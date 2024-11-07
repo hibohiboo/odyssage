@@ -38,10 +38,13 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-      - name: Install dependencies
+
+      - name: Install document dependencies
         run: bun install
         working-directory: ${{ env.BUILD_PATH }}
 
+      - name: Install monorepo dependencies
+        run: bun install
 
       # ドキュメント作成
       - name: Build with Astro
