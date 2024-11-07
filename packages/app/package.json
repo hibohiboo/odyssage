@@ -1,9 +1,0 @@
-{
-  "name": "@odyssage/app",
-  "scripts": {
-    "run": "bun run src/index.ts"
-  },
-  "dependencies": {
-    "@odyssage/lib": "workspace:*"
-  }
-}

@@ -44,7 +44,7 @@ jobs:
         working-directory: ${{ env.BUILD_PATH }}
 
       - name: Install monorepo dependencies
-        run: bun install
+        run: bun install --ignore-scripts
 
       # ドキュメント作成
       - name: Build with Astro

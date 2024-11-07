@@ -40,7 +40,7 @@ export const SIDEBAR: Sidebar = {
       //   link: `${BASE_PATH}/odyssage-jest-coverage/lcov-report/index.html`,
       // },
       {
-        text: 'eslint',
+        text: 'ESLint Config Inspector',
         link: `${BASE_PATH}/odyssage-eslint-config-inspector/`,
       },
     ],

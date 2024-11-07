@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", // Node20の推奨バージョン
+    "lib": ["ES2022"],
+    /* Linting */
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
