@@ -1,0 +1,10 @@
+
+A blank map spreads out before your eyes
+I start walking alone on a pathless road
+
+The future whispers softly to the dawn wind
+“You are the one who paints the scenery we haven’t seen yet.”
+,
+fantasy, 1girl, ponytail, single hair bun, brown hair, black eyes, flat chest,
+Negative prompt: lowers, bad anatomy, bad hands, text error, bad hands, missing fingers, extra digits, fewer digits, cropped, worst quality, low quality, standard quality, signature, watermark, username, blurry, jpeg artifacts, Humpbacked , more than 2 thighs, The background is incoherent, disappearing arms, extra legs, mutation, duplicate, cloned face, artifacts
+Steps: 20, Sampler: Euler a, Schedule type: Automatic, CFG scale: 7, Seed: 74607907251615543, Size: 640x320, Model hash: 22da9d1251, Model: Shungiku-Mix_v1-better-vae-fp16, Version: v1.10.1
