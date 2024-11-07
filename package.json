@@ -2,7 +2,7 @@
     "name": "odyssage",
     "private": true,
     "scripts": {
-        "lint": "biome format --changed"
+    "preinstall": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install"
     },
     "workspaces": [
         "packages/*"
