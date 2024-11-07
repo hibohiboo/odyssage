@@ -1,0 +1,9 @@
+{
+  "extends": ["./init.json", "./prettier.json", "../eslint/default.json"],
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "develop"
+  }
+}

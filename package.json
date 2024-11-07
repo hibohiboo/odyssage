@@ -1,0 +1,10 @@
+{
+    "name": "odyssage",
+    "private": true,
+    "scripts": {
+        "lint": "biome format --changed"
+    },
+    "workspaces": [
+        "packages/*"
+    ]
+}
