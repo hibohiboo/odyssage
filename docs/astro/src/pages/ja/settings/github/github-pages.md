@@ -15,7 +15,6 @@ github action で github page をデプロイするときの、 GitHub 側での
 ## 設定箇所
 
 Settings > Pages > Build and deployment
-github-pages 環境の デプロイを許可するブランチに develop を追加する。
+Source に Github Actions でのデプロイを設定する。
 
 ![alt text](/odyssage/images/settings/github-settings-01.png)
-![alt text](/odyssage/images/settings/github-settings-02.png)
