@@ -41,7 +41,7 @@ export const SIDEBAR: Sidebar = {
       // },
       {
         text: 'eslint',
-        link: `${BASE_PATH}/odyssage-eslint-config-inspector/index.html`,
+        link: `${BASE_PATH}/odyssage-eslint-config-inspector/`,
       },
     ],
     設定: [
