@@ -1,4 +1,5 @@
 {
+  "name": "@odyssage/lib",
   "dependencies": {
     "date-fns": "^4.1.0"
   }

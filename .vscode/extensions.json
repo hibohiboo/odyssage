@@ -3,7 +3,9 @@
     "biomejs.biome",
     "ms-vscode.vscode-typescript-next",
     "EditorConfig.EditorConfig",
-    "bradlc.vscode-tailwindcss"
+    "bradlc.vscode-tailwindcss",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint"
   ],
   "unwantedRecommendations": []
 }

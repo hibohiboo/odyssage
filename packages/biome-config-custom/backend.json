@@ -1,3 +1,0 @@
-{
-  "extends": ["./default/biome.json", "../eslint/backend.json"]
-}
