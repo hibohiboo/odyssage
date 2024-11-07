@@ -1,4 +1,6 @@
-# コンセプト
+<div><img src="./docs/astro/public/images/consept-art/top.png" /></div>
 
-未知を辿る、非同期型ゲームブック風TRPG。
-君だけの旅路を残す白い手帳。
+<div align="center">An asynchronous, gamebook-style TRPG that explores the unknown. A blank journal to chronicle your own journey.</div>
+
+---
+
