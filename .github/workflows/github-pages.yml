@@ -51,6 +51,10 @@ jobs:
             --base "${{ steps.pages.outputs.base_path }}"
         working-directory: ${{ env.BUILD_PATH }}
 
+      # eslint ドキュメント作成
+      - name: Build with eslint-inspect
+        run: bun run build
+        working-directory: ./packages/eslint-config-custom
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

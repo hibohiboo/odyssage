@@ -1,4 +1,8 @@
-export const SITE = { title: 'Doc', description: 'Comment thrower.', defaultLanguage: 'ja_JP' };
+export const SITE = {
+  title: 'Doc',
+  description: 'Comment thrower.',
+  defaultLanguage: 'ja_JP',
+};
 
 export const OPEN_GRAPH = {};
 
@@ -28,8 +32,23 @@ export const SIDEBAR: Sidebar = {
       { text: 'イントロダクション', link: `${BASE_PATH}/ja/introduction` },
       { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
     ],
+    開発用: [
+      // { text: 'Storybook', link: `${BASE_PATH}/odyssage-components/index.html` },
+      // { text: 'Jestレポート', link: `${BASE_PATH}/odyssage-jest-reports/jest.html` },
+      // {
+      //   text: 'Jestカバレッジ',
+      //   link: `${BASE_PATH}/odyssage-jest-coverage/lcov-report/index.html`,
+      // },
+      {
+        text: 'eslint',
+        link: `${BASE_PATH}/odyssage-eslint-config-inspector/index.html`,
+      },
+    ],
     設定: [
-      { text: 'GitHub Pages', link: `${BASE_PATH}/ja/settings/github/github-pages` },
+      {
+        text: 'GitHub Pages',
+        link: `${BASE_PATH}/ja/settings/github/github-pages`,
+      },
     ],
   },
 };

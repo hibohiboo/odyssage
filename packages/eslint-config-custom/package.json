@@ -22,7 +22,7 @@
   },
   "scripts": {
     "inspect": "eslint-config-inspector",
-    "build": "eslint-config-inspector build --base odyssage/public/eslint-config-inspector --outDir ../../docs/astro/public/odyssage-eslint-config-inspector",
+    "build": "eslint-config-inspector build --base odyssage/odyssage-eslint-config-inspector --outDir ../../docs/astro/dist/odyssage-eslint-config-inspector",
     "ncu": " bunx --bun ncu -u"
   }
 }
