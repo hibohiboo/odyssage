@@ -2,7 +2,8 @@
     "name": "odyssage",
     "private": true,
     "scripts": {
-    "preinstall": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install"
+      "preinstall": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
+      "build": "cd packages/app && bunx run build"
     },
     "workspaces": [
         "packages/*"
