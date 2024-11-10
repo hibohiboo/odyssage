@@ -14,8 +14,6 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@odyssage/eslint-config-custom": "workspace:*",
-    "@odyssage/tsconfig": "workspace:*",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.7.1",
