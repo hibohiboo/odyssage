@@ -2,13 +2,16 @@
     "name": "odyssage",
     "private": true,
     "scripts": {
-      "preinstall": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
-      "build": "cd packages/app && bunx run build"
+        "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
+        "dev": "turbo dev",
+        "build": "turbo build"
     },
     "workspaces": [
         "packages/*"
     ],
     "devDependencies": {
-        "prettier": "^3.3.3"
-    }
+        "prettier": "^3.3.3",
+        "turbo": "^2.2.3"
+    },
+    "packageManager": "bun@1.1.34"
 }

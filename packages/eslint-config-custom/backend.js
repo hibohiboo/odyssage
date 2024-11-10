@@ -1,6 +1,6 @@
-import customConfig from './defaults.js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import customConfig from './defaults.js';
 
 export default tseslint.config({
   files: ['**/*.ts'],

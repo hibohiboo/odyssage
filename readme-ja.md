@@ -14,3 +14,10 @@
 ## ワークスペース
 
 [Bun workspace で始めるモノレポ生活](https://azukiazusa.dev/blog/bun-workspace/)
+
+## 最初にやること
+
+```
+npm install
+npm run init
+```
