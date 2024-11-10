@@ -56,7 +56,7 @@ jobs:
 
       # eslint ドキュメント作成
       - name: Build with eslint-inspect
-        run: bun run build
+        run: bun run build-inspect
         working-directory: ./packages/eslint-config-custom
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

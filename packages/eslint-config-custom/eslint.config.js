@@ -1,5 +1,5 @@
-import customConfig from './defaults.js';
 import tseslint from 'typescript-eslint';
+import customConfig from './defaults.js';
 
 export default tseslint.config({
   extends: [...customConfig],

@@ -1,10 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
-import customConfig from './defaults.js';
 import { FlatCompat } from "@eslint/eslintrc";
 import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import customConfig from './defaults.js';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
