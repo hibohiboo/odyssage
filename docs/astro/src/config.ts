@@ -30,6 +30,10 @@ export const SIDEBAR: Sidebar = {
   ja: {
     目次: [
       { text: 'イントロダクション', link: `${BASE_PATH}/ja/introduction` },
+      {
+        text: 'ビジョン',
+        link: `${BASE_PATH}/ja/ddd/businessdomain/domain.md`,
+      },
       { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
     ],
     開発用: [
