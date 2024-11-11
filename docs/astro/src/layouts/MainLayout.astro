@@ -149,11 +149,11 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
 
       const drawDiagram = async function () {
         const elements = document.querySelectorAll('.mermaid');
-        
+        // https://stackoverflow.com/questions/78319916/how-do-i-pan-and-zoom-on-mermaid-output
         elements.forEach(async (element, index) => {
           const graphDefinition = element.innerText;
           const { svg } = await mermaid.render(`mySvgId${index}`, graphDefinition);
-          element.innerHTML = svg.replace(/( )*max-width:( 0-9\.)*px;/i, '');
+          element.innerHTML = svg.replace(/max-width:\s*\d+(\.\d+)?px;/i, 'min-height: 300px');
 
           let doPan = false;
           let eventsHandler;
