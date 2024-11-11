@@ -11,7 +11,7 @@ flowchart TB
     %% アクター定義
     Player("プレイヤー")
     System("システム")
-
+    ScenarioCreator("シナリオ作成者")
     %% コアサブドメインのユースケース
     CreateCharacter["キャラクター作成"]
     EditCharacter["キャラクター情報編集"]
@@ -33,12 +33,8 @@ flowchart TB
     System --> RecordStory
     Player --> ViewLog
     Player --> ShareLog
-</pre>    
-<pre class="mermaid">
-flowchart TB
-    %% アクター定義
-    Player("プレイヤー")
-    ScenarioCreator("シナリオ作成者")
+
+
 
     %% 一般サブドメインのユースケース
     CreatePost["投稿の作成"]
@@ -62,11 +58,6 @@ flowchart TB
     ScenarioCreator --> UseTemplate
     ScenarioCreator --> EditTemplate
 
-</pre>    
-<pre class="mermaid">
-flowchart TB
-    %% アクター定義
-    System("システム")
     
     %% 補完サブドメインのユースケース
     SendProgressNotification["進行状況の通知"]
