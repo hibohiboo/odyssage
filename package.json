@@ -4,7 +4,8 @@
     "scripts": {
         "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
         "dev": "bunx --bun turbo dev",
-        "build": "bunx --bun turbo build"
+        "build": "bunx --bun turbo build",
+        "ncu": "bunx --bun turbo ncu && ncu -u"
     },
     "workspaces": [
         "packages/*"
