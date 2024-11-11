@@ -142,9 +142,65 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}/${currentFile}`;
         <RightSidebar headings={headings} />
       </aside>
     </main>
+    <script src="https://bumbu.me/svg-pan-zoom/dist/svg-pan-zoom.min.js"></script>
     <script type="module">
-      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-      mermaid.initialize({ startOnLoad: true });
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: false });
+
+      const drawDiagram = async function () {
+        const element = document.querySelector('.mermaid');
+        const graphDefinition = element.innerText;
+        const { svg } = await mermaid.render('mySvgId', graphDefinition);
+        element.innerHTML = svg.replace(/( )*max-width:( 0-9\.)*px;/i, '');
+
+        let doPan = false;
+        let eventsHandler;
+        let panZoom;
+        let mousepos;
+
+        eventsHandler = {
+          haltEventListeners: ['mousedown', 'mousemove', 'mouseup']
+
+          , mouseDownHandler: function (ev) {
+            if (event.target.className == "[object SVGAnimatedString]") {
+              doPan = true;
+              mousepos = { x: ev.clientX, y: ev.clientY }
+            };
+          }
+
+          , mouseMoveHandler: function (ev) {
+            if (doPan) {
+              panZoom.panBy({ x: ev.clientX - mousepos.x, y: ev.clientY - mousepos.y });
+              mousepos = { x: ev.clientX, y: ev.clientY };
+              window.getSelection().removeAllRanges();
+            }
+          }
+
+          , mouseUpHandler: function (ev) {
+            doPan = false;
+          }
+
+          , init: function (options) {
+            options.svgElement.addEventListener('mousedown', this.mouseDownHandler, false);
+            options.svgElement.addEventListener('mousemove', this.mouseMoveHandler, false);
+            options.svgElement.addEventListener('mouseup', this.mouseUpHandler, false);
+          }
+
+          , destroy: function (options) {
+            options.svgElement.removeEventListener('mousedown', this.mouseDownHandler, false);
+            options.svgElement.removeEventListener('mousemove', this.mouseMoveHandler, false);
+            options.svgElement.removeEventListener('mouseup', this.mouseUpHandler, false);
+          }
+        }
+        panZoom = svgPanZoom('#mySvgId', {
+          zoomEnabled: true
+          , controlIconsEnabled: true
+          , fit: 1
+          , center: 1
+          , customEventsHandler: eventsHandler
+        })
+      };
+      await drawDiagram();
     </script>
   </body>
 </html>

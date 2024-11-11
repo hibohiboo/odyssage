@@ -38,6 +38,10 @@ export const SIDEBAR: Sidebar = {
         text: 'ユースケース',
         link: `${BASE_PATH}/ja/ddd/businessdomain/usecase`,
       },
+      {
+        text: 'Context Mapping',
+        link: `${BASE_PATH}/ja/ddd/businessdomain/contextmap`,
+      },
       { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
     ],
     開発用: [
