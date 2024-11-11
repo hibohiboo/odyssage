@@ -1,10 +1,9 @@
 ---
 title: ユースケース
-description: 事業領域の定義
+description: 事業領域の定義 ユースケース
 layout: ../../../../layouts/MainLayout.astro
 ---
 
-# ユースケース
 
 <pre class="mermaid">
 %% オデッサージュ ユースケース図
