@@ -34,6 +34,10 @@ export const SIDEBAR: Sidebar = {
         text: 'ビジョン',
         link: `${BASE_PATH}/ja/ddd/businessdomain/domain`,
       },
+      {
+        text: 'ユースケース',
+        link: `${BASE_PATH}/ja/ddd/businessdomain/usecase`,
+      },
       { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
     ],
     開発用: [
