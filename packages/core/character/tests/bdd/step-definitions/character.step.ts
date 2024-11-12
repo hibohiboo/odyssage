@@ -1,9 +1,10 @@
 import { When, Then, Given } from '@cucumber/cucumber';
+// Node.js自身はNative ESMモードでは拡張子を補完しない
+import { CharacterService } from '@odyssage/core/character/application/CharacterService.ts';
+import { Character } from '@odyssage/core/character/domain/Character.ts';
+import { Tag } from '@odyssage/core/character/domain/Tag.ts';
+import { CharacterRepository } from '@odyssage/core/character/infrastructure/CharacterRepository.ts';
 import { strict as assert } from 'assert';
-import { Character } from '../../../domain/Character';
-import { Tag } from '../../../domain/Tag';
-import { CharacterRepository } from '../../../infrastructure/CharacterRepository';
-import { CharacterService } from '../../../application/CharacterService';
 
 let character: Character;
 let repository: CharacterRepository;
@@ -31,7 +32,7 @@ Given(/キャラクター "(.+)" が存在する/, (name: string) => {
 });
 
 When(/"(.+)" のタグを追加する/, (tag: string) => {
-  const newTag: Tag = { name: tag };
+  const newTag: Tag = tag;
   service.addTag(character.id, newTag);
 });
 
@@ -40,7 +41,7 @@ Then(
   (name: string, tag: string) => {
     const character = repository.findById('1');
     assert(character, `キャラクター "${name}" が存在しません`);
-    const found = character.tags.some((t) => t.name === tag);
+    const found = character.tags.some((t) => t === tag);
     assert(found, `"${name}" のタグリストに "${tag}" が含まれていません`);
   },
 );
