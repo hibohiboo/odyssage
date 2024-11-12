@@ -1,0 +1,16 @@
+import customConfig from '@odyssage/eslint-config-custom/default.js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config({
+  extends: [...customConfig],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
+      typescript: {
+        project: "./tsconfig.app.json",
+      },
+    },
+  },
+});

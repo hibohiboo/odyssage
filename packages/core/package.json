@@ -1,0 +1,17 @@
+{
+  "name": "@odyssage/core",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "cucumber-js --config cucumber.mjs",
+    "ncu": "ncu -u"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^11.0.1",
+    "@types/node": "^22.9.0",
+    "ts-node": "^10.9.2",
+    "vitest": "^2.1.4"
+  },
+  "devDependencies": {}
+}
