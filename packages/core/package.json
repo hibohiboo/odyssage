@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "test": "cucumber-js --config cucumber.mjs",
+    "test": "cucumber-js --config tests/bdd/cucumber.mjs",
     "ncu": "ncu -u"
   },
   "dependencies": {

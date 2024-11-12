@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022", // Node20の推奨バージョン
-    "lib": ["ES2023"],
+    "target": "ES2022", // LTS ( Node22 ) の推奨バージョン
+    "lib": ["ES2023"], // https://github.com/tsconfig/bases/blob/main/bases/node-lts.json
     /* Linting */
     "strict": true,
     "esModuleInterop": true

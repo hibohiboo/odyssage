@@ -6,6 +6,6 @@
     "noEmit": true, // https://zenn.dev/hayato94087/articles/d05b3eb7de1fcf
     "allowImportingTsExtensions": true //  import のパス名に .ts のまま記述を許可
   },
-  "include": ["./*.ts"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
