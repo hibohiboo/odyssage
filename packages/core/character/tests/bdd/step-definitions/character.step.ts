@@ -1,5 +1,5 @@
 import { When, Then, Given } from '@cucumber/cucumber';
-// Node.js自身はNative ESMモードでは拡張子を補完しない
+// Node.js は Native ESM モードでは拡張子を補完しない
 import { CharacterService } from '@odyssage/core/character/application/CharacterService.ts';
 import { Character } from '@odyssage/core/character/domain/Character.ts';
 import { Tag } from '@odyssage/core/character/domain/Tag.ts';
