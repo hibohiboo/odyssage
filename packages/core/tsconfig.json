@@ -1,14 +1,10 @@
 {
-  "extends": "@odyssage/tsconfig/tsconfig.node",
+  "extends": "@odyssage/tsconfig/tsconfig.base",
   "compilerOptions": {
     "module": "ESNext",
-    "target": "ESNext",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "allowImportingTsExtensions": true
+    "noEmit": true, // https://zenn.dev/hayato94087/articles/d05b3eb7de1fcf
+    "allowImportingTsExtensions": true //  import のパス名に .ts のまま記述を許可
   },
   "include": ["./*.ts"],
   "exclude": ["node_modules", "dist"]
