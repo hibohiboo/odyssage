@@ -3,8 +3,8 @@ import { ExtendedTag, Tag } from './Tag';
 export interface CharacterProps {
   id: string;
   name: string;
-  tags: Tag[];
-  extendedTags: ExtendedTag[];
+  tags?: Tag[];
+  extendedTags?: ExtendedTag[];
   description?: string;
 }
 export class Character {
@@ -21,8 +21,8 @@ export class Character {
   constructor(props: CharacterProps) {
     this.id = props.id;
     this.name = props.name;
-    this.tags = props.tags;
-    this.extendedTags = props.extendedTags;
+    this.tags = props.tags || [];
+    this.extendedTags = props.extendedTags || [];
     this.description = props.description;
   }
 

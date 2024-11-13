@@ -7,8 +7,16 @@ export class CharacterRepository {
     this.characters.push(character);
   }
 
+  delete(name: string): void {
+    this.characters = this.characters.filter((c) => c.name !== name);
+  }
+
   findById(id: string): Character | undefined {
     return this.characters.find((c) => c.id === id);
+  }
+
+  findByName(name: string): Character | undefined {
+    return this.characters.find((c) => c.name === name);
   }
 
   update(character: Character): void {
