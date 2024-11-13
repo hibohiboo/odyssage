@@ -15,35 +15,40 @@ function saveCharactersToStorage(characters: Character[]): void {
  * @description ローカルストレージにキャラクター情報を保存するリポジトリ
  */
 export class CharacterLocalRepository {
+  private characters: Character[];
+
+  constructor() {
+    this.characters = getCharactersFromStorage();
+  }
+
   add(character: Character): void {
-    const characters = getCharactersFromStorage();
-    characters.push(character);
-    saveCharactersToStorage(characters);
+    this.characters.push(character);
+    saveCharactersToStorage(this.characters);
   }
 
   delete(name: string): void {
-    let characters = getCharactersFromStorage();
-    characters = characters.filter((character) => character.name !== name);
-    saveCharactersToStorage(characters);
+    this.characters = this.characters.filter(
+      (character) => character.name !== name,
+    );
+    saveCharactersToStorage(this.characters);
   }
 
   findById(id: string): Character | undefined {
-    const characters = getCharactersFromStorage();
-    return characters.find((character) => character.id === id);
+    return this.characters.find((character) => character.id === id);
   }
 
   findByName(name: string): Character | undefined {
-    const characters = getCharactersFromStorage();
-    return characters.find((character) => character.name === name);
+    return this.characters.find((character) => character.name === name);
   }
 
   update(character: Character): void {
-    let characters = getCharactersFromStorage();
-    characters = characters.map((c) => (c.id === character.id ? character : c));
-    saveCharactersToStorage(characters);
+    this.characters = this.characters.map((c) =>
+      c.id === character.id ? character : c,
+    );
+    saveCharactersToStorage(this.characters);
   }
 
   listAll(): Character[] {
-    return getCharactersFromStorage();
+    return this.characters;
   }
 }
