@@ -1,5 +1,5 @@
 {
-  "name": "@odyssage/app",
+  "name": "@odyssage/frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -21,7 +21,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react-swc": "^3.7.1",
     "globals": "^15.12.0",
-    "npm-check-updates": "^17.1.10",
+    "npm-check-updates": "^17.1.11",
     "vite": "^5.4.11"
   }
 }
