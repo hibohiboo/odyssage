@@ -5,14 +5,14 @@
   "type": "module",
   "scripts": {
     "test": "cucumber-js --config cucumber.mjs",
+    "test-report": "cucumber-js --config cucumber.mjs --format html:../../docs/astro/public/odyssage-cucumber/index.html",
     "ncu": "ncu -u"
   },
-  "dependencies": {
-
-  },
+  "dependencies": {},
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.1",
     "@types/node": "^22.9.0",
+    "cucumber-html-reporter": "^7.2.0",
     "ts-node": "^10.9.2",
     "vitest": "^2.1.4"
   }

@@ -3,5 +3,5 @@
 export default {
   paths: ['**/features/*.feature'],
   import: ['**/step-definitions/*.step.ts'],
-  loader: ['ts-node/esm'],
+  loader: ['ts-node/esm']
 }

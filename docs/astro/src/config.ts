@@ -1,31 +1,9 @@
 export const SITE = {
   title: 'Doc',
-  description: 'Comment thrower.',
+  description: 'Odyssage.',
   defaultLanguage: 'ja_JP',
 };
-
-export const OPEN_GRAPH = {};
-
-// This is the type of the frontmatter you put in the docs markdown files.
-export type Frontmatter = {
-  title: string;
-  description: string;
-  layout: string;
-  image?: { src: string; alt: string };
-  dir?: 'ltr' | 'rtl';
-  ogLocale?: string;
-  lang?: string;
-};
-
-export const KNOWN_LANGUAGES = { 日本語: 'ja' } as const;
-export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
-export const GITHUB_EDIT_URL = `https://github.com/hkj-hub/odyssagetree/main/docs`;
 export const BASE_PATH = 'odyssage';
-
-export type Sidebar = Record<
-  (typeof KNOWN_LANGUAGE_CODES)[number],
-  Record<string, { text: string; link: string }[]>
->;
 export const SIDEBAR: Sidebar = {
   ja: {
     目次: [
@@ -45,6 +23,10 @@ export const SIDEBAR: Sidebar = {
       { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
     ],
     開発用: [
+      {
+        text: 'ふるまい駆動テストレポート',
+        link: `${BASE_PATH}/odyssage-cucumber/index.html`,
+      },
       // { text: 'Storybook', link: `${BASE_PATH}/odyssage-components/index.html` },
       // { text: 'Jestレポート', link: `${BASE_PATH}/odyssage-jest-reports/jest.html` },
       // {
@@ -64,3 +46,23 @@ export const SIDEBAR: Sidebar = {
     ],
   },
 };
+export const OPEN_GRAPH = {};
+// This is the type of the frontmatter you put in the docs markdown files.
+export type Frontmatter = {
+  title: string;
+  description: string;
+  layout: string;
+  image?: { src: string; alt: string };
+  dir?: 'ltr' | 'rtl';
+  ogLocale?: string;
+  lang?: string;
+};
+
+export const KNOWN_LANGUAGES = { 日本語: 'ja' } as const;
+export const KNOWN_LANGUAGE_CODES = Object.values(KNOWN_LANGUAGES);
+export const GITHUB_EDIT_URL = `https://github.com/hibohiboo/odyssage/tree/main/docs`;
+
+export type Sidebar = Record<
+  (typeof KNOWN_LANGUAGE_CODES)[number],
+  Record<string, { text: string; link: string }[]>
+>;
