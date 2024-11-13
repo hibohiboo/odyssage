@@ -1,3 +1,4 @@
+/* global localStorage */
 import { Character } from '../domain/Character';
 
 const STORAGE_KEY = 'characters';
