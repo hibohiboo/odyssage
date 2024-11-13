@@ -2,7 +2,11 @@ import { ExtendedTag, Tag } from '../domain/Tag';
 import { CharacterRepository } from '../infrastructure/CharacterRepository';
 
 export class CharacterService {
-  constructor(private repository: CharacterRepository) {}
+  private repository: CharacterRepository;
+
+  constructor(repository: CharacterRepository) {
+    this.repository = repository;
+  }
 
   addTag(characterId: string, tag: Tag): void {
     const character = this.repository.findById(characterId);

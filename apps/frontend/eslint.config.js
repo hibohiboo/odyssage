@@ -3,6 +3,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config({
   extends: [...customConfig],
+
   settings: {
     'import/resolver': {
       node: {

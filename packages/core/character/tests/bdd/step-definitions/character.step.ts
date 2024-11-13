@@ -1,10 +1,10 @@
+import { strict as assert } from 'assert';
 import { When, Then, Given } from '@cucumber/cucumber';
 // Node.js は Native ESM モードでは拡張子を補完しない
 import { CharacterService } from '@odyssage/core/character/application/CharacterService.ts';
 import { Character } from '@odyssage/core/character/domain/Character.ts';
 import { Tag } from '@odyssage/core/character/domain/Tag.ts';
 import { CharacterRepository } from '@odyssage/core/character/infrastructure/CharacterRepository.ts';
-import { strict as assert } from 'assert';
 
 let character: Character;
 let repository: CharacterRepository;
@@ -32,16 +32,16 @@ Given(/キャラクター "(.+)" が存在する/, (name: string) => {
 });
 
 When(/"(.+)" のタグを追加する/, (tag: string) => {
-  const newTag: Tag = tag;
+  const newTag: Tag = { name: tag };
   service.addTag(character.id, newTag);
 });
 
 Then(
   /"(.+)" のタグリストに "(.+)" が含まれている/,
   (name: string, tag: string) => {
-    const character = repository.findById('1');
-    assert(character, `キャラクター "${name}" が存在しません`);
-    const found = character.tags.some((t) => t === tag);
+    const char = repository.findById('1');
+    assert(char, `キャラクター "${name}" が存在しません`);
+    const found = char.tags.some((t) => t.name === tag);
     assert(found, `"${name}" のタグリストに "${tag}" が含まれていません`);
   },
 );

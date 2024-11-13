@@ -6,6 +6,7 @@ export class CharacterRepository {
   add(character: Character): void {
     this.characters.push(character);
   }
+
   findById(id: string): Character | undefined {
     return this.characters.find((c) => c.id === id);
   }
