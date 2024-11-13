@@ -26,6 +26,19 @@ export class Character {
     this.description = props.description;
   }
 
+  addTag: (tag: Tag) => void = (tag: Tag) => {
+    if (!this.tags.includes(tag)) {
+      this.tags.push(tag);
+    }
+  };
+
+  removeTag: (tagName: string) => void = (tagName: string) => {
+    this.tags = this.tags.filter((t) => t.name !== tagName);
+  };
+
+  hasTag: (tagName: string) => boolean = (tagName: string) =>
+    this.tags.some((t) => t.name === tagName);
+
   getExtendedTagValue: (tagName: string) => number | string | undefined = (
     tagName: string,
   ) => {
