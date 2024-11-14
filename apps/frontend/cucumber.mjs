@@ -1,6 +1,6 @@
 
 export default {
   paths: ['**/features/*.feature'],
-  require: ['**/support/**','**/tests/*.steps.ts','**/setup.ts'],
+  require: ['**/tests/*.steps.ts'],
   requireModule : ['ts-node/register']
 };
