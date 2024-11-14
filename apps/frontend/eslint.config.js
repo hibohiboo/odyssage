@@ -18,6 +18,8 @@ export default tseslint.config({
       files: ['**/e2e/**'],
       rules: {
         'lintsonarjs/no-empty-test-file': ['off'],
+        'no-restricted-syntax': ['off'],
+        'no-await-in-loop': ['off'],
       },
     },
   ],

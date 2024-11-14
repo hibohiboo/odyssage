@@ -6,8 +6,8 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:5173',
     headless: true,
-    screenshot: 'on',
-    video: 'retain-on-failure',
-    ignoreHTTPSErrors: true,
+    // screenshot: 'on',
+    // video: 'retain-on-failure',
+    // ignoreHTTPSErrors: true,
   },
 });
