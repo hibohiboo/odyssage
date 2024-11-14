@@ -9,6 +9,11 @@
 未知を辿る、非同期型ゲームブック風TRPG。
 君だけの旅路を残す白い手帳。
 
+# Odyssage
+[Odyssage](https://odyssage.pages.dev/)  
+[Odyssage テーマソング](https://suno.com/song/79917a5e-040d-4378-a1f3-3023fd161697)  
+[開発者ドキュメント](https://hibohiboo.github.io/odyssage/ja/introduction/)
+
 # 開発環境
 
 ## ワークスペース

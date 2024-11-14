@@ -4,4 +4,6 @@
 
 ---
 
-[Odyssage Theme Song](https://suno.com/song/79917a5e-040d-4378-a1f3-3023fd161697)
+[Odyssage](https://odyssage.pages.dev/)  
+[Odyssage Theme Song](https://suno.com/song/79917a5e-040d-4378-a1f3-3023fd161697)  
+[Developers Docs](https://hibohiboo.github.io/odyssage/ja/introduction/)
