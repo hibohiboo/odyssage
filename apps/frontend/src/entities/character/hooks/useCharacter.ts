@@ -5,6 +5,17 @@ import { fetchCharacters, saveCharacters } from '../service/characterService';
 export const useCharacter = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [name, setName] = useState('');
+  const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(
+    null,
+  );
+  const fetchCharactersHandler = async () => {
+    const list = await fetchCharacters();
+    setCharacters(list);
+    setSelectedCharacter(
+      list.find((c) => c.id === selectedCharacter?.id) || null,
+    );
+  };
+
   useEffect(() => {
     fetchCharacters().then(setCharacters);
   }, []);
@@ -18,5 +29,14 @@ export const useCharacter = () => {
     setName('');
     fetchCharacters();
   };
-  return { characters, handleAddCharacter, name, setName };
+
+  return {
+    characters,
+    handleAddCharacter,
+    name,
+    setName,
+    selectedCharacter,
+    setSelectedCharacter,
+    fetchCharacters: fetchCharactersHandler,
+  };
 };
