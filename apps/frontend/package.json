@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "preview": "bunx --bun vite preview",
     "ncu": "ncu -u",
-    "e2e-test": "cucumber-js --config cucumber.mjs"
+    "e2e-test": "cucumber-js --config cucumber.mjs --exit"
   },
   "dependencies": {
     "@odyssage/core": "workspace:*",
