@@ -2,3 +2,5 @@ node_modules
 dist
 # Turborepo
 .turbo
+.config
+npm-cache

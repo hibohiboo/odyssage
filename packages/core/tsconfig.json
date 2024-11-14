@@ -1,0 +1,14 @@
+{
+  "extends": "@odyssage/tsconfig/tsconfig.base",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "noEmit": true, // https://zenn.dev/hayato94087/articles/d05b3eb7de1fcf
+    "allowImportingTsExtensions": true, //  import のパス名に .ts のまま記述を許可
+    "paths": {
+      "@odyssage/core/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

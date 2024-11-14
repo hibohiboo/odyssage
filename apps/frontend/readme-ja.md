@@ -1,33 +1,12 @@
-<div><img src="./docs/astro/public/images/consept-art/top.png" /></div>
+# 作業に入る前に
 
-<div align="center">オデッサージュ</div>
-
----
-
-# コンセプト
-
-未知を辿る、非同期型ゲームブック風TRPG。
-君だけの旅路を残す白い手帳。
-
-# Odyssage
-[Odyssage](https://odyssage.pages.dev/)  
-[Odyssage テーマソング](https://suno.com/song/79917a5e-040d-4378-a1f3-3023fd161697)  
-[開発者ドキュメント](https://hibohiboo.github.io/odyssage/ja/introduction/)
-
-# 開発環境
-
-## ワークスペース
-
-[Bun workspace で始めるモノレポ生活](https://azukiazusa.dev/blog/bun-workspace/)
-
-## 最初にやること
+playwrightは手動でローカル環境にいれる必要がある
 
 ```
-npm install
-npm run init
+ npx playwright install  
 ```
 
-## フォルダ構成
+# フォルダ構成
 
 ```
 odysseyage/
@@ -53,16 +32,14 @@ odysseyage/
 └── package.json
 ```
 
-### フォルダ構成のポイント
+# e2eフォルダ構成
 
-1.  **モノレポ構成**:
-    *   `apps/` と `packages/` でプロジェクトを分離し、再利用性を高める。
-    *   `core/` には、各文脈のドメインロジックが入る。
-2.  **DDDとFSDの融合**:
-    *   `entities/` や `features/` など、FSDのフォルダ構成を採用してドメイン層を分かりやすく配置。
-    *   ドメイン層は `core/` 内の各パッケージに分け、DDDの概念に沿って設計。
-3.  **テスト**:
-    *   ユニットテスト、統合テスト、E2Eテストを `tests/` 内にまとめる。
-4.  **設計ドキュメント**:
-    *   `docs/` フォルダに、これまでのDDD設計資料をまとめて配置。
- 
+```
+apps/frontend/
+├── e2e/
+│   ├── features/
+│   │   └── characterList.feature      # Gherkin シナリオファイル
+│   └── tests/
+│       └── characterList.steps.ts          # ステップ定義ファイル
+└── src/
+```

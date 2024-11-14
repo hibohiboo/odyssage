@@ -46,7 +46,12 @@ jobs:
       - name: Install monorepo dependencies
         run: bun install --ignore-scripts
 
-      # ドキュメント作成
+        # core ふるまい駆動テスト
+      - name: Core Test Report Cucumber
+        run: bun run test-report
+        working-directory: ./packages/core
+
+        # ドキュメント作成
       - name: Build with Astro
         run: |
           npm run astro build \
@@ -58,6 +63,7 @@ jobs:
       - name: Build with eslint-inspect
         run: bun run build-inspect
         working-directory: ./packages/eslint-config-custom
+      # astro ドキュメントアップロード
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

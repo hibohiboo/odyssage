@@ -1,0 +1,31 @@
+{
+  "name": "@odyssage/frontend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "bunx --bun vite",
+    "build": "tsc -b && bunx --bun vite build",
+    "lint": "eslint .",
+    "preview": "bunx --bun vite preview",
+    "ncu": "ncu -u",
+    "e2e-test": "cucumber-js --config cucumber.mjs --exit"
+  },
+  "dependencies": {
+    "@odyssage/core": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^11.0.1",
+    "@odyssage/eslint-config-custom": "workspace:*",
+    "@odyssage/tsconfig": "workspace:*",
+    "@playwright/test": "^1.48.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react-swc": "^3.7.1",
+    "globals": "^15.12.0",
+    "npm-check-updates": "^17.1.11",
+    "ts-node": "^10.9.2",
+    "vite": "^5.4.11"
+  }
+}
