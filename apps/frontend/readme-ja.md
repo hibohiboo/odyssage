@@ -15,6 +15,7 @@ core/
     ├── infrastructure/          # インフラ層（データアクセス）
     │   ├── CharacterRepositoryImpl.ts # リポジトリ実装
     │   └── DataSource.ts        # データソース
+    ├── persistence/             # 永続化層（リポジトリの実装）
     ├── presentation/            # プレゼンテーション層（UIとの連携）
     │   ├── CharacterViewModel.ts # キャラクターの状態管理
     │   └── TagViewModel.ts      # タグの状態管理
