@@ -1,12 +1,11 @@
-# 作業に入る前に
+# init
 
-playwrightは手動でローカル環境にいれる必要がある
 
 ```
  npx playwright install  
 ```
 
-# e2eフォルダ構成
+# e2e folder
 
 ```
 apps/frontend/
