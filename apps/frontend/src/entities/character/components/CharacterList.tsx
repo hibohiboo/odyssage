@@ -5,7 +5,7 @@ import CharacterCard from './CharacterCard';
 import './CharacterList.css';
 
 const CharacterList: React.FC = () => {
-  const { characters } = useCharacter();
+  const { characters, name, setName, handleAddCharacter } = useCharacter();
 
   return (
     <div className="character-list">
@@ -16,6 +16,15 @@ const CharacterList: React.FC = () => {
       ) : (
         <p>キャラクターが見つかりませんでした。</p>
       )}
+      <div>
+        <input
+          type="text"
+          value={name}
+          placeholder="キャラクター名を入力"
+          onChange={(e) => setName(e.target.value)}
+        />
+        <button onClick={handleAddCharacter}>キャラクターを追加</button>
+      </div>
     </div>
   );
 };
