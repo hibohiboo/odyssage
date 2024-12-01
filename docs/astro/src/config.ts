@@ -27,6 +27,10 @@ export const SIDEBAR: Sidebar = {
         text: 'ふるまい駆動テストレポート',
         link: `${BASE_PATH}/odyssage-cucumber/`,
       },
+      {
+        text: 'ホットスポットプロファイル',
+        link: `${BASE_PATH}/crime-scene-hotspots/`,
+      },
       // { text: 'Storybook', link: `${BASE_PATH}/odyssage-components/index.html` },
       // { text: 'Jestレポート', link: `${BASE_PATH}/odyssage-jest-reports/jest.html` },
       // {
