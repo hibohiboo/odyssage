@@ -79,3 +79,10 @@ main|https://odyssage.pages.dev/ にデプロイ
 develop|https://develop.odyssage.pages.dev/ にデプロイ。github-pagesの更新
 docs|デプロイを行わず、github-pagesの更新のみ
 id/*/*|開発用Featureブランチ
+
+# GitHub Actions
+
+Action|yaml|説明|
+--|--|--
+Deploy Documents to Pages|github-pages.yml|GitHub Pagesへのデプロイ
+CodeQL|-|GitHub Code Scanning|
