@@ -15,29 +15,29 @@ Given('ユーザーがキャラクター作成フォームを開いている', (
   service = new CharacterService(repository);
 });
 
-When(/"(.+)" という名前でキャラクターを作成する/, (name: string) => {
+When('{string} という名前でキャラクターを作成する', (name: string) => {
   character = new Character({ id: '1', name, tags: [], extendedTags: [] });
   repository.add(character);
 });
 
-Then(/キャラクターリストに "(.+)" が表示されている/, (name: string) => {
+Then('キャラクターリストに {string} が表示されている', (name: string) => {
   const characters = repository.listAll();
   const found = characters.some((c) => c.name === name);
   assert(found, `キャラクターリストに "${name}" が表示されていません`);
 });
 
-Given(/キャラクター "(.+)" が存在する/, (name: string) => {
+Given('キャラクター {string} が存在する', (name: string) => {
   character = new Character({ id: '1', name, tags: [], extendedTags: [] });
   repository.add(character);
 });
 
-When(/"(.+)" のタグを追加する/, (tag: string) => {
+When('{string} のタグを追加する', (tag: string) => {
   const newTag: Tag = { name: tag };
   service.addTag(character.id, newTag);
 });
 
 Then(
-  /"(.+)" のタグリストに "(.+)" が含まれている/,
+  '{string} のタグリストに {string} が含まれている',
   (name: string, tag: string) => {
     const char = repository.findById('1');
     assert(char, `キャラクター "${name}" が存在しません`);
