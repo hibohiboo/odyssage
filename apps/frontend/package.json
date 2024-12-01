@@ -24,6 +24,6 @@
     "@vitejs/plugin-react-swc": "^3.7.2",
     "globals": "^15.12.0",
     "npm-check-updates": "^17.1.11",
-    "vite": "^6.0.0"
+    "vite": "^6.0.1"
   }
 }
