@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - develop
+      - docs
     paths:
       - .github/workflows/**
       - docs/** # documentsフォルダ内が更新されたときに実施

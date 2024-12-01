@@ -66,3 +66,16 @@ odysseyage/
 4.  **設計ドキュメント**:
     *   `docs/` フォルダに、これまでのDDD設計資料をまとめて配置。
  
+
+# デプロイ
+
+cloudflareを使ってデプロイ
+
+# ブランチ
+
+ブランチ|説明
+--|--
+main|https://odyssage.pages.dev/ にデプロイ
+develop|https://develop.odyssage.pages.dev/ にデプロイ。github-pagesの更新
+docs|デプロイを行わず、github-pagesの更新のみ
+id/*/*|開発用Featureブランチ
