@@ -20,34 +20,6 @@ class MergeError(Exception):
     def __init__(self, message):
         Exception.__init__(self, message)
 
-
-def write_csv(stats):
-    print('module,revisions,code')
-    for s in stats:
-        name, (f, c) = s
-        print(name + ',' + f + ',' + c)
-
-
-def parse_complexity(merged, row):
-    name = row[1][2:]
-    complexity = row[4]
-    merged.record_detected(name, complexity)
-
-
-def parse_freqs(merged, row):
-    name = row[0]
-    freqs = row[1]
-    merged.extend_with(name, freqs)
-
-
-def merge(revs_file, comp_file):
-    merged = Merged()
-    complexity_format = 'language,filename,blank,comment,code'
-    freqs_format = 'entity,n-revs'
-    parse_csv(merged, comp_file, parse_complexity, complexity_format)
-    parse_csv(merged, revs_file, parse_freqs, freqs_format)
-    write_csv(merged.sorted_result())
-
 ######################################################################
 # Parse input
 ######################################################################
