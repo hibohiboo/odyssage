@@ -33,13 +33,15 @@ odysseyage/
 ```
 
 # e2eフォルダ構成
+tsconfigの設定がコンフリクトするので、フォルダを別途分割した
 
 ```
 apps/frontend/
+└── src/
+pacakages/bdd-e2e-test
 ├── e2e/
 │   ├── features/
 │   │   └── characterList.feature      # Gherkin シナリオファイル
 │   └── tests/
 │       └── characterList.steps.ts          # ステップ定義ファイル
-└── src/
 ```

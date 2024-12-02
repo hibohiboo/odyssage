@@ -1,5 +1,6 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
-import { expect, chromium, Page } from '@playwright/test';
+import { expect, chromium } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 let page: Page;
 
@@ -8,6 +9,7 @@ Before(async () => {
   const context = await browser.newContext();
   page = await context.newPage();
 });
+
 Given('アプリが起動している', async () => {
   await page.goto('http://localhost:5173');
 });
@@ -26,26 +28,29 @@ Then('"キャラクターが見つかりませんでした" と表示される',
   await expect(message).toBeVisible();
 });
 
-When('{string} という名前のキャラクターを追加する', async (name) => {
+When('{string} という名前のキャラクターを追加する', async (name: string) => {
   await page.fill('input[placeholder="キャラクター名を入力"]', name);
   await page.click('button:has-text("キャラクターを追加")');
 });
 
-Then('キャラクターリストに {string} が表示される', async (name) => {
+Then('キャラクターリストに {string} が表示される', async (name: string) => {
   const character = await page.locator(`text=${name}`);
   await expect(character).toBeVisible();
 });
 
-When('以下のキャラクターを追加する:', async (table) => {
-  for (const { name } of table.hashes()) {
-    await page.fill('input[placeholder="キャラクター名を入力"]', name);
-    await page.click('button:has-text("キャラクターを追加")');
-  }
-});
+When(
+  '以下のキャラクターを追加する:',
+  async (table: { hashes: () => { name: string }[] }) => {
+    for (const { name } of table.hashes()) {
+      await page.fill('input[placeholder="キャラクター名を入力"]', name);
+      await page.click('button:has-text("キャラクターを追加")');
+    }
+  },
+);
 
 Then(
   'キャラクターリストに {string} と {string} が表示される',
-  async (name1, name2) => {
+  async (name1: string, name2: string) => {
     const character1 = await page.locator(`text=${name1}`);
     const character2 = await page.locator(`text=${name2}`);
     await expect(character1).toBeVisible();
