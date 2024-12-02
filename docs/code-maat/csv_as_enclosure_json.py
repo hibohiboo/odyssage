@@ -21,29 +21,6 @@ class MergeError(Exception):
         Exception.__init__(self, message)
 
 
-class Merged(object):
-    def __init__(self):
-        self._all_modules_with_complexity = {}
-        self._merged = {}
-
-    def sorted_result(self):
-        # Sort on descending order:
-        ordered = sorted(
-            list(
-                self._merged.items()),
-            key=lambda item: item[1][0],
-            reverse=True)
-        return ordered
-
-    def extend_with(self, name, freqs):
-        if name in self._all_modules_with_complexity:
-            complexity = self._all_modules_with_complexity[name]
-            self._merged[name] = freqs, complexity
-
-    def record_detected(self, name, complexity):
-        self._all_modules_with_complexity[name] = complexity
-
-
 def write_csv(stats):
     print('module,revisions,code')
     for s in stats:
