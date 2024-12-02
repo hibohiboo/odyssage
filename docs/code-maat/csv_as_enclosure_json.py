@@ -65,9 +65,10 @@ def parse_freqs(merged, row):
 
 def merge(revs_file, comp_file):
     merged = Merged()
-    parse_csv(merged, comp_file, parse_complexity,
-              expected_format='language,filename,blank,comment,code')
-    parse_csv(merged, revs_file, parse_freqs, expected_format='entity,n-revs')
+    complexity_format = 'language,filename,blank,comment,code'
+    freqs_format = 'entity,n-revs'
+    parse_csv(merged, comp_file, parse_complexity,expected_format=complexity_format)
+    parse_csv(merged, revs_file, parse_freqs, expected_format=freqs_format)
     write_csv(merged.sorted_result())
 
 ######################################################################
@@ -107,11 +108,11 @@ class StructuralElement(object):
         self.complexity = complexity
 
     def parts(self):
-        res = [x for x in self.pathParts()]
+        res = [x for x in self.path_parts()]
         res.reverse()
         return res
 
-    def pathParts(self):
+    def path_parts(self):
         (hd, tl) = os.path.split(self.name)
         while tl != '':
             yield tl
@@ -172,7 +173,6 @@ def _ensure_branch_exists(hierarchy, branch):
 
 
 def _add_leaf(hierarchy, module, weight_calculator, name):
-    # TODO: augment with weight here!
     new_leaf = {'name': name, 'children': [],
                 'size': module.complexity,
                 'weight': weight_calculator(module.name)}
@@ -221,11 +221,6 @@ def write_json(result):
 # Main
 ######################################################################
 
-# TODO: turn it around: parse the weights first and add them to individual
-# elements
-# as the raw structure list is built!
-
-
 def run(args):
     raw_weights = parse_csv(
         args.weights,
@@ -259,7 +254,6 @@ if __name__ == "__main__":
         type=int,
         default=1,
         help="The index specifying the column to use in the weight table")
-    # TODO: add arguments to specify which CSV columns to use!
 
     args = parser.parse_args()
     run(args)
