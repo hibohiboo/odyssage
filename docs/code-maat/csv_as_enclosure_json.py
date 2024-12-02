@@ -67,8 +67,8 @@ def merge(revs_file, comp_file):
     merged = Merged()
     complexity_format = 'language,filename,blank,comment,code'
     freqs_format = 'entity,n-revs'
-    parse_csv(merged, comp_file, parse_complexity,expected_format=complexity_format)
-    parse_csv(merged, revs_file, parse_freqs, expected_format=freqs_format)
+    parse_csv(merged, filename=comp_file, parse_action=parse_complexity,expected_format=complexity_format)
+    parse_csv(merged, filename=revs_file, parse_action=parse_freqs, expected_format=freqs_format)
     write_csv(merged.sorted_result())
 
 ######################################################################
