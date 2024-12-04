@@ -11,8 +11,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@odyssage/eslint-config-custom": "workspace:*",
     "@cucumber/cucumber": "^11.1.0",
+    "@odyssage/eslint-config-custom": "workspace:*",
     "@types/node": "^22.10.1",
     "cucumber-html-reporter": "^7.2.0",
     "ts-node": "^10.9.2",
