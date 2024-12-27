@@ -1,5 +1,6 @@
-export default {
-	async fetch(request, env, ctx): Promise<Response> {
-		return new Response('Hello World!');
-	},
-} satisfies ExportedHandler<Env>;
+import { Hono } from 'hono';
+const app = new Hono();
+
+app.get('/', (c) => c.text('Hello Cloudflare Workers!'));
+
+export default app;
