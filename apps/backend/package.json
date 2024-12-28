@@ -1,6 +1,7 @@
 {
   "name": "@odyssage/backend",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "deploy": "wrangler deploy",
@@ -8,7 +9,8 @@
     "start": "wrangler dev",
     "test": "vitest",
     "ncu": "ncu -u",
-		"put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
+		"lint": "eslint .",
+    "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
@@ -19,6 +21,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
-    "hono": "^4.6.14"
+    "hono": "^4.6.14",
+    "neo4j-driver": "^5.27.0"
   }
 }
