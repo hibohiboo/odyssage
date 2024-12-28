@@ -3,6 +3,7 @@
 interface Env {
 	Bindings: {
 		NEON_CONNECTION_STRING: string;
+		NEO4J_URL: string;
 		NEO4J_USER: string;
 		NEO4J_PASSWORD: string;
 	};

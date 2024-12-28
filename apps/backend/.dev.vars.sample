@@ -1,0 +1,7 @@
+# ローカル実行時(npm run dev)は.sampleを外してrenameし、下記を適切な環境変数として登録する
+
+NEON_CONNECTION_STRING=postgresql://<DB_USER_NAME>:<DB_PASSWORD>@<NEON_DB_DOMAIN>.us-west-2.aws.neon.tech/main?sslmode=require
+NEO4J_URL=neo4j+s://<NEO4J_INSTANCE_DOMAIN>.databases.neo4j.io
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=<NEO4J_PASSWORD>
+
