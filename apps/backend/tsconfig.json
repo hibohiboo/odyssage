@@ -1,6 +1,7 @@
 {
   "extends": "@odyssage/tsconfig/tsconfig.base",
 	"compilerOptions": {
+		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		/* Specify type package names to be included without being referenced in a source file. */
 		"types": ["@cloudflare/workers-types"],

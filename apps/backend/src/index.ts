@@ -1,6 +1,6 @@
-import { Hono } from 'hono';
 import { neon } from '@neondatabase/serverless';
-import neo4j from 'neo4j-driver';
+import { Hono } from 'hono';
+
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
@@ -15,8 +15,9 @@ app.get('/characters', async (c) => {
 	return c.json(data);
 });
 app.get('/scenarios', async (c) => {
+	// vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
+	const neo4j = await import('neo4j-driver');
 	let driver;
-
 	try {
 		console.log(c.env);
 		driver = neo4j.driver(c.env.NEO4J_URL, neo4j.auth.basic(c.env.NEO4J_USER, c.env.NEO4J_PASSWORD));
