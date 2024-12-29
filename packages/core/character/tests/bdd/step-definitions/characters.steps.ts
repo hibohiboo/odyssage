@@ -22,8 +22,8 @@ Given('以下のキャラクターが存在する:', (dataTable) => {
   });
 });
 
-When('キャラクターリストを取得する', async () => {
-  result = await characterRepository.listAll();
+When('キャラクターリストを取得する', () => {
+  result = characterRepository.listAll();
 });
 
 Then('以下のキャラクターがリストに表示されるべき:', (dataTable) => {
