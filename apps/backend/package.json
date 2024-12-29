@@ -1,0 +1,27 @@
+{
+  "name": "@odyssage/backend",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "ncu": "ncu -u",
+		"lint": "eslint .",
+    "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
+    "cf-typegen": "wrangler types"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.5.40",
+    "@cloudflare/workers-types": "^4.20241224.0",
+    "vitest": "2.1.8",
+    "wrangler": "^3.99.0"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "hono": "^4.6.15",
+    "neo4j-driver": "^5.27.0"
+  }
+}

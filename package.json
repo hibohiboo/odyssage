@@ -12,8 +12,8 @@
         "apps/*"
     ],
     "devDependencies": {
-        "prettier": "^3.4.1",
+        "prettier": "^3.4.2",
         "turbo": "^2.3.3"
     },
-    "packageManager": "bun@1.1.38"
+    "packageManager": "bun@1.1.42"
 }
