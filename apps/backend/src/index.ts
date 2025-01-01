@@ -1,5 +1,9 @@
 import { getScenarios } from '@odyssage/database/src/queries/select';
+import { scenarioResponseSchema } from '@odyssage/schema/src/schema';
+import { apiReference } from '@scalar/hono-api-reference';
 import { Hono } from 'hono';
+import { describeRoute, openAPISpecs } from 'hono-openapi';
+import { resolver } from 'hono-openapi/valibot';
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
@@ -7,11 +11,25 @@ import type { Neo4jError } from 'neo4j-driver-core';
 const app = new Hono<Env>();
 
 app.get('/', (c) => c.text('Hello Cloudflare Workers!'));
-app.get('/scenarios', async (c) => {
-	const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
+app.get(
+	'/scenarios',
+	describeRoute({
+		description: 'シナリオの一覧を取得',
+		responses: {
+			200: {
+				description: 'Successful response',
+				content: {
+					'application/json': { schema: resolver(scenarioResponseSchema) },
+				},
+			},
+		},
+	}),
+	async (c) => {
+		const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
-	return c.json(data);
-});
+		return c.json(data);
+	},
+);
 app.get('/graph-scenarios', async (c) => {
 	// vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
 	const neo4j = await import('neo4j-driver');
@@ -38,4 +56,20 @@ app.get('/graph-scenarios', async (c) => {
 		}
 	}
 });
+app.get(
+	'/openapi',
+	openAPISpecs(app, {
+		documentation: {
+			info: { title: 'Odyssage API', version: '0.0.0', description: 'Odyssage Backend API' },
+			servers: [{ url: 'http://127.0.0.1:8787', description: 'Local Server' }],
+		},
+	}),
+);
+app.get(
+	'/docs',
+	apiReference({
+		theme: 'saturn',
+		spec: { url: '/openapi' },
+	}),
+);
 export default app;

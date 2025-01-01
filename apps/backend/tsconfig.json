@@ -2,7 +2,8 @@
   "extends": "@odyssage/tsconfig/tsconfig.base",
 	"compilerOptions": {
 		"paths": { 
-      "@odyssage/database/*": ["../../packages/database/*"]
+      "@odyssage/database/*": ["../../packages/database/*"],
+			"@odyssage/schema/*": ["../../packages/schema/*"]
      },
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
