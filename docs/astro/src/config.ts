@@ -24,6 +24,10 @@ export const SIDEBAR: Sidebar = {
     ],
     開発用: [
       {
+        text: 'APIリファレンス',
+        link: `https://odyssage-backend.hibohiboo66-cloudflare.workers.dev/docs`,
+      },
+      {
         text: 'ふるまい駆動テストレポート',
         link: `${BASE_PATH}/odyssage-cucumber/`,
       },
