@@ -1,6 +1,5 @@
 import { neon } from '@neondatabase/serverless';
 import { Hono } from 'hono';
-
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
