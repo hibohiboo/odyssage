@@ -1,6 +1,9 @@
 {
   "extends": "@odyssage/tsconfig/tsconfig.base",
 	"compilerOptions": {
+		"paths": { 
+      "@odyssage/database/*": ["../../packages/database/*"]
+     },
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
 		/* Specify type package names to be included without being referenced in a source file. */
