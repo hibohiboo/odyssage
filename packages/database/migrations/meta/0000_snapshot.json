@@ -1,5 +1,5 @@
 {
-  "id": "ecba10d1-b825-4316-beb5-a4cc1a7213e3",
+  "id": "9e81a803-0599-4bb9-8ef5-8809271f6949",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -20,8 +20,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "userId": {
-          "name": "userId",
+        "user_id": {
+          "name": "user_id",
           "type": "varchar(64)",
           "primaryKey": false,
           "notNull": true
@@ -42,13 +42,13 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "scenarios_userId_users_id_fk": {
-          "name": "scenarios_userId_users_id_fk",
+        "scenarios_user_id_users_id_fk": {
+          "name": "scenarios_user_id_users_id_fk",
           "tableFrom": "scenarios",
           "tableTo": "users",
           "schemaTo": "odyssage",
           "columnsFrom": [
-            "userId"
+            "user_id"
           ],
           "columnsTo": [
             "id"

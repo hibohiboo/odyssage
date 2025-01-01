@@ -1,11 +1,4 @@
-import {
-  serial,
-  pgSchema,
-  uuid,
-  text,
-  varchar,
-  timestamp,
-} from 'drizzle-orm/pg-core';
+import { pgSchema, uuid, text, varchar, timestamp } from 'drizzle-orm/pg-core';
 
 export const mySchema = pgSchema('odyssage');
 export const usersTable = mySchema.table('users', {
@@ -15,7 +8,7 @@ export const usersTable = mySchema.table('users', {
 export const scenariosTable = mySchema.table('scenarios', {
   id: uuid().primaryKey(),
   title: text('title').notNull(),
-  userId: varchar({ length: 64 })
+  userId: varchar('user_id', { length: 64 })
     .notNull()
     .references(() => usersTable.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
