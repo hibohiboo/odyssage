@@ -1,6 +1,9 @@
+import { getScenarios } from '@odyssage/database/src/queries/select';
+import { scenarioResponseSchema } from '@odyssage/schema/src/schema';
+import { apiReference } from '@scalar/hono-api-reference';
 import { Hono } from 'hono';
-import { neon } from '@neondatabase/serverless';
-import neo4j from 'neo4j-driver';
+import { describeRoute, openAPISpecs } from 'hono-openapi';
+import { resolver } from 'hono-openapi/valibot';
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
@@ -8,15 +11,29 @@ import type { Neo4jError } from 'neo4j-driver-core';
 const app = new Hono<Env>();
 
 app.get('/', (c) => c.text('Hello Cloudflare Workers!'));
-app.get('/characters', async (c) => {
-	const sql = neon(c.env.NEON_CONNECTION_STRING);
-	const data = await sql('SELECT * FROM odyssage.character');
+app.get(
+	'/scenarios',
+	describeRoute({
+		description: 'シナリオの一覧を取得',
+		responses: {
+			200: {
+				description: 'Successful response',
+				content: {
+					'application/json': { schema: resolver(scenarioResponseSchema) },
+				},
+			},
+		},
+	}),
+	async (c) => {
+		const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
-	return c.json(data);
-});
-app.get('/scenarios', async (c) => {
+		return c.json(data);
+	},
+);
+app.get('/graph-scenarios', async (c) => {
+	// vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
+	const neo4j = await import('neo4j-driver');
 	let driver;
-
 	try {
 		console.log(c.env);
 		driver = neo4j.driver(c.env.NEO4J_URL, neo4j.auth.basic(c.env.NEO4J_USER, c.env.NEO4J_PASSWORD));
@@ -39,4 +56,20 @@ app.get('/scenarios', async (c) => {
 		}
 	}
 });
+app.get(
+	'/openapi',
+	openAPISpecs(app, {
+		documentation: {
+			info: { title: 'Odyssage API', version: '0.0.0', description: 'Odyssage Backend API' },
+			servers: [{ url: 'http://127.0.0.1:8787', description: 'Local Server' }],
+		},
+	}),
+);
+app.get(
+	'/docs',
+	apiReference({
+		theme: 'saturn',
+		spec: { url: '/openapi' },
+	}),
+);
 export default app;
