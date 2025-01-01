@@ -1,6 +1,7 @@
-import { pgTable, serial } from 'drizzle-orm/pg-core';
+import { serial, pgSchema } from 'drizzle-orm/pg-core';
 
-export const usersTable = pgTable('users_table', {
+export const mySchema = pgSchema('odyssage');
+export const usersTable = mySchema.table('users_table', {
 	id: serial('id').primaryKey(),
 });
 
