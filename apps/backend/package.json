@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@odyssage/database": "workspace:*",
-    "@neondatabase/serverless": "^0.10.4",
     "hono": "^4.6.15",
     "neo4j-driver": "^5.27.0"
   }
