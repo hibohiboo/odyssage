@@ -9,17 +9,20 @@
     "start": "wrangler dev",
     "test": "vitest",
     "ncu": "ncu -u",
-		"lint": "eslint .",
+    "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "apply-db": "drizzle-kit generate"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.5.40",
-    "@cloudflare/workers-types": "^4.20241224.0",
+    "@cloudflare/workers-types": "^4.20241230.0",
+    "dotenv": "^16.4.7",
     "vitest": "2.1.8",
     "wrangler": "^3.99.0"
   },
   "dependencies": {
+    "@odyssage/database": "workspace:*",
     "@neondatabase/serverless": "^0.10.4",
     "hono": "^4.6.15",
     "neo4j-driver": "^5.27.0"

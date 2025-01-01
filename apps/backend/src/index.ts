@@ -1,6 +1,5 @@
-import { neon } from '@neondatabase/serverless';
+import { getScenarios } from '@odyssage/database/src/queries/select';
 import { Hono } from 'hono';
-
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
@@ -8,13 +7,12 @@ import type { Neo4jError } from 'neo4j-driver-core';
 const app = new Hono<Env>();
 
 app.get('/', (c) => c.text('Hello Cloudflare Workers!'));
-app.get('/characters', async (c) => {
-	const sql = neon(c.env.NEON_CONNECTION_STRING);
-	const data = await sql('SELECT * FROM odyssage.character');
+app.get('/scenarios', async (c) => {
+	const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
 	return c.json(data);
 });
-app.get('/scenarios', async (c) => {
+app.get('/graph-scenarios', async (c) => {
 	// vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
 	const neo4j = await import('neo4j-driver');
 	let driver;
