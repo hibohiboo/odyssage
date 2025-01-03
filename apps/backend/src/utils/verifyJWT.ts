@@ -1,5 +1,6 @@
 import { Auth, WorkersKVStoreSingle } from 'firebase-auth-cloudflare-workers';
 
+import type { KVNamespace } from '@cloudflare/workers-types';
 import type { EmulatorEnv, FirebaseIdToken } from 'firebase-auth-cloudflare-workers';
 
 interface Bindings extends EmulatorEnv {

@@ -7,8 +7,6 @@
      },
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		/* Specify type package names to be included without being referenced in a source file. */
-		"types": ["@cloudflare/workers-types"],
 		"resolveJsonModule": true,
 		/* Allow JavaScript files to be a part of your program. Use the `checkJS` option to get errors from these files. */
 		"allowJs": true,
