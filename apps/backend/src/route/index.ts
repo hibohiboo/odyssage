@@ -3,11 +3,13 @@ import { scenarioResponseSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { describeRoute } from 'hono-openapi';
 import { resolver } from 'hono-openapi/valibot';
+import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { user } from './user';
 import type { Neo4jError } from 'neo4j-driver-core';
 
 const route = new Hono<Env>()
 	.get('/', (c) => c.text('Hello Cloudflare Workers!'))
+	.use('/user/*', authorizeMiddleware)
 	.route('/user', user)
 	.get(
 		'/scenarios',

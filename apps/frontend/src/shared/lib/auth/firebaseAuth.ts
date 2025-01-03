@@ -22,3 +22,10 @@ export const signInAnonymous = async () => {
 };
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);
+export const getIdToken = async () => {
+  const user = auth.currentUser;
+  if (user == null) {
+    return null;
+  }
+  return user.getIdToken();
+};

@@ -5,7 +5,7 @@ export const scenarioResponseSchema = v.object({
   title: v.string(),
 });
 export const userParamSchema = v.object({
-  id: v.string(),
+  uid: v.string(),
 });
 export const userSchema = v.object({
   id: v.string(),

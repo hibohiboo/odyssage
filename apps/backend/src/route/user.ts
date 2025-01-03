@@ -7,7 +7,7 @@ import { resolver, validator as vValidator } from 'hono-openapi/valibot';
 
 export const user = new Hono<Env>()
 	.get(
-		'/:id',
+		'/:uid',
 		describeRoute({
 			description: '指定したユーザを取得',
 			responses: {
@@ -22,7 +22,7 @@ export const user = new Hono<Env>()
 		vValidator('param', userParamSchema),
 		async (c) => {
 			const param = c.req.valid('param');
-			const [data] = await getUserById(c.env.NEON_CONNECTION_STRING, param.id);
+			const [data] = await getUserById(c.env.NEON_CONNECTION_STRING, param.uid);
 			if (!data) {
 				return c.text('Not Found', 404);
 			}
@@ -30,7 +30,7 @@ export const user = new Hono<Env>()
 		},
 	)
 	.put(
-		'/:id',
+		'/:uid',
 		describeRoute({
 			description: '指定したユーザを登録',
 			responses: {
@@ -42,7 +42,7 @@ export const user = new Hono<Env>()
 		vValidator('param', userParamSchema),
 		async (c) => {
 			const param = c.req.valid('param');
-			await upsertUser(c.env.NEON_CONNECTION_STRING, { id: param.id });
+			await upsertUser(c.env.NEON_CONNECTION_STRING, { id: param.uid });
 
 			return c.body(null, 204);
 		},

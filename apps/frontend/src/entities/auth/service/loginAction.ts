@@ -20,14 +20,14 @@ export const loginAction = createAsyncThunk<
       setUser({ uid: user.uid, displayName: user.displayName }),
     );
 
-    const result = await apiClient.api.user[':id'].$get({
-      param: { id: user.uid },
+    const result = await apiClient.api.user[':uid'].$get({
+      param: { uid: user.uid },
     });
     if (result.status !== 404) return;
     console.log('Creating user');
-    const ret = await apiClient.api.user[':id'].$put(
+    const ret = await apiClient.api.user[':uid'].$put(
       {
-        param: { id: user.uid },
+        param: { uid: user.uid },
       },
       {
         headers: { 'Content-Type': 'application/json' },
