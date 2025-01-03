@@ -16,8 +16,19 @@ export default tseslint.config({
         'no-await-in-loop': ['off'],
       },
     },
+    {
+      files: ['src/entities/auth/service/**'],
+      rules: {
+        '@conarti/feature-sliced/layers-slices': ['off']
+      },
+    },
+    {
+      files: ['**/src/**/**Slice.ts'],
+      rules: {
+        'no-param-reassign': ['off']
+      },
+    }
   ],
-
   settings: {
     'import/resolver': {
       node: {
@@ -28,4 +39,5 @@ export default tseslint.config({
       },
     },
   },
+  
 });

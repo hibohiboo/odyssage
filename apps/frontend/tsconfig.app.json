@@ -2,12 +2,12 @@
   "extends": "@odyssage/tsconfig/tsconfig.frontend",
   "compilerOptions": {
     "paths": { 
-      "@odyssage/app/*": ["./src/*"],
+      "@odyssage/frontend/*": ["./src/*"],
       "@odyssage/core/*": ["../../packages/core/*"]
      },
      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
      "allowSyntheticDefaultImports": true
   },
-  "include": ["src","../../packages/core/**/*.ts"],
+  "include": ["src","../../packages/core/**/*.ts","types"],
   "exclude": ["node_modules", "dist"]
 } 

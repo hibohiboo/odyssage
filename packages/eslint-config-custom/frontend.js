@@ -29,6 +29,9 @@ export default tseslint.config({
       { allowConstantExport: true },
     ],
     'import/extensions': ['off'],
+    // The typescript-eslint FAQ provides guidance here:
+    // https://typescript-eslint.io/troubleshooting/faqs/general/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
+    "no-undef": "off"
     // ↓ bulletproof-react の推奨 https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md
     // 'import/no-restricted-paths': [
     //   'error',
