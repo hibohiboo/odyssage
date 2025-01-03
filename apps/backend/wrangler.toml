@@ -10,6 +10,15 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+[vars]
+PUBLIC_JWK_CACHE_KEY = "odyssage-public-jwk-cache"
+
+# https://zenn.dev/codehex/articles/ca85a1babcc046?ref=deg84.com
+[[kv_namespaces]]
+binding = "PUBLIC_JWK_CACHE_KV"
+id = "odyssage-public-jwk-cache-kv"
+
+
 # Automatically place your workloads in an optimal location to minimize latency.
 # If you are running back-end logic in a Worker, running it closer to your back-end infrastructure
 # rather than the end user may result in better performance.

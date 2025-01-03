@@ -11,6 +11,7 @@
     "ncu": "ncu -u",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
+    "put-secret-firebase-project-id": "wrangler secret put FIREBASE_PROJECT_ID",
     "cf-typegen": "wrangler types",
     "apply-db": "drizzle-kit generate"
   },
@@ -25,6 +26,7 @@
     "@odyssage/database": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "@scalar/hono-api-reference": "^0.5.165",
+    "firebase-auth-cloudflare-workers": "^2.0.6",
     "hono": "^4.6.15",
     "hono-openapi": "^0.3.1",
     "neo4j-driver": "^5.27.0"

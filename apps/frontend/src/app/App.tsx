@@ -1,8 +1,13 @@
-// eslint-disable-next-line @conarti/feature-sliced/absolute-relative
-import { CharacterList } from '@odyssage/app/entities/character/index';
+import { Provider } from 'react-redux';
+import { LoginUser } from '@odyssage/frontend/entities/auth';
+import { store } from './store';
 
 function App() {
-  return <CharacterList />;
+  return (
+    <Provider store={store}>
+      <LoginUser />
+    </Provider>
+  );
 }
 
 export default App;

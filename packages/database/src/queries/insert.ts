@@ -6,9 +6,9 @@ import {
   usersTable,
 } from '../schema';
 
-export async function createUser(data: InsertUser) {
-  const db = getDb();
-  await db.insert(usersTable).values(data);
+export async function upsertUser(connectionString: string, data: InsertUser) {
+  const db = getDb(connectionString);
+  await db.insert(usersTable).values(data).onConflictDoNothing();
 }
 export async function createScenario(data: InsertScenario) {
   const db = getDb();

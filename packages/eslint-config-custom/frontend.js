@@ -29,6 +29,7 @@ export default tseslint.config({
       { allowConstantExport: true },
     ],
     'import/extensions': ['off'],
+
     // ↓ bulletproof-react の推奨 https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md
     // 'import/no-restricted-paths': [
     //   'error',
