@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 import {
   onAuthStateChangedListener,
   signInAnonymous,
 } from '@odyssage/frontend/shared/lib/auth/firebaseAuth';
-import { BACKEND_DOMAIN } from '@odyssage/frontend/shared/lib/config';
 import { setUser } from '../model/authSlice';
 
 export const loginAction = createAsyncThunk<
@@ -19,15 +19,21 @@ export const loginAction = createAsyncThunk<
     thunkAPI.dispatch(
       setUser({ uid: user.uid, displayName: user.displayName }),
     );
-    const result = await fetch(`${BACKEND_DOMAIN}/user/${user.uid}`);
+
+    const result = await apiClient.api.user[':id'].$get({
+      param: { id: user.uid },
+    });
     if (result.status !== 404) return;
     console.log('Creating user');
-    const ret = await fetch(`${BACKEND_DOMAIN}/user/${user.uid}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
+    const ret = await apiClient.api.user[':id'].$put(
+      {
+        param: { id: user.uid },
       },
-    });
+      {
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+
     if (ret.status !== 204) {
       console.error('Failed to create user');
     }
