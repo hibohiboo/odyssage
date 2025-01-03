@@ -1,7 +1,11 @@
-import { getAuth, onAuthStateChanged, signInAnonymously } from 'firebase/auth';
-import { store } from '@odyssage/frontend/app/store';
+import {
+  getAuth,
+  NextOrObserver,
+  onAuthStateChanged,
+  signInAnonymously,
+  User,
+} from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
-import { setUser } from '../model/authSlice';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,
@@ -17,10 +21,5 @@ export const signInAnonymous = async () => {
   console.log('signInAnonymous', ret);
   return ret;
 };
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    store.dispatch(setUser({ uid: null, displayName: null }));
-    return;
-  }
-  store.dispatch(setUser({ uid: user.uid, displayName: user.displayName }));
-});
+export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
+  onAuthStateChanged(auth, callback);

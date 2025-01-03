@@ -17,7 +17,7 @@ export default tseslint.config({
       },
     },
     {
-      files: ['src/entities/auth/service/**'],
+      files: ['src/shared/lib/auth/**'],
       rules: {
         '@conarti/feature-sliced/layers-slices': ['off']
       },

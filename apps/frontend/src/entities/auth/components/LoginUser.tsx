@@ -1,15 +1,19 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '@odyssage/frontend/shared/lib/store';
 import { userDisplayNameSelector, uidSelector } from '../model/authSlice';
-import { signInAnonymous } from '../service/firebaseAuth';
+import { loginAction } from '../service/loginAction';
 
 const LoginUser: React.FC = () => {
-  const userName = useSelector(userDisplayNameSelector);
-  const user = useSelector(uidSelector);
+  const userName = useAppSelector(userDisplayNameSelector);
+  const user = useAppSelector(uidSelector);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    signInAnonymous();
-  }, []);
+    dispatch(loginAction());
+  }, [dispatch]);
   if (user == null) {
     return <div>ログイン中</div>;
   }

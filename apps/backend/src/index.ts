@@ -3,6 +3,7 @@ import { getScenarios, getUserById } from '@odyssage/database/src/queries/select
 import { scenarioResponseSchema, userParamSchema, userSchema } from '@odyssage/schema/src/schema';
 import { apiReference } from '@scalar/hono-api-reference';
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { describeRoute, openAPISpecs } from 'hono-openapi';
 import { resolver, validator as vValidator } from 'hono-openapi/valibot';
 import type { Neo4jError } from 'neo4j-driver-core';
@@ -10,7 +11,7 @@ import type { Neo4jError } from 'neo4j-driver-core';
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
 // eslint-disable-next-line no-undef
 const app = new Hono<Env>();
-
+app.use('*', cors());
 app.get('/', (c) => c.text('Hello Cloudflare Workers!'));
 app.get(
 	'/scenarios',
