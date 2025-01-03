@@ -1,9 +1,10 @@
-import { getScenarios } from '@odyssage/database/src/queries/select';
-import { scenarioResponseSchema } from '@odyssage/schema/src/schema';
+import { upsertUser } from '@odyssage/database/src/queries/insert';
+import { getScenarios, getUserById } from '@odyssage/database/src/queries/select';
+import { scenarioResponseSchema, userParamSchema, userSchema } from '@odyssage/schema/src/schema';
 import { apiReference } from '@scalar/hono-api-reference';
 import { Hono } from 'hono';
 import { describeRoute, openAPISpecs } from 'hono-openapi';
-import { resolver } from 'hono-openapi/valibot';
+import { resolver, validator as vValidator } from 'hono-openapi/valibot';
 import type { Neo4jError } from 'neo4j-driver-core';
 
 // worker-configuration.d.ts で定義されていることをlinterが知らないのでコメントで対応
@@ -28,6 +29,47 @@ app.get(
 		const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
 		return c.json(data);
+	},
+);
+app.get(
+	'/user/:id',
+	describeRoute({
+		description: '指定したユーザを取得',
+		responses: {
+			200: {
+				description: 'Successful response',
+				content: {
+					'application/json': { schema: resolver(userSchema) },
+				},
+			},
+		},
+	}),
+	vValidator('param', userParamSchema),
+	async (c) => {
+		const param = c.req.valid('param');
+		const [data] = await getUserById(c.env.NEON_CONNECTION_STRING, param.id);
+		if (!data) {
+			return c.text('Not Found', 404);
+		}
+		return c.json(data);
+	},
+);
+app.put(
+	'/user/:id',
+	describeRoute({
+		description: '指定したユーザを登録',
+		responses: {
+			204: {
+				description: 'Successful response',
+			},
+		},
+	}),
+	vValidator('param', userParamSchema),
+	async (c) => {
+		const param = c.req.valid('param');
+		await upsertUser(c.env.NEON_CONNECTION_STRING, { id: param.id });
+
+		return c.body(null, 204);
 	},
 );
 app.get('/graph-scenarios', async (c) => {

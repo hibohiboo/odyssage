@@ -3,9 +3,10 @@ import { getDb } from '../db';
 import { SelectUser, usersTable, scenariosTable } from '../schema';
 
 export async function getUserById(
+  connectionString: string,
   id: SelectUser['id'],
 ): Promise<Array<{ id: string }>> {
-  const db = getDb();
+  const db = getDb(connectionString);
   return db.select().from(usersTable).where(eq(usersTable.id, id));
 }
 
