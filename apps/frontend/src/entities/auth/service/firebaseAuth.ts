@@ -8,7 +8,7 @@ const firebaseConfig = {
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN as string,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID as string,
 };
-
+console.log('firebaseConfig', firebaseConfig);
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
