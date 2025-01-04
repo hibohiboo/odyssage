@@ -25,7 +25,7 @@ export const SIDEBAR: Sidebar = {
     開発用: [
       {
         text: 'APIリファレンス',
-        link: `https://odyssage-backend.hibohiboo66-cloudflare.workers.dev/docs`,
+        link: `${BASE_PATH}/odyssage-openapi/`,
       },
       {
         text: 'ふるまい駆動テストレポート',

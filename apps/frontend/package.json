@@ -13,17 +13,21 @@
   },
   "dependencies": {
     "@odyssage/core": "workspace:*",
+    "@reduxjs/toolkit": "^2.5.0",
+    "firebase": "^11.1.0",
+    "hono": "^4.6.15",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-redux": "^9.2.0"
   },
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
-    "@types/react": "^19.0.1",
+    "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react-swc": "^3.7.2",
-    "globals": "^15.13.0",
-    "npm-check-updates": "^17.1.11",
-    "vite": "^6.0.3"
+    "globals": "^15.14.0",
+    "npm-check-updates": "^17.1.13",
+    "vite": "^6.0.7"
   }
 }

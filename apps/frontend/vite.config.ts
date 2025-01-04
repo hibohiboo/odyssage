@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@odyssage/app': path.join(__dirname, './src'),
+      '@odyssage/frontend': path.join(__dirname, './src'),
       '@odyssage/core': path.join(__dirname, '../../packages/core'),
     },
   },

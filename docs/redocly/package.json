@@ -1,0 +1,21 @@
+{
+  "name": "kartagraph-api",
+  "version": "0.0.1",
+  "dependencies": {
+    "@apiture/openapi-down-convert": "^0.14.0",
+    "@redocly/cli": "1.27.0"
+  },
+  "private": true,
+  "scripts": {
+    "dev": "redocly preview-docs",
+    "test": "redocly lint",
+    "ncu": "ncu -u && npm install",
+    "bundle": "redocly bundle -o dist/bundle.yaml",
+    "postbundle": "openapi-down-convert -i dist/bundle.yaml -o dist/bundle-3.0.yaml",
+    "bundle-json": "redocly bundle -o ./dist/openapi.json",
+    "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html"
+  },
+  "devDependencies": {
+    "npm-check-updates": "^17.1.13"
+  }
+}
