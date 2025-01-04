@@ -15,11 +15,18 @@ export const verifyJWT = async (authorization: string | null | undefined, env: B
 		console.warn('No authorization header');
 		return null;
 	}
-	const jwt = authorization.replace(/Bearer\s+/i, '');
-	const auth = Auth.getOrInitialize(
-		env.FIREBASE_PROJECT_ID,
-		WorkersKVStoreSingle.getOrInitialize(env.PUBLIC_JWK_CACHE_KEY, env.PUBLIC_JWK_CACHE_KV),
-	);
 
-	return auth.verifyIdToken(jwt, false, env);
+	const jwt = authorization.replace(/Bearer\s+/i, '');
+	try {
+		const auth = Auth.getOrInitialize(
+			env.FIREBASE_PROJECT_ID,
+			WorkersKVStoreSingle.getOrInitialize(env.PUBLIC_JWK_CACHE_KEY, env.PUBLIC_JWK_CACHE_KV),
+		);
+		const ret = await auth.verifyIdToken(jwt, false, env);
+		return ret;
+	} catch (e) {
+		console.warn('FirebaseIdToken error');
+		console.warn(e);
+		return null;
+	}
 };
