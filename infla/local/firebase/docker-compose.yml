@@ -1,0 +1,16 @@
+version: '3.9'
+
+# https://qiita.com/ppco/items/87682b3a14ceb3702dbb
+services:
+  firebase:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - ./tmp:/opt/tmp
+    ports:
+      - 9099:9099 # Firebase Authentication
+      - 9005:9005 # Firebase login
+    # working_dir: /opt/firebase
+    # command: firebase emulators:start
+    # tty: true
