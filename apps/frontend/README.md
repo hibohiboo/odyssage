@@ -1,1 +1,3 @@
-バックエンドで`bun run dev`を行ったのちに、こちらで`bun run dev`を行うこと。
+- ローカル実行`bun run dev`する際の前提
+  - `infra/local/firebase/bin.sh`を実行し、firebase エミュレータが`localhost:9099`で稼動していること
+  - バックエンド`apps/backend`で`bun run dev`を行い、バックエンドのAPIが`localhost:8787`で稼動していること

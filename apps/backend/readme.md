@@ -1,3 +1,7 @@
+- ローカル実行する際の前提
+  - `infra/local/firebase/bin.sh`を実行し、firebase エミュレータが`localhost:9099`で稼動していること
+
+---
 
  Welcome to Cloudflare Workers! This is your first worker.
 
