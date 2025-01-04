@@ -1,4 +1,5 @@
 import {
+  connectAuthEmulator,
   getAuth,
   NextOrObserver,
   onAuthStateChanged,
@@ -14,6 +15,11 @@ const firebaseConfig = {
 };
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
+
+if (import.meta.env.DEV) {
+  console.log('connectAuthEmulator');
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099');
+}
 
 export const signInAnonymous = async () => {
   const ret = await signInAnonymously(auth);
