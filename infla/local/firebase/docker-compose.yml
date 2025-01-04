@@ -7,10 +7,11 @@ services:
       context: .
       dockerfile: ./docker/Dockerfile
     volumes:
-      - ./tmp:/opt/tmp
+      - ./config:/opt/config
     ports:
       - 9099:9099 # Firebase Authentication
       - 9005:9005 # Firebase login
+      - 4000:4000 # Firebase UI
     # working_dir: /opt/firebase
     # command: firebase emulators:start
     # tty: true
