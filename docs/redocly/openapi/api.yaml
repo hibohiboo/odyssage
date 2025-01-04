@@ -3,6 +3,9 @@ info:
   title: "Odyssage API"
   description: "Odyssage Backend API"
   version: "0.0.0"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
 servers:
   - url: "http://127.0.0.1:8787"
     description: "Local Server"
@@ -15,3 +18,8 @@ components:
   schemas: {}
   responses:
     $ref: './components/schemas/response.yaml'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

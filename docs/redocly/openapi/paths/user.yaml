@@ -1,5 +1,7 @@
 get:
-  summary: "指定したユーザを取得"
+  summary: ユーザ取得
+  security:
+    - bearerAuth: []
   responses:
     200:
       description: "Successful response"
@@ -24,6 +26,9 @@ get:
         type: "string"
       required: true
 put:
+  summary: ユーザ登録
+  security:
+    - bearerAuth: []
   responses:
     204:
       description: "Successful response"

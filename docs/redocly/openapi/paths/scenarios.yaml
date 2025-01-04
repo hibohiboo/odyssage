@@ -1,4 +1,6 @@
 get:
+  summary: シナリオ一覧全取得
+  security: []
   responses:
     200:
       description: "Successful response"
