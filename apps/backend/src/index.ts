@@ -8,7 +8,7 @@ const app = new Hono<Env>()
 	.use(
 		'/api/*',
 		cors({
-			origin: ['*'],
+			origin: ['https://odyssage.pages.dev', 'http://localhost:5173'],
 			allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 			allowHeaders: ['Content-Type', 'Authorization'],
 		}),

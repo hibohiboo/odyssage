@@ -3,7 +3,7 @@ import { verifyJWT } from '../utils/verifyJWT';
 
 // eslint-disable-next-line consistent-return
 export const authorizeMiddleware = createMiddleware(async (c, next) => {
-	const token = await verifyJWT(c.req.header('authorization'), c.env);
+	const token = await verifyJWT(c.req.header('Authorization'), c.env);
 
 	if (token == null) {
 		return c.body('Unauthorized', 401);
