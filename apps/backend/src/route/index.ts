@@ -1,8 +1,5 @@
 import { getScenarios } from '@odyssage/database/src/queries/select';
-import { scenarioResponseSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
-import { describeRoute } from 'hono-openapi';
-import { resolver } from 'hono-openapi/valibot';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { user } from './user';
 import type { Neo4jError } from 'neo4j-driver-core';
@@ -11,25 +8,11 @@ const route = new Hono<Env>()
 	.get('/', (c) => c.text('Hello Cloudflare Workers!'))
 	.use('/user/*', authorizeMiddleware)
 	.route('/user', user)
-	.get(
-		'/scenarios',
-		describeRoute({
-			description: 'シナリオの一覧を取得',
-			responses: {
-				200: {
-					description: 'Successful response',
-					content: {
-						'application/json': { schema: resolver(scenarioResponseSchema) },
-					},
-				},
-			},
-		}),
-		async (c) => {
-			const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
+	.get('/scenarios', async (c) => {
+		const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
-			return c.json(data);
-		},
-	)
+		return c.json(data);
+	})
 	.get('/graph-scenarios', async (c) => {
 		// vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
 		const neo4j = await import('neo4j-driver');
