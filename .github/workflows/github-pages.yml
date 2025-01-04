@@ -47,12 +47,17 @@ jobs:
       - name: Install monorepo dependencies
         run: bun install --ignore-scripts
 
-        # core ふるまい駆動テスト
+      # core ふるまい駆動テスト
       - name: Core Test Report Cucumber
         run: bun run test-report
         working-directory: ./packages/core
+      
+      # OpenAPI ドキュメント作成
+      - name: Build with OpenAPI
+        run: bun run build
+        working-directory: ./docs/redocly
 
-        # ドキュメント作成
+      # ドキュメント作成
       - name: Build with Astro
         run: |
           npm run astro build \
