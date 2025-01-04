@@ -1,0 +1,39 @@
+get:
+  summary: "指定したユーザを取得"
+  responses:
+    200:
+      description: "Successful response"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+            required:
+              - "id"
+            additionalProperties: false
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+  operationId: "getApiUserByUid"
+  description: "指定したユーザを取得"
+  parameters:
+    - in: "path"
+      name: "uid"
+      schema:
+        type: "string"
+      required: true
+put:
+  responses:
+    204:
+      description: "Successful response"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+  operationId: "putApiUserByUid"
+  description: "指定したユーザを登録"
+  parameters:
+    - in: "path"
+      name: "uid"
+      schema:
+        type: "string"
+      required: true
