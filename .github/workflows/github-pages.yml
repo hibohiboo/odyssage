@@ -54,7 +54,7 @@ jobs:
       
       # OpenAPI ドキュメント作成
       - name: Build with OpenAPI
-        run: bun run build
+        run: bun install && bun run build
         working-directory: ./docs/redocly
 
       # ドキュメント作成
