@@ -4,7 +4,16 @@ import { cors } from 'hono/cors';
 import { openAPISpecs } from 'hono-openapi';
 import route from './route';
 
-const app = new Hono<Env>().use('*', cors()).route('/api', route);
+const app = new Hono<Env>()
+	.use(
+		'/api/*',
+		cors({
+			origin: ['*'],
+			allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+			allowHeaders: ['Content-Type', 'Authorization'],
+		}),
+	)
+	.route('/api', route);
 
 app.get(
 	'/openapi',
