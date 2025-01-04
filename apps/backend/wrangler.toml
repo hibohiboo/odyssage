@@ -16,7 +16,7 @@ PUBLIC_JWK_CACHE_KEY = "odyssage-public-jwk-cache"
 # https://zenn.dev/codehex/articles/ca85a1babcc046?ref=deg84.com
 [[kv_namespaces]]
 binding = "PUBLIC_JWK_CACHE_KV"
-id = "odyssage-public-jwk-cache-kv"
+id = "7cfdf2031ce64ea69a06e7e922576e67"
 
 
 # Automatically place your workloads in an optimal location to minimize latency.
