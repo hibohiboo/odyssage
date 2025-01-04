@@ -4,6 +4,7 @@ import {
   onAuthStateChangedListener,
   signInAnonymous,
 } from '@odyssage/frontend/shared/lib/auth/firebaseAuth';
+import { putHeaders } from '@odyssage/frontend/shared/lib/http/putHeader';
 import { setUser } from '../model/authSlice';
 
 export const loginAction = createAsyncThunk<
@@ -26,12 +27,8 @@ export const loginAction = createAsyncThunk<
     if (result.status !== 404) return;
     console.log('Creating user');
     const ret = await apiClient.api.user[':uid'].$put(
-      {
-        param: { uid: user.uid },
-      },
-      {
-        headers: { 'Content-Type': 'application/json' },
-      },
+      { param: { uid: user.uid } },
+      { headers: putHeaders },
     );
 
     if (ret.status !== 204) {
