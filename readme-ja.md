@@ -93,7 +93,8 @@ CodeQL|-|GitHub Code Scanning|
 各bashで下記コマンドを実行
 
 ```
-bun run local:db
+bun run local:rdb
+bun run local:graphdb
 bun run local:firebase
 bun run dev
 ```
