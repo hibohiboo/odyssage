@@ -1,8 +1,9 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { config } from 'dotenv';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { defineConfig } from 'drizzle-kit';
 
-config({ path: '.env.local' });
+config({ path: process.env.DOTENV_CONFIG_PATH });
 
 export default defineConfig({
   schema: './src/schema.ts',
