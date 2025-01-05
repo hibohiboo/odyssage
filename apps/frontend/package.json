@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bunx --bun vite",
+    "dev:mock": "bunx --bun vite --mode mock",
     "build": "tsc -b && bunx --bun vite build",
     "lint": "eslint .",
     "preview": "bunx --bun vite preview",
@@ -27,7 +28,13 @@
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react-swc": "^3.7.2",
     "globals": "^15.14.0",
+    "msw": "^2.7.0",
     "npm-check-updates": "^17.1.13",
     "vite": "^6.0.7"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }
