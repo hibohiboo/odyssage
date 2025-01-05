@@ -1,0 +1,24 @@
+get:
+  summary: シナリオ一覧全取得
+  security: []
+  responses:
+    200:
+      description: "Successful response"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+              title:
+                type: "string"
+            required:
+              - "id"
+              - "title"
+            additionalProperties: false
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+ 
+  operationId: "getApiScenarios"
+  description: "シナリオの一覧を取得"

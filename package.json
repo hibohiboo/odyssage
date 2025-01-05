@@ -3,6 +3,9 @@
     "private": true,
     "scripts": {
         "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
+        "local:rdb": "bash ./infra/local/neon/bin/up.sh",
+        "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
+        "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
         "dev": "bunx --bun turbo dev",
         "build": "bunx --bun turbo build",
         "ncu": "bunx --bun turbo ncu && ncu -u"

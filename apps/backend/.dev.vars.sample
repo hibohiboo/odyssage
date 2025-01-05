@@ -1,8 +1,9 @@
-# ローカル実行時(npm run dev)は.sampleを外してrenameし、下記を適切な環境変数として登録する
+# ローカル実行時(npm run dev)は.sampleを外してrenameする
 
-NEON_CONNECTION_STRING=postgresql://<DB_USER_NAME>:<DB_PASSWORD>@<NEON_DB_DOMAIN>.us-west-2.aws.neon.tech/main?sslmode=require
-NEO4J_URL=neo4j+s://<NEO4J_INSTANCE_DOMAIN>.databases.neo4j.io
+NEON_CONNECTION_STRING=postgres://postgres:postgres@db.localtest.me:5432/main
+NEO4J_URL=neo4j://127.0.0.1:7687
 NEO4J_USER=neo4j
-NEO4J_PASSWORD=<NEO4J_PASSWORD>
+NEO4J_PASSWORD=neo4jpassword
 
 FIREBASE_PROJECT_ID=hogehoge
+FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099

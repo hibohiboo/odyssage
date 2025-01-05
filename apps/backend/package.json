@@ -23,12 +23,11 @@
     "wrangler": "^3.99.0"
   },
   "dependencies": {
+    "@hono/valibot-validator": "^0.5.1",
     "@odyssage/database": "workspace:*",
     "@odyssage/schema": "workspace:*",
-    "@scalar/hono-api-reference": "^0.5.165",
     "firebase-auth-cloudflare-workers": "^2.0.6",
     "hono": "^4.6.15",
-    "hono-openapi": "^0.3.1",
     "neo4j-driver": "^5.27.0"
   }
 }

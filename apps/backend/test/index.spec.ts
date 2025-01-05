@@ -5,7 +5,7 @@ import worker from '../src/index';
 
 describe('Hello World worker', () => {
 	it('responds with Hello World! (unit style)', async () => {
-		const request = new Request<unknown, IncomingRequestCfProperties>('http://example.com');
+		const request = new Request<unknown, IncomingRequestCfProperties>('http://example.com/api');
 		// Create an empty context to pass to `worker.fetch()`.
 		const ctx = createExecutionContext();
 		const response = await worker.fetch(request, env, ctx);
@@ -15,7 +15,7 @@ describe('Hello World worker', () => {
 	});
 
 	it('responds with Hello World! (integration style)', async () => {
-		const response = await SELF.fetch('https://example.com');
+		const response = await SELF.fetch('https://example.com/api');
 		expect(await response.text()).toMatchInlineSnapshot(`"Hello Cloudflare Workers!"`);
 	});
 });
