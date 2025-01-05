@@ -23,8 +23,8 @@
 ## 最初にやること
 
 ```
-npm install
 npm run init
+bun install
 ```
 
 ## フォルダ構成
@@ -86,3 +86,16 @@ Action|yaml|説明|
 --|--|--
 Deploy Documents to Pages|github-pages.yml|GitHub Pagesへのデプロイ
 CodeQL|-|GitHub Code Scanning|
+
+# ローカル実行
+
+ローカルでFirebaseとDBを動かす必要がある。
+各bashで下記コマンドを実行
+
+```
+bun run local:db
+bun run local:firebase
+bun run dev
+```
+
+
