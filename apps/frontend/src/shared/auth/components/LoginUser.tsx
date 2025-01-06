@@ -12,13 +12,13 @@ const LoginUser: React.FC = () => {
     dispatch(loginAction());
   }, [dispatch]);
   if (user == null) {
-    return <div>ログイン中</div>;
+    return <span>ログイン中</span>;
   }
   if (!userName) {
-    return <div>ゲストユーザ</div>;
+    return <span>ゲストユーザ</span>;
   }
 
-  return <div>{userName}</div>;
+  return <span>{userName}</span>;
 };
 
 export default LoginUser;
