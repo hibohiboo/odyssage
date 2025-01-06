@@ -1,10 +1,13 @@
 import {
   connectAuthEmulator,
+  EmailAuthProvider,
   getAuth,
+  linkWithCredential,
   NextOrObserver,
   onAuthStateChanged,
   signInAnonymously,
   User,
+  validatePassword,
 } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 
@@ -21,6 +24,7 @@ if (import.meta.env.DEV) {
   connectAuthEmulator(auth, 'http://127.0.0.1:9099');
 }
 
+export const getCurrentUser = () => auth.currentUser;
 export const signInAnonymous = async () => {
   const ret = await signInAnonymously(auth);
   console.log('signInAnonymous', ret);
@@ -34,4 +38,22 @@ export const getIdToken = async () => {
     return null;
   }
   return user.getIdToken();
+};
+
+export const credentialUserWithMail = async (
+  email: string,
+  password: string,
+) => {
+  const status = await validatePassword(auth, password);
+  if (!status.isValid) {
+    throw new Error(`Invalid password`);
+  }
+  if (auth.currentUser == null) {
+    throw new Error(`User is not signed in`);
+  }
+  const credential = EmailAuthProvider.credential(email, password);
+  const userCredential = await linkWithCredential(auth.currentUser, credential);
+
+  const { user } = userCredential;
+  console.log('signInMail', user);
 };

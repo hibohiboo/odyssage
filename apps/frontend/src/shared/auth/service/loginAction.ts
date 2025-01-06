@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
+import { apiClient } from '../../api/client';
 import {
+  getCurrentUser,
   onAuthStateChangedListener,
   signInAnonymous,
-} from '@odyssage/frontend/shared/lib/auth/firebaseAuth';
-import { putHeaders } from '@odyssage/frontend/shared/lib/http/putHeader';
+} from '../../lib/auth/firebaseAuth';
+import { putHeaders } from '../../lib/http/putHeader';
 import { setUser } from '../model/authSlice';
 
 export const loginAction = createAsyncThunk<
@@ -35,5 +36,10 @@ export const loginAction = createAsyncThunk<
       console.error('Failed to create user');
     }
   });
+  const user = getCurrentUser();
+  if (user) {
+    console.debug('user already signed in');
+    return;
+  }
   await signInAnonymous();
 });

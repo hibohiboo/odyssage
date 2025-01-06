@@ -1,8 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '@odyssage/frontend/shared/lib/store';
+import { useAppDispatch, useAppSelector } from '../../lib/store';
 import { userDisplayNameSelector, uidSelector } from '../model/authSlice';
 import { loginAction } from '../service/loginAction';
 
