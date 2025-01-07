@@ -1,9 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { apiClient } from '../../api/client';
 import {
   getCurrentUser,
   onAuthStateChangedListener,
   signInAnonymous,
 } from '../../lib/auth/firebaseAuth';
+import { putHeaders } from '../../lib/http/putHeader';
 import { setUser } from '../model/authSlice';
 
 export const loginAction = createAsyncThunk<
@@ -26,6 +28,19 @@ export const loginAction = createAsyncThunk<
         isAnonymous: user.isAnonymous,
       }),
     );
+    const result = await apiClient.api.user[':uid'].$get({
+      param: { uid: user.uid },
+    });
+    if (result.status !== 404) return;
+    console.log('Creating user');
+    const ret = await apiClient.api.user[':uid'].$put(
+      { param: { uid: user.uid } },
+      { headers: putHeaders },
+    );
+
+    if (ret.status !== 204) {
+      console.error('Failed to create user');
+    }
   });
 
   setTimeout(async () => {
