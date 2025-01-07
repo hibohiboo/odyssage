@@ -1,0 +1,1 @@
+ALTER TABLE "odyssage"."users" ADD COLUMN "name" text DEFAULT '' NOT NULL;

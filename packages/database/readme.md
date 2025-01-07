@@ -1,7 +1,7 @@
 1. src/schema.ts をもとにマイグレーション用のSQLを作成する。
 
 ```
-npm run migrate
+drizzle-kit generate
 ```
 
 2. マイグレーション用のSQLをNeonに反映する

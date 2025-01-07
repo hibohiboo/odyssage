@@ -8,6 +8,13 @@
       "when": 1735737394481,
       "tag": "0000_tricky_human_cannonball",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1736261022338,
+      "tag": "0001_giant_firebrand",
+      "breakpoints": true
     }
   ]
 }

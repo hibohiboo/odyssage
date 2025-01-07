@@ -3,6 +3,7 @@ import { pgSchema, uuid, text, varchar, timestamp } from 'drizzle-orm/pg-core';
 export const mySchema = pgSchema('odyssage');
 export const usersTable = mySchema.table('users', {
   id: varchar({ length: 64 }).primaryKey(),
+  name: text('name').notNull().default(''),
 });
 
 export const scenariosTable = mySchema.table('scenarios', {
