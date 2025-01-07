@@ -28,9 +28,8 @@ export const { setUser } = authSlice.actions;
 
 const stateSelector = (state: RootState) => state[authSlice.reducerPath];
 
-export const userDisplayNameSelector = createSelector(
-  stateSelector,
-  (c) => c.displayName,
+export const userDisplayNameSelector = createSelector(stateSelector, (c) =>
+  c.displayName == null ? undefined : c.displayName,
 );
 export const uidSelector = createSelector(stateSelector, (c) => c.uid);
 export const isAnonymousSelector = createSelector(

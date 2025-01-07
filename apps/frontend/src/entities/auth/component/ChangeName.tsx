@@ -1,11 +1,16 @@
 import React, { FormEventHandler } from 'react';
 import { useNavigate } from 'react-router';
+import { userDisplayNameSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { changeNameAction } from '@odyssage/frontend/shared/auth/service/changeNameAction';
-import { useAppDispatch } from '@odyssage/frontend/shared/lib/store';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '@odyssage/frontend/shared/lib/store';
 
 export const ChangeName: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const name = useAppSelector(userDisplayNameSelector);
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
@@ -25,7 +30,13 @@ export const ChangeName: React.FC = () => {
           <label className="label" htmlFor="displayName">
             ニックネーム
           </label>
-          <input required id="displayName" name="displayName" type="text" />
+          <input
+            required
+            id="displayName"
+            name="displayName"
+            defaultValue={name}
+            type="text"
+          />
         </div>
 
         <button className="button is-primary" type="submit">
