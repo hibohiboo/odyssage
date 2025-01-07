@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '@odyssage/frontend/shared/lib/store';
+import { Link } from 'react-router';
+import { useAppDispatch, useAppSelector } from '../../lib/store';
 import { userDisplayNameSelector, uidSelector } from '../model/authSlice';
 import { loginAction } from '../service/loginAction';
 
@@ -15,13 +13,17 @@ const LoginUser: React.FC = () => {
     dispatch(loginAction());
   }, [dispatch]);
   if (user == null) {
-    return <div>ログイン中</div>;
+    return <span>ログイン中</span>;
   }
   if (!userName) {
-    return <div>ゲストユーザ</div>;
+    return <span>ゲストユーザ</span>;
   }
 
-  return <div>{userName}</div>;
+  return (
+    <Link className="ml-2" to="/change-name">
+      {userName}
+    </Link>
+  );
 };
 
 export default LoginUser;

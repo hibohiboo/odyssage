@@ -1,10 +1,11 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
+import { apiClient } from '../../api/client';
 import {
+  getCurrentUser,
   onAuthStateChangedListener,
   signInAnonymous,
-} from '@odyssage/frontend/shared/lib/auth/firebaseAuth';
-import { putHeaders } from '@odyssage/frontend/shared/lib/http/putHeader';
+} from '../../lib/auth/firebaseAuth';
+import { putHeaders } from '../../lib/http/putHeader';
 import { setUser } from '../model/authSlice';
 
 export const loginAction = createAsyncThunk<
@@ -14,13 +15,19 @@ export const loginAction = createAsyncThunk<
 >('loginAction', async (_, thunkAPI) => {
   onAuthStateChangedListener(async (user) => {
     if (!user) {
-      thunkAPI.dispatch(setUser({ uid: null, displayName: null }));
+      thunkAPI.dispatch(
+        setUser({ uid: null, displayName: null, isAnonymous: null }),
+      );
       return;
     }
-    thunkAPI.dispatch(
-      setUser({ uid: user.uid, displayName: user.displayName }),
-    );
 
+    thunkAPI.dispatch(
+      setUser({
+        uid: user.uid,
+        displayName: user.displayName,
+        isAnonymous: user.isAnonymous,
+      }),
+    );
     const result = await apiClient.api.user[':uid'].$get({
       param: { uid: user.uid },
     });
@@ -35,5 +42,16 @@ export const loginAction = createAsyncThunk<
       console.error('Failed to create user');
     }
   });
-  await signInAnonymous();
+
+  setTimeout(async () => {
+    const user = getCurrentUser();
+
+    if (user) {
+      console.debug('user already signed in');
+      return;
+    }
+    console.debug('waiting 1 sec login anonymous');
+    // 1秒待ってまだログインしていなければ匿名認証でログイン
+    await signInAnonymous();
+  }, 1000);
 });
