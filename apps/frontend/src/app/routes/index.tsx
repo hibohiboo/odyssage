@@ -9,7 +9,7 @@ export const createRouter = () =>
       Component: Layout,
       children: [
         {
-          path: 'login',
+          path: 'signup',
           element: <Login />,
         },
       ],

@@ -6,6 +6,7 @@ import {
   NextOrObserver,
   onAuthStateChanged,
   signInAnonymously,
+  updateProfile,
   User,
   validatePassword,
 } from 'firebase/auth';
@@ -44,7 +45,10 @@ export const credentialUserWithMail = async (
   email: string,
   password: string,
 ) => {
-  const status = await validatePassword(auth, password);
+  // エミュレーターの場合はvalidatePasswordのメソッドがないためパスワードのバリデーションをスキップ
+  const status = import.meta.env.DEV
+    ? { isValid: true }
+    : await validatePassword(auth, password);
   if (!status.isValid) {
     throw new Error(`Invalid password`);
   }
@@ -56,4 +60,13 @@ export const credentialUserWithMail = async (
 
   const { user } = userCredential;
   console.log('signInMail', user);
+};
+
+export const changeUserName = async (name: string) => {
+  if (auth.currentUser == null) {
+    throw new Error(`User is not signed in`);
+  }
+  await updateProfile(auth.currentUser, {
+    displayName: name,
+  });
 };
