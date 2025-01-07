@@ -18,6 +18,7 @@ export const loginAction = createAsyncThunk<
       );
       return;
     }
+
     thunkAPI.dispatch(
       setUser({
         uid: user.uid,

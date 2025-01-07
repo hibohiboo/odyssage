@@ -9,8 +9,8 @@ export const Header: React.FC = () => {
     <header>
       <LoginUser />
       {isAnonymous && (
-        <Link className="ml-2" to="/signup">
-          サインアップ
+        <Link className="ml-2" to="/login">
+          ログイン
         </Link>
       )}
     </header>

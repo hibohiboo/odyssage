@@ -6,6 +6,7 @@ import {
   NextOrObserver,
   onAuthStateChanged,
   signInAnonymously,
+  signInWithEmailAndPassword,
   updateProfile,
   User,
   validatePassword,
@@ -61,7 +62,15 @@ export const credentialUserWithMail = async (
   const { user } = userCredential;
   console.log('signInMail', user);
 };
-
+export const signIn = async (email: string, password: string) => {
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password,
+  );
+  const { user } = userCredential;
+  return user;
+};
 export const changeUserName = async (name: string) => {
   if (auth.currentUser == null) {
     throw new Error(`User is not signed in`);

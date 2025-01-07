@@ -1,9 +1,9 @@
 import { FormEventHandler } from 'react';
 import { useNavigate } from 'react-router';
-import { signUpAction } from '@odyssage/frontend/shared/auth/service/signUpAction';
+import { signupAction } from '@odyssage/frontend/shared/auth/service/signUpAction';
 import { useAppDispatch } from '@odyssage/frontend/shared/lib/store';
 
-export const useLogin = () => {
+export const useSignup = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (event) => {
@@ -13,7 +13,7 @@ export const useLogin = () => {
     const email = form.get('email') || '';
     const password = form.get('password') || '';
     await dispatch(
-      signUpAction({
+      signupAction({
         displayName: `${displayName}`,
         email: `${email}`,
         password: `${password}`,
