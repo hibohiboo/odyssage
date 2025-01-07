@@ -199,11 +199,16 @@ module.exports = {
   options: {
 
     /* Which modules not to follow further when encountered */
+    // doNotFollow: {
+    //   /* path: an array of regular expressions in strings to match against */
+    //   path: ['node_modules']
+    // },
     doNotFollow: {
-      /* path: an array of regular expressions in strings to match against */
-      path: ['node_modules']
+      path: 'node_modules'
     },
-
+    exclude: {
+      path: 'node_modules'
+    },
     /* Which modules to exclude */
     // exclude : {
     //   /* path: an array of regular expressions in strings to match against */

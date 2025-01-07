@@ -8,7 +8,10 @@ import {
 
 export async function upsertUser(connectionString: string, data: InsertUser) {
   const db = getDb(connectionString);
-  await db.insert(usersTable).values(data).onConflictDoNothing();
+  await db
+    .insert(usersTable)
+    .values(data)
+    .onConflictDoUpdate({ target: usersTable.id, set: { name: data.name } });
 }
 export async function createScenario(data: InsertScenario) {
   const db = getDb();

@@ -27,7 +27,7 @@
     "@odyssage/database": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
-    "hono": "^4.6.15",
+    "hono": "^4.6.16",
     "neo4j-driver": "^5.27.0"
   }
 }

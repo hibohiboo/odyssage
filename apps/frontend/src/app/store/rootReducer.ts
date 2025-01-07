@@ -1,5 +1,5 @@
 import { combineReducers, UnknownAction } from '@reduxjs/toolkit';
-import { authSlice } from '@odyssage/frontend/entities/auth';
+import { authSlice } from '@odyssage/frontend/shared/auth';
 
 const combinedReducer = combineReducers({
   [authSlice.reducerPath]: authSlice.reducer,

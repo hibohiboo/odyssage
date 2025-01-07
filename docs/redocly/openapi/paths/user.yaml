@@ -12,8 +12,11 @@ get:
             properties:
               id:
                 type: "string"
+              name:
+                type: "string"
             required:
               - "id"
+              - "name"
             additionalProperties: false
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
@@ -42,3 +45,15 @@ put:
       schema:
         type: "string"
       required: true
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+          required:
+            - "name"
+

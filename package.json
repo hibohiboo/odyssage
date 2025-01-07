@@ -6,6 +6,8 @@
         "local:rdb": "bash ./infra/local/neon/bin/up.sh",
         "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
         "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
+        "dev:backend": "cd apps/backend && bun run dev",
+        "dev:frontend": "cd apps/frontend && bun run dev",
         "dev": "bunx --bun turbo dev",
         "build": "bunx --bun turbo build",
         "ncu": "bunx --bun turbo ncu && ncu -u"

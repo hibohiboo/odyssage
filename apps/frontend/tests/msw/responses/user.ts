@@ -9,6 +9,7 @@ export const userHandlers = [
         JSON.stringify([
           {
             id: 'test-aaaa-bbbb-cccc-29ddfc9efee1',
+            name: 'test',
           },
         ]),
         okResponseStatus,

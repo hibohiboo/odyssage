@@ -1,2 +1,3 @@
-export { authSlice } from './model/authSlice';
-export { default as LoginUser } from './components/LoginUser';
+export { Signup } from './component/Signup';
+export { ChangeName } from './component/ChangeName';
+export { Login } from './component/Login';
