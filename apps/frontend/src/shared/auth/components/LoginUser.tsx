@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../lib/store';
 import { userDisplayNameSelector, uidSelector } from '../model/authSlice';
 import { loginAction } from '../service/loginAction';
@@ -18,7 +19,11 @@ const LoginUser: React.FC = () => {
     return <span>ゲストユーザ</span>;
   }
 
-  return <span>{userName}</span>;
+  return (
+    <Link className="ml-2" to="/change-name">
+      {userName}
+    </Link>
+  );
 };
 
 export default LoginUser;

@@ -12,13 +12,18 @@ export const loginAction = createAsyncThunk<
   { dispatch: AppDispatch; state: RootState }
 >('loginAction', async (_, thunkAPI) => {
   onAuthStateChangedListener(async (user) => {
-    console.log('onAuthStateChangedListener', user);
     if (!user) {
-      thunkAPI.dispatch(setUser({ uid: null, displayName: null }));
+      thunkAPI.dispatch(
+        setUser({ uid: null, displayName: null, isAnonymous: null }),
+      );
       return;
     }
     thunkAPI.dispatch(
-      setUser({ uid: user.uid, displayName: user.displayName }),
+      setUser({
+        uid: user.uid,
+        displayName: user.displayName,
+        isAnonymous: user.isAnonymous,
+      }),
     );
   });
 

@@ -1,5 +1,5 @@
 import { createBrowserRouter } from 'react-router';
-import { Login } from '@odyssage/frontend/entities/auth';
+import { ChangeName, Login } from '@odyssage/frontend/entities/auth';
 import { Layout } from '@odyssage/frontend/shared/ui';
 
 export const createRouter = () =>
@@ -11,6 +11,10 @@ export const createRouter = () =>
         {
           path: 'signup',
           element: <Login />,
+        },
+        {
+          path: 'change-name',
+          element: <ChangeName />,
         },
       ],
     },

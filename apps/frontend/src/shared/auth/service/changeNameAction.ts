@@ -1,19 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { apiClient } from '../../api/client';
-import {
-  changeUserName,
-  credentialUserWithMail,
-  getCurrentUser,
-} from '../../lib/auth/firebaseAuth';
+import { changeUserName, getCurrentUser } from '../../lib/auth/firebaseAuth';
 import { putHeaders } from '../../lib/http/putHeader';
 import { setUser } from '../model/authSlice';
 
-export const signUpAction = createAsyncThunk<
+export const changeNameAction = createAsyncThunk<
   void,
-  { displayName: string; email: string; password: string },
+  { displayName: string },
   { dispatch: AppDispatch; state: RootState }
->('signUpAction', async (payload, thunkAPI) => {
-  await credentialUserWithMail(payload.email, payload.password);
+>('changeNameAction', async (payload, thunkAPI) => {
   await changeUserName(payload.displayName);
 
   const user = getCurrentUser();
