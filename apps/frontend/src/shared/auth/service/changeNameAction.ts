@@ -24,7 +24,7 @@ export const changeNameAction = createAsyncThunk<
     }),
   );
   const ret = await apiClient.api.user[':uid'].$put(
-    { param: { uid: user.uid } },
+    { param: { uid: user.uid }, json: { name: payload.displayName } },
     { headers: putHeaders },
   );
 

@@ -10,3 +10,6 @@ export const userParamSchema = v.object({
 export const userSchema = v.object({
   id: v.string(),
 });
+export const userRequestSchema = v.object({
+  name: v.string(),
+});

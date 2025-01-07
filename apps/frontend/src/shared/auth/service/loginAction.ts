@@ -28,13 +28,14 @@ export const loginAction = createAsyncThunk<
         isAnonymous: user.isAnonymous,
       }),
     );
+    if (!user.isAnonymous) return;
     const result = await apiClient.api.user[':uid'].$get({
       param: { uid: user.uid },
     });
     if (result.status !== 404) return;
     console.log('Creating user');
     const ret = await apiClient.api.user[':uid'].$put(
-      { param: { uid: user.uid } },
+      { param: { uid: user.uid }, json: { name: '' } },
       { headers: putHeaders },
     );
 
