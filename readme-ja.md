@@ -96,7 +96,9 @@ CodeQL|-|GitHub Code Scanning|
 bun run local:rdb
 bun run local:graphdb
 bun run local:firebase
-bun run dev
+bun run dev:frontend
+bun run dev:backend
+
 ```
 
 
