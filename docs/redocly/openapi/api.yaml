@@ -14,6 +14,8 @@ paths:
     $ref: './paths/user.yaml'
   /api/scenarios:
     $ref: './paths/scenarios.yaml'
+  /api/user/{uid}/scenario:
+    $ref: './paths/user.yaml#/post'
 components:
   schemas: {}
   responses:
