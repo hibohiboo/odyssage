@@ -15,6 +15,13 @@
       "when": 1736261022338,
       "tag": "0001_giant_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1736597187773,
+      "tag": "0002_useful_network",
+      "breakpoints": true
     }
   ]
 }
