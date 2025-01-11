@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "e2e-test": "cucumber-js --config cucumber.mjs --exit"
+    "e2e-test": "playwright test",
+    "bdd-test": "cucumber-js --config cucumber.mjs --exit"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.0.1",
