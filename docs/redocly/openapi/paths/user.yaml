@@ -95,12 +95,7 @@ post:
               type: "string"
             overview:
               type: "string"
-            tags:
-              type: "array"
-              items:
-                type: "string"
           required:
             - "id"
             - "title"
             - "overview"
-            - "tags"

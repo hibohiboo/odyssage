@@ -24,7 +24,7 @@ export const user = new Hono<Env>()
 		const param = c.req.valid('param');
 		const json = c.req.valid('json');
 		try {
-			await createScenario({ id: json.id, title: json.title, userId: param.uid, overview: json.overview, tags: json.tags });
+			await createScenario({ id: json.id, title: json.title, userId: param.uid, overview: json.overview });
 			return c.json({ message: 'Scenario created successfully' }, 201);
 		} catch (error) {
 			return c.json({ message: 'Failed to create scenario', error: error.message }, 400);
