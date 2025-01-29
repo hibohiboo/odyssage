@@ -1,0 +1,3 @@
+ALTER TABLE scenarios
+ADD COLUMN overview TEXT NOT NULL,
+ADD COLUMN tags TEXT[] NOT NULL;

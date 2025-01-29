@@ -16,6 +16,7 @@ export const scenariosTable = mySchema.table('scenarios', {
   updatedAt: timestamp('updated_at')
     .notNull()
     .$onUpdate(() => new Date()),
+  overview: text('overview').notNull(),
 });
 
 export type InsertUser = typeof usersTable.$inferInsert;

@@ -56,4 +56,46 @@ put:
               type: "string"
           required:
             - "name"
-
+post:
+  summary: シナリオ作成
+  security:
+    - bearerAuth: []
+  responses:
+    201:
+      description: "Scenario created successfully"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+            required:
+              - "message"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+  operationId: "postApiUserByUidScenario"
+  description: "指定したユーザのシナリオを作成"
+  parameters:
+    - in: "path"
+      name: "uid"
+      schema:
+        type: "string"
+      required: true
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            id:
+              type: "string"
+            title:
+              type: "string"
+            overview:
+              type: "string"
+          required:
+            - "id"
+            - "title"
+            - "overview"

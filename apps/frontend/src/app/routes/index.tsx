@@ -1,5 +1,11 @@
 import { createBrowserRouter } from 'react-router';
-import { ChangeName, Login, Signup } from '@odyssage/frontend/entities/auth';
+import {
+  ChangeNamePage,
+  LoginPage,
+  SignupPage,
+} from '@odyssage/frontend/page/login';
+import { ScenarioCreatePage } from '@odyssage/frontend/page/scenario';
+import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/ui';
 
 export const createRouter = () =>
@@ -9,16 +15,29 @@ export const createRouter = () =>
       Component: Layout,
       children: [
         {
+          path: '',
+          element: <TopPage />,
+        },
+        {
           path: 'login',
-          element: <Login />,
+          element: <LoginPage />,
         },
         {
           path: 'signup',
-          element: <Signup />,
+          element: <SignupPage />,
         },
         {
           path: 'change-name',
-          element: <ChangeName />,
+          element: <ChangeNamePage />,
+        },
+        {
+          path: 'scenario',
+          children: [
+            {
+              path: 'create',
+              element: <ScenarioCreatePage />,
+            },
+          ],
         },
       ],
     },

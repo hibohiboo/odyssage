@@ -1,9 +1,13 @@
 import { HttpResponse, http } from 'msw';
+import { firebaseHandlers } from './responses/firebase';
 import { userHandlers } from './responses/user';
+import { userScenarioHandlers } from './responses/user/scenario';
 import { baseUrl, okResponseStatus } from './utils';
 
 export const handlers = [
   ...userHandlers,
+  ...firebaseHandlers,
+  ...userScenarioHandlers,
   http.get(
     `${baseUrl}/scenarios`,
     () =>

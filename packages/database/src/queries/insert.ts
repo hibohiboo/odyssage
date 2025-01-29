@@ -13,7 +13,10 @@ export async function upsertUser(connectionString: string, data: InsertUser) {
     .values(data)
     .onConflictDoUpdate({ target: usersTable.id, set: { name: data.name } });
 }
-export async function createScenario(data: InsertScenario) {
-  const db = getDb();
+export async function createScenario(
+  connectionString: string,
+  data: InsertScenario,
+) {
+  const db = getDb(connectionString);
   await db.insert(scenariosTable).values(data);
 }

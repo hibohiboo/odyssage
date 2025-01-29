@@ -52,7 +52,11 @@ export const loginAction = createAsyncThunk<
       return;
     }
     console.debug('waiting 1 sec login anonymous');
-    // 1秒待ってまだログインしていなければ匿名認証でログイン
-    await signInAnonymous();
+    try {
+      // 1秒待ってまだログインしていなければ匿名認証でログイン
+      await signInAnonymous();
+    } catch (e) {
+      console.warn('Failed to sign in anonymously', e);
+    }
   }, 1000);
 });

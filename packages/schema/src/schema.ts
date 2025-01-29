@@ -13,3 +13,8 @@ export const userSchema = v.object({
 export const userRequestSchema = v.object({
   name: v.string(),
 });
+export const scenarioRequestSchema = v.object({
+  id: v.string(),
+  title: v.string(),
+  overview: v.string(),
+});
