@@ -6,12 +6,20 @@ export const useCreateScenario = () => {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
-  const createScenario = async (scenario: { id: string; title: string; overview: string; tags: string[] }) => {
+  const createScenario = async (scenario: {
+    id: string;
+    title: string;
+    overview: string;
+    uid: string;
+  }) => {
     setLoading(true);
     setSuccess(false);
     setError('');
     try {
-      const response = await apiClient.post(`/user/${scenario.id}/scenario`, scenario);
+      const response = await apiClient.api.user[':uid'].scenario.$post({
+        param: { uid: scenario.uid },
+        json: scenario,
+      });
       if (response.ok) {
         setSuccess(true);
       } else {
@@ -19,6 +27,7 @@ export const useCreateScenario = () => {
         setError(errorData.message || 'Failed to create scenario');
       }
     } catch (err) {
+      console.error('Error creating scenario:', err);
       setError('Failed to create scenario');
     } finally {
       setLoading(false);

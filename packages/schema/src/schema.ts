@@ -17,5 +17,4 @@ export const scenarioRequestSchema = v.object({
   id: v.string(),
   title: v.string(),
   overview: v.string(),
-  tags: v.array(v.string()),
 });
