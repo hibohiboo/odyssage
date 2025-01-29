@@ -3,7 +3,7 @@
   "compilerOptions": {
     "paths": { 
       "@odyssage/frontend/*": ["./src/*"],
-      "@odyssage/core/*": ["../../packages/core/*"],
+  
       "@odyssage/backend/*": ["../backend/src/*"]
      },
      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",

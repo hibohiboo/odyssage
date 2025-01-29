@@ -2,6 +2,7 @@ import customConfig from '@odyssage/eslint-config-custom/frontend.js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config({
+  external: ['vite.config.ts'],
   extends: [
     ...customConfig,
     {
