@@ -24,6 +24,6 @@ export const user = new Hono<Env>()
 		const param = c.req.valid('param');
 		const json = c.req.valid('json');
 
-		await createScenario({ id: json.id, title: json.title, userId: param.uid, overview: json.overview });
+		await createScenario(c.env.NEON_CONNECTION_STRING, { id: json.id, title: json.title, userId: param.uid, overview: json.overview });
 		return c.json({ message: 'Scenario created successfully' }, 201);
 	});
