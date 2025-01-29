@@ -16,18 +16,18 @@
     "apply-db": "drizzle-kit generate"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.5.40",
-    "@cloudflare/workers-types": "^4.20241230.0",
+    "@cloudflare/vitest-pool-workers": "^0.6.8",
+    "@cloudflare/workers-types": "^4.20250124.3",
     "dotenv": "^16.4.7",
-    "vitest": "2.1.8",
-    "wrangler": "^3.99.0"
+    "vitest": "3.0.4",
+    "wrangler": "^3.106.0"
   },
   "dependencies": {
-    "@hono/valibot-validator": "^0.5.1",
+    "@hono/valibot-validator": "^0.5.2",
     "@odyssage/database": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
-    "hono": "^4.6.16",
+    "hono": "^4.6.19",
     "neo4j-driver": "^5.27.0"
   }
 }
