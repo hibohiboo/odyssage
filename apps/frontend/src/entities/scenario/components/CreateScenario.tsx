@@ -12,7 +12,7 @@ const CreateScenario = () => {
     const form = new FormData(e.currentTarget);
 
     const title = form.get('title') as string;
-    const overview = form.get('overview') as string;
+    const overview = (form.get('overview') as string) || '';
     if (!uid || !title || !overview) {
       console.error('Invalid form data', { uid, title, overview });
       return;
@@ -25,7 +25,7 @@ const CreateScenario = () => {
     <form onSubmit={handleSubmit}>
       <div>
         <label htmlFor="title">シナリオタイトル:</label>
-        <input type="text" id="title" name="title" />
+        <input required type="text" id="title" name="title" />
       </div>
       <div>
         <label htmlFor="overview">シナリオ概要:</label>
