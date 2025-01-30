@@ -1,19 +1,24 @@
 import { FormEventHandler, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { useEditScenario } from '@odyssage/frontend/entities/scenario/hooks/useEditScenario';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
+import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
+import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
 const EditPage = () => {
   const { id } = useParams<{ id: string }>();
+  const uid = useAppSelector(uidSelector);
   const { editScenario, loading, success, error } = useEditScenario();
   const [title, setTitle] = useState('');
   const [overview, setOverview] = useState('');
 
   useEffect(() => {
     const fetchScenario = async () => {
-      if (!id) return;
+      if (!id || !uid) return;
       try {
-        const response = await apiClient.api.scenarios.$get({ param: { id } });
+        const response = await apiClient.api.scenario[':id'].$get({
+          param: { id },
+        });
         const data = await response.json();
         setTitle(data.title);
         setOverview(data.overview);

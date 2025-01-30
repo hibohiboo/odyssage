@@ -1,0 +1,37 @@
+put:
+  summary: シナリオ更新
+  security:
+    - bearerAuth: []
+  responses:
+    204:
+      description: "Successful response"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+  operationId: "putApiUserByUid"
+  description: "指定したユーザを登録"
+  parameters:
+    - in: "path"
+      name: "uid"
+      schema:
+        type: "string"
+      required: true
+    - in: "path"
+      name: "id"
+      schema:
+        type: "string"
+      required: true
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            title:
+              type: "string"
+            overview:
+              type: "string"
+            updatedAt:
+              type: "string"
+          required:
+            - "name"

@@ -13,6 +13,7 @@ import {
   userRequestSchema,
   scenarioRequestSchema,
   scenarioUpdateRequestSchema,
+  userScenarioParamSchema,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 
@@ -57,9 +58,18 @@ export const user = new Hono<Env>()
       return c.json({ message: 'Scenario created successfully' }, 201);
     },
   )
+  .get('/:uid/scenario', vValidator('param', userParamSchema), async (c) => {
+    const param = c.req.valid('param');
+    const data = await getScenariosByUid(
+      c.env.NEON_CONNECTION_STRING,
+      param.uid,
+    );
+    return c.json(data);
+  })
+
   .put(
     '/:uid/scenario/:id',
-    vValidator('param', userParamSchema),
+    vValidator('param', userScenarioParamSchema),
     vValidator('json', scenarioUpdateRequestSchema),
     async (c) => {
       const param = c.req.valid('param');
@@ -72,12 +82,4 @@ export const user = new Hono<Env>()
       });
       return c.json({ message: 'Scenario updated successfully' }, 200);
     },
-  )
-  .get('/:uid/scenario', vValidator('param', userParamSchema), async (c) => {
-    const param = c.req.valid('param');
-    const data = await getScenariosByUid(
-      c.env.NEON_CONNECTION_STRING,
-      param.uid,
-    );
-    return c.json(data);
-  });
+  );
