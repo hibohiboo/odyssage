@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 const ScenarioListPage = () => {
-  const [scenarios, setScenarios] = useState([]);
+  const [scenarios, setScenarios] = useState<
+    {
+      id: string;
+      title: string;
+    }[]
+  >([]);
 
   useEffect(() => {
     const fetchScenarios = async () => {
       try {
         const response = await apiClient.api.scenarios.$get();
-        setScenarios(response);
+        const data = await response.json();
+        setScenarios(data);
       } catch (error) {
         console.error('Failed to fetch scenarios', error);
       }

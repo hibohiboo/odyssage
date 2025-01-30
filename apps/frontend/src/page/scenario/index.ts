@@ -1,2 +1,2 @@
 export { CreatePage as ScenarioCreatePage } from './ui/CreatePage';
-export { ScenarioListPage } from './ui/ScenarioListPage';
+export { default as ScenarioListPage } from './ui/ScenarioListPage';

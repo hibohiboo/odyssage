@@ -4,7 +4,10 @@ import {
   LoginPage,
   SignupPage,
 } from '@odyssage/frontend/page/login';
-import { ScenarioCreatePage, ScenarioListPage } from '@odyssage/frontend/page/scenario';
+import {
+  ScenarioCreatePage,
+  ScenarioListPage,
+} from '@odyssage/frontend/page/scenario';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/ui';
 
