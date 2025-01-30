@@ -1,8 +1,8 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import customConfig from '@odyssage/eslint-config-custom/defaults.js';
+import customConfig from '@odyssage/eslint-config-custom/backend.js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config({
+  ignores: [...customConfig[0].ignores, '.wrangler/*'],
   extends: [
     ...customConfig,
     {

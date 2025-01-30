@@ -1,6 +1,4 @@
 import { chromium, test, expect } from '@playwright/test';
-import type { Page } from '@playwright/test';
-
 test.beforeAll(async () => {
   const browser = await chromium.launch({ headless: true }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();

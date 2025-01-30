@@ -10,12 +10,12 @@ servers:
   - url: "http://127.0.0.1:8787"
     description: "Local Server"
 paths:
-  /api/user/{uid}: 
-    $ref: './paths/user.yaml'
   /api/scenarios:
     $ref: './paths/scenarios.yaml'
+  /api/user/{uid}: 
+    $ref: './paths/user.yaml'
   /api/user/{uid}/scenario:
-    $ref: './paths/user.yaml#/post'
+    $ref: './paths/userScenario.yaml'
 components:
   schemas: {}
   responses:

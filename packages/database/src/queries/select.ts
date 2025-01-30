@@ -75,3 +75,23 @@ export async function getScenarios(connectionString: string): Promise<
     .from(scenariosTable)
     .orderBy(asc(scenariosTable.userId), asc(scenariosTable.title));
 }
+
+export async function getScenariosByUid(
+  connectionString: string,
+  uid: string,
+): Promise<
+  Array<{
+    id: string;
+    title: string;
+  }>
+> {
+  const db = getDb(connectionString);
+  return db
+    .select({
+      id: scenariosTable.id,
+      title: scenariosTable.title,
+    })
+    .from(scenariosTable)
+    .where(eq(scenariosTable.userId, uid))
+    .orderBy(asc(scenariosTable.userId), asc(scenariosTable.title));
+}
