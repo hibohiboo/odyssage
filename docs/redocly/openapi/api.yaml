@@ -12,10 +12,13 @@ servers:
 paths:
   /api/scenarios:
     $ref: './paths/scenarios.yaml'
+  /api/scenario/{id}:
+    $ref: './paths/scenario.yaml'
   /api/user/{uid}: 
     $ref: './paths/user.yaml'
   /api/user/{uid}/scenario:
     $ref: './paths/userScenario.yaml'
+
 components:
   schemas: {}
   responses:

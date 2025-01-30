@@ -3,9 +3,9 @@
   "compilerOptions": {
     "paths": { 
       "@odyssage/frontend/*": ["./src/*"],
-  
-      "@odyssage/backend/*": ["../backend/src/*"]
-     },
+      "@odyssage/backend/*": ["../backend/src/*"],
+      "@odyssage/schema/*": ["../../packages/schema/*"]
+    },
      "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
      "allowSyntheticDefaultImports": true
   },
