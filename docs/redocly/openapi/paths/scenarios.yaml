@@ -7,18 +7,19 @@ get:
       content:
         application/json:
           schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-              title:
-                type: "string"
-            required:
-              - "id"
-              - "title"
-            additionalProperties: false
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                title:
+                  type: "string"
+              required:
+                - "id"
+                - "title"
+              additionalProperties: false
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
- 
   operationId: "getApiScenarios"
   description: "シナリオの一覧を取得"
