@@ -1,8 +1,15 @@
+import type { ScnearioListItem } from '@odyssage/schema/src/schema';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
+const createScenario = (scenario: ScnearioListItem) => (
+  <li key={scenario.id}>
+    <Link to={`/scenario/edit/${scenario.id}`}>{scenario.title}</Link>
+  </li>
+);
 const ScenarioListPage = () => {
   const uid = useAppSelector(uidSelector);
   const [scenarios, setScenarios] = useState<
@@ -42,21 +49,12 @@ const ScenarioListPage = () => {
     };
     fetchScenarios(uid);
   }, [uid]);
-
   return (
     <div>
       <h1>Scenario List</h1>
-      <ul>
-        {scenarios.map((scenario) => (
-          <li key={scenario.id}>{scenario.title}</li>
-        ))}
-      </ul>
+      <ul>{scenarios.map(createScenario)}</ul>
       <h2>My Scenarios</h2>
-      <ul>
-        {myScenarios.map((scenario) => (
-          <li key={scenario.id}>{scenario.title}</li>
-        ))}
-      </ul>
+      <ul>{myScenarios.map(createScenario)}</ul>
     </div>
   );
 };

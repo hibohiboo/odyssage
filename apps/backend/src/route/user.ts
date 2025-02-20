@@ -7,10 +7,13 @@ import {
   getScenariosByUid,
   getUserById,
 } from '@odyssage/database/src/queries/select';
+import { updateScenario } from '@odyssage/database/src/queries/update';
 import {
   userParamSchema,
   userRequestSchema,
   scenarioRequestSchema,
+  scenarioUpdateRequestSchema,
+  userScenarioParamSchema,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 
@@ -62,4 +65,21 @@ export const user = new Hono<Env>()
       param.uid,
     );
     return c.json(data);
-  });
+  })
+
+  .put(
+    '/:uid/scenario/:id',
+    vValidator('param', userScenarioParamSchema),
+    vValidator('json', scenarioUpdateRequestSchema),
+    async (c) => {
+      const param = c.req.valid('param');
+      const json = c.req.valid('json');
+
+      await updateScenario(c.env.NEON_CONNECTION_STRING, {
+        id: param.id,
+        title: json.title,
+        overview: json.overview,
+      });
+      return c.json({ message: 'Scenario updated successfully' }, 200);
+    },
+  );

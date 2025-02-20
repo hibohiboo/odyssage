@@ -13,7 +13,7 @@
     "e2e-test": "cd ../../packages/bdd-e2e-test && npm run e2e-test"
   },
   "dependencies": {
-
+    "@odyssage/schema": "workspace:*",
     "@reduxjs/toolkit": "^2.5.1",
     "firebase": "^11.2.0",
     "hono": "^4.6.19",

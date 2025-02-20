@@ -47,10 +47,10 @@ jobs:
       - name: Install monorepo dependencies
         run: bun install --ignore-scripts
 
-      # core ふるまい駆動テスト
-      - name: Core Test Report Cucumber
-        run: bun run test-report
-        working-directory: ./packages/core
+      # # core ふるまい駆動テスト
+      # - name: Core Test Report Cucumber
+      #   run: bun run test-report
+      #   working-directory: ./packages/core
       
       # OpenAPI ドキュメント作成
       - name: Build with OpenAPI

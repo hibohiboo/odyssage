@@ -7,6 +7,7 @@ import {
 import {
   ScenarioCreatePage,
   ScenarioListPage,
+  ScenarioEditPage,
 } from '@odyssage/frontend/page/scenario';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/ui';
@@ -43,6 +44,10 @@ export const createRouter = () =>
             {
               path: 'list',
               element: <ScenarioListPage />,
+            },
+            {
+              path: 'edit/:id',
+              element: <ScenarioEditPage />,
             },
           ],
         },
