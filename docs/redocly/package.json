@@ -1,5 +1,5 @@
 {
-  "name": "kartagraph-api",
+  "name": "odyssage-api",
   "version": "0.0.1",
   "dependencies": {
     "@apiture/openapi-down-convert": "^0.14.0",
