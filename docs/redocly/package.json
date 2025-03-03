@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@apiture/openapi-down-convert": "^0.14.0",
-    "@redocly/cli": "1.30.0"
+    "@redocly/cli": "1.32.0"
   },
   "private": true,
   "scripts": {
