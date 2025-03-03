@@ -10,7 +10,7 @@
         "dev:frontend": "cd apps/frontend && bun run dev",
         "dev": "bunx --bun turbo dev",
         "build": "bunx --bun turbo build",
-        "ncu": "bunx --bun turbo ncu && ncu -u"
+        "ncu": "turbo ncu && ncu -u"
     },
     "workspaces": [
         "packages/*",
