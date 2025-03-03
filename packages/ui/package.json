@@ -1,3 +1,8 @@
 {
-  "name": "@odyssage/ui"
+  "name": "@odyssage/ui",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "ncu": "ncu -u"
+  }
 }
