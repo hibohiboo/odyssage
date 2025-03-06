@@ -6,7 +6,7 @@
   "version": "0.0.0",
   "devDependencies": {
     "@conarti/eslint-plugin-feature-sliced": "^1.0.5",
-    "@eslint/config-inspector": "^1.0.1",
+    "@eslint/config-inspector": "^1.0.2",
     "@eslint/eslintrc": "^3.3.0",
     "@eslint/js": "^9.21.0",
     "eslint": "^9.21.0",
@@ -18,7 +18,7 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "eslint-plugin-sonarjs": "^3.0.2",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "typescript-eslint": "^8.25.0"
+    "typescript-eslint": "^8.26.0"
   },
   "scripts": {
     "ncu": "ncu -u",
