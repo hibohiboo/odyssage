@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ArrowRight } from 'lucide-react';
-
 import { CtaButton } from './CtaButton';
 
 const meta = {
@@ -41,7 +40,11 @@ export const WithIcon: Story = {
     children: (
       <>
         シナリオを作成する
-        <ArrowRight className="inline ml-2 h-5 w-5" />
+        <ArrowRight
+          className="inline ml-2 h-5 w-5"
+          aria-hidden="true"
+          focusable="false"
+        />
       </>
     ),
   },
