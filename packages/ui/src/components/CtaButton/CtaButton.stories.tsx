@@ -41,7 +41,7 @@ export const WithIcon: Story = {
     children: (
       <>
         シナリオを作成する
-        <ArrowRight className="ml-2 h-5 w-5" />
+        <ArrowRight className="inline ml-2 h-5 w-5" />
       </>
     ),
   },
