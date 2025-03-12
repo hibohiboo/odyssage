@@ -1,5 +1,4 @@
 import React from 'react';
-import Link from 'next/link';
 
 export interface CtaButtonProps {
   /**
@@ -11,9 +10,13 @@ export interface CtaButtonProps {
    */
   variant?: 'primary' | 'outline';
   /**
-   * Button contents
+   * Button contents (can include text and icons)
    */
   children: React.ReactNode;
+  /**
+   * Optional className for additional styling
+   */
+  className?: string;
 }
 
 /**
@@ -23,13 +26,14 @@ export const CtaButton = ({
   href,
   variant = 'primary',
   children,
+  className = '',
 }: CtaButtonProps) => (
-  <Link
+  <a
     href={href}
-    className={`btn ${variant === 'primary' ? 'btn-primary' : 'btn-outline'}`}
+    className={`btn ${variant === 'primary' ? 'btn-primary' : 'btn-outline'} ${className}`}
   >
     {children}
-  </Link>
+  </a>
 );
 
 export default CtaButton;
