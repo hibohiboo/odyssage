@@ -28,4 +28,8 @@
   // デフォルトの設定はオフにしておく
   "typescript.format.enable": false,
   "javascript.format.enable": false,
+  // tailwindcssの設定
+  "files.associations": {
+    "*.css": "tailwindcss"
+ }
 }

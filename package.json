@@ -10,6 +10,7 @@
         "dev:backend": "cd apps/backend && bun run dev",
         "dev:frontend": "cd apps/frontend && bun run dev",
         "dev": "bunx --bun turbo dev",
+        "prebuild": "bun install", 
         "build": "bunx --bun turbo build",
         "ncu": "turbo ncu && ncu -u"
     },
@@ -23,5 +24,5 @@
         "prettier": "^3.5.3",
         "turbo": "^2.4.4"
     },
-    "packageManager": "bun@1.2.4"
+    "packageManager": "bun@1.2.5"
 }
