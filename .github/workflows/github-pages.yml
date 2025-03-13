@@ -57,7 +57,12 @@ jobs:
         run: bun install && bun run build
         working-directory: ./docs/redocly
 
-      # ドキュメント作成
+        # build storybook
+      - name: Build Storybook
+        run: bun install && bun run build-storybook
+        working-directory: ./packages/ui
+
+        # ドキュメント作成
       - name: Build with Astro
         run: |
           npm run astro build \
