@@ -10,6 +10,7 @@
         "dev:backend": "cd apps/backend && bun run dev",
         "dev:frontend": "cd apps/frontend && bun run dev",
         "dev": "bunx --bun turbo dev",
+        "prebuild": "bun install", 
         "build": "bunx --bun turbo build",
         "ncu": "turbo ncu && ncu -u"
     },
