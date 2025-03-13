@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    "./*": "./src/*.ts"
+    "./*": "./src/*.ts",
+    "./tailwind.css": "./src/styles/tailwind.css"
   },
   "scripts": {
     "ncu": "ncu -u",

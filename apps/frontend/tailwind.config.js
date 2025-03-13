@@ -6,7 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
     // UIパッケージのコンポーネントも含める
-    "../../packages/ui/src/**/*.{js,ts,jsx,tsx}"
+    "../../packages/ui/src/**/*.{ts,tsx}"
   ],
   // UIパッケージのテーマを継承
   presets: [uiPreset],
