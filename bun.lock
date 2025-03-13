@@ -97,6 +97,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@odyssage/schema": "workspace:*",
+        "@odyssage/ui": "workspace:*",
         "@reduxjs/toolkit": "^2.6.1",
         "firebase": "^11.4.0",
         "hono": "^4.7.4",
