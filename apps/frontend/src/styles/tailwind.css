@@ -1,2 +1,2 @@
 @import '@odyssage/ui/tailwind.css';
-@source "../../../../package/ui/**/*.{js,ts,jsx,tsx,mdx}";
+@source "../../../../packages/ui/**/*.{js,ts,jsx,tsx,mdx}";
