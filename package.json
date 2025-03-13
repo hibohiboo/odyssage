@@ -23,5 +23,5 @@
         "prettier": "^3.5.3",
         "turbo": "^2.4.4"
     },
-    "packageManager": "bun@1.2.4"
+    "packageManager": "bun@1.2.5"
 }
