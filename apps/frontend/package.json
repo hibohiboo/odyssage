@@ -28,16 +28,13 @@
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
-    "@tailwindcss/postcss": "^4.0.13",
+    "@tailwindcss/vite": "^4.0.14",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.0",
-    "autoprefixer": "^10.4.21",
     "globals": "^16.0.0",
     "msw": "^2.7.3",
     "npm-check-updates": "^17.1.15",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^4.0.13",
     "vite": "^6.2.1"
   },
   "msw": {
