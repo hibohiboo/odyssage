@@ -2,8 +2,8 @@
   "name": "odyssage-api",
   "version": "0.0.1",
   "dependencies": {
-    "@apiture/openapi-down-convert": "^0.14.0",
-    "@redocly/cli": "1.33.0"
+    "@apiture/openapi-down-convert": "^0.14.1",
+    "@redocly/cli": "1.33.1"
   },
   "private": true,
   "scripts": {
