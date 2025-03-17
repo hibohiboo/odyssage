@@ -26,6 +26,7 @@ export const MobileMenu = ({
             icon={link.icon}
             isActive={pathname === link.to}
             onClick={closeMenu}
+            isMobile={true}
           />
         ))}
       </nav>

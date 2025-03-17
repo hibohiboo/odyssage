@@ -7,4 +7,5 @@ export {
   Home,
   PlusCircle,
   User,
+  LoaderIcon,
 } from 'lucide-react';

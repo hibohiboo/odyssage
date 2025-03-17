@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import Navigation from './navigation';
 import { BookOpen, Home, PlusCircle, User } from 'lucide-react';
+import { BrowserRouter } from 'react-router';
 
 const navLinks = [
   { to: '/', label: 'ホーム', icon: Home },
@@ -16,6 +17,13 @@ const meta: Meta<typeof Navigation> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
 };
 
 export default meta;

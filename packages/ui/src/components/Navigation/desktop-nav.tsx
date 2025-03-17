@@ -9,7 +9,7 @@ export const DesktopNav = ({
   pathname: string;
   navLinks: NavLinkItem[];
 }) => (
-  <nav className="hidden md:flex items-center gap-6">
+  <nav className="hidden md:flex flex-row items-center gap-6">
     {navLinks.map((link) => (
       <NavLink
         key={link.to}
@@ -17,6 +17,7 @@ export const DesktopNav = ({
         label={link.label}
         icon={link.icon}
         isActive={pathname === link.to}
+        isMobile={false}
       />
     ))}
   </nav>
