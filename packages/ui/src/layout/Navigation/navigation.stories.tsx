@@ -11,7 +11,7 @@ const navLinks = [
 ];
 
 const meta: Meta<typeof Navigation> = {
-  title: 'Components/Navigation',
+  title: 'Layout/Navigation',
   component: Navigation,
   parameters: {
     layout: 'centered',
@@ -34,6 +34,11 @@ export const Default: Story = {
     navLinks,
     currentPath: '/',
   },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
 };
 
 export const Mobile: Story = {
@@ -53,5 +58,10 @@ export const Desktop: Story = {
   args: {
     navLinks,
     currentPath: '/about',
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'desktop',
+    },
   },
 };
