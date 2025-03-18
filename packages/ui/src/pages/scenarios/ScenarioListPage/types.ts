@@ -1,10 +1,12 @@
-export type Scenario = {
+export type ScenarioStatus = 'published' | 'draft' | 'private';
+
+export interface Scenario {
   id: string;
-  status: 'published' | 'draft' | 'private';
   title: string;
   description: string;
-  tags: string[];
   createdAt: string;
   updatedAt: string;
+  status: ScenarioStatus;
   usedByGMs: number;
-};
+  tags: string[];
+}

@@ -1,4 +1,4 @@
-import { ScenarioCard } from './ScenrioCard';
+import { ScenarioCard } from './ScenarioCard';
 import { Scenario } from './types';
 
 // シナリオリストコンポーネント
