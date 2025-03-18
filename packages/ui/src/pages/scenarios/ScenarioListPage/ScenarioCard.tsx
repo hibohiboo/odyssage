@@ -51,9 +51,8 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
           <div className="flex items-center gap-4">
             <div className="flex items-center">
               <Clock className="h-3 w-3 mr-1" />
-              <span>作成: {scenario.createdAt}</span>
+              <div>更新: {scenario.updatedAt}</div>
             </div>
-            <div>更新: {scenario.updatedAt}</div>
           </div>
           {scenario.status === 'published' && scenario.usedByGMs > 0 && (
             <div className="flex items-center">

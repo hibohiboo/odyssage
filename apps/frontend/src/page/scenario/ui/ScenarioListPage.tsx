@@ -1,6 +1,7 @@
 import type { ScnearioListItem } from '@odyssage/schema/src/schema';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
+import { ScenarioListPage as ScenarioListPageUI } from '@odyssage/ui/pages';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
@@ -50,12 +51,17 @@ const ScenarioListPage = () => {
     fetchScenarios(uid);
   }, [uid]);
   return (
-    <div>
-      <h1>Scenario List</h1>
-      <ul>{scenarios.map(createScenario)}</ul>
-      <h2>My Scenarios</h2>
-      <ul>{myScenarios.map(createScenario)}</ul>
-    </div>
+    <ScenarioListPageUI
+      scenarios={[...scenarios, ...myScenarios].map((s) => ({
+        id: s.id,
+        title: s.title,
+        description: '',
+        updatedAt: '',
+        status: 'published',
+        usedByGMs: 0,
+        tags: [],
+      }))}
+    />
   );
 };
 
