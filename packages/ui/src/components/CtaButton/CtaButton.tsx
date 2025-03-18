@@ -1,10 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export interface CtaButtonProps {
   /**
    * URL the button will navigate to
    */
-  href: string;
+  to: string;
   /**
    * Button style variant
    */
@@ -23,17 +24,17 @@ export interface CtaButtonProps {
  * Call-to-action button component with built-in navigation link
  */
 export const CtaButton = ({
-  href,
+  to,
   variant = 'primary',
   children,
   className = '',
 }: CtaButtonProps) => (
-  <a
-    href={href}
+  <Link
+    to={to}
     className={`btn ${variant === 'primary' ? 'btn-primary' : 'btn-outline'} ${className}`}
   >
     {children}
-  </a>
+  </Link>
 );
 
 export default CtaButton;
