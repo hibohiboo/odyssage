@@ -1,65 +1,55 @@
-import { Given, When, Then } from '@cucumber/cucumber';
-import { expect } from 'chai';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
-import { chromium } from 'playwright';
+import { Given, When, Then, Before } from '@cucumber/cucumber';
+import { chromium, expect } from '@playwright/test';
 
-Given('システムにログインしている', async function () {
-  // Implement login logic here
-  this.userId = '123'; // Example user ID
+Before(async function (this) {
+  const browser = await chromium.launch({ headless: false }); // headless: true にするとブラウザが表示されない
+  const context = await browser.newContext();
+  this.page = await context.newPage();
 });
 
-When('{string} という名前でシナリオを作成する', async function (title) {
-  this.scenario = {
-    id: 'scenario-1',
-    title,
-    overview: '',
-    tags: [],
-  };
+Given('アプリが起動している', async function (this) {
+  await this.page.goto('http://localhost:5173');
 });
 
-When('概要を {string} と設定する', async function (overview) {
-  this.scenario.overview = overview;
+When(
+  'ユーザーが「 {string} 」ボタンをクリックする',
+  async function (this, text) {
+    const { page } = this;
+    await page.getByRole('link', { name: text }).click();
+  },
+);
+
+When(
+  '{string} という名前でシナリオを作成する',
+  async function (this, scenarioName) {
+    const { page } = this;
+    await page
+      .getByRole('textbox', { name: 'シナリオタイトル:' })
+      .fill(scenarioName);
+  },
+);
+Then('{string}と画面に表示される', async function (this, text) {
+  const { page } = this;
+  await expect(page.getByText(text)).toBeVisible();
 });
 
-When('タグに {string} を追加する', async function (tag) {
-  this.scenario.tags.push(tag);
+When('概要を {string} と設定する', async function (this, scenarioDetail) {
+  const { page } = this;
+  await page
+    .getByRole('textbox', { name: 'シナリオ概要:' })
+    .fill(scenarioDetail);
+  await page.getByRole('button', { name: 'シナリオ作成' }).click();
 });
 
-Then('シナリオが作成され、システムは成功メッセージを返す', async function () {
-  const response = await apiClient.post(`/user/${this.userId}/scenario`, this.scenario);
-  expect(response.status).to.equal(201);
-  const responseBody = await response.json();
-  expect(responseBody.message).to.equal('Scenario created successfully');
+When('「シナリオ作成」ボタンをクリックする', async function (this) {
+  const { page } = this;
+  await page.getByRole('button', { name: 'シナリオ作成' }).click();
 });
 
-Then('シナリオ一覧に新しいシナリオが表示される', async function () {
-  const response = await apiClient.get('/scenarios');
-  const scenarios = await response.json();
-  const createdScenario = scenarios.find((scenario) => scenario.id === this.scenario.id);
-  expect(createdScenario).to.not.be.undefined;
-  expect(createdScenario.title).to.equal(this.scenario.title);
-});
-
-Given('I am on the scenario creation page', async function () {
-  this.browser = await chromium.launch();
-  this.page = await this.browser.newPage();
-  await this.page.goto('http://localhost:5173/create-scenario');
-});
-
-When('I fill in the scenario form with {string}, {string}, and {string}', async function (title, overview, tags) {
-  await this.page.fill('#id', 'scenario-1');
-  await this.page.fill('#title', title);
-  await this.page.fill('#overview', overview);
-  await this.page.fill('#tags', tags);
-});
-
-When('I submit the scenario form', async function () {
-  await this.page.click('button[type="submit"]');
-});
-
-Then('I should see a success message', async function () {
-  await this.page.waitForSelector('text=Scenario created successfully!');
-  const successMessage = await this.page.textContent('text=Scenario created successfully!');
-  expect(successMessage).to.equal('Scenario created successfully!');
-  await this.browser.close();
-});
+Then(
+  '作成したシナリオ{string}がシナリオ一覧に表示される',
+  async function (this, scenarioName) {
+    const { page } = this;
+    await expect(page.getByText(scenarioName).nth(0)).toBeVisible();
+  },
+);

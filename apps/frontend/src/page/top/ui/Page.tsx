@@ -1,7 +1,6 @@
 import { Map, BookOpen, Users, ArrowRight } from '@odyssage/ui/icons';
 import { CtaButton, FeatureCard } from '@odyssage/ui/index';
 import { TopDecoration, Footer } from '@odyssage/ui/top';
-import { Link } from 'react-router';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
@@ -42,12 +41,11 @@ export const Page = () => {
               Odyssageで、あなただけの冒険を創り出し、共有しましょう。
               プレイヤーは自由に物語を進め、GMは非同期でシナリオを管理できます。
             </p>
-            <Link to="/scenario/list">
-              <CtaButton href="" variant="primary">
-                シナリオ一覧へ
-                <ArrowRight className="ml-2 h-5 w-5 inline" />
-              </CtaButton>
-            </Link>
+
+            <CtaButton to="/creator/scenario/list" variant="primary">
+              シナリオ一覧へ
+              <ArrowRight className="ml-2 h-5 w-5 inline" />
+            </CtaButton>
           </div>
         </div>
 
@@ -89,14 +87,13 @@ export const Page = () => {
             共有しましょう。新しい冒険があなたを待っています。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/scenario/create">
-              <CtaButton href="/create">シナリオを作成する</CtaButton>
-            </Link>
-            <Link to="/scenario/list">
-              <CtaButton href="/dashboard" variant="outline">
-                シナリオ一覧を見る
-              </CtaButton>
-            </Link>
+            <CtaButton to="/creator/scenario/create">
+              シナリオを作成する
+            </CtaButton>
+
+            <CtaButton to="/creator/scenario/list" variant="outline">
+              シナリオ一覧を見る
+            </CtaButton>
           </div>
         </div>
       </section>

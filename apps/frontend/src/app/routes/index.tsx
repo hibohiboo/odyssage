@@ -35,19 +35,24 @@ export const createRouter = () =>
           element: <ChangeNamePage />,
         },
         {
-          path: 'scenario',
+          path: 'creator',
           children: [
             {
-              path: 'create',
-              element: <ScenarioCreatePage />,
-            },
-            {
-              path: 'list',
-              element: <ScenarioListPage />,
-            },
-            {
-              path: 'edit/:id',
-              element: <ScenarioEditPage />,
+              path: 'scenario',
+              children: [
+                {
+                  path: 'create',
+                  element: <ScenarioCreatePage />,
+                },
+                {
+                  path: 'list',
+                  element: <ScenarioListPage />,
+                },
+                {
+                  path: ':id/edit',
+                  element: <ScenarioEditPage />,
+                },
+              ],
             },
           ],
         },

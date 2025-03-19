@@ -1,1 +1,11 @@
-export { Compass, Map, BookOpen, Users, ArrowRight } from 'lucide-react';
+export {
+  Compass,
+  Map,
+  BookOpen,
+  Users,
+  ArrowRight,
+  Home,
+  PlusCircle,
+  User,
+  LoaderIcon,
+} from 'lucide-react';
