@@ -1,11 +1,11 @@
 export type ScenarioStatus = 'published' | 'draft' | 'private';
 
 export interface Scenario {
-  id: string;
-  title: string;
-  description: string;
-  updatedAt: string;
-  status: ScenarioStatus;
-  usedByGMs: number;
-  tags: string[];
+  readonly id: string;
+  readonly title: string;
+  readonly description: string;
+  readonly updatedAt: string;
+  readonly status: ScenarioStatus;
+  readonly usedByGMs: number;
+  readonly tags: string[];
 }

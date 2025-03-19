@@ -56,7 +56,7 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
         <div className="flex flex-wrap gap-2 mb-3">
           {scenario.tags.map((tag, index) => (
             <span
-              key={index}
+              key={`${tag}-${index}`}
               className="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-full"
             >
               {tag}

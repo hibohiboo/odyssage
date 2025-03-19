@@ -8,7 +8,7 @@ import { PlusCircle } from 'lucide-react';
 export default function CreatorScenarios({
   scenarios,
 }: {
-  scenarios: Scenario[];
+  readonly scenarios: Scenario[];
 }) {
   return (
     <div className="container mx-auto px-4 py-8">

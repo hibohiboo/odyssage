@@ -2,8 +2,8 @@ function TabButton({
   children,
   active = false,
 }: {
-  children: React.ReactNode;
-  active?: boolean;
+  readonly children: React.ReactNode;
+  readonly active?: boolean;
 }) {
   if (active) {
     return (
