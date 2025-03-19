@@ -12,9 +12,44 @@ Given('アプリが起動している', async function (this) {
 });
 
 When(
-  'ユーザーが「新規シナリオ作成」ボタンをクリックする',
-  async function (this) {
+  'ユーザーが「 {string} 」ボタンをクリックする',
+  async function (this, text) {
     const { page } = this;
-    await page.getByRole('link', { name: 'シナリオ新規作成' }).click();
+    await page.getByRole('link', { name: text }).click();
+  },
+);
+
+When(
+  '{string} という名前でシナリオを作成する',
+  async function (this, scenarioName) {
+    const { page } = this;
+    await page
+      .getByRole('textbox', { name: 'シナリオタイトル:' })
+      .fill(scenarioName);
+  },
+);
+Then('{string}と画面に表示される', async function (this, text) {
+  const { page } = this;
+  await expect(page.getByText(text)).toBeVisible();
+});
+
+When('概要を {string} と設定する', async function (this, scenarioDetail) {
+  const { page } = this;
+  await page
+    .getByRole('textbox', { name: 'シナリオ概要:' })
+    .fill(scenarioDetail);
+  await page.getByRole('button', { name: 'シナリオ作成' }).click();
+});
+
+When('「シナリオ作成」ボタンをクリックする', async function (this) {
+  const { page } = this;
+  await page.getByRole('button', { name: 'シナリオ作成' }).click();
+});
+
+Then(
+  '作成したシナリオ{string}がシナリオ一覧に表示される',
+  async function (this, scenarioName) {
+    const { page } = this;
+    await expect(page.getByText(scenarioName)).toBeVisible();
   },
 );
