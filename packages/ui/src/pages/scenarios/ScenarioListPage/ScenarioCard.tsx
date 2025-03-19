@@ -6,8 +6,35 @@ interface ScenarioActionsProps {
   readonly scenario: Scenario;
 }
 
+// ステータスに応じたクラス名を取得
+const getStatusClassName = (status: string): string => {
+  switch (status) {
+    case 'published':
+      return 'bg-green-100 text-green-800';
+    case 'draft':
+      return 'bg-amber-100 text-amber-800';
+    default:
+      return 'bg-stone-100 text-stone-800';
+  }
+};
+
+// ステータスに応じたテキストを取得
+const getStatusText = (status: string): string => {
+  switch (status) {
+    case 'published':
+      return '公開中';
+    case 'draft':
+      return '下書き';
+    default:
+      return '非公開';
+  }
+};
+
 // シナリオカードコンポーネント
 export function ScenarioCard({ scenario }: ScenarioActionsProps) {
+  const statusClassName = getStatusClassName(scenario.status);
+  const statusText = getStatusText(scenario.status);
+
   return (
     <div className="card overflow-hidden hover:shadow-md transition-shadow">
       <div className="p-5">
@@ -16,19 +43,9 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
             {scenario.title}
           </h3>
           <div
-            className={`px-2 py-1 rounded-full text-xs font-medium ${
-              scenario.status === 'published'
-                ? 'bg-green-100 text-green-800'
-                : scenario.status === 'draft'
-                  ? 'bg-amber-100 text-amber-800'
-                  : 'bg-stone-100 text-stone-800'
-            }`}
+            className={`px-2 py-1 rounded-full text-xs font-medium ${statusClassName}`}
           >
-            {scenario.status === 'published'
-              ? '公開中'
-              : scenario.status === 'draft'
-                ? '下書き'
-                : '非公開'}
+            {statusText}
           </div>
         </div>
 
