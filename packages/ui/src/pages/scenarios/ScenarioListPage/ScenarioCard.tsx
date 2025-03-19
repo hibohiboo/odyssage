@@ -3,7 +3,7 @@ import { ScenarioActions } from './ScenarioAction';
 import { Scenario } from './types';
 
 interface ScenarioActionsProps {
-  scenario: Scenario;
+  readonly scenario: Scenario;
 }
 
 // シナリオカードコンポーネント

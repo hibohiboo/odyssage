@@ -5,7 +5,7 @@ import { Link } from 'react-router';
 export function ScenarioActions({
   scenario,
 }: {
-  scenario: { id: string; status: string };
+  scenario: { readonly id: string; readonly status: string };
 }) {
   return (
     <div className="bg-stone-50 p-3 flex justify-between">
