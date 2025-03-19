@@ -50,6 +50,6 @@ Then(
   '作成したシナリオ{string}がシナリオ一覧に表示される',
   async function (this, scenarioName) {
     const { page } = this;
-    await expect(page.getByText(scenarioName)).toBeVisible();
+    await expect(page.getByText(scenarioName).nth(0)).toBeVisible();
   },
 );
