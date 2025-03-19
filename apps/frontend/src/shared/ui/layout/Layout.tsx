@@ -29,8 +29,12 @@ export const Layout: React.FC = () => {
   const navLinks = useMemo(() => {
     const defaultNavLinks = [
       { to: '/', label: 'ホーム', icon: Home },
-      { to: '/scenario/list', label: 'シナリオ一覧', icon: BookOpen },
-      { to: '/scenario/create', label: 'シナリオ新規作成', icon: PlusCircle },
+      { to: '/creator/scenario/list', label: 'シナリオ一覧', icon: BookOpen },
+      {
+        to: '/creator/scenario/create',
+        label: 'シナリオ新規作成',
+        icon: PlusCircle,
+      },
     ];
     if (user == null) {
       return [{ to: '/', label: 'ログイン中', icon: LoaderIcon }];
