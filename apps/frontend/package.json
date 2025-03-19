@@ -21,7 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "react-router": "^7.3.0",
+    "react-router": "^7.4.0",
     "swr": "^2.3.3",
     "uuid": "^11.1.0"
   },
@@ -29,7 +29,7 @@
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
     "@tailwindcss/vite": "^4.0.14",
-    "@types/react": "^19.0.11",
+    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react-swc": "^3.8.1",
     "globals": "^16.0.0",
