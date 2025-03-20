@@ -31,6 +31,10 @@ export interface ScenarioEditProps {
   onPlayerCountChange?: (value: string) => void;
   playtime?: string;
   onPlaytimeChange?: (value: string) => void;
+
+  // Option
+  isViewSidebar?: boolean;
+  isViewTags?: boolean;
 }
 
 export default function ScenarioEdit({
@@ -52,6 +56,8 @@ export default function ScenarioEdit({
   onPlayerCountChange,
   playtime = 'medium',
   onPlaytimeChange,
+  isViewSidebar = false,
+  isViewTags = false,
 }: ScenarioEditProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -102,46 +108,47 @@ export default function ScenarioEdit({
               rows={5}
             />
           </FormSection>
-
-          <FormSection title="タグ">
-            <div className="flex flex-wrap gap-2 mb-4">
-              {tags.map((tag, index) => (
-                <div
-                  key={index}
-                  className="flex items-center bg-amber-50 text-amber-700 px-3 py-1 rounded-full"
-                >
-                  <span>{tag}</span>
-                  <button
-                    onClick={() => onRemoveTag(tag)}
-                    className="ml-2 text-amber-500 hover:text-amber-700"
+          {isViewTags && (
+            <FormSection title="タグ">
+              <div className="flex flex-wrap gap-2 mb-4">
+                {tags.map((tag, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center bg-amber-50 text-amber-700 px-3 py-1 rounded-full"
                   >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+                    <span>{tag}</span>
+                    <button
+                      onClick={() => onRemoveTag(tag)}
+                      className="ml-2 text-amber-500 hover:text-amber-700"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
 
-              {tags.length === 0 && (
-                <p className="text-sm text-stone-500">
-                  タグを追加してシナリオを分類しましょう
-                </p>
-              )}
-            </div>
+                {tags.length === 0 && (
+                  <p className="text-sm text-stone-500">
+                    タグを追加してシナリオを分類しましょう
+                  </p>
+                )}
+              </div>
 
-            <div className="flex">
-              <input
-                type="text"
-                value={newTag}
-                onChange={(e) => onNewTagChange(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="新しいタグを追加"
-                className="input flex-1 mr-2"
-              />
-              <button onClick={onAddTag} className="btn btn-outline">
-                <Tag className="mr-2 h-4 w-4" />
-                追加
-              </button>
-            </div>
-          </FormSection>
+              <div className="flex">
+                <input
+                  type="text"
+                  value={newTag}
+                  onChange={(e) => onNewTagChange(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="新しいタグを追加"
+                  className="input flex-1 mr-2"
+                />
+                <button onClick={onAddTag} className="btn btn-outline">
+                  <Tag className="mr-2 h-4 w-4" />
+                  追加
+                </button>
+              </div>
+            </FormSection>
+          )}
 
           <FormSection title="公開設定">
             <div className="space-y-4">
@@ -200,92 +207,99 @@ export default function ScenarioEdit({
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          <div className="card p-6 mb-6">
-            <h2 className="text-lg font-serif font-medium text-amber-800 mb-4">
-              シナリオ設定
-            </h2>
+          {isViewSidebar && (
+            <>
+              <div className="card p-6 mb-6">
+                <h2 className="text-lg font-serif font-medium text-amber-800 mb-4">
+                  シナリオ設定
+                </h2>
 
-            <div className="space-y-4">
-              <div>
-                <label
-                  htmlFor="difficulty"
-                  className="block text-sm font-medium text-stone-700 mb-1"
-                >
-                  難易度
-                </label>
-                <select
-                  id="difficulty"
-                  className="input w-full"
-                  value={difficulty}
-                  onChange={(e) => onDifficultyChange?.(e.target.value)}
-                >
-                  <option value="easy">簡単</option>
-                  <option value="normal">普通</option>
-                  <option value="hard">難しい</option>
-                  <option value="very-hard">非常に難しい</option>
-                </select>
+                <div className="space-y-4">
+                  <div>
+                    <label
+                      htmlFor="difficulty"
+                      className="block text-sm font-medium text-stone-700 mb-1"
+                    >
+                      難易度
+                    </label>
+                    <select
+                      id="difficulty"
+                      className="input w-full"
+                      value={difficulty}
+                      onChange={(e) => onDifficultyChange?.(e.target.value)}
+                    >
+                      <option value="easy">簡単</option>
+                      <option value="normal">普通</option>
+                      <option value="hard">難しい</option>
+                      <option value="very-hard">非常に難しい</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="players"
+                      className="block text-sm font-medium text-stone-700 mb-1"
+                    >
+                      推奨プレイヤー数
+                    </label>
+                    <select
+                      id="players"
+                      className="input w-full"
+                      value={playerCount}
+                      onChange={(e) => onPlayerCountChange?.(e.target.value)}
+                    >
+                      <option value="1">1人</option>
+                      <option value="2-3">2〜3人</option>
+                      <option value="4-5">4〜5人</option>
+                      <option value="6+">6人以上</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="playtime"
+                      className="block text-sm font-medium text-stone-700 mb-1"
+                    >
+                      想定プレイ時間
+                    </label>
+                    <select
+                      id="playtime"
+                      className="input w-full"
+                      value={playtime}
+                      onChange={(e) => onPlaytimeChange?.(e.target.value)}
+                    >
+                      <option value="short">短め（〜30分）</option>
+                      <option value="medium">普通（30分〜1時間）</option>
+                      <option value="long">長め（1時間〜2時間）</option>
+                      <option value="very-long">非常に長い（2時間以上）</option>
+                    </select>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label
-                  htmlFor="players"
-                  className="block text-sm font-medium text-stone-700 mb-1"
-                >
-                  推奨プレイヤー数
-                </label>
-                <select
-                  id="players"
-                  className="input w-full"
-                  value={playerCount}
-                  onChange={(e) => onPlayerCountChange?.(e.target.value)}
-                >
-                  <option value="1">1人</option>
-                  <option value="2-3">2〜3人</option>
-                  <option value="4-5">4〜5人</option>
-                  <option value="6+">6人以上</option>
-                </select>
+              <div className="card p-6">
+                <h2 className="text-lg font-serif font-medium text-amber-800 mb-4">
+                  ヒント
+                </h2>
+
+                <div className="text-sm text-stone-600 space-y-3">
+                  <p>
+                    ✓ シナリオのタイトルは魅力的で記憶に残るものにしましょう
+                  </p>
+                  <p>
+                    ✓
+                    概要は簡潔に、GMとプレイヤーの興味を引く内容を心がけましょう
+                  </p>
+                  <p>✓ タグを追加すると、シナリオが検索されやすくなります</p>
+                  <p>
+                    ✓
+                    シナリオを保存した後、フローチャートエディタでストーリーの分岐を作成できます
+                  </p>
+                  <p>✓ 公開前に必ずプレビューで確認しましょう</p>
+                </div>
               </div>
-
-              <div>
-                <label
-                  htmlFor="playtime"
-                  className="block text-sm font-medium text-stone-700 mb-1"
-                >
-                  想定プレイ時間
-                </label>
-                <select
-                  id="playtime"
-                  className="input w-full"
-                  value={playtime}
-                  onChange={(e) => onPlaytimeChange?.(e.target.value)}
-                >
-                  <option value="short">短め（〜30分）</option>
-                  <option value="medium">普通（30分〜1時間）</option>
-                  <option value="long">長め（1時間〜2時間）</option>
-                  <option value="very-long">非常に長い（2時間以上）</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <div className="card p-6">
-            <h2 className="text-lg font-serif font-medium text-amber-800 mb-4">
-              ヒント
-            </h2>
-
-            <div className="text-sm text-stone-600 space-y-3">
-              <p>✓ シナリオのタイトルは魅力的で記憶に残るものにしましょう</p>
-              <p>
-                ✓ 概要は簡潔に、GMとプレイヤーの興味を引く内容を心がけましょう
-              </p>
-              <p>✓ タグを追加すると、シナリオが検索されやすくなります</p>
-              <p>
-                ✓
-                シナリオを保存した後、フローチャートエディタでストーリーの分岐を作成できます
-              </p>
-              <p>✓ 公開前に必ずプレビューで確認しましょう</p>
-            </div>
-          </div>
+            </>
+          )}
         </div>
       </div>
     </div>
