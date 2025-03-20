@@ -3,7 +3,7 @@ import { ScenarioHeader } from './ScenarioHeader';
 import { PlusCircle } from 'lucide-react';
 
 const meta: Meta<typeof ScenarioHeader> = {
-  title: 'Pages/Scenarios/ScenarioHeader',
+  title: 'Pages/Scenarios/ScenarioList/ScenarioHeader',
   component: ScenarioHeader,
   parameters: {
     layout: 'centered',

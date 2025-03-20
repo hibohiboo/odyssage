@@ -4,7 +4,7 @@ import { Scenario } from './types';
 import { BrowserRouter } from 'react-router';
 
 const meta: Meta<typeof ScenarioCard> = {
-  title: 'Pages/Scenarios/ScenarioCard',
+  title: 'Pages/Scenarios/ScenarioList/ScenarioCard',
   component: ScenarioCard,
   parameters: {
     layout: 'padded',

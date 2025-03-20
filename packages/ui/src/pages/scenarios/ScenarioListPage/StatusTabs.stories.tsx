@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { StatusTabs } from './StatusTabs';
 
 const meta: Meta<typeof StatusTabs> = {
-  title: 'Pages/Scenarios/StatusTabs',
+  title: 'Pages/Scenarios/ScenarioList/StatusTabs',
   component: StatusTabs,
   parameters: {
     layout: 'padded',

@@ -4,7 +4,7 @@ import { Scenario } from './types';
 import { BrowserRouter } from 'react-router';
 
 const meta: Meta<typeof ScenarioListPage> = {
-  title: 'Pages/Scenarios/ScenarioListPage',
+  title: 'Pages/Scenarios/ScenarioList/ScenarioListPage',
   component: ScenarioListPage,
   parameters: {
     layout: 'fullscreen',
