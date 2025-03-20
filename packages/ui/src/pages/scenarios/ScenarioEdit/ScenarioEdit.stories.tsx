@@ -13,6 +13,8 @@ const ScenarioEditWithState = ({
   initialDifficulty = 'normal',
   initialPlayerCount = '4-5',
   initialPlaytime = 'medium',
+  isViewSidebar = false,
+  isViewTags = false,
 }) => {
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
@@ -57,6 +59,8 @@ const ScenarioEditWithState = ({
       onPlayerCountChange={setPlayerCount}
       playtime={playtime}
       onPlaytimeChange={setPlaytime}
+      isViewSidebar={isViewSidebar}
+      isViewTags={isViewTags}
     />
   );
 };
@@ -137,4 +141,21 @@ export const PropsExample: Story = {
     playtime: 'medium',
     onPlaytimeChange: () => console.log('プレイ時間変更'),
   },
+};
+
+// Options showcase example
+export const WithOptions: Story = {
+  render: () => (
+    <ScenarioEditWithState
+      initialTitle="オプション表示サンプル"
+      initialDescription="このストーリーは様々なオプションの選択肢を表示するためのサンプルです。難易度、プレイヤー数、プレイ時間などの設定を確認できます。"
+      initialTags={['サンプル', 'オプション', '設定']}
+      initialVisibility="public"
+      initialDifficulty="easy"
+      initialPlayerCount="6+"
+      initialPlaytime="short"
+      isViewSidebar={true}
+      isViewTags={true}
+    />
+  ),
 };
