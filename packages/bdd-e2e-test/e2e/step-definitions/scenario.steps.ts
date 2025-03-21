@@ -12,7 +12,7 @@ Given('アプリが起動している', async function (this) {
 });
 
 When(
-  'ユーザーが「 {string} 」ボタンをクリックする',
+  'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
     await page.getByRole('link', { name: text }).click();
@@ -24,7 +24,7 @@ When(
   async function (this, scenarioName) {
     const { page } = this;
     await page
-      .getByRole('textbox', { name: 'シナリオタイトル:' })
+      .getByRole('textbox', { name: 'シナリオタイトル' })
       .fill(scenarioName);
   },
 );
@@ -36,14 +36,14 @@ Then('{string}と画面に表示される', async function (this, text) {
 When('概要を {string} と設定する', async function (this, scenarioDetail) {
   const { page } = this;
   await page
-    .getByRole('textbox', { name: 'シナリオ概要:' })
+    .getByRole('textbox', { name: 'シナリオ概要' })
     .fill(scenarioDetail);
-  await page.getByRole('button', { name: 'シナリオ作成' }).click();
+  await page.getByRole('button', { name: '保存する' }).click();
 });
 
-When('「シナリオ作成」ボタンをクリックする', async function (this) {
+When('「保存する」ボタンをクリックする', async function (this) {
   const { page } = this;
-  await page.getByRole('button', { name: 'シナリオ作成' }).click();
+  await page.getByRole('button', { name: '保存する' }).click();
 });
 
 Then(

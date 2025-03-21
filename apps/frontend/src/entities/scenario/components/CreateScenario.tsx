@@ -1,3 +1,4 @@
+import { ScenarioEditPage } from '@odyssage/ui/page-ui';
 import { FormEventHandler } from 'react';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
@@ -23,18 +24,7 @@ const CreateScenario = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">シナリオタイトル:</label>
-        <input required type="text" id="title" name="title" />
-      </div>
-      <div>
-        <label htmlFor="overview">シナリオ概要:</label>
-        <textarea id="overview" name="overview" />
-      </div>
-
-      <button className="button is-primary" type="submit" disabled={loading}>
-        {loading ? 'Creating...' : 'シナリオ作成'}
-      </button>
+      <ScenarioEditPage loading={loading} />
       {success && <p>Scenario created successfully!</p>}
     </form>
   );

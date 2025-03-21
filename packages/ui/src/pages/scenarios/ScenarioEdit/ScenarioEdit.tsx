@@ -9,19 +9,20 @@ import { Link } from 'react-router';
 
 export interface ScenarioEditProps {
   // State props
-  title: string;
-  description: string;
-  tags: string[];
-  newTag: string;
-  visibility: 'private' | 'public';
+  title?: string;
+  description?: string;
+  tags?: string[];
+  newTag?: string;
+  visibility?: 'private' | 'public';
+  loading?: boolean;
 
   // Handler props
-  onTitleChange: (value: string) => void;
-  onDescriptionChange: (value: string) => void;
-  onNewTagChange: (value: string) => void;
-  onVisibilityChange: (value: 'private' | 'public') => void;
-  onAddTag: () => void;
-  onRemoveTag: (tagToRemove: string) => void;
+  onTitleChange?: (value: string) => void;
+  onDescriptionChange?: (value: string) => void;
+  onNewTagChange?: (value: string) => void;
+  onVisibilityChange?: (value: 'private' | 'public') => void;
+  onAddTag?: () => void;
+  onRemoveTag?: (tagToRemove: string) => void;
   onSave?: () => void;
 
   // Additional settings props
@@ -50,26 +51,51 @@ export default function ScenarioEdit({
   onAddTag,
   onRemoveTag,
   onSave,
-  difficulty = 'normal',
+  difficulty,
   onDifficultyChange,
-  playerCount = '4-5',
+  playerCount,
   onPlayerCountChange,
-  playtime = 'medium',
+  playtime,
   onPlaytimeChange,
-  isViewSidebar = false,
-  isViewTags = false,
+  isViewSidebar,
+  isViewTags,
+  loading,
 }: ScenarioEditProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      onAddTag();
+      onAddTag?.();
     }
   };
+
+  // Safe handlers that check for undefined
+  const handleTitleChange = (value: string) => onTitleChange?.(value);
+  const handleDescriptionChange = (value: string) =>
+    onDescriptionChange?.(value);
+  const handleNewTagChange = (value: string) => onNewTagChange?.(value);
+  const handleVisibilityChange = (value: 'private' | 'public') =>
+    onVisibilityChange?.(value);
+  const handleAddTag = () => onAddTag?.();
+  const handleRemoveTag = (tag: string) => onRemoveTag?.(tag);
+  const handleSave = () => onSave?.();
+  const handleDifficultyChange = (value: string) => onDifficultyChange?.(value);
+  const handlePlayerCountChange = (value: string) =>
+    onPlayerCountChange?.(value);
+  const handlePlaytimeChange = (value: string) => onPlaytimeChange?.(value);
+
+  // Use actual values or fallbacks when rendering
+  const actualTags = tags || [];
+  const actualVisibility = visibility || 'private';
+  const actualDifficulty = difficulty || 'normal';
+  const actualPlayerCount = playerCount || '4-5';
+  const actualPlaytime = playtime || 'medium';
+  const shouldViewSidebar = isViewSidebar || false;
+  const shouldViewTags = isViewTags || false;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <Link
-        to="/creator/scenarios"
+        to="/creator/scenario/list"
         className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-1" />
@@ -81,10 +107,18 @@ export default function ScenarioEdit({
           新規シナリオ作成
         </h1>
 
-        <button className="btn btn-primary" onClick={onSave}>
-          <Save className="mr-2 h-4 w-4" />
-          保存する
-        </button>
+        <div
+          className={`${!shouldViewSidebar ? 'md:mr-auto lg:mr-[calc(33.333333%-1rem)]' : ''}`}
+        >
+          <button
+            className="btn btn-primary"
+            onClick={handleSave}
+            type="submit"
+          >
+            <Save className="mr-2 h-4 w-4" />
+            {loading ? 'Creating...' : '保存する'}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -95,30 +129,30 @@ export default function ScenarioEdit({
               id="title"
               label="シナリオタイトル"
               value={title}
-              onChange={(e) => onTitleChange(e.target.value)}
+              onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="冒険の名前を入力してください"
             />
 
             <FormTextArea
-              id="description"
+              id="overview"
               label="シナリオ概要"
               value={description}
-              onChange={(e) => onDescriptionChange(e.target.value)}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
               placeholder="シナリオの概要や背景を入力してください"
               rows={5}
             />
           </FormSection>
-          {isViewTags && (
+          {shouldViewTags && (
             <FormSection title="タグ">
               <div className="flex flex-wrap gap-2 mb-4">
-                {tags.map((tag, index) => (
+                {actualTags.map((tag, index) => (
                   <div
                     key={index}
                     className="flex items-center bg-amber-50 text-amber-700 px-3 py-1 rounded-full"
                   >
                     <span>{tag}</span>
                     <button
-                      onClick={() => onRemoveTag(tag)}
+                      onClick={() => handleRemoveTag(tag)}
                       className="ml-2 text-amber-500 hover:text-amber-700"
                     >
                       <X className="h-3 w-3" />
@@ -126,7 +160,7 @@ export default function ScenarioEdit({
                   </div>
                 ))}
 
-                {tags.length === 0 && (
+                {actualTags.length === 0 && (
                   <p className="text-sm text-stone-500">
                     タグを追加してシナリオを分類しましょう
                   </p>
@@ -137,12 +171,12 @@ export default function ScenarioEdit({
                 <input
                   type="text"
                   value={newTag}
-                  onChange={(e) => onNewTagChange(e.target.value)}
+                  onChange={(e) => handleNewTagChange(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="新しいタグを追加"
                   className="input flex-1 mr-2"
                 />
-                <button onClick={onAddTag} className="btn btn-outline">
+                <button onClick={handleAddTag} className="btn btn-outline">
                   <Tag className="mr-2 h-4 w-4" />
                   追加
                 </button>
@@ -158,8 +192,8 @@ export default function ScenarioEdit({
                     id="private"
                     type="radio"
                     name="visibility"
-                    checked={visibility === 'private'}
-                    onChange={() => onVisibilityChange('private')}
+                    checked={actualVisibility === 'private'}
+                    onChange={() => handleVisibilityChange('private')}
                     className="h-4 w-4 text-amber-700 border-stone-300 focus:ring-amber-500"
                   />
                 </div>
@@ -183,8 +217,8 @@ export default function ScenarioEdit({
                     id="public"
                     type="radio"
                     name="visibility"
-                    checked={visibility === 'public'}
-                    onChange={() => onVisibilityChange('public')}
+                    checked={actualVisibility === 'public'}
+                    onChange={() => handleVisibilityChange('public')}
                     className="h-4 w-4 text-amber-700 border-stone-300 focus:ring-amber-500"
                   />
                 </div>
@@ -207,7 +241,7 @@ export default function ScenarioEdit({
 
         {/* Sidebar */}
         <div className="lg:col-span-1">
-          {isViewSidebar && (
+          {shouldViewSidebar && (
             <>
               <div className="card p-6 mb-6">
                 <h2 className="text-lg font-serif font-medium text-amber-800 mb-4">
@@ -225,8 +259,8 @@ export default function ScenarioEdit({
                     <select
                       id="difficulty"
                       className="input w-full"
-                      value={difficulty}
-                      onChange={(e) => onDifficultyChange?.(e.target.value)}
+                      value={actualDifficulty}
+                      onChange={(e) => handleDifficultyChange(e.target.value)}
                     >
                       <option value="easy">簡単</option>
                       <option value="normal">普通</option>
@@ -245,8 +279,8 @@ export default function ScenarioEdit({
                     <select
                       id="players"
                       className="input w-full"
-                      value={playerCount}
-                      onChange={(e) => onPlayerCountChange?.(e.target.value)}
+                      value={actualPlayerCount}
+                      onChange={(e) => handlePlayerCountChange(e.target.value)}
                     >
                       <option value="1">1人</option>
                       <option value="2-3">2〜3人</option>
@@ -265,8 +299,8 @@ export default function ScenarioEdit({
                     <select
                       id="playtime"
                       className="input w-full"
-                      value={playtime}
-                      onChange={(e) => onPlaytimeChange?.(e.target.value)}
+                      value={actualPlaytime}
+                      onChange={(e) => handlePlaytimeChange(e.target.value)}
                     >
                       <option value="short">短め（〜30分）</option>
                       <option value="medium">普通（30分〜1時間）</option>

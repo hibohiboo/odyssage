@@ -1,5 +1,5 @@
+import { ScenarioListPage as ScenarioListPageUI } from '@odyssage/ui/page-ui';
 import { useEffect, useState } from 'react';
-import { ScenarioListPage as ScenarioListPageUI } from '@odyssage/ui/pages';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';

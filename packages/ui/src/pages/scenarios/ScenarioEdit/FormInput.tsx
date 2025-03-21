@@ -3,8 +3,8 @@ import React from 'react';
 interface FormInputProps {
   readonly id: string;
   readonly label: string;
-  readonly value: string;
-  readonly onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  readonly value?: string;
+  readonly onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readonly placeholder?: string;
   readonly className?: string;
 }
@@ -27,6 +27,7 @@ export function FormInput({
       </label>
       <input
         id={id}
+        name={id}
         type="text"
         value={value}
         onChange={onChange}

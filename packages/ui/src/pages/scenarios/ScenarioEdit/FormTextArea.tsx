@@ -3,8 +3,8 @@ import React from 'react';
 interface FormTextAreaProps {
   readonly id: string;
   readonly label: string;
-  readonly value: string;
-  readonly onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  readonly value?: string;
+  readonly onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   readonly placeholder?: string;
   readonly rows?: number;
   readonly className?: string;
@@ -29,6 +29,7 @@ export function FormTextArea({
       </label>
       <textarea
         id={id}
+        name={id}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
