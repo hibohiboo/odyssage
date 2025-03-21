@@ -3,6 +3,9 @@
   "workspaces": {
     "": {
       "name": "odyssage",
+      "dependencies": {
+        "@types/react": "19.0.12",
+      },
       "devDependencies": {
         "concurrently": "^9.1.2",
         "dependency-cruiser": "^16.10.0",

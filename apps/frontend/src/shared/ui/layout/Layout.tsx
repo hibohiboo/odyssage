@@ -18,7 +18,7 @@ import { loginAction } from '../../auth/service/loginAction';
 import { useAppDispatch, useAppSelector } from '../../lib/store';
 
 // ナビゲーションリンクの定義
-export const Layout: React.FC = () => {
+export function Layout() {
   const location = useLocation();
   const currentPath = location.pathname;
   const isAnonymous = useAppSelector(isAnonymousSelector);
@@ -68,4 +68,4 @@ export const Layout: React.FC = () => {
       <Outlet />
     </LayoutUI>
   );
-};
+}
