@@ -1,0 +1,10 @@
+{
+  "extends": "@odyssage/tsconfig/tsconfig.frontend",
+  "include": ["./src", ".storybook"],
+  "exclude": ["node_modules", "dist","**/node_modules"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "outDir": "./dist",
+    "jsx": "react-jsx"
+  }
+}

@@ -24,6 +24,10 @@ export const SIDEBAR: Sidebar = {
     ],
     開発用: [
       {
+        text: 'Storybook',
+        link: `${BASE_PATH}/odyssage-components/index.html`,
+      },
+      {
         text: 'APIリファレンス',
         link: `${BASE_PATH}/odyssage-openapi/`,
       },

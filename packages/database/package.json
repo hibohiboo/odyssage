@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "ncu": "ncu -u",
     "generate": "drizzle-kit generate",
     "migrate": "cross-env DOTENV_CONFIG_PATH=.env.prod drizzle-kit migrate",
     "migrate:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit migrate",
@@ -12,11 +13,11 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.1",
+    "drizzle-kit": "^0.30.5",
     "postgres": "^3.4.5"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
-    "drizzle-orm": "^0.38.3"
+    "drizzle-orm": "^0.41.0"
   }
 }

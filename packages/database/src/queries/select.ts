@@ -60,12 +60,7 @@ export async function getScenariosForLast24Hours(
     .offset((page - 1) * pageSize);
 }
 
-export async function getScenarios(connectionString: string): Promise<
-  Array<{
-    id: string;
-    title: string;
-  }>
-> {
+export async function getScenarios(connectionString: string) {
   const db = getDb(connectionString);
   return db
     .select({

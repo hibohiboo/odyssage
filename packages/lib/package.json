@@ -3,7 +3,6 @@
   "version": "0.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "bun build ./src/index.ts --outdir ./dist/index.js",
     "ncu": "ncu -u"
   },
   "dependencies": {

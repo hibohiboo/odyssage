@@ -6,20 +6,26 @@
         "local:rdb": "bash ./infra/local/neon/bin/up.sh",
         "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
         "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
+        "local:all": "bunx concurrently \"npm:local:rdb\" \"npm:local:graphdb\" \"npm:local:firebase\"",
         "dev:backend": "cd apps/backend && bun run dev",
         "dev:frontend": "cd apps/frontend && bun run dev",
         "dev": "bunx --bun turbo dev",
+        "prebuild": "bun install",
         "build": "bunx --bun turbo build",
-        "ncu": "bunx --bun turbo ncu && ncu -u"
+        "ncu": "turbo ncu && ncu -u"
     },
     "workspaces": [
         "packages/*",
         "apps/*"
     ],
     "devDependencies": {
-        "dependency-cruiser": "^16.9.0",
-        "prettier": "^3.4.2",
-        "turbo": "^2.3.4"
+        "concurrently": "^9.1.2",
+        "dependency-cruiser": "^16.10.0",
+        "prettier": "^3.5.3",
+        "turbo": "^2.4.4"
     },
-    "packageManager": "bun@1.2.1"
+    "packageManager": "bun@1.2.5",
+    "dependencies": {
+        "@types/react": "19.0.12"
+    }
 }

@@ -1,9 +1,9 @@
 {
-  "name": "kartagraph-api",
+  "name": "odyssage-api",
   "version": "0.0.1",
   "dependencies": {
-    "@apiture/openapi-down-convert": "^0.14.0",
-    "@redocly/cli": "1.27.2"
+    "@apiture/openapi-down-convert": "^0.14.1",
+    "@redocly/cli": "1.34.0"
   },
   "private": true,
   "scripts": {
@@ -16,6 +16,6 @@
     "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html"
   },
   "devDependencies": {
-    "npm-check-updates": "^17.1.14"
+    "npm-check-updates": "^17.1.15"
   }
 }

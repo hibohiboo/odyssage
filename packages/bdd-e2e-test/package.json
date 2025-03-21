@@ -4,13 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "ncu": "ncu -u",
     "e2e-test": "playwright test",
     "bdd-test": "cucumber-js --config cucumber.mjs --exit"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^11.0.1",
+    "@cucumber/cucumber": "^11.2.0",
     "@odyssage/tsconfig": "workspace:*",
-    "@playwright/test": "^1.48.2",
+    "@playwright/test": "^1.51.1",
     "ts-node": "^10.9.2"
   }
 }
