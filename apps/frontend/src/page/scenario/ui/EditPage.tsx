@@ -1,3 +1,4 @@
+import { ScenarioEditPage } from '@odyssage/ui/page-ui';
 import { FormEventHandler, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { useEditScenario } from '@odyssage/frontend/entities/scenario/hooks/useEditScenario';
@@ -11,6 +12,7 @@ const EditPage = () => {
   const { editScenario, loading, success, error } = useEditScenario();
   const [title, setTitle] = useState('');
   const [overview, setOverview] = useState('');
+  const [visibility, setVisibility] = useState<'private' | 'public'>('private');
 
   useEffect(() => {
     const fetchScenario = async () => {
@@ -22,46 +24,46 @@ const EditPage = () => {
         const data = await response.json();
         setTitle(data.title);
         setOverview(data.overview);
+        if (data.visibility) {
+          setVisibility(data.visibility);
+        }
       } catch (err) {
         console.error('Failed to fetch scenario', err);
       }
     };
 
     fetchScenario();
-  }, [id]);
+  }, [id, uid]);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (!id) return;
-    await editScenario({ id, title, overview });
+    await editScenario({ id, title, overview, visibility });
+  };
+
+  const handleTitleChange = (value: string) => {
+    setTitle(value);
+  };
+
+  const handleDescriptionChange = (value: string) => {
+    setOverview(value);
+  };
+
+  const handleVisibilityChange = (value: 'private' | 'public') => {
+    setVisibility(value);
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="title">シナリオタイトル:</label>
-        <input
-          required
-          type="text"
-          id="title"
-          name="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="overview">シナリオ概要:</label>
-        <textarea
-          id="overview"
-          name="overview"
-          value={overview}
-          onChange={(e) => setOverview(e.target.value)}
-        />
-      </div>
-
-      <button className="button is-primary" type="submit" disabled={loading}>
-        {loading ? 'Updating...' : 'シナリオ更新'}
-      </button>
+      <ScenarioEditPage
+        title={title}
+        description={overview}
+        visibility={visibility}
+        onTitleChange={handleTitleChange}
+        onDescriptionChange={handleDescriptionChange}
+        onVisibilityChange={handleVisibilityChange}
+        loading={loading}
+      />
       {success && <p>Scenario updated successfully!</p>}
       {error && <p>{error}</p>}
     </form>

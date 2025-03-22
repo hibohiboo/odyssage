@@ -37,6 +37,10 @@ post:
               type: "string"
             overview:
               type: "string"
+            visibility:
+              type: "string"
+              enum: ["public", "private"]
+              description: "シナリオの公開設定"
           required:
             - "id"
             - "title"
@@ -65,6 +69,14 @@ get:
                   type: "string"
                 title:
                   type: "string"
+                visibility:
+                  type: "string"
+                  enum: ["public", "private"]
+                  description: "シナリオの公開設定"
+                status:
+                  type: "string"
+                  enum: ["published", "draft", "private"]
+                  description: "シナリオの状態"
               required:
                 - "id"
                 - "title"

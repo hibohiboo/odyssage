@@ -38,7 +38,6 @@ When('概要を {string} と設定する', async function (this, scenarioDetail)
   await page
     .getByRole('textbox', { name: 'シナリオ概要' })
     .fill(scenarioDetail);
-  await page.getByRole('button', { name: '保存する' }).click();
 });
 
 When('「保存する」ボタンをクリックする', async function (this) {
@@ -51,5 +50,33 @@ Then(
   async function (this, scenarioName) {
     const { page } = this;
     await expect(page.getByText(scenarioName).nth(0)).toBeVisible();
+  },
+);
+
+When(
+  'シナリオ一覧からシナリオ{string}の編集画面を開く',
+  async function (this, scenarioName) {
+    const { page } = this;
+    // シナリオ名を含む行を見つけて、その行の「編集する」リンクをクリック
+    const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
+    await scenarioRow.locator('text=編集する').click();
+  },
+);
+
+When('公開設定を {string} に変更する', async function (this, visibility) {
+  const { page } = this;
+  if (visibility === 'public') {
+    await page.locator('label:has-text("公開")').click();
+  } else {
+    await page.locator('label:has-text("非公開（下書き）")').click();
+  }
+});
+
+Then(
+  'シナリオ{string}が{string}として表示される',
+  async function (this, scenarioName, status) {
+    const { page } = this;
+    const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
+    await expect(scenarioRow.locator(`:has-text("${status}")`)).toBeVisible();
   },
 );
