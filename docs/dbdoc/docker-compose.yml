@@ -2,7 +2,7 @@ services:
   schemaspy:
     build:
       context: .
-      dockerfile: ./schemaspy/Dockerfile.schemaspy
+      dockerfile: ./schemaspy/Dockerfile.dev
     volumes:
       - ../astro/public/odyssage-dbdoc:/output
       - ./schemaspy/schemaspy.properties:/schemaspy.properties
