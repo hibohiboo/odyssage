@@ -1,6 +1,0 @@
-FROM openjdk:11-jdk
-
-RUN apt-get update && apt-get install -y fontconfig fonts-dejavu && \
-    wget -O schemaspy.jar https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar && \
-    wget -O /postgresql.jar https://jdbc.postgresql.org/download/postgresql-42.7.3.jar && \
-    rm -rf /var/lib/apt/lists/*
