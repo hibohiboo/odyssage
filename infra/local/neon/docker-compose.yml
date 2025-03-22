@@ -24,6 +24,7 @@ services:
     depends_on:
       docker-postgres:
         condition: service_healthy
+  # markdown形式でドキュメントを自動生成
   tbls:
     image: ghcr.io/k1low/tbls:latest
     volumes:
@@ -33,6 +34,8 @@ services:
     depends_on:
       docker-postgres:
         condition: service_healthy
+
+
 
 volumes:
   db_data:
