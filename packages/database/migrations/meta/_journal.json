@@ -29,6 +29,13 @@
       "when": 1742638854107,
       "tag": "0003_new_stryfe",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742656442051,
+      "tag": "0004_silly_prism",
+      "breakpoints": true
     }
   ]
 }

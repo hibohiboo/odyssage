@@ -16,7 +16,7 @@ export const scenariosTable = mySchema.table('scenarios', {
   updatedAt: timestamp('updated_at')
     .notNull()
     .$onUpdate(() => new Date()),
-  overview: text('overview').notNull(),
+  overview: text('overview').notNull().default(''),
   visibility: varchar('visibility', { length: 10 })
     .notNull()
     .default('private'),
