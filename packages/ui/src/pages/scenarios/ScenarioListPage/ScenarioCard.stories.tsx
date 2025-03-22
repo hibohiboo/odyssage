@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { BrowserRouter } from 'react-router';
 import { ScenarioCard } from './ScenarioCard';
 import { Scenario } from './types';
-import { BrowserRouter } from 'react-router';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof ScenarioCard> = {
   title: 'Pages/Scenarios/ScenarioList/ScenarioCard',
@@ -29,7 +29,7 @@ const publishedScenario: Scenario = {
     '古代文明の遺跡で眠る秘宝を求めて冒険者たちが集まる。しかし、遺跡には古代の呪いが...',
   createdAt: '2023-10-15',
   updatedAt: '2023-12-10',
-  status: 'published',
+  status: 'public',
   usedByGMs: 5,
   tags: ['ファンタジー', '冒険', '謎解き'],
 };

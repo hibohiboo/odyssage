@@ -1,0 +1,12 @@
+services:
+  schemaspy:
+    build:
+      context: .
+      dockerfile: ./schemaspy/Dockerfile.dev
+    volumes:
+      - ../astro/public/odyssage-dbdoc:/output
+      - ./schemaspy/schemaspy.properties:/schemaspy.properties
+    command: "java -jar schemaspy.jar -vizjs"
+    # github actions が立ち上げるコンテナのネットワークに接続するために、host ネットワークを使用する
+    network_mode: "host"
+

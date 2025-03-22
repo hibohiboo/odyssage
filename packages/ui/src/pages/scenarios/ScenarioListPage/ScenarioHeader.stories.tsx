@@ -1,6 +1,6 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { ScenarioHeader } from './ScenarioHeader';
 import { PlusCircle } from 'lucide-react';
+import { ScenarioHeader } from './ScenarioHeader';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof ScenarioHeader> = {
   title: 'Pages/Scenarios/ScenarioList/ScenarioHeader',

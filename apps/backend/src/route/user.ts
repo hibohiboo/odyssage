@@ -54,6 +54,7 @@ export const user = new Hono<Env>()
         title: json.title,
         userId: param.uid,
         overview: json.overview,
+        visibility: json.visibility,
       });
       return c.json({ message: 'Scenario created successfully' }, 201);
     },
@@ -79,6 +80,7 @@ export const user = new Hono<Env>()
         id: param.id,
         title: json.title,
         overview: json.overview,
+        visibility: json.visibility,
       });
       return c.json({ message: 'Scenario updated successfully' }, 200);
     },

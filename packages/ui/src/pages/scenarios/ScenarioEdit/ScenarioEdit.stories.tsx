@@ -1,10 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import ScenarioEdit from './ScenarioEdit';
 import { BrowserRouter } from 'react-router';
+import ScenarioEdit from './ScenarioEdit';
+import type { Meta, StoryObj } from '@storybook/react';
 
 type Visibility = 'private' | 'public';
 // This wrapper helps us use state in Storybook
+// eslint-disable-next-line complexity
 const ScenarioEditWithState = ({
   initialTitle = '',
   initialDescription = '',

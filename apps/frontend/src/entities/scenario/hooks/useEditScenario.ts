@@ -12,6 +12,7 @@ export const useEditScenario = () => {
     id: string;
     title: string;
     overview: string;
+    visibility?: 'private' | 'public';
   }) => {
     if (!uid) {
       return;

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { StatusTabs } from './StatusTabs';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StatusTabs> = {
   title: 'Pages/Scenarios/ScenarioList/StatusTabs',
@@ -22,7 +22,7 @@ export const Default: Story = {
 
 export const PublishedActive: Story = {
   args: {
-    activeTab: 'published',
+    activeTab: 'public',
     onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
   },
 };

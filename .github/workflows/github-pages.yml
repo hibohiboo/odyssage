@@ -6,6 +6,7 @@ on:
     branches:
       - develop
       - docs
+      - id/55/addGithubActionsDBDoc
     paths:
       - .github/workflows/**
       - docs/** # documentsフォルダ内が更新されたときに実施
@@ -29,6 +30,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    # dbdoc生成のためにPostgreSQLのコンテナを立ち上げる
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: main
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,8 +55,19 @@ jobs:
         run: bun install
         working-directory: ${{ env.BUILD_PATH }}
 
+      # ドキュメント作成用の依存関係をインストール
       - name: Install monorepo dependencies
         run: bun install --ignore-scripts
+
+      # マイグレーションを実行
+      - name: Migration
+        run: bun run migrate:ci
+        working-directory: ./packages/database
+
+      # dbdoc作成
+      - name: Build dbdoc with Schemaspy
+        run: docker compose up
+        working-directory: ./docs/dbdoc
 
       # # core ふるまい駆動テスト
       # - name: Core Test Report Cucumber

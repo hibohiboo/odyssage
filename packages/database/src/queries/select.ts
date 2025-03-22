@@ -71,44 +71,28 @@ export async function getScenarios(connectionString: string) {
     .orderBy(asc(scenariosTable.userId), asc(scenariosTable.title));
 }
 
-export async function getScenariosByUid(
-  connectionString: string,
-  uid: string,
-): Promise<
-  Array<{
-    id: string;
-    title: string;
-    overview: string;
-  }>
-> {
+export async function getScenariosByUid(connectionString: string, uid: string) {
   const db = getDb(connectionString);
   return db
     .select({
       id: scenariosTable.id,
       title: scenariosTable.title,
       overview: scenariosTable.overview,
+      visibility: scenariosTable.visibility,
     })
     .from(scenariosTable)
     .where(eq(scenariosTable.userId, uid))
     .orderBy(asc(scenariosTable.userId), asc(scenariosTable.title));
 }
 
-export async function getScenariosByid(
-  connectionString: string,
-  id: string,
-): Promise<
-  Array<{
-    id: string;
-    title: string;
-    overview: string;
-  }>
-> {
+export async function getScenariosByid(connectionString: string, id: string) {
   const db = getDb(connectionString);
   return db
     .select({
       id: scenariosTable.id,
       title: scenariosTable.title,
       overview: scenariosTable.overview,
+      visibility: scenariosTable.visibility,
     })
     .from(scenariosTable)
     .where(eq(scenariosTable.id, id));

@@ -17,6 +17,9 @@ export const scenariosTable = mySchema.table('scenarios', {
     .notNull()
     .$onUpdate(() => new Date()),
   overview: text('overview').notNull(),
+  visibility: varchar('visibility', { length: 10 })
+    .notNull()
+    .default('private'),
 });
 
 export type InsertUser = typeof usersTable.$inferInsert;

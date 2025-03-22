@@ -8,7 +8,7 @@ put:
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
   operationId: "putApiUserByUid"
-  description: "指定したユーザを登録"
+  description: "指定したユーザのシナリオを更新"
   parameters:
     - in: "path"
       name: "uid"
@@ -33,5 +33,10 @@ put:
               type: "string"
             updatedAt:
               type: "string"
+            visibility:
+              type: "string"
+              enum: ["public", "private"]
+              description: "シナリオの公開設定"
           required:
-            - "name"
+            - "title"
+            - "overview"

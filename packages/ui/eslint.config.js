@@ -9,6 +9,7 @@ export default tseslint.config({
       files: ['src/**'],
       rules: {
         'no-underscore-dangle': ['off'],
+        'no-restricted-exports':['off']
       },
     },
   ],

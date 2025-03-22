@@ -16,10 +16,17 @@ export const idSchema = v.object({
 export const userRequestSchema = v.object({
   name: v.string(),
 });
+
+export enum VisibilityEnum {
+  Private = 'private',
+  Draft = 'draft',
+  Public = 'public',
+}
 export const scenarioRequestSchema = v.object({
   id: v.string(),
   title: v.string(),
   overview: v.string(),
+  visibility: v.optional(v.string()),
 });
 
 export const userScenarioParamSchema = v.object({
@@ -29,9 +36,12 @@ export const userScenarioParamSchema = v.object({
 export const scenarioUpdateRequestSchema = v.object({
   title: v.string(),
   overview: v.string(),
+  visibility: v.optional(v.string()),
 });
 export const scenarioListItemSchema = v.object({
   id: v.string(),
   title: v.string(),
+  visibility: v.optional(v.string()),
+  status: v.optional(v.string()),
 });
 export type ScnearioListItem = v.InferOutput<typeof scenarioListItemSchema>;

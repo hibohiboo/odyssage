@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { BrowserRouter } from 'react-router';
 import ScenarioListPage from './ScenarioListPage';
 import { Scenario } from './types';
-import { BrowserRouter } from 'react-router';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof ScenarioListPage> = {
   title: 'Pages/Scenarios/ScenarioList/ScenarioListPage',
@@ -30,7 +30,7 @@ const mockScenarios: Scenario[] = [
       '古代文明の遺跡で眠る秘宝を求めて冒険者たちが集まる。しかし、遺跡には古代の呪いが...',
     createdAt: '2023-10-15',
     updatedAt: '2023-12-10',
-    status: 'published',
+    status: 'public',
     usedByGMs: 5,
     tags: ['ファンタジー', '冒険', '謎解き'],
   },
@@ -41,7 +41,7 @@ const mockScenarios: Scenario[] = [
       '宇宙船の故障により未知の惑星に不時着した乗組員たち。生存と脱出のために奮闘する物語。',
     createdAt: '2023-11-20',
     updatedAt: '2023-11-25',
-    status: 'published',
+    status: 'public',
     usedByGMs: 2,
     tags: ['SF', 'サバイバル', '宇宙'],
   },

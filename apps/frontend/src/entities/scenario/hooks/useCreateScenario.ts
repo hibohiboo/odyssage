@@ -11,6 +11,7 @@ export const useCreateScenario = () => {
     title: string;
     overview: string;
     uid: string;
+    visibility?: 'private' | 'public';
   }) => {
     setLoading(true);
     setSuccess(false);

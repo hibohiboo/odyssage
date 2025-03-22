@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Link } from 'react-router';
 
 // シナリオアクションコンポーネント
@@ -24,17 +24,7 @@ export function ScenarioActions({
         </Link>
       </div>
       <div className="flex gap-3">
-        {scenario.status === 'published' ? (
-          <button className="text-sm text-stone-600 hover:text-stone-800 flex items-center">
-            <EyeOff className="h-4 w-4 mr-1" />
-            非公開にする
-          </button>
-        ) : (
-          <button className="text-sm text-green-600 hover:text-green-800 flex items-center">
-            <Eye className="h-4 w-4 mr-1" />
-            公開する
-          </button>
-        )}
+        {' '}
         <button className="text-sm text-red-600 hover:text-red-800 flex items-center">
           <Trash2 className="h-4 w-4 mr-1" />
           削除
