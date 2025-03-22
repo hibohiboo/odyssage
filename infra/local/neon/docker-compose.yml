@@ -34,20 +34,6 @@ services:
     depends_on:
       docker-postgres:
         condition: service_healthy
-  # htmlでドキュメントを自動生成
-  schemaspy:
-    build:
-      context: .
-      dockerfile: ./schemaspy/Dockerfile.dev
-    container_name: schemaspy
-    image: schemaspy/schemaspy
-    volumes:
-      - ./schemaspy/output:/schemaspy_output
-      - ./schemaspy/schemaspy.properties:/schemaspy.properties
-    command: "java -jar schemaspy.jar -vizjs"
-    depends_on:
-      docker-postgres:
-        condition: service_healthy
 
 volumes:
   db_data:
