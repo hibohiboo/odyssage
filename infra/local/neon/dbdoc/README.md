@@ -1,4 +1,8 @@
-# main
+# Odyssage Database
+
+## Description
+
+OdyssageのDB定義
 
 ## Tables
 

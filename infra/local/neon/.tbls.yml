@@ -1,3 +1,5 @@
+name: Odyssage Database
+desc: OdyssageのDB定義
 dsn: postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
 docPath: ./dbdoc
 er:
@@ -11,3 +13,6 @@ format:
   number: false
 include:
   - odyssage.*
+detectVirtualRelations:
+  enabled: true
+requiredVersion: '>= 1.84, < 2'
