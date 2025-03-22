@@ -31,6 +31,10 @@ export const SIDEBAR: Sidebar = {
         text: 'APIリファレンス',
         link: `${BASE_PATH}/odyssage-openapi/`,
       },
+      {
+        text: 'ER図',
+        link: `${BASE_PATH}/odyssage-dbdoc/`,
+      },
       // {
       //   text: 'ふるまい駆動テストレポート',
       //   link: `${BASE_PATH}/odyssage-cucumber/`,

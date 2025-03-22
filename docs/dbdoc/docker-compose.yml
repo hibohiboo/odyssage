@@ -9,6 +9,4 @@ services:
       - ../astro/public/odyssage-dbdoc:/schemaspy_output
       - ./schemaspy/schemaspy.properties:/schemaspy.properties
     command: "java -jar schemaspy.jar -vizjs"
-    depends_on:
-      docker-postgres:
-        condition: service_healthy
+
