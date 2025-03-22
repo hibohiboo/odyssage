@@ -34,7 +34,7 @@
     "@vitejs/plugin-react-swc": "^3.8.1",
     "globals": "^16.0.0",
     "msw": "^2.7.3",
-    "npm-check-updates": "^17.1.15",
+    "npm-check-updates": "^17.1.16",
     "typescript": "^5.8.2",
     "vite": "^6.2.2"
   },
