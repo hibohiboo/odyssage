@@ -8,7 +8,8 @@
     "generate": "drizzle-kit generate",
     "migrate": "cross-env DOTENV_CONFIG_PATH=.env.prod drizzle-kit migrate",
     "migrate:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit migrate",
-    "push:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit push"
+    "push:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit push",
+    "push:ci": "cross-env DOTENV_CONFIG_PATH=.env.ci drizzle-kit push"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
