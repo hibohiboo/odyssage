@@ -15,21 +15,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  neon-proxy:
-    image: ghcr.io/timowilhelm/local-neon-http-proxy:main
-    environment:
-      - PG_CONNECTION_STRING=postgres://postgres:postgres@docker-postgres:5432/main
-    ports:
-      - '4444:4444'
-    depends_on:
-      docker-postgres:
-        condition: service_healthy
+  # neon-proxy:
+  #   image: ghcr.io/timowilhelm/local-neon-http-proxy:main
+  #   environment:
+  #     - PG_CONNECTION_STRING=postgres://postgres:postgres@docker-postgres:5432/main
+  #   ports:
+  #     - '4444:4444'
+  #   depends_on:
+  #     docker-postgres:
+  #       condition: service_healthy
   tbls:
     image: ghcr.io/k1low/tbls:latest
     volumes:
       - .:/work
     working_dir: /work
-    command: doc postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
+    command: doc -f --without-er postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
     depends_on:
       docker-postgres:
         condition: service_healthy
