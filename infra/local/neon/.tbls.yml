@@ -3,7 +3,7 @@ desc: OdyssageのDB定義
 dsn: postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
 docPath: ./dbdoc
 er:
-  skip: true
+  skip: true # falseにすると tbls が Segmentation Fault (SIGSEGV) を起こしてクラッシュする
   format: svg
   comment: false
   distance: 1
