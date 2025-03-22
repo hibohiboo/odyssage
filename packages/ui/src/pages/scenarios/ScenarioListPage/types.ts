@@ -1,4 +1,4 @@
-export type ScenarioStatus = 'published' | 'draft' | 'private';
+export type ScenarioStatus = 'public' | 'draft' | 'private';
 
 export interface Scenario {
   readonly id: string;

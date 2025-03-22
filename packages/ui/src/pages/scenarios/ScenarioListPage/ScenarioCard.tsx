@@ -9,7 +9,7 @@ interface ScenarioActionsProps {
 // ステータスに応じたクラス名を取得
 const getStatusClassName = (status: string): string => {
   switch (status) {
-    case 'published':
+    case 'public':
       return 'bg-green-100 text-green-800';
     case 'draft':
       return 'bg-amber-100 text-amber-800';
@@ -21,7 +21,7 @@ const getStatusClassName = (status: string): string => {
 // ステータスに応じたテキストを取得
 const getStatusText = (status: string): string => {
   switch (status) {
-    case 'published':
+    case 'public':
       return '公開中';
     case 'draft':
       return '下書き';
@@ -71,7 +71,7 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
               <div>更新: {scenario.updatedAt}</div>
             </div>
           </div>
-          {scenario.status === 'published' && scenario.usedByGMs > 0 && (
+          {scenario.status === 'public' && scenario.usedByGMs > 0 && (
             <div className="flex items-center">
               <span>{scenario.usedByGMs}人のGMが使用中</span>
             </div>

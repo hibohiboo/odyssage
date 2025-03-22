@@ -22,7 +22,7 @@ export const Default: Story = {
 
 export const PublishedActive: Story = {
   args: {
-    activeTab: 'published',
+    activeTab: 'public',
     onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
   },
 };

@@ -24,7 +24,7 @@ export function ScenarioActions({
         </Link>
       </div>
       <div className="flex gap-3">
-        {scenario.status === 'published' ? (
+        {scenario.status === 'public' ? (
           <button className="text-sm text-stone-600 hover:text-stone-800 flex items-center">
             <EyeOff className="h-4 w-4 mr-1" />
             非公開にする

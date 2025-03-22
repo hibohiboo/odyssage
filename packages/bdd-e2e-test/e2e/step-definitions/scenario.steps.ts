@@ -38,6 +38,7 @@ When('概要を {string} と設定する', async function (this, scenarioDetail)
   await page
     .getByRole('textbox', { name: 'シナリオ概要' })
     .fill(scenarioDetail);
+  await page.getByRole('button', { name: '保存する' }).click();
 });
 
 When('「保存する」ボタンをクリックする', async function (this) {

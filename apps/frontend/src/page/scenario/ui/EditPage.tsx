@@ -6,13 +6,14 @@ import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
+type Visibility = 'private' | 'public';
 const EditPage = () => {
   const { id } = useParams<{ id: string }>();
   const uid = useAppSelector(uidSelector);
   const { editScenario, loading, success, error } = useEditScenario();
   const [title, setTitle] = useState('');
   const [overview, setOverview] = useState('');
-  const [visibility, setVisibility] = useState<'private' | 'public'>('private');
+  const [visibility, setVisibility] = useState<Visibility>('private');
 
   useEffect(() => {
     const fetchScenario = async () => {
@@ -25,7 +26,7 @@ const EditPage = () => {
         setTitle(data.title);
         setOverview(data.overview);
         if (data.visibility) {
-          setVisibility(data.visibility);
+          setVisibility(data.visibility as Visibility);
         }
       } catch (err) {
         console.error('Failed to fetch scenario', err);

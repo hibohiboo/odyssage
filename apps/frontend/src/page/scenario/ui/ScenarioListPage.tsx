@@ -1,37 +1,20 @@
 import { ScenarioListPage as ScenarioListPageUI } from '@odyssage/ui/page-ui';
+import { ClientResponse } from 'hono/client';
 import { useEffect, useState } from 'react';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
+type APIType = (typeof apiClient.api.user)[':uid']['scenario']['$get'];
+type ScenarioResponse = Awaited<ReturnType<APIType>>;
+type ScenarioData =
+  ScenarioResponse extends ClientResponse<infer T> ? T : never;
+
 const ScenarioListPage = () => {
   const uid = useAppSelector(uidSelector);
-  const [scenarios, setScenarios] = useState<
-    {
-      id: string;
-      title: string;
-    }[]
-  >([]);
-  const [myScenarios, setMyScenarios] = useState<
-    {
-      id: string;
-      title: string;
-    }[]
-  >([]);
 
-  useEffect(() => {
-    const fetchScenarios = async () => {
-      try {
-        const response = await apiClient.api.scenarios.$get();
-        const data = await response.json();
-        setScenarios(data);
-      } catch (error) {
-        console.error('Failed to fetch scenarios', error);
-      }
-    };
+  const [myScenarios, setMyScenarios] = useState<ScenarioData>([]);
 
-    fetchScenarios();
-  }, []);
   useEffect(() => {
     if (!uid) return;
     const fetchScenarios = async (id: string) => {
@@ -45,12 +28,12 @@ const ScenarioListPage = () => {
   }, [uid]);
   return (
     <ScenarioListPageUI
-      scenarios={[...scenarios, ...myScenarios].map((s) => ({
+      scenarios={[...myScenarios].map((s) => ({
         id: s.id,
         title: s.title,
         description: '',
         updatedAt: '',
-        status: 'published',
+        status: s.visibility === 'public' ? 'public' : 'private',
         usedByGMs: 0,
         tags: [],
       }))}
