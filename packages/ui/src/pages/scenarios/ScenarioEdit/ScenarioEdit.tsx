@@ -1,5 +1,3 @@
-'use client';
-
 import type React from 'react';
 import { Save, X, Tag, ArrowLeft, Globe, Lock } from 'lucide-react';
 import { FormInput } from './FormInput';
