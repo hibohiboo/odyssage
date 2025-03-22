@@ -1,9 +1,9 @@
-import type React from 'react';
 import { Save, X, Tag, ArrowLeft, Globe, Lock } from 'lucide-react';
-import { FormInput } from './FormInput';
-import { FormTextArea } from './FormTextArea';
-import { FormSection } from './FormSection';
 import { Link } from 'react-router';
+import { FormInput } from './FormInput';
+import { FormSection } from './FormSection';
+import { FormTextArea } from './FormTextArea';
+import type React from 'react';
 
 export interface ScenarioEditProps {
   pageTitle?: string;

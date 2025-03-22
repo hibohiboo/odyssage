@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import { BrowserRouter } from 'react-router';
 import { ScenarioCard } from './ScenarioCard';
 import { Scenario } from './types';
-import { BrowserRouter } from 'react-router';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof ScenarioCard> = {
   title: 'Pages/Scenarios/ScenarioList/ScenarioCard',

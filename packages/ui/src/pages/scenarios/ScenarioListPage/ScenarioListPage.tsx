@@ -1,9 +1,8 @@
+import { PlusCircle } from 'lucide-react';
 import { Link } from 'react-router';
 import { ScenarioHeader } from './ScenarioHeader';
 import { ScenarioList } from './ScenarioList';
-import { StatusTabs } from './StatusTabs';
 import { Scenario } from './types';
-import { PlusCircle } from 'lucide-react';
 
 export default function CreatorScenarios({
   scenarios,

@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { StatusTabs } from './StatusTabs';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof StatusTabs> = {
   title: 'Pages/Scenarios/ScenarioList/StatusTabs',
