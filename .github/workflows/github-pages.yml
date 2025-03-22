@@ -61,7 +61,7 @@ jobs:
 
       # マイグレーションを実行
       - name: Migration
-        run: bun run push:ci
+        run: bun run migrate:ci
         working-directory: ./packages/database
 
       # dbdoc作成

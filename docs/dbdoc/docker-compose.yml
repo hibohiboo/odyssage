@@ -1,8 +1,5 @@
 services:
   schemaspy:
-    build:
-      context: .
-      dockerfile: ../schemaspy/Dockerfile.dev
     container_name: schemaspy
     image: schemaspy/schemaspy
     volumes:

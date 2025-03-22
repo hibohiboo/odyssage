@@ -9,7 +9,7 @@
     "migrate": "cross-env DOTENV_CONFIG_PATH=.env.prod drizzle-kit migrate",
     "migrate:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit migrate",
     "push:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit push",
-    "push:ci": "cross-env DOTENV_CONFIG_PATH=.env.ci drizzle-kit push --config ./drizzle.config.ts"
+    "migrate:ci": "cross-env DOTENV_CONFIG_PATH=.env.ci drizzle-kit migrate --config ./drizzle.config.ts"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
