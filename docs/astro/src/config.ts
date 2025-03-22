@@ -33,7 +33,7 @@ export const SIDEBAR: Sidebar = {
       },
       {
         text: 'ER図',
-        link: `${BASE_PATH}/odyssage-dbdoc/output/`,
+        link: `${BASE_PATH}/odyssage-dbdoc/`,
       },
       // {
       //   text: 'ふるまい駆動テストレポート',

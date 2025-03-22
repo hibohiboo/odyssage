@@ -66,7 +66,10 @@ jobs:
 
       # dbdoc作成
       - name: Build dbdoc with Schemaspy
-        run: docker compose up
+        run: |
+          mkdir -p ../astro/public/odyssage-dbdoc
+          chmod 666 ../astro/public/odyssage-dbdoc
+          docker compose up
         working-directory: ./docs/dbdoc
 
       # # core ふるまい駆動テスト
