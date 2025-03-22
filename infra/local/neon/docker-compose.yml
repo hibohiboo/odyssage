@@ -1,5 +1,5 @@
 services:
-  postgres:
+  docker-postgres:
     image: postgres:17
     command: '-d 1'
     volumes:
@@ -18,11 +18,36 @@ services:
   neon-proxy:
     image: ghcr.io/timowilhelm/local-neon-http-proxy:main
     environment:
-      - PG_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/main
+      - PG_CONNECTION_STRING=postgres://postgres:postgres@docker-postgres:5432/main
     ports:
       - '4444:4444'
     depends_on:
-      postgres:
+      docker-postgres:
         condition: service_healthy
+  # markdown形式でドキュメントを自動生成
+  tbls:
+    image: ghcr.io/k1low/tbls:latest
+    volumes:
+      - .:/work
+    working_dir: /work
+    command: doc
+    depends_on:
+      docker-postgres:
+        condition: service_healthy
+  # htmlでドキュメントを自動生成
+  schemaspy:
+    build:
+      context: .
+      dockerfile: ./schemaspy/Dockerfile.dev
+    container_name: schemaspy
+    image: schemaspy/schemaspy
+    volumes:
+      - ./schemaspy/output:/schemaspy_output
+      - ./schemaspy/schemaspy.properties:/schemaspy.properties
+    command: "java -jar schemaspy.jar -vizjs"
+    depends_on:
+      docker-postgres:
+        condition: service_healthy
+
 volumes:
   db_data:

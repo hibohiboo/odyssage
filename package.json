@@ -21,6 +21,17 @@
         "build": "bunx --bun turbo build",
         "ncu": "turbo ncu && ncu -u"
     },
+    "turbo": {
+        "pipeline": {
+            "build": {
+                "dependsOn": ["^build"],
+                "outputs": [".next/**", "dist/**"]
+            },
+            "dev": {
+                "cache": false
+            }
+        }
+    },
     "workspaces": [
         "packages/*",
         "apps/*"
