@@ -16,21 +16,21 @@ type Story = StoryObj<typeof StatusTabs>;
 export const Default: Story = {
   args: {
     activeTab: 'all',
-    onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
+    onTabChange: (tab: string) => console.log(`Tab changed to: ${tab}`),
   },
 };
 
 export const PublishedActive: Story = {
   args: {
     activeTab: 'public',
-    onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
+    onTabChange: (tab: string) => console.log(`Tab changed to: ${tab}`),
   },
 };
 
 export const DraftActive: Story = {
   args: {
     activeTab: 'draft',
-    onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
+    onTabChange: (tab: string) => console.log(`Tab changed to: ${tab}`),
   },
 };
 
