@@ -3,7 +3,7 @@ services:
     container_name: schemaspy
     image: schemaspy/schemaspy
     volumes:
-      - ../astro/public/odyssage-dbdoc:/schemaspy_output
+      - ../astro/public/odyssage-dbdoc:/output
       - ./schemaspy/schemaspy.properties:/schemaspy.properties
     command: "java -jar schemaspy.jar -vizjs"
     # github actions が立ち上げるコンテナのネットワークに接続するために、host ネットワークを使用する
