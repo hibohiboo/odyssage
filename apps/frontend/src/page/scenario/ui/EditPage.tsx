@@ -14,6 +14,7 @@ const EditPage = () => {
   const [title, setTitle] = useState('');
   const [overview, setOverview] = useState('');
   const [visibility, setVisibility] = useState<Visibility>('private');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchScenario = async () => {
@@ -28,6 +29,7 @@ const EditPage = () => {
         if (data.visibility) {
           setVisibility(data.visibility as Visibility);
         }
+        setIsLoading(false);
       } catch (err) {
         console.error('Failed to fetch scenario', err);
       }
@@ -55,19 +57,22 @@ const EditPage = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <ScenarioEditPage
-        title={title}
-        description={overview}
-        visibility={visibility}
-        onTitleChange={handleTitleChange}
-        onDescriptionChange={handleDescriptionChange}
-        onVisibilityChange={handleVisibilityChange}
-        loading={loading}
-      />
-      {success && <p>Scenario updated successfully!</p>}
-      {error && <p>{error}</p>}
-    </form>
+    !isLoading && (
+      <form onSubmit={handleSubmit}>
+        <ScenarioEditPage
+          title={title}
+          description={overview}
+          visibility={visibility}
+          onTitleChange={handleTitleChange}
+          onDescriptionChange={handleDescriptionChange}
+          onVisibilityChange={handleVisibilityChange}
+          loading={loading}
+          pageTitle="シナリオ編集"
+        />
+        {success && <p>Scenario updated successfully!</p>}
+        {error && <p>{error}</p>}
+      </form>
+    )
   );
 };
 

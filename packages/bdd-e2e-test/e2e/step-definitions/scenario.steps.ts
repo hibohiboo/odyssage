@@ -15,7 +15,7 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
-    await page.getByRole('link', { name: text }).click();
+    await page.getByRole('link', { name: text }).nth(0).click();
   },
 );
 
@@ -67,7 +67,7 @@ When(
 When('公開設定を {string} に変更する', async function (this, visibility) {
   const { page } = this;
   if (visibility === 'public') {
-    await page.locator('label:has-text("公開")').click();
+    await page.getByText('公開', { exact: true }).click();
   } else {
     await page.locator('label:has-text("非公開（下書き）")').click();
   }
@@ -78,6 +78,8 @@ Then(
   async function (this, scenarioName, status) {
     const { page } = this;
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-    await expect(scenarioRow.locator(`:has-text("${status}")`)).toBeVisible();
+    await expect(
+      scenarioRow.locator(`:has-text("${status}")`).first(),
+    ).toBeVisible();
   },
 );

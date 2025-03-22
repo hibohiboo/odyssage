@@ -6,6 +6,7 @@ import { FormSection } from './FormSection';
 import { Link } from 'react-router';
 
 export interface ScenarioEditProps {
+  pageTitle?: string;
   // State props
   title?: string;
   description?: string;
@@ -58,6 +59,7 @@ export default function ScenarioEdit({
   isViewSidebar,
   isViewTags,
   loading,
+  pageTitle,
 }: ScenarioEditProps) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -102,7 +104,7 @@ export default function ScenarioEdit({
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h1 className="text-2xl md:text-3xl font-serif font-bold text-amber-800">
-          新規シナリオ作成
+          {pageTitle ?? '新規シナリオ作成'}
         </h1>
 
         <div
