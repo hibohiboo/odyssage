@@ -29,7 +29,7 @@ services:
     volumes:
       - .:/work
     working_dir: /work
-    command: doc -f --without-er postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
+    command: doc
     depends_on:
       docker-postgres:
         condition: service_healthy
