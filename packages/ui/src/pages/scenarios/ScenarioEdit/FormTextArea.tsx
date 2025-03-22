@@ -8,6 +8,7 @@ interface FormTextAreaProps {
   readonly placeholder?: string;
   readonly rows?: number;
   readonly className?: string;
+  readonly required?: boolean;
 }
 
 export function FormTextArea({
@@ -18,6 +19,7 @@ export function FormTextArea({
   placeholder,
   rows = 5,
   className = 'w-full',
+  required,
 }: FormTextAreaProps) {
   return (
     <div>
@@ -35,6 +37,7 @@ export function FormTextArea({
         placeholder={placeholder}
         className={`textarea ${className}`}
         rows={rows}
+        required={required}
       />
     </div>
   );

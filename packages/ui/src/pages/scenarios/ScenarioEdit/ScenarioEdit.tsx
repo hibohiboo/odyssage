@@ -37,6 +37,7 @@ export interface ScenarioEditProps {
   isViewTags?: boolean;
 }
 
+// eslint-disable-next-line complexity
 export default function ScenarioEdit({
   title,
   description,
@@ -111,7 +112,7 @@ export default function ScenarioEdit({
           className={`${!shouldViewSidebar ? 'md:mr-auto lg:mr-[calc(33.333333%-1rem)]' : ''}`}
         >
           <button
-            className="btn btn-primary"
+            className="flex cursor-pointer"
             onClick={handleSave}
             type="submit"
           >
@@ -131,6 +132,7 @@ export default function ScenarioEdit({
               value={title}
               onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="冒険の名前を入力してください"
+              required
             />
 
             <FormTextArea
@@ -140,6 +142,7 @@ export default function ScenarioEdit({
               onChange={(e) => handleDescriptionChange(e.target.value)}
               placeholder="シナリオの概要や背景を入力してください"
               rows={5}
+              required
             />
           </FormSection>
           {shouldViewTags && (

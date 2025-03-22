@@ -37,6 +37,6 @@ export const DraftActive: Story = {
 export const PrivateActive: Story = {
   args: {
     activeTab: 'private',
-    onTabChange: (tab) => console.log(`Tab changed to: ${tab}`),
+    onTabChange: (tab: string) => console.log(`Tab changed to: ${tab}`),
   },
 };
