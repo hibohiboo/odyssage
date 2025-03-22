@@ -2,7 +2,12 @@ dsn: postgres://postgres:postgres@docker-postgres:5432/main?sslmode=disable
 docPath: ./dbdoc
 er:
   skip: true
+  format: svg
+  comment: false
+  distance: 1
 format: 
   adjust: false
   sort: false
   number: false
+include:
+  - odyssage.*

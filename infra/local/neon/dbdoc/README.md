@@ -4,8 +4,6 @@
 
 | Name | Columns | Comment | Type |
 | ---- | ------- | ------- | ---- |
-| [neon_control_plane.endpoints](neon_control_plane.endpoints.md) | 2 |  | BASE TABLE |
-| [drizzle.__drizzle_migrations](drizzle.__drizzle_migrations.md) | 3 |  | BASE TABLE |
 | [odyssage.scenarios](odyssage.scenarios.md) | 6 |  | BASE TABLE |
 | [odyssage.users](odyssage.users.md) | 2 |  | BASE TABLE |
 
