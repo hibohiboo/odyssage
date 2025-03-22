@@ -73,10 +73,6 @@ get:
                   type: "string"
                   enum: ["public", "private"]
                   description: "シナリオの公開設定"
-                status:
-                  type: "string"
-                  enum: ["published", "draft", "private"]
-                  description: "シナリオの状態"
                 updatedAt:
                   type: "string"
                   description: "シナリオの更新日時"
