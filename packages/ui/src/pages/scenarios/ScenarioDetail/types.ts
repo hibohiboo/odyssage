@@ -28,14 +28,14 @@ export type Scenario = {
   id: string;
   title: string;
   description: string;
-  createdAt: string;
+  createdAt?: string;
   updatedAt: string;
   status: ScenarioStatus;
   tags: string[];
   author: Author;
-  difficulty: string;
-  estimatedTime: string;
-  playerCount: string;
+  difficulty?: string;
+  estimatedTime?: string;
+  playerCount?: string;
   isStockedByGM: boolean;
   gmCount: number;
   nodes: ScenarioNode[];

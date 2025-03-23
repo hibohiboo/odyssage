@@ -24,12 +24,16 @@ type Story = StoryObj<typeof ScenarioDetailPage>;
 
 export const Default: Story = {
   args: {
-    scenario: scenarioData,
+    scenario: {
+      ...scenarioData,
+      createdAt: undefined,
+      gmCount: 0,
+      difficulty: undefined,
+      estimatedTime: undefined,
+      playerCount: undefined,
+    },
     onStatusChange: (newStatus: ScenarioStatus) => {
       console.log(`Status changed to: ${newStatus}`);
-    },
-    onToggleGMStock: () => {
-      console.log('GM Stock toggled');
     },
   },
 };
