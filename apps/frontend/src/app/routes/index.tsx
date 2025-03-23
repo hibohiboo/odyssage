@@ -61,6 +61,7 @@ export const createRouter = () =>
                     },
                     {
                       path: 'edit',
+                      loader: detailPageLoader,
                       element: <ScenarioEditPage />,
                     },
                   ],

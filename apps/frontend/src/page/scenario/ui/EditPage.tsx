@@ -1,42 +1,20 @@
 import { ScenarioEditPage } from '@odyssage/ui/page-ui';
-import { FormEventHandler, useEffect, useState } from 'react';
-import { useParams } from 'react-router';
+import { FormEventHandler, useState } from 'react';
+import { useLoaderData, useParams } from 'react-router';
 import { useEditScenario } from '@odyssage/frontend/entities/scenario/hooks/useEditScenario';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
-import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
-import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
+import { ScenarioData } from '../api/detailLoader';
 
 type Visibility = 'private' | 'public';
 const EditPage = () => {
   const { id } = useParams<{ id: string }>();
-  const uid = useAppSelector(uidSelector);
+  const loaderData = useLoaderData<ScenarioData>();
+
   const { editScenario, loading, success, error } = useEditScenario();
-  const [title, setTitle] = useState('');
-  const [overview, setOverview] = useState('');
-  const [visibility, setVisibility] = useState<Visibility>('private');
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchScenario = async () => {
-      if (!id || !uid) return;
-      try {
-        const response = await apiClient.api.scenario[':id'].$get({
-          param: { id },
-        });
-        const data = await response.json();
-        setTitle(data.title);
-        setOverview(data.overview);
-        if (data.visibility) {
-          setVisibility(data.visibility as Visibility);
-        }
-        setIsLoading(false);
-      } catch (err) {
-        console.error('Failed to fetch scenario', err);
-      }
-    };
-
-    fetchScenario();
-  }, [id, uid]);
+  const [title, setTitle] = useState(loaderData.title);
+  const [overview, setOverview] = useState(loaderData.overview);
+  const [visibility, setVisibility] = useState<Visibility>(
+    (loaderData.visibility as Visibility) || 'private',
+  );
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -57,22 +35,20 @@ const EditPage = () => {
   };
 
   return (
-    !isLoading && (
-      <form onSubmit={handleSubmit}>
-        <ScenarioEditPage
-          title={title}
-          description={overview}
-          visibility={visibility}
-          onTitleChange={handleTitleChange}
-          onDescriptionChange={handleDescriptionChange}
-          onVisibilityChange={handleVisibilityChange}
-          loading={loading}
-          pageTitle="シナリオ編集"
-        />
-        {success && <p>Scenario updated successfully!</p>}
-        {error && <p>{error}</p>}
-      </form>
-    )
+    <form onSubmit={handleSubmit}>
+      <ScenarioEditPage
+        title={title}
+        description={overview}
+        visibility={visibility}
+        onTitleChange={handleTitleChange}
+        onDescriptionChange={handleDescriptionChange}
+        onVisibilityChange={handleVisibilityChange}
+        loading={loading}
+        pageTitle="シナリオ編集"
+      />
+      {success && <p>Scenario updated successfully!</p>}
+      {error && <p>{error}</p>}
+    </form>
   );
 };
 
