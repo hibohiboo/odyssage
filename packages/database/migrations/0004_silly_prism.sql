@@ -1,0 +1,1 @@
+ALTER TABLE "odyssage"."scenarios" ALTER COLUMN "overview" SET DEFAULT '';

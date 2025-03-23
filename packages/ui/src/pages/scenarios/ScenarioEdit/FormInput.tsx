@@ -7,6 +7,7 @@ interface FormInputProps {
   readonly onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readonly placeholder?: string;
   readonly className?: string;
+  readonly required?: boolean;
 }
 
 export function FormInput({
@@ -16,6 +17,7 @@ export function FormInput({
   onChange,
   placeholder,
   className = 'w-full',
+  required,
 }: FormInputProps) {
   return (
     <div className="mb-4">
@@ -33,6 +35,7 @@ export function FormInput({
         onChange={onChange}
         placeholder={placeholder}
         className={`input ${className}`}
+        required={required}
       />
     </div>
   );

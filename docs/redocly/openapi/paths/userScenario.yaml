@@ -73,13 +73,13 @@ get:
                   type: "string"
                   enum: ["public", "private"]
                   description: "シナリオの公開設定"
-                status:
+                updatedAt:
                   type: "string"
-                  enum: ["published", "draft", "private"]
-                  description: "シナリオの状態"
+                  description: "シナリオの更新日時"
               required:
                 - "id"
                 - "title"
+                - "updatedAt"
               additionalProperties: false
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'

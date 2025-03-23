@@ -79,6 +79,7 @@ export async function getScenariosByUid(connectionString: string, uid: string) {
       title: scenariosTable.title,
       overview: scenariosTable.overview,
       visibility: scenariosTable.visibility,
+      updatedAt: scenariosTable.updatedAt,
     })
     .from(scenariosTable)
     .where(eq(scenariosTable.userId, uid))
@@ -93,6 +94,7 @@ export async function getScenariosByid(connectionString: string, id: string) {
       title: scenariosTable.title,
       overview: scenariosTable.overview,
       visibility: scenariosTable.visibility,
+      updatedAt: scenariosTable.updatedAt,
     })
     .from(scenariosTable)
     .where(eq(scenariosTable.id, id));

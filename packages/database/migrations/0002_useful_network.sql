@@ -1,1 +1,1 @@
-ALTER TABLE "odyssage"."scenarios" ADD COLUMN "overview" text NOT NULL;
+ALTER TABLE "odyssage"."scenarios" ADD COLUMN "overview" text NOT NULL DEFAULT '';

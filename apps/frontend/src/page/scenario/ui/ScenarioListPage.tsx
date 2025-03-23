@@ -31,8 +31,10 @@ const ScenarioListPage = () => {
       scenarios={[...myScenarios].map((s) => ({
         id: s.id,
         title: s.title,
-        description: '',
-        updatedAt: '',
+        description: s.overview || '',
+        updatedAt: s.updatedAt
+          ? new Date(s.updatedAt).toLocaleDateString('ja-JP')
+          : '',
         status: s.visibility === 'public' ? 'public' : 'private',
         usedByGMs: 0,
         tags: [],
