@@ -32,6 +32,7 @@ export const Default: Story = {
       estimatedTime: undefined,
       playerCount: undefined,
       author: undefined,
+      tags: [],
     },
     onStatusChange: (newStatus: ScenarioStatus) => {
       console.log(`Status changed to: ${newStatus}`);

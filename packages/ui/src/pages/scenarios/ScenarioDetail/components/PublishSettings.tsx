@@ -57,7 +57,7 @@ export const PublishSettings = ({
     {
       status: 'private' as const,
       icon: <FileEdit className="h-4 w-4 mr-2" />,
-      label: '作成中',
+      label: '非公開',
       activeColor: 'amber-800',
       activeBg: 'amber-100',
       indicatorColor: 'amber-500',

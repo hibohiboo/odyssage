@@ -2,7 +2,7 @@ import { FileEdit, Eye } from 'lucide-react';
 import { ScenarioStatus } from './types';
 
 const privateState = {
-  label: '作成中',
+  label: '非公開',
   bgColor: 'bg-amber-100',
   textColor: 'text-amber-800',
   icon: <FileEdit className="h-4 w-4 mr-1" />,
