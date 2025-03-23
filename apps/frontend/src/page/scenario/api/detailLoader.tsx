@@ -8,7 +8,6 @@ export type ScenarioData =
   ScenarioResponse extends ClientResponse<infer T> ? T : never;
 
 export const detailPageLoader: LoaderFunction = async (args) => {
-  console.log('detailPageLoader', args);
   const { id } = args.params;
   if (!id) {
     throw new Error('UID is required');
