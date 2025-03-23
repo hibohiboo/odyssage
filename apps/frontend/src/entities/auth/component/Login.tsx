@@ -1,3 +1,4 @@
+import { Button } from '@odyssage/ui/index';
 import React, { FormEventHandler } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { signinAction } from '@odyssage/frontend/shared/auth/service/signinAction';
@@ -41,12 +42,10 @@ export const Login: React.FC = () => {
           </label>
           <input required id="password" name="password" type="password" />
         </div>
-        <button className="button is-primary" type="submit">
-          ログイン
-        </button>
+        <Button type="submit">ログイン</Button>
       </form>
       初回の方は
-      <Link className="ml-2" to="/signup">
+      <Link className=" underline ml-2" to="/signup">
         サインアップ
       </Link>
       をお願いします

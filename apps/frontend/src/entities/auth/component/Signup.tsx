@@ -1,3 +1,4 @@
+import { Button } from '@odyssage/ui/index';
 import React from 'react';
 import { useSignup } from '../model/useSignup';
 
@@ -24,9 +25,7 @@ export const Signup: React.FC = () => {
           </label>
           <input required id="password" name="password" type="password" />
         </div>
-        <button className="button is-primary" type="submit">
-          サインアップ
-        </button>
+        <Button type="submit">サインアップ</Button>
       </form>
     </div>
   );

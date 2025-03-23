@@ -44,7 +44,6 @@ export function Layout() {
       return [
         ...defaultNavLinks,
         { to: '/login', label: 'ログイン', icon: User },
-        { to: '/signup', label: 'サインアップ', icon: User },
       ];
     }
     const name = userName ?? 'ゲストユーザ';

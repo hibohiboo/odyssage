@@ -17,6 +17,7 @@ export interface ButtonProps {
    * Is button disabled
    */
   disabled?: boolean;
+  type: 'button' | 'submit' | 'reset';
 }
 
 /**
@@ -27,6 +28,7 @@ export const Button = ({
   variant = 'primary',
   disabled = false,
   onClick,
+  type = 'button',
 }: ButtonProps) => {
   const baseStyles = 'px-4 py-2 rounded font-medium transition-colors';
 
@@ -38,7 +40,7 @@ export const Button = ({
 
   return (
     <button
-      type="button"
+      type={type}
       className={`${baseStyles} ${variantStyles[variant]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       disabled={disabled}
       onClick={onClick}
