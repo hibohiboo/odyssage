@@ -1,11 +1,10 @@
-import { Scenario, ScenarioStatus } from '../types';
+import { Scenario } from '../types';
 import { ActionButtons } from './ActionButtons';
 import { AuthorInfo } from './AuthorInfo';
 import { ScenarioStats } from './ScenarioStats';
 
 interface SidebarProps {
   scenario: Scenario;
-  onStatusChange?: (status: ScenarioStatus) => void;
   onToggleGMStock?: () => void;
   onDeleteClick?: () => void;
 }

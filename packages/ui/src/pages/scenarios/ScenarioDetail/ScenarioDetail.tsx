@@ -6,19 +6,17 @@ import { FlowchartViewer } from './components/FlowchartViewer';
 import { ScenarioHeader } from './components/ScenarioHeader';
 import { SceneList } from './components/SceneList';
 import { Sidebar } from './components/Sidebar';
-import { Scenario, ScenarioStatus } from './types';
+import { Scenario } from './types';
 
 // シナリオに関するProps
 interface ScenarioDetailPageProps {
-  scenario: Scenario;
-  onStatusChange?: (newStatus: ScenarioStatus) => void;
-  onToggleGMStock?: () => void;
+  readonly scenario: Scenario;
+  readonly onToggleGMStock?: () => void;
 }
 
 // 純粋な表示用コンポーネント
 export function ScenarioDetailPage({
   scenario,
-  onStatusChange,
   onToggleGMStock,
 }: ScenarioDetailPageProps) {
   return (
@@ -44,11 +42,7 @@ export function ScenarioDetailPage({
         </div>
 
         {/* サイドバー */}
-        <Sidebar
-          scenario={scenario}
-          onStatusChange={onStatusChange}
-          onToggleGMStock={onToggleGMStock}
-        />
+        <Sidebar scenario={scenario} onToggleGMStock={onToggleGMStock} />
       </div>
     </div>
   );
