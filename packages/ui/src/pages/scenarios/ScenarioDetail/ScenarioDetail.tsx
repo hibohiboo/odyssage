@@ -11,7 +11,7 @@ import { Scenario, ScenarioStatus } from './types';
 // シナリオに関するProps
 interface ScenarioDetailPageProps {
   scenario: Scenario;
-  onStatusChange: (newStatus: ScenarioStatus) => void;
+  onStatusChange?: (newStatus: ScenarioStatus) => void;
   onToggleGMStock?: () => void;
 }
 
