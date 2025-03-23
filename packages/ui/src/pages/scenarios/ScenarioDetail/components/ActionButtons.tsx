@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 interface ActionButtonsProps {
   scenarioId: string;
   isStockedByGM: boolean;
-  onToggleGMStock: () => void;
+  onToggleGMStock?: () => void;
   onDeleteClick?: () => void;
 }
 
@@ -23,18 +23,20 @@ export const ActionButtons = ({
         <Edit className="h-5 w-5 mr-2" />
         シナリオを編集
       </Link>
+      {onToggleGMStock && (
+        <button
+          onClick={onToggleGMStock}
+          className={`btn w-full py-3 px-4 rounded-md flex items-center justify-center ${
+            isStockedByGM
+              ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+              : 'bg-blue-500 hover:bg-blue-600 text-white'
+          }`}
+        >
+          <BookOpen className="h-5 w-5 mr-2" />
+          {isStockedByGM ? 'GM用ストック済み' : 'GM用ストックに追加'}
+        </button>
+      )}
 
-      <button
-        onClick={onToggleGMStock}
-        className={`btn w-full py-3 px-4 rounded-md flex items-center justify-center ${
-          isStockedByGM
-            ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-            : 'bg-blue-500 hover:bg-blue-600 text-white'
-        }`}
-      >
-        <BookOpen className="h-5 w-5 mr-2" />
-        {isStockedByGM ? 'GM用ストック済み' : 'GM用ストックに追加'}
-      </button>
       {onDeleteClick && (
         <button
           onClick={onDeleteClick}

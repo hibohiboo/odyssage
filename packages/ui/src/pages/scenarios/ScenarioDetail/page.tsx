@@ -1,35 +1,26 @@
 'use client';
 
 import { ArrowLeft } from 'lucide-react';
-
-import { useState } from 'react';
 import { Link } from 'react-router';
 import { FlowchartViewer } from './components/FlowchartViewer';
 import { ScenarioHeader } from './components/ScenarioHeader';
 import { SceneList } from './components/SceneList';
 import { Sidebar } from './components/Sidebar';
-import { scenarioData, ScenarioStatus } from './types';
+import { Scenario, ScenarioStatus } from './types';
 
-// メインページコンポーネント
-export default function ScenarioDetailPage(_: { params: { id: string } }) {
-  const [scenario, setScenario] = useState(scenarioData);
+// シナリオに関するProps
+interface ScenarioDetailPageProps {
+  scenario: Scenario;
+  onStatusChange: (newStatus: ScenarioStatus) => void;
+  onToggleGMStock?: () => void;
+}
 
-  // シナリオの状態を変更する関数
-  const handleStatusChange = (newStatus: ScenarioStatus) => {
-    setScenario({
-      ...scenario,
-      status: newStatus,
-    });
-  };
-
-  // GM用ストック機能の切り替え
-  const toggleGMStock = () => {
-    setScenario({
-      ...scenario,
-      isStockedByGM: !scenario.isStockedByGM,
-    });
-  };
-
+// 純粋な表示用コンポーネント
+export function ScenarioDetailPage({
+  scenario,
+  onStatusChange,
+  onToggleGMStock,
+}: ScenarioDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* 戻るリンク */}
@@ -55,8 +46,8 @@ export default function ScenarioDetailPage(_: { params: { id: string } }) {
         {/* サイドバー */}
         <Sidebar
           scenario={scenario}
-          onStatusChange={handleStatusChange}
-          onToggleGMStock={toggleGMStock}
+          onStatusChange={onStatusChange}
+          onToggleGMStock={onToggleGMStock}
         />
       </div>
     </div>

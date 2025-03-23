@@ -7,7 +7,7 @@ import { ScenarioStats } from './ScenarioStats';
 interface SidebarProps {
   scenario: Scenario;
   onStatusChange: (status: ScenarioStatus) => void;
-  onToggleGMStock: () => void;
+  onToggleGMStock?: () => void;
   onDeleteClick?: () => void;
 }
 
