@@ -15,7 +15,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ['react', 'react-dom', 'react-router', 'react-dom/server'],
+          react: [
+            'react',
+            'react-router',
+            'react-dom/server',
+            'react-dom/client',
+          ],
           redux: ['@reduxjs/toolkit', 'react-redux'],
           ui: [
             '@odyssage/ui/page-ui',
