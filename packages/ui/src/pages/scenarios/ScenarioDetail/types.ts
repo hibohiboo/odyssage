@@ -32,7 +32,7 @@ export type Scenario = {
   updatedAt: string;
   status: ScenarioStatus;
   tags: string[];
-  author: Author;
+  author?: Author;
   difficulty?: string;
   estimatedTime?: string;
   playerCount?: string;

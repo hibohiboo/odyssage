@@ -47,20 +47,30 @@ export const ScenarioHeader = ({ scenario }: ScenarioHeaderProps) => {
         {scenario.description}
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-        <div className="flex flex-col">
-          <span className="text-stone-500">難易度</span>
-          <span className="font-medium">{scenario.difficulty}</span>
+      {(scenario.difficulty ||
+        scenario.estimatedTime ||
+        scenario.playerCount) && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          {scenario.difficulty && (
+            <div className="flex flex-col">
+              <span className="text-stone-500">難易度</span>
+              <span className="font-medium">{scenario.difficulty}</span>
+            </div>
+          )}
+          {scenario.estimatedTime && (
+            <div className="flex flex-col">
+              <span className="text-stone-500">想定プレイ時間</span>
+              <span className="font-medium">{scenario.estimatedTime}</span>
+            </div>
+          )}
+          {scenario.playerCount && (
+            <div className="flex flex-col">
+              <span className="text-stone-500">推奨プレイヤー数</span>
+              <span className="font-medium">{scenario.playerCount}</span>
+            </div>
+          )}
         </div>
-        <div className="flex flex-col">
-          <span className="text-stone-500">想定プレイ時間</span>
-          <span className="font-medium">{scenario.estimatedTime}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-stone-500">推奨プレイヤー数</span>
-          <span className="font-medium">{scenario.playerCount}</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

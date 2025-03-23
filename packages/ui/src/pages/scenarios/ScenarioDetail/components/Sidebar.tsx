@@ -24,7 +24,8 @@ export const Sidebar = ({
       onToggleGMStock={onToggleGMStock}
       onDeleteClick={onDeleteClick}
     />
-    <AuthorInfo author={scenario.author} />
+    {scenario.author && <AuthorInfo author={scenario.author} />}
+
     <ScenarioStats scenario={scenario} />
     <PublishSettings status={scenario.status} onStatusChange={onStatusChange} />
   </div>

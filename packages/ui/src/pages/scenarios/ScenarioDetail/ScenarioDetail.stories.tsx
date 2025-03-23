@@ -31,10 +31,12 @@ export const Default: Story = {
       difficulty: undefined,
       estimatedTime: undefined,
       playerCount: undefined,
+      author: undefined,
     },
     onStatusChange: (newStatus: ScenarioStatus) => {
       console.log(`Status changed to: ${newStatus}`);
     },
+    onToggleGMStock: undefined,
   },
 };
 
