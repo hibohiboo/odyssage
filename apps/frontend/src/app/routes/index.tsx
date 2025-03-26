@@ -59,7 +59,9 @@ export const createRouter = () =>
                     {
                       path: '',
                       loader: detailPageLoader,
-                      element: <ScenarioDetailPage />,
+                      element: (
+                        <ScenarioDetailPage backLink="/creator/scenario/list" />
+                      ),
                     },
                     {
                       path: 'edit',
@@ -82,6 +84,19 @@ export const createRouter = () =>
                   path: 'public',
                   element: <PublicScenarioListPage />,
                   loader: publicScenarioListLoader,
+                },
+                {
+                  path: ':id',
+
+                  children: [
+                    {
+                      path: '',
+                      loader: detailPageLoader,
+                      element: (
+                        <ScenarioDetailPage backLink="/gm/scenario/public" />
+                      ),
+                    },
+                  ],
                 },
               ],
             },

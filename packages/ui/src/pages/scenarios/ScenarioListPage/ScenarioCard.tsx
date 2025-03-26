@@ -6,6 +6,7 @@ import { Scenario } from './types';
 interface ScenarioActionsProps {
   readonly scenario: Scenario;
   readonly editable?: boolean;
+  readonly linkPrefix: string;
 }
 
 // ステータスに応じたクラス名を取得
@@ -33,7 +34,11 @@ const getStatusText = (status: string): string => {
 };
 
 // シナリオカードコンポーネント
-export function ScenarioCard({ scenario, editable }: ScenarioActionsProps) {
+export function ScenarioCard({
+  scenario,
+  editable,
+  linkPrefix,
+}: ScenarioActionsProps) {
   const statusClassName = getStatusClassName(scenario.status);
   const statusText = getStatusText(scenario.status);
 
@@ -81,7 +86,11 @@ export function ScenarioCard({ scenario, editable }: ScenarioActionsProps) {
         </div>
       </div>
 
-      <ScenarioActions scenario={scenario} editable={editable} />
+      <ScenarioActions
+        scenario={scenario}
+        editable={editable}
+        linkPrefix={linkPrefix}
+      />
     </div>
   );
 }

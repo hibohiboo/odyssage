@@ -14,6 +14,7 @@ export default function PublicScenarioListPage({
             key={scenario.id}
             scenario={scenario}
             editable={false}
+            linkPrefix={`/gm/scenario`}
           />
         ))}
       </div>

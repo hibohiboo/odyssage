@@ -3,11 +3,13 @@ import { Link } from 'react-router';
 
 // シナリオアクションコンポーネント
 export function ScenarioActions({
+  linkPrefix,
   scenario,
   editable,
   onDelete,
 }: {
   readonly scenario: { readonly id: string; readonly status: string };
+  readonly linkPrefix: string;
   readonly onDelete?: () => void;
   readonly editable?: boolean;
 }) {
@@ -15,14 +17,14 @@ export function ScenarioActions({
     <div className="bg-stone-50 p-3 flex justify-between">
       <div className="flex gap-2">
         <Link
-          to={`/creator/scenario/${scenario.id}`}
+          to={`${linkPrefix}/${scenario.id}`}
           className="text-sm text-amber-700 hover:text-amber-800 font-medium"
         >
           詳細を見る
         </Link>
         {editable && (
           <Link
-            to={`/creator/scenario/${scenario.id}/edit`}
+            to={`${linkPrefix}/${scenario.id}/edit`}
             className="text-sm text-stone-600 hover:text-stone-800"
           >
             編集する

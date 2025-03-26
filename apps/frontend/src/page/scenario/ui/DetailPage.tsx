@@ -1,26 +1,10 @@
 import { ScenarioDetailPage } from '@odyssage/ui/page-ui';
-import { useLoaderData } from 'react-router';
-import { ScenarioData } from '../api/detailLoader';
+import { useDetailPage } from '../model/useDetailPage';
 
-const DetailPage = () => {
-  const loaderData = useLoaderData<ScenarioData>();
+const DetailPage = ({ backLink }: { backLink: string }) => {
+  const scenario = useDetailPage();
 
-  return (
-    <ScenarioDetailPage
-      scenario={{
-        id: loaderData.id,
-        title: loaderData.title,
-        description: loaderData.overview,
-        updatedAt: loaderData.updatedAt,
-        status: loaderData.visibility as 'private' | 'public',
-        tags: [],
-        isStockedByGM: false,
-        gmCount: 0,
-        nodes: [],
-        connections: [],
-      }}
-    />
-  );
+  return <ScenarioDetailPage scenario={scenario} backLink={backLink} />;
 };
 
 export default DetailPage;

@@ -11,19 +11,21 @@ import { Scenario } from './types';
 // シナリオに関するProps
 interface ScenarioDetailPageProps {
   readonly scenario: Scenario;
+  readonly backLink: string;
   readonly onToggleGMStock?: () => void;
 }
 
 // 純粋な表示用コンポーネント
 export function ScenarioDetailPage({
   scenario,
+  backLink,
   onToggleGMStock,
 }: ScenarioDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* 戻るリンク */}
       <Link
-        to="/creator/scenario/list"
+        to={backLink}
         className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-1" />
