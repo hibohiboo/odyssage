@@ -7,6 +7,7 @@ import {
   getScenariosByUid,
   getUserById,
 } from '@odyssage/database/src/queries/select';
+import { getScenarioStocksByUserId } from '@odyssage/database/src/queries/select_stocks';
 import { createScenarioStock } from '@odyssage/database/src/queries/stock';
 import { updateScenario } from '@odyssage/database/src/queries/update';
 import {
@@ -97,5 +98,17 @@ export const user = new Hono<Env>()
       });
 
       return c.json({ message: 'Scenario insert successfully' }, 201);
+    },
+  )
+  .get(
+    '/:uid/stocked-scenarios',
+    vValidator('param', userParamSchema),
+    async (c) => {
+      const param = c.req.valid('param');
+      const data = await getScenarioStocksByUserId(
+        c.env.NEON_CONNECTION_STRING,
+        param.uid,
+      );
+      return c.json(data);
     },
   );
