@@ -1,9 +1,11 @@
+import { utcStringToJstDatetime } from '@odyssage/lib/dateUtils';
 import { Clock } from 'lucide-react';
 import { ScenarioActions } from './ScenarioAction';
 import { Scenario } from './types';
 
 interface ScenarioActionsProps {
   readonly scenario: Scenario;
+  readonly editable?: boolean;
 }
 
 // ステータスに応じたクラス名を取得
@@ -31,7 +33,7 @@ const getStatusText = (status: string): string => {
 };
 
 // シナリオカードコンポーネント
-export function ScenarioCard({ scenario }: ScenarioActionsProps) {
+export function ScenarioCard({ scenario, editable }: ScenarioActionsProps) {
   const statusClassName = getStatusClassName(scenario.status);
   const statusText = getStatusText(scenario.status);
 
@@ -68,7 +70,7 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
           <div className="flex items-center gap-4">
             <div className="flex items-center">
               <Clock className="h-3 w-3 mr-1" />
-              <div>更新: {scenario.updatedAt}</div>
+              <div>更新: {utcStringToJstDatetime(scenario.updatedAt)}</div>
             </div>
           </div>
           {scenario.status === 'public' && scenario.usedByGMs > 0 && (
@@ -79,7 +81,7 @@ export function ScenarioCard({ scenario }: ScenarioActionsProps) {
         </div>
       </div>
 
-      <ScenarioActions scenario={scenario} />
+      <ScenarioActions scenario={scenario} editable={editable} />
     </div>
   );
 }

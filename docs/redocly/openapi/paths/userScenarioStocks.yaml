@@ -1,0 +1,41 @@
+get:
+  operationId: getUserScenarioStocks
+  summary: Get scenarios stocked by a user
+  description: Returns a list of scenarios stocked by the specified user
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the user
+  responses:
+    '200':
+      description: Successfully retrieved user's stocked scenarios
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                title:
+                  type: string
+                overview:
+                  type: string
+                stockedAt:
+                  type: string
+                  format: date-time
+    '401':
+      $ref: '../components/schemas/response.yaml#/Unauthorized'
+    '403':
+      $ref: '../components/schemas/response.yaml#/Forbidden'
+    '404':
+      $ref: '../components/schemas/response.yaml#/NotFound'
+    '500':
+      $ref: '../components/schemas/response.yaml#/InternalServerError'
+  security:
+    - bearerAuth: []

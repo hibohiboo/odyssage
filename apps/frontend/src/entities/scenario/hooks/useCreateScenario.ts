@@ -17,7 +17,7 @@ export const useCreateScenario = () => {
     setSuccess(false);
     setError('');
     try {
-      const response = await apiClient.api.user[':uid'].scenario.$post({
+      const response = await apiClient.api.users[':uid'].scenario.$post({
         param: { uid: scenario.uid },
         json: scenario,
       });

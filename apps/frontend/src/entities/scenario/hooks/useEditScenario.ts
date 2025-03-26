@@ -21,7 +21,7 @@ export const useEditScenario = () => {
     setSuccess(false);
     setError('');
     try {
-      const response = await apiClient.api.user[':uid'].scenario[':id'].$put({
+      const response = await apiClient.api.users[':uid'].scenario[':id'].$put({
         param: { id: scenario.id, uid },
         json: scenario,
       });

@@ -4,11 +4,12 @@ import { Link } from 'react-router';
 // シナリオアクションコンポーネント
 export function ScenarioActions({
   scenario,
-  onEdit,
+  editable,
+  onDelete,
 }: {
   readonly scenario: { readonly id: string; readonly status: string };
   readonly onDelete?: () => void;
-  readonly onEdit?: () => void;
+  readonly editable?: boolean;
 }) {
   return (
     <div className="bg-stone-50 p-3 flex justify-between">
@@ -19,17 +20,19 @@ export function ScenarioActions({
         >
           詳細を見る
         </Link>
-        <Link
-          to={`/creator/scenario/${scenario.id}/edit`}
-          className="text-sm text-stone-600 hover:text-stone-800"
-        >
-          編集する
-        </Link>
+        {editable && (
+          <Link
+            to={`/creator/scenario/${scenario.id}/edit`}
+            className="text-sm text-stone-600 hover:text-stone-800"
+          >
+            編集する
+          </Link>
+        )}
       </div>
-      {onEdit && (
+      {onDelete && (
         <div className="flex gap-3">
           <button
-            onClick={onEdit}
+            onClick={onDelete}
             className="text-sm text-red-600 hover:text-red-800 flex items-center"
           >
             <Trash2 className="h-4 w-4 mr-1" />

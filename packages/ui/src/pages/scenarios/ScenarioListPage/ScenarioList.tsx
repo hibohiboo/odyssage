@@ -10,7 +10,7 @@ export function ScenarioList({
   return (
     <div className="space-y-6">
       {scenarios.map((scenario) => (
-        <ScenarioCard key={scenario.id} scenario={scenario} />
+        <ScenarioCard key={scenario.id} scenario={scenario} editable={true} />
       ))}
     </div>
   );

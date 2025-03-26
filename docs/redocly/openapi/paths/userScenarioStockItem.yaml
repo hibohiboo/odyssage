@@ -1,0 +1,65 @@
+post:
+  operationId: createScenarioStock
+  summary: Add a scenario to user's stock
+  description: User stocks (saves) a scenario for future reference
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the user
+    - name: scenario_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The ID of the scenario to stock
+  responses:
+    '201':
+      description: Successfully stocked the scenario
+    '401':
+      $ref: '../components/schemas/response.yaml#/Unauthorized'
+    '403':
+      $ref: '../components/schemas/response.yaml#/Forbidden'
+    '404':
+      $ref: '../components/schemas/response.yaml#/NotFound'
+    '409':
+      description: Scenario is already stocked by this user
+    '500':
+      $ref: '../components/schemas/response.yaml#/InternalServerError'
+  security:
+    - bearerAuth: []
+
+delete:
+  operationId: deleteScenarioStock
+  summary: Remove a scenario from user's stock
+  description: Remove a previously stocked scenario from user's collection
+  parameters:
+    - name: user_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The ID of the user
+    - name: scenario_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: The ID of the scenario to remove from stock
+  responses:
+    '200':
+      description: Successfully removed the scenario from stock
+    '401':
+      $ref: '../components/schemas/response.yaml#/Unauthorized'
+    '403':
+      $ref: '../components/schemas/response.yaml#/Forbidden'
+    '404':
+      description: Scenario is not in user's stock or does not exist
+    '500':
+      $ref: '../components/schemas/response.yaml#/InternalServerError'
+  security:
+    - bearerAuth: []
