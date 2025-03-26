@@ -1,33 +1,37 @@
-import { and, eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { getDb } from '../db';
-import { InsertScenarioStock, scenarioStockTable } from '../schema';
+import { scenarioStockTable } from '../schema';
 
-/**
- * Creates a new scenario stock entry (user stocks a scenario)
- */
-export async function createScenarioStock(
+// シナリオをストックに追加する
+export const createScenarioStock = async (
   connectionString: string,
-  data: InsertScenarioStock,
-) {
-  const db = getDb(connectionString);
-  await db.insert(scenarioStockTable).values(data);
-}
+  data: {
+    userId: string;
+    scenarioId: string;
+  },
+) => {
+  const client = getDb(connectionString);
+  await client.insert(scenarioStockTable).values({
+    userId: data.userId,
+    scenarioId: data.scenarioId,
+  });
+};
 
-/**
- * Removes a scenario stock entry (user unstocks a scenario)
- */
-export async function deleteScenarioStock(
+// シナリオをストックから削除する
+export const deleteScenarioStock = async (
   connectionString: string,
-  userId: string,
-  scenarioId: string,
-) {
-  const db = getDb(connectionString);
-  return db
+  data: {
+    userId: string;
+    scenarioId: string;
+  },
+) => {
+  const client = getDb(connectionString);
+  await client
     .delete(scenarioStockTable)
     .where(
       and(
-        eq(scenarioStockTable.userId, userId),
-        eq(scenarioStockTable.scenarioId, scenarioId),
+        eq(scenarioStockTable.userId, data.userId),
+        eq(scenarioStockTable.scenarioId, data.scenarioId),
       ),
     );
-}
+};

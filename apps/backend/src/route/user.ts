@@ -8,7 +8,10 @@ import {
   getUserById,
 } from '@odyssage/database/src/queries/select';
 import { getScenarioStocksByUserId } from '@odyssage/database/src/queries/select_stocks';
-import { createScenarioStock } from '@odyssage/database/src/queries/stock';
+import {
+  createScenarioStock,
+  deleteScenarioStock,
+} from '@odyssage/database/src/queries/stock';
 import { updateScenario } from '@odyssage/database/src/queries/update';
 import {
   userParamSchema,
@@ -98,6 +101,22 @@ export const user = new Hono<Env>()
       });
 
       return c.json({ message: 'Scenario insert successfully' }, 201);
+    },
+  )
+  .delete(
+    '/:uid/stocked-scenarios/:id',
+    vValidator('param', userScenarioParamSchema),
+    async (c) => {
+      const param = c.req.valid('param');
+      await deleteScenarioStock(c.env.NEON_CONNECTION_STRING, {
+        userId: param.uid,
+        scenarioId: param.id,
+      });
+
+      return c.json(
+        { message: 'Scenario removed from stock successfully' },
+        200,
+      );
     },
   )
   .get(
