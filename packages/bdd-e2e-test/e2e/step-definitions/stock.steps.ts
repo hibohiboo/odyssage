@@ -55,11 +55,25 @@ Then(
 When('公開シナリオ{string}が存在する', async function (this, scenarioName) {
   const { page } = this;
 
-  // シナリオ作成画面に遷移
+  // シナリオ一覧ページに移動
   await page.getByRole('link', { name: 'シナリオ管理' }).click();
-  await page.getByRole('link', { name: '新規シナリオ作成' }).click();
 
-  // シナリオを作成
+  // 該当のシナリオがすでに公開状態かチェック
+  const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
+  const isScenarioExists = await scenarioRow.count(); // 0なら存在しない
+
+  if (isScenarioExists) {
+    const isPublic = await scenarioRow.locator('text=公開中').count();
+    if (isPublic) {
+      console.log(
+        `シナリオ "${scenarioName}" はすでに公開済み。スキップします。`,
+      );
+      return; // すでに公開されているのでスキップ
+    }
+  }
+
+  // シナリオを新規作成
+  await page.getByRole('link', { name: '新規シナリオ作成' }).click();
   await page
     .getByRole('textbox', { name: 'シナリオタイトル' })
     .fill(scenarioName);
@@ -72,7 +86,6 @@ When('公開シナリオ{string}が存在する', async function (this, scenario
   await page.getByRole('link', { name: 'シナリオ一覧に戻る' }).click();
 
   // 作成したシナリオの編集画面を開く
-  const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
   await scenarioRow.locator('text=編集する').click();
 
   // 公開設定を "public" に変更
@@ -82,6 +95,6 @@ When('公開シナリオ{string}が存在する', async function (this, scenario
   // シナリオ一覧に戻る
   await page.getByRole('link', { name: 'シナリオ一覧に戻る' }).click();
 
-  // 公開中であることを確認
+  // 公開状態を確認
   await expect(scenarioRow.locator('text=公開中')).toBeVisible();
 });
