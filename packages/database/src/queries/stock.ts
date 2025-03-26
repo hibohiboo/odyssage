@@ -5,8 +5,11 @@ import { InsertScenarioStock, scenarioStockTable } from '../schema';
 /**
  * Creates a new scenario stock entry (user stocks a scenario)
  */
-export async function createScenarioStock(data: InsertScenarioStock) {
-  const db = getDb();
+export async function createScenarioStock(
+  connectionString: string,
+  data: InsertScenarioStock,
+) {
+  const db = getDb(connectionString);
   await db.insert(scenarioStockTable).values(data);
 }
 

@@ -92,7 +92,7 @@ export const user = new Hono<Env>()
     vValidator('param', userScenarioParamSchema),
     async (c) => {
       const param = c.req.valid('param');
-      await createScenarioStock({
+      await createScenarioStock(c.env.NEON_CONNECTION_STRING, {
         userId: param.uid,
         scenarioId: param.id,
       });
