@@ -4,6 +4,7 @@ interface TabButtonProps {
   readonly children: React.ReactNode;
   readonly active?: boolean;
   readonly onClick?: () => void;
+  readonly name?: string;
 }
 
 /**
@@ -11,10 +12,19 @@ interface TabButtonProps {
  * @param children 子要素
  * @param active アクティブ状態
  * @param onClick クリックハンドラー
+ * @param name タブ名（ARIA用）
  */
-function TabButton({ children, active = false, onClick }: TabButtonProps) {
+function TabButton({
+  children,
+  active = false,
+  onClick,
+  name,
+}: TabButtonProps) {
   return (
     <button
+      role="tab"
+      aria-selected={active}
+      name={name}
       className={`px-4 py-2 border-b-2 ${
         active
           ? 'border-amber-700 text-amber-800 font-medium'
@@ -42,16 +52,18 @@ interface ScenarioTabsProps {
  */
 export function ScenarioTabs({ activeTab, onTabChange }: ScenarioTabsProps) {
   return (
-    <div className="flex border-b border-stone-200 mb-6">
+    <div role="tablist" className="flex border-b border-stone-200 mb-6">
       <TabButton
         active={activeTab === 'public'}
         onClick={() => onTabChange('public')}
+        name="公開シナリオ"
       >
         公開シナリオ
       </TabButton>
       <TabButton
         active={activeTab === 'stocked'}
         onClick={() => onTabChange('stocked')}
+        name="ストック一覧"
       >
         ストック一覧
       </TabButton>

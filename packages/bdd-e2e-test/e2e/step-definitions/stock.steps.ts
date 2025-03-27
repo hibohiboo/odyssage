@@ -26,8 +26,8 @@ Then(
   '「ストック一覧」ページにシナリオ{string}が表示される',
   async function (this, scenarioName) {
     const { page } = this;
-    // ストック一覧タブへ切り替え - セレクタを修正
-    await page.locator('button:has-text("ストック一覧")').click();
+    // ストック一覧タブへ切り替え - セレクタをrole属性を使用
+    await page.getByRole('tab', { name: 'ストック一覧' }).click();
     // ページが安定するのを待つ
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
@@ -49,8 +49,8 @@ Then(
   'シナリオ{string}が「ストック一覧」に表示されなくなる',
   async function (this, scenarioName) {
     const { page } = this;
-    // ストック一覧タブへ切り替え - セレクタを修正
-    await page.locator('button:has-text("ストック一覧")').click();
+    // ストック一覧タブへ切り替え - セレクタをrole属性を使用
+    await page.getByRole('tab', { name: 'ストック一覧' }).click();
     // ページが安定するのを待つ
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
@@ -59,16 +59,29 @@ Then(
   },
 );
 
+/**
+ * シナリオ一覧ページでシナリオが「ストックする」と表示されることを確認するステップ
+ * 複数の同名シナリオが存在する場合に備え、よりピンポイントで検索します
+ * @param scenarioName 検索対象のシナリオ名
+ */
 Then(
   'シナリオ一覧ページでシナリオ{string}が「ストックする」と表示される',
   async function (this, scenarioName) {
     const { page } = this;
     // 公開シナリオタブに切り替え
-    await page.locator('button:has-text("公開シナリオ")').click();
+    await page.getByRole('tab', { name: '公開シナリオ' }).click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
-    const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-    await expect(scenarioRow.locator('text=ストックする')).toBeVisible();
+    
+    // シナリオカードを探す - シナリオ名を含むカードを特定
+    const scenarioCards = page.locator('.card:has(h3:text("' + scenarioName + '"))');
+    
+    // 最初のカードを選択
+    const firstCard = scenarioCards.first();
+    
+    // このカードに「ストックする」ボタンがあることを確認
+    const stockButton = firstCard.getByText('ストックする');
+    await expect(stockButton).toBeVisible();
   },
 );
 
@@ -205,3 +218,21 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
     throw error;
   }
 });
+
+/**
+ * 特定のシナリオが「ストック一覧」に表示されていることを検証するステップ
+ * @param scenarioName 検索対象のシナリオ名
+ */
+Then(
+  'シナリオ"{string}"が「ストック一覧」に表示される',
+  async function (this, scenarioName) {
+    const { page } = this;
+    // ストック一覧タブへ切り替え
+    await page.getByRole('tab', { name: 'ストック一覧' }).click();
+    // ページが安定するのを待つ
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    // シナリオ名が表示されていることを検証
+    await expect(page.getByText(scenarioName)).toBeVisible();
+  },
+);
