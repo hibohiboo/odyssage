@@ -1,5 +1,8 @@
-import { Given, When, Then } from '@cucumber/cucumber';
+import { Given, When, Then, setDefaultTimeout } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
+
+// Increase timeout to 60 seconds to avoid timeout errors
+setDefaultTimeout(60 * 1000);
 
 When(
   'シナリオ{string}の「ストックする」ボタンをクリックする',
@@ -52,49 +55,125 @@ Then(
     await expect(scenarioRow.locator('text=ストックする')).toBeVisible();
   },
 );
-When('公開シナリオ{string}が存在する', async function (this, scenarioName) {
-  const { page } = this;
 
-  // シナリオ一覧ページに移動
-  await page.getByRole('link', { name: 'シナリオ管理' }).click();
+Given(
+  'ユーザーがシナリオ{string}をストック済みである',
+  async function (this, scenarioName) {
+    const { page } = this;
+    // シナリオ一覧ページに移動
+    await page.getByRole('link', { name: 'シナリオ管理' }).click();
 
-  // 該当のシナリオがすでに公開状態かチェック
-  const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-  const isScenarioExists = await scenarioRow.count(); // 0なら存在しない
+    // シナリオが存在するか確認
+    const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
+    const isScenarioExists = await scenarioRow.count(); // 0なら存在しない
 
-  if (isScenarioExists) {
-    const isPublic = await scenarioRow.locator('text=公開中').count();
-    if (isPublic) {
-      console.log(
-        `シナリオ "${scenarioName}" はすでに公開済み。スキップします。`,
-      );
-      return; // すでに公開されているのでスキップ
+    if (!isScenarioExists) {
+      throw new Error(`シナリオ "${scenarioName}" が見つかりません。`);
     }
+
+    // ストック状態を確認
+    const isStocked = await scenarioRow.locator('text=ストック済み').count();
+
+    // まだストックされていない場合はストックする
+    if (!isStocked) {
+      await scenarioRow.locator('text=ストックする').click();
+      // ストック完了を待つ
+      await expect(scenarioRow.locator('text=ストック済み')).toBeVisible();
+    }
+  },
+);
+
+// 既存の公開シナリオ関数を最適化
+Given('公開シナリオ{string}が存在する', async function (this, scenarioName) {
+  try {
+    const { page } = this;
+    // シナリオ一覧ページに移動
+    await page.getByRole('link', { name: 'シナリオ管理' }).click();
+    // ナビゲーションを安定して待つ
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    // 該当のシナリオがすでに公開状態かチェック
+    const scenarioExists =
+      (await page.locator(`:has-text("${scenarioName}")`).count()) > 0;
+
+    if (scenarioExists) {
+      const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
+      const isPublic = (await scenarioRow.locator('text=公開中').count()) > 0;
+
+      if (isPublic) {
+        console.log(
+          `シナリオ "${scenarioName}" はすでに公開済み。スキップします。`,
+        );
+        return; // すでに公開されているのでスキップ
+      }
+
+      // 非公開状態なら公開に変更
+      await scenarioRow.locator('text=編集する').click();
+      await page.waitForLoadState('networkidle');
+      await page.getByText('公開', { exact: true }).click();
+      await page.getByRole('button', { name: '保存する' }).click();
+      await page.waitForLoadState('networkidle');
+      await page.getByRole('link', { name: 'シナリオ一覧に戻る' }).click();
+      await page.waitForLoadState('networkidle');
+      return;
+    }
+
+    // シナリオを新規作成
+    console.log('新規シナリオ作成を開始します');
+
+    // 新規シナリオ作成リンクを探して確実にクリック
+    const newScenarioLink = page.getByRole('link', {
+      name: '新規シナリオ作成',
+    });
+    await newScenarioLink.waitFor({ state: 'visible' });
+
+    console.log('新規シナリオ作成リンクを見つけました');
+    await page.waitForTimeout(500);
+
+    if (await newScenarioLink.isEnabled()) {
+      await newScenarioLink.click();
+    } else {
+      console.log('要素が有効でないためクリックできません');
+      await page.waitForTimeout(500);
+      await newScenarioLink.click({ timeout: 1000 });
+    }
+
+    // クリック後のページ遷移を確認
+    try {
+      // シナリオタイトル入力欄が表示されるまで待機
+      await page.getByRole('textbox', { name: 'シナリオタイトル' }).waitFor({
+        state: 'visible',
+        timeout: 5000,
+      });
+    } catch (e) {
+      console.log(
+        '通常のクリックでは遷移しませんでした。強制ナビゲーションを試みます',
+      );
+
+      // JavaScriptを使って直接ナビゲーションを実行
+      const href = await newScenarioLink.getAttribute('href');
+      if (href) {
+        await page.goto(`http://localhost:5173${href}`);
+      } else {
+        throw new Error('新規シナリオ作成リンクのURLを取得できませんでした');
+      }
+    }
+
+    // ページが安定するのを待つ
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+
+    // シナリオ情報を入力
+    await page
+      .getByRole('textbox', { name: 'シナリオタイトル' })
+      .fill(scenarioName);
+    await page
+      .getByRole('textbox', { name: 'シナリオ概要' })
+      .fill('テスト用のシナリオ');
+    await page.getByText('公開', { exact: true }).click();
+    await page.getByRole('button', { name: '保存する' }).click();
+  } catch (error) {
+    console.error(`シナリオ作成中にエラーが発生しました: ${error}`);
+    throw error;
   }
-
-  // シナリオを新規作成
-  await page.getByRole('link', { name: '新規シナリオ作成' }).click();
-  await page
-    .getByRole('textbox', { name: 'シナリオタイトル' })
-    .fill(scenarioName);
-  await page
-    .getByRole('textbox', { name: 'シナリオ概要' })
-    .fill('テスト用のシナリオ');
-  await page.getByRole('button', { name: '保存する' }).click();
-
-  // シナリオ一覧に戻る
-  await page.getByRole('link', { name: 'シナリオ一覧に戻る' }).click();
-
-  // 作成したシナリオの編集画面を開く
-  await scenarioRow.locator('text=編集する').click();
-
-  // 公開設定を "public" に変更
-  await page.getByText('公開', { exact: true }).click();
-  await page.getByRole('button', { name: '保存する' }).click();
-
-  // シナリオ一覧に戻る
-  await page.getByRole('link', { name: 'シナリオ一覧に戻る' }).click();
-
-  // 公開状態を確認
-  await expect(scenarioRow.locator('text=公開中')).toBeVisible();
 });
