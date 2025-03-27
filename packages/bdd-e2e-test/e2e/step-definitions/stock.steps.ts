@@ -9,7 +9,7 @@ When(
   async function (this, scenarioName) {
     const { page } = this;
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-    await scenarioRow.locator('text=ストックする').click();
+    await scenarioRow.locator('text=ストックする').nth(0).click();
   },
 );
 
@@ -18,7 +18,7 @@ Then(
   async function (this, scenarioName) {
     const { page } = this;
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-    await expect(scenarioRow.locator('text=ストック済み')).toBeVisible();
+    await expect(scenarioRow.locator('text=ストック済み').nth(0)).toBeVisible();
   },
 );
 
@@ -35,7 +35,7 @@ When(
   async function (this, scenarioName) {
     const { page } = this;
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
-    await scenarioRow.locator('text=ストック解除').click();
+    await scenarioRow.locator('text=ストック解除').nth(0).click();
   },
 );
 
@@ -51,6 +51,8 @@ Then(
   'シナリオ一覧ページでシナリオ{string}が「ストックする」と表示される',
   async function (this, scenarioName) {
     const { page } = this;
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
     await expect(scenarioRow.locator('text=ストックする')).toBeVisible();
   },
@@ -61,7 +63,7 @@ Given(
   async function (this, scenarioName) {
     const { page } = this;
     // シナリオ一覧ページに移動
-    await page.getByRole('link', { name: 'シナリオ管理' }).click();
+    await page.getByRole('link', { name: '公開シナリオ' }).click();
 
     // シナリオが存在するか確認
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();
@@ -76,9 +78,11 @@ Given(
 
     // まだストックされていない場合はストックする
     if (!isStocked) {
-      await scenarioRow.locator('text=ストックする').click();
+      await scenarioRow.locator('text=ストックする').nth(0).click();
       // ストック完了を待つ
-      await expect(scenarioRow.locator('text=ストック済み')).toBeVisible();
+      await expect(
+        scenarioRow.locator('text=ストック済み').nth(0),
+      ).toBeVisible();
     }
   },
 );
@@ -88,7 +92,7 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
   try {
     const { page } = this;
     // シナリオ一覧ページに移動
-    await page.getByRole('link', { name: 'シナリオ管理' }).click();
+    await page.getByRole('link', { name: '公開シナリオ' }).click();
     // ナビゲーションを安定して待つ
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
@@ -108,7 +112,17 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
       }
 
       // 非公開状態なら公開に変更
-      await scenarioRow.locator('text=編集する').click();
+      // シナリオ一覧ページに移動
+      await page.getByRole('link', { name: 'シナリオ管理' }).click();
+      // ナビゲーションを安定して待つ
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(500);
+
+      await page
+        .locator(`:has-text("${scenarioName}")`)
+        .first()
+        .locator('text=編集する')
+        .click();
       await page.waitForLoadState('networkidle');
       await page.getByText('公開', { exact: true }).click();
       await page.getByRole('button', { name: '保存する' }).click();

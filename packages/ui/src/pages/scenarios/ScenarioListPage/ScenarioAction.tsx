@@ -29,14 +29,15 @@ const StockButton = ({
     {isLoading ? (
       <span className="animate-pulse">処理中...</span>
     ) : (
-      <>
+      <span className="flex items-center cursor-pointer">
+        {isStocked ? 'ストック済み' : ''}
         {isStocked ? (
           <CheckCircle className="h-4 w-4 mr-1" />
         ) : (
           <BookOpen className="h-4 w-4 mr-1" />
         )}
         {isStocked ? 'ストック解除' : 'ストックする'}
-      </>
+      </span>
     )}
   </button>
 );
