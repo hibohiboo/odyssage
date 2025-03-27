@@ -13,6 +13,7 @@ interface ScenarioDetailPageProps {
   readonly scenario: Scenario;
   readonly backLink: string;
   readonly onToggleGMStock?: () => void;
+  readonly isLoading?: boolean;
 }
 
 // 純粋な表示用コンポーネント
@@ -20,6 +21,7 @@ export function ScenarioDetailPage({
   scenario,
   backLink,
   onToggleGMStock,
+  isLoading = false,
 }: ScenarioDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
@@ -44,7 +46,11 @@ export function ScenarioDetailPage({
         </div>
 
         {/* サイドバー */}
-        <Sidebar scenario={scenario} onToggleGMStock={onToggleGMStock} />
+        <Sidebar
+          scenario={scenario}
+          onToggleGMStock={onToggleGMStock}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Edit, Trash2, BookOpen } from 'lucide-react';
+import { Edit, Trash2, BookOpen, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router';
 
 interface ActionButtonsProps {
@@ -6,6 +6,7 @@ interface ActionButtonsProps {
   isStockedByGM: boolean;
   onToggleGMStock?: () => void;
   onDeleteClick?: () => void;
+  isLoading?: boolean;
 }
 
 export const ActionButtons = ({
@@ -13,6 +14,7 @@ export const ActionButtons = ({
   isStockedByGM,
   onToggleGMStock,
   onDeleteClick,
+  isLoading = false,
 }: ActionButtonsProps) => (
   <div className="card p-6 mb-6">
     <div className="space-y-3">
@@ -26,14 +28,25 @@ export const ActionButtons = ({
       {onToggleGMStock && (
         <button
           onClick={onToggleGMStock}
+          disabled={isLoading}
           className={`btn w-full py-3 px-4 rounded-md flex items-center justify-center ${
             isStockedByGM
               ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
               : 'bg-blue-500 hover:bg-blue-600 text-white'
           }`}
         >
-          <BookOpen className="h-5 w-5 mr-2" />
-          {isStockedByGM ? 'GM用ストック済み' : 'GM用ストックに追加'}
+          {isLoading ? (
+            <span className="animate-pulse">処理中...</span>
+          ) : (
+            <>
+              {isStockedByGM ? (
+                <CheckCircle className="h-5 w-5 mr-2" />
+              ) : (
+                <BookOpen className="h-5 w-5 mr-2" />
+              )}
+              {isStockedByGM ? 'GM用ストックを解除' : 'GM用ストックに追加'}
+            </>
+          )}
         </button>
       )}
 
