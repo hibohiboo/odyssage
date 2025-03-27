@@ -25,15 +25,19 @@ export default function PublicScenarioListPage({
   const [activeTab, setActiveTab] = useState<ScenarioTabType>('public');
 
   // 表示するシナリオをタブに応じてフィルタリング
-  const filteredScenarios = activeTab === 'public' 
-    ? scenarios 
-    : scenarios.filter(scenario => stockedScenarioIds.includes(scenario.id));
+  const filteredScenarios =
+    activeTab === 'public'
+      ? scenarios
+      : scenarios.filter((scenario) =>
+          stockedScenarioIds.includes(scenario.id),
+        );
 
   // ページタイトルとサブタイトルをタブに応じて変更
   const pageTitle = activeTab === 'public' ? 'シナリオ一覧' : 'ストック一覧';
-  const pageSubtitle = activeTab === 'public' 
-    ? '公開されているシナリオを閲覧できます' 
-    : 'ストックしたシナリオを管理できます';
+  const pageSubtitle =
+    activeTab === 'public'
+      ? '公開されているシナリオを閲覧できます'
+      : 'ストックしたシナリオを管理できます';
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -47,10 +51,7 @@ export default function PublicScenarioListPage({
       </div>
 
       {/* タブ表示 */}
-      <ScenarioTabs 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
-      />
+      <ScenarioTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       <div className="space-y-6">
         {filteredScenarios.map((scenario) => (
@@ -68,8 +69,8 @@ export default function PublicScenarioListPage({
         ))}
         {filteredScenarios.length === 0 && (
           <div className="text-center py-10 text-stone-500">
-            {activeTab === 'public' 
-              ? '公開されているシナリオがありません' 
+            {activeTab === 'public'
+              ? '公開されているシナリオがありません'
               : 'ストックしたシナリオがありません'}
           </div>
         )}

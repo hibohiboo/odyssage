@@ -26,6 +26,12 @@ Then(
   '「ストック一覧」ページにシナリオ{string}が表示される',
   async function (this, scenarioName) {
     const { page } = this;
+    // ストック一覧タブへ切り替え - セレクタを修正
+    await page.locator('button:has-text("ストック一覧")').click();
+    // ページが安定するのを待つ
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    // シナリオ名が表示されていることを検証
     await expect(page.getByText(scenarioName)).toBeVisible();
   },
 );
@@ -43,6 +49,12 @@ Then(
   'シナリオ{string}が「ストック一覧」に表示されなくなる',
   async function (this, scenarioName) {
     const { page } = this;
+    // ストック一覧タブへ切り替え - セレクタを修正
+    await page.locator('button:has-text("ストック一覧")').click();
+    // ページが安定するのを待つ
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    // シナリオ名が表示されていないことを検証
     await expect(page.getByText(scenarioName)).not.toBeVisible();
   },
 );
@@ -51,6 +63,8 @@ Then(
   'シナリオ一覧ページでシナリオ{string}が「ストックする」と表示される',
   async function (this, scenarioName) {
     const { page } = this;
+    // 公開シナリオタブに切り替え
+    await page.locator('button:has-text("公開シナリオ")').click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
     const scenarioRow = page.locator(`:has-text("${scenarioName}")`).first();

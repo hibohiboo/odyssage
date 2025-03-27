@@ -40,10 +40,7 @@ interface ScenarioTabsProps {
  * @param activeTab 現在のアクティブタブ
  * @param onTabChange タブ変更時のコールバック
  */
-export function ScenarioTabs({
-  activeTab,
-  onTabChange,
-}: ScenarioTabsProps) {
+export function ScenarioTabs({ activeTab, onTabChange }: ScenarioTabsProps) {
   return (
     <div className="flex border-b border-stone-200 mb-6">
       <TabButton
