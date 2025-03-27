@@ -48,7 +48,7 @@
 ],
 // コミットメッセージ生成時
 "github.copilot.chat.commitMessageGeneration.instructions": [
-  {"file": ".github/copilot-instructions.md"},
+  {"file": ".github/copilot-instructions.commit-msg.md"},
   {"text": "何のための変更かを記載すること" }
 ],
 }
