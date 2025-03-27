@@ -7,6 +7,9 @@ interface ScenarioActionsProps {
   readonly scenario: Scenario;
   readonly editable?: boolean;
   readonly linkPrefix: string;
+  readonly isStocked?: boolean;
+  readonly onToggleStock?: () => void;
+  readonly isStockLoading?: boolean;
 }
 
 // ステータスに応じたクラス名を取得
@@ -38,6 +41,9 @@ export function ScenarioCard({
   scenario,
   editable,
   linkPrefix,
+  isStocked,
+  onToggleStock,
+  isStockLoading,
 }: ScenarioActionsProps) {
   const statusClassName = getStatusClassName(scenario.status);
   const statusText = getStatusText(scenario.status);
@@ -90,6 +96,9 @@ export function ScenarioCard({
         scenario={scenario}
         editable={editable}
         linkPrefix={linkPrefix}
+        isStocked={isStocked}
+        onToggleStock={onToggleStock}
+        isStockLoading={isStockLoading}
       />
     </div>
   );
