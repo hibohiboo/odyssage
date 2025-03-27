@@ -31,5 +31,24 @@
   // tailwindcssの設定
   "files.associations": {
     "*.css": "tailwindcss"
- }
+ },
+ // https://zenn.dev/dzeyelid/articles/f26ad0b4dc555d
+ // レビューとコメント
+ "github.copilot.chat.reviewSelection.instructions": [
+  {"file": ".github/copilot-instructions.md"}
+],
+// コード生成時
+"github.copilot.chat.codeGeneration.instructions": [
+  {"file": ".github/copilot-instructions.md"}
+],
+// テスト生成時
+"github.copilot.chat.testGeneration.instructions": [
+  {"file": ".github/copilot-instructions.md"},
+  {"text": "テストケースは日本語で記載すること" }
+],
+// コミットメッセージ生成時
+"github.copilot.chat.commitMessageGeneration.instructions": [
+  {"file": ".github/copilot-instructions.md"},
+  {"text": "何のための変更かを記載すること" }
+],
 }
