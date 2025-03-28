@@ -72,13 +72,15 @@ Then(
     await page.getByRole('tab', { name: '公開シナリオ' }).click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
-    
+
     // シナリオカードを探す - シナリオ名を含むカードを特定
-    const scenarioCards = page.locator('.card:has(h3:text("' + scenarioName + '"))');
-    
+    const scenarioCards = page.locator(
+      '.card:has(h3:text("' + scenarioName + '"))',
+    );
+
     // 最初のカードを選択
     const firstCard = scenarioCards.first();
-    
+
     // このカードに「ストックする」ボタンがあることを確認
     const stockButton = firstCard.getByText('ストックする');
     await expect(stockButton).toBeVisible();
