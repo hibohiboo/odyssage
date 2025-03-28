@@ -6,35 +6,35 @@ import { FormTextArea } from './FormTextArea';
 import type React from 'react';
 
 export interface ScenarioEditProps {
-  pageTitle?: string;
+  readonly pageTitle?: string;
   // State props
-  title?: string;
-  description?: string;
-  tags?: string[];
-  newTag?: string;
-  visibility?: 'private' | 'public';
-  loading?: boolean;
+  readonly title?: string;
+  readonly description?: string;
+  readonly tags?: string[];
+  readonly newTag?: string;
+  readonly visibility?: 'private' | 'public';
+  readonly loading?: boolean;
 
   // Handler props
-  onTitleChange?: (value: string) => void;
-  onDescriptionChange?: (value: string) => void;
-  onNewTagChange?: (value: string) => void;
-  onVisibilityChange?: (value: 'private' | 'public') => void;
-  onAddTag?: () => void;
-  onRemoveTag?: (tagToRemove: string) => void;
-  onSave?: () => void;
+  readonly onTitleChange?: (value: string) => void;
+  readonly onDescriptionChange?: (value: string) => void;
+  readonly onNewTagChange?: (value: string) => void;
+  readonly onVisibilityChange?: (value: 'private' | 'public') => void;
+  readonly onAddTag?: () => void;
+  readonly onRemoveTag?: (tagToRemove: string) => void;
+  readonly onSave?: () => void;
 
   // Additional settings props
-  difficulty?: string;
-  onDifficultyChange?: (value: string) => void;
-  playerCount?: string;
-  onPlayerCountChange?: (value: string) => void;
-  playtime?: string;
-  onPlaytimeChange?: (value: string) => void;
+  readonly difficulty?: string;
+  readonly onDifficultyChange?: (value: string) => void;
+  readonly playerCount?: string;
+  readonly onPlayerCountChange?: (value: string) => void;
+  readonly playtime?: string;
+  readonly onPlaytimeChange?: (value: string) => void;
 
   // Option
-  isViewSidebar?: boolean;
-  isViewTags?: boolean;
+  readonly isViewSidebar?: boolean;
+  readonly isViewTags?: boolean;
 }
 
 // eslint-disable-next-line complexity

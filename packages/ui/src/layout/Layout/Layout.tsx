@@ -4,8 +4,8 @@ export function Layout({
   navigation,
   children,
 }: {
-  navigation: React.ReactNode;
-  children: React.ReactNode;
+  readonly navigation: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <div className={`bg-stone-100 text-stone-800 min-h-screen`}>
