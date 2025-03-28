@@ -109,15 +109,15 @@ jobs:
         working-directory: ./docs/code-maat
 
       - name: create git log 
-        run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2023-01-01 > ./logfile.log
+        run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2024-01-01 > ./logfile.log
         working-directory: ./docs/code-maat
 
       - name: Run Code Maat
-        run: java -jar code-maat-1.0.4-standalone.jar -l logfile.log -c git2 -c git2 -a revisions > ./revisions.csv
+        run: java -jar code-maat-1.0.4-standalone.jar -l logfile.log -c git2 -a revisions > ./revisions.csv
         working-directory: ./docs/code-maat
 
       - name: Run Cloc
-        run: docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 10 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/complexity.csv
+        run: docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 20 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/complexity.csv
 
       - uses: actions/setup-python@v5
         with:

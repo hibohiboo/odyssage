@@ -16,6 +16,6 @@
     "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html"
   },
   "devDependencies": {
-    "npm-check-updates": "^17.1.15"
+    "npm-check-updates": "^17.1.16"
   }
 }
