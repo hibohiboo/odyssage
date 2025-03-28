@@ -1,7 +1,7 @@
 ルートフォルダで
 
 ```
-docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 20 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./complexity.csv
+docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 20 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/data/complexity.csv
 ```
 
 

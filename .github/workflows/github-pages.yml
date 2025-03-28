@@ -135,10 +135,6 @@ jobs:
       - run: python csv_as_enclosure_json.py --structure complexity.csv --weights revisions.csv > ../astro/dist/crime-scene-hotspots/hotspots.json
         working-directory: ./docs/code-maat
 
-      - run: cp ./logfile.log ../astro/dist/crime-scene-hotspots/logfile.log && cp ./complexity.csv ../astro/dist/crime-scene-hotspots/complexity.csv && cp ./revisions.csv ../astro/dist/crime-scene-hotspots/revisions.csv
-        working-directory: ./docs/code-maat
-
-
       # astro ドキュメントアップロード
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
