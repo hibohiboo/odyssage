@@ -3,4 +3,4 @@ FROM openjdk:11-jdk
 ADD https://github.com/schemaspy/schemaspy/releases/download/v6.2.4/schemaspy-6.2.4.jar /schemaspy.jar
 ADD https://jdbc.postgresql.org/download/postgresql-42.7.3.jar /postgresql.jar
 
-RUN apt-get update && apt-get install -y fontconfig fonts-dejavu && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get --no-install-recommends install -y fontconfig fonts-dejavu && rm -rf /var/lib/apt/lists/*
