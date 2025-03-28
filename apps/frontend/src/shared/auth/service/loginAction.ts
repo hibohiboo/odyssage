@@ -29,12 +29,12 @@ export const loginAction = createAsyncThunk<
       }),
     );
     if (!user.isAnonymous) return;
-    const result = await apiClient.api.user[':uid'].$get({
+    const result = await apiClient.api.users[':uid'].$get({
       param: { uid: user.uid },
     });
     if (result.status !== 404) return;
     console.log('Creating user');
-    const ret = await apiClient.api.user[':uid'].$put(
+    const ret = await apiClient.api.users[':uid'].$put(
       { param: { uid: user.uid }, json: { name: '' } },
       { headers: putHeaders },
     );

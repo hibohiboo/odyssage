@@ -6,26 +6,28 @@ import { FlowchartViewer } from './components/FlowchartViewer';
 import { ScenarioHeader } from './components/ScenarioHeader';
 import { SceneList } from './components/SceneList';
 import { Sidebar } from './components/Sidebar';
-import { Scenario, ScenarioStatus } from './types';
+import { Scenario } from './types';
 
 // シナリオに関するProps
 interface ScenarioDetailPageProps {
-  scenario: Scenario;
-  onStatusChange?: (newStatus: ScenarioStatus) => void;
-  onToggleGMStock?: () => void;
+  readonly scenario: Scenario;
+  readonly backLink: string;
+  readonly onToggleGMStock?: () => void;
+  readonly isLoading?: boolean;
 }
 
 // 純粋な表示用コンポーネント
 export function ScenarioDetailPage({
   scenario,
-  onStatusChange,
+  backLink,
   onToggleGMStock,
+  isLoading = false,
 }: ScenarioDetailPageProps) {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* 戻るリンク */}
       <Link
-        to="/creator/scenario/list"
+        to={backLink}
         className="inline-flex items-center text-amber-700 hover:text-amber-800 mb-6"
       >
         <ArrowLeft className="h-4 w-4 mr-1" />
@@ -46,8 +48,8 @@ export function ScenarioDetailPage({
         {/* サイドバー */}
         <Sidebar
           scenario={scenario}
-          onStatusChange={onStatusChange}
           onToggleGMStock={onToggleGMStock}
+          isLoading={isLoading}
         />
       </div>
     </div>

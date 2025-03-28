@@ -11,4 +11,23 @@ export default defineConfig({
       '@odyssage/frontend': path.join(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-router', 'react-dom/client'],
+          redux: ['@reduxjs/toolkit', 'react-redux'],
+          ui: [
+            '@odyssage/ui/page-ui',
+            '@odyssage/ui/index',
+            '@odyssage/ui/top',
+            '@odyssage/ui/layout',
+          ],
+          lucide: ['lucide-react'],
+          util: ['swr', 'uuid'],
+          vendors: ['hono', 'firebase/auth', 'firebase/app'],
+        },
+      },
+    },
+  },
 });

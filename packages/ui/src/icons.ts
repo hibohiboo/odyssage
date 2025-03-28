@@ -8,4 +8,5 @@ export {
   PlusCircle,
   User,
   LoaderIcon,
+  MapPin,
 } from 'lucide-react';

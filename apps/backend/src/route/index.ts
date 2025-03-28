@@ -2,6 +2,7 @@ import { vValidator } from '@hono/valibot-validator';
 import {
   getScenarios,
   getScenariosByid,
+  getPublicScenarios,
 } from '@odyssage/database/src/queries/select';
 import { idSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
@@ -11,10 +12,15 @@ import type { Neo4jError } from 'neo4j-driver-core';
 
 const route = new Hono<Env>()
   .get('/', (c) => c.text('Hello Cloudflare Workers!'))
-  .use('/user/*', authorizeMiddleware)
-  .route('/user', user)
+  .use('/users/*', authorizeMiddleware)
+  .route('/users', user)
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
+
+    return c.json(data);
+  })
+  .get('/scenarios/public', async (c) => {
+    const data = await getPublicScenarios(c.env.NEON_CONNECTION_STRING);
 
     return c.json(data);
   })

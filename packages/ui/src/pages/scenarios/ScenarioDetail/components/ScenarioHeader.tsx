@@ -35,7 +35,7 @@ export const ScenarioHeader = ({ scenario }: ScenarioHeaderProps) => {
       <div className="flex flex-wrap gap-2 mb-4">
         {scenario.tags.map((tag, index) => (
           <span
-            key={index}
+            key={`${tag}-${index}`}
             className="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded-full"
           >
             {tag}

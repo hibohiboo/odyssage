@@ -1,0 +1,33 @@
+get:
+  summary: 公開シナリオ一覧取得
+  security: []
+  responses:
+    200:
+      description: "Successful response"
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                title:
+                  type: "string"
+                overview:
+                  type: "string"
+                  description: "シナリオの概要"
+                updatedAt:
+                  type: "string"
+                  description: "シナリオの更新日時"
+              required:
+                - "id"
+                - "title"
+                - "overview"
+                - "updatedAt"
+              additionalProperties: false
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+  operationId: "getApiPublicScenarios"
+  description: "公開されているシナリオの一覧のみを取得"

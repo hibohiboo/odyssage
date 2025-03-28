@@ -5,7 +5,7 @@ import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
-type APIType = (typeof apiClient.api.user)[':uid']['scenario']['$get'];
+type APIType = (typeof apiClient.api.users)[':uid']['scenario']['$get'];
 type ScenarioResponse = Awaited<ReturnType<APIType>>;
 type ScenarioData =
   ScenarioResponse extends ClientResponse<infer T> ? T : never;
@@ -18,7 +18,7 @@ const ScenarioListPage = () => {
   useEffect(() => {
     if (!uid) return;
     const fetchScenarios = async (id: string) => {
-      const response = await apiClient.api.user[':uid'].scenario.$get({
+      const response = await apiClient.api.users[':uid'].scenario.$get({
         param: { uid: id },
       });
       const data = await response.json();
@@ -32,9 +32,7 @@ const ScenarioListPage = () => {
         id: s.id,
         title: s.title,
         description: s.overview || '',
-        updatedAt: s.updatedAt
-          ? new Date(s.updatedAt).toLocaleDateString('ja-JP')
-          : '',
+        updatedAt: s.updatedAt,
         status: s.visibility === 'public' ? 'public' : 'private',
         usedByGMs: 0,
         tags: [],

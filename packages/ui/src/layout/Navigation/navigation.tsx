@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { DesktopNav } from './desktop-nav';
 import Logo from './logo';
 import { MenuButton } from './menu-button';
-import { DesktopNav } from './desktop-nav';
 import { MobileMenu } from './mobile-nav';
 import { NavLinkItem } from './types';
 

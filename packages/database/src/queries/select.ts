@@ -1,4 +1,12 @@
-import { asc, between, count, eq, getTableColumns, sql } from 'drizzle-orm';
+import {
+  asc,
+  desc,
+  between,
+  count,
+  eq,
+  getTableColumns,
+  sql,
+} from 'drizzle-orm';
 import { getDb } from '../db';
 import { SelectUser, usersTable, scenariosTable } from '../schema';
 
@@ -98,4 +106,18 @@ export async function getScenariosByid(connectionString: string, id: string) {
     })
     .from(scenariosTable)
     .where(eq(scenariosTable.id, id));
+}
+
+export async function getPublicScenarios(connectionString: string) {
+  const db = getDb(connectionString);
+  return db
+    .select({
+      id: scenariosTable.id,
+      title: scenariosTable.title,
+      overview: scenariosTable.overview,
+      updatedAt: scenariosTable.updatedAt,
+    })
+    .from(scenariosTable)
+    .where(eq(scenariosTable.visibility, 'public'))
+    .orderBy(desc(scenariosTable.updatedAt));
 }

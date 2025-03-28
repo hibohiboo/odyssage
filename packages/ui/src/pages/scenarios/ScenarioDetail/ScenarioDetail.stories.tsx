@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router';
 import { ScenarioDetailPage } from './ScenarioDetail';
-import { scenarioData, ScenarioStatus } from './types';
+import { scenarioData } from './types';
 import type { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof ScenarioDetailPage> = {
@@ -34,9 +34,6 @@ export const Default: Story = {
       author: undefined,
       tags: [],
     },
-    onStatusChange: (newStatus: ScenarioStatus) => {
-      console.log(`Status changed to: ${newStatus}`);
-    },
     onToggleGMStock: undefined,
   },
 };
@@ -46,9 +43,6 @@ export const PublicScenario: Story = {
     scenario: {
       ...scenarioData,
       status: 'public',
-    },
-    onStatusChange: (newStatus: ScenarioStatus) => {
-      console.log(`Status changed to: ${newStatus}`);
     },
     onToggleGMStock: () => {
       console.log('GM Stock toggled');
@@ -61,9 +55,6 @@ export const GMStockedScenario: Story = {
     scenario: {
       ...scenarioData,
       isStockedByGM: true,
-    },
-    onStatusChange: (newStatus: ScenarioStatus) => {
-      console.log(`Status changed to: ${newStatus}`);
     },
     onToggleGMStock: () => {
       console.log('GM Stock toggled');
