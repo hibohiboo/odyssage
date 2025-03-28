@@ -43,6 +43,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # 後述のcode-maatでgit logを取得するために必要
+          # https://qiita.com/h_tyokinuhata/items/bd5488264f0e6aa41c89
+          # リポジトリをクローンする
+          # コミット履歴をどこまで遡って参照できるかの設定
+          # デフォルトでは 1 に設定されており、最新のコミット履歴しか参照できない
+          # 0 に変更することで、リポジトリの完全なコミット履歴を参照できるようになる
+          # ただし、コミット履歴が大きくなるとクローンに時間がかかるため、ボトルネックになる場合は適切な値を設定する
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -107,17 +116,6 @@ jobs:
       - name: Download Code Maat
         run: wget https://github.com/adamtornhill/code-maat/releases/download/v1.0.4/code-maat-1.0.4-standalone.jar
         working-directory: ./docs/code-maat
-
-      # https://qiita.com/h_tyokinuhata/items/bd5488264f0e6aa41c89
-      # リポジトリをクローンする
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          # コミット履歴をどこまで遡って参照できるかの設定
-          # デフォルトでは 1 に設定されており、最新のコミット履歴しか参照できない
-          # 0 に変更することで、リポジトリの完全なコミット履歴を参照できるようになる
-          # ただし、コミット履歴が大きくなるとクローンに時間がかかるため、ボトルネックになる場合は適切な値を設定する
-          fetch-depth: 0
 
       - name: create git log 
         run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2024-01-01 > ./logfile.log
