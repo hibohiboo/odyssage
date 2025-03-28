@@ -150,7 +150,7 @@ export default function ScenarioEdit({
               <div className="flex flex-wrap gap-2 mb-4">
                 {actualTags.map((tag, index) => (
                   <div
-                    key={index}
+                    key={`${tag}-index`}
                     className="flex items-center bg-amber-50 text-amber-700 px-3 py-1 rounded-full"
                   >
                     <span>{tag}</span>
