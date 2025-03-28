@@ -4,7 +4,6 @@ function TabButton({
 }: {
   readonly children: React.ReactNode;
   readonly active?: boolean;
-  readonly onTabChange?: (tab: string) => void;
 }) {
   if (active) {
     return (

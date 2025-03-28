@@ -18,7 +18,7 @@ export default function CreatorScenarios({
         </Link>
       </ScenarioHeader>
 
-      <ScenarioList scenarios={scenarios} />
+      <ScenarioList scenarios={scenarios} linkPrefix={`/creator/scenario`} />
     </div>
   );
 }

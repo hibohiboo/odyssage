@@ -15,11 +15,11 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.5",
+    "drizzle-kit": "^0.30.6",
     "postgres": "^3.4.5"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.10.4",
+    "@neondatabase/serverless": "^1.0.0",
     "drizzle-orm": "^0.41.0"
   }
 }

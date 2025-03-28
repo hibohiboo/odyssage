@@ -10,9 +10,11 @@ import {
   ScenarioEditPage,
   ScenarioDetailPage,
   detailPageLoader,
+  publicScenarioListLoader,
+  PublicScenarioListPage,
 } from '@odyssage/frontend/page/scenario';
 import { TopPage } from '@odyssage/frontend/page/top';
-import { Layout } from '@odyssage/frontend/shared/ui';
+import { Layout } from '@odyssage/frontend/shared/layout';
 
 export const createRouter = () =>
   createBrowserRouter([
@@ -57,12 +59,42 @@ export const createRouter = () =>
                     {
                       path: '',
                       loader: detailPageLoader,
-                      element: <ScenarioDetailPage />,
+                      element: (
+                        <ScenarioDetailPage backLink="/creator/scenario/list" />
+                      ),
                     },
                     {
                       path: 'edit',
                       loader: detailPageLoader,
                       element: <ScenarioEditPage />,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+        {
+          path: 'gm',
+          children: [
+            {
+              path: 'scenario',
+              children: [
+                {
+                  path: 'public',
+                  element: <PublicScenarioListPage />,
+                  loader: publicScenarioListLoader,
+                },
+                {
+                  path: ':id',
+
+                  children: [
+                    {
+                      path: '',
+                      loader: detailPageLoader,
+                      element: (
+                        <ScenarioDetailPage backLink="/gm/scenario/public" />
+                      ),
                     },
                   ],
                 },

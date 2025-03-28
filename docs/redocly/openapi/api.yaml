@@ -12,12 +12,18 @@ servers:
 paths:
   /api/scenarios:
     $ref: './paths/scenarios.yaml'
+  /api/scenarios/public:
+    $ref: './paths/scenariosPublic.yaml'
   /api/scenario/{id}:
     $ref: './paths/scenario.yaml'
-  /api/user/{uid}: 
+  /api/users/{uid}: 
     $ref: './paths/user.yaml'
-  /api/user/{uid}/scenario:
+  /api/users/{uid}/scenario:
     $ref: './paths/userScenario.yaml'
+  /api/users/{uid}/stocked-scenarios:
+    $ref: './paths/userScenarioStocks.yaml'
+  /api/users/{uid}/stocked-scenarios/{scenario_id}:
+    $ref: './paths/userScenarioStockItem.yaml'
 
 components:
   schemas: {}

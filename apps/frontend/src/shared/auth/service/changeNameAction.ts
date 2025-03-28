@@ -23,7 +23,7 @@ export const changeNameAction = createAsyncThunk<
       isAnonymous: user.isAnonymous,
     }),
   );
-  const ret = await apiClient.api.user[':uid'].$put(
+  const ret = await apiClient.api.users[':uid'].$put(
     { param: { uid: user.uid }, json: { name: payload.displayName } },
     { headers: putHeaders },
   );

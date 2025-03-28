@@ -17,5 +17,7 @@ export const detailPageLoader: LoaderFunction = async (args) => {
   });
   const data = await response.json();
 
-  return data;
+  return {
+    ...data,
+  };
 };

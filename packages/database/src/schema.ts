@@ -1,4 +1,11 @@
-import { pgSchema, uuid, text, varchar, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgSchema,
+  uuid,
+  text,
+  varchar,
+  timestamp,
+  primaryKey,
+} from 'drizzle-orm/pg-core';
 
 export const mySchema = pgSchema('odyssage');
 export const usersTable = mySchema.table('users', {
@@ -22,7 +29,25 @@ export const scenariosTable = mySchema.table('scenarios', {
     .default('private'),
 });
 
+export const scenarioStockTable = mySchema.table(
+  'scenario_stock',
+  {
+    userId: varchar('user_id', { length: 64 })
+      .notNull()
+      .references(() => usersTable.id, { onDelete: 'cascade' }),
+    scenarioId: uuid('scenario_id')
+      .notNull()
+      .references(() => scenariosTable.id, { onDelete: 'cascade' }),
+    stockedAt: timestamp('stocked_at').notNull().defaultNow(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.scenarioId] }),
+  }),
+);
+
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
 export type InsertScenario = typeof scenariosTable.$inferInsert;
 export type SelectScenario = typeof scenariosTable.$inferSelect;
+export type InsertScenarioStock = typeof scenarioStockTable.$inferInsert;
+export type SelectScenarioStock = typeof scenarioStockTable.$inferSelect;
