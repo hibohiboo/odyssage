@@ -90,8 +90,8 @@ const PublicScenarioListPage = () => {
         status: 'public',
         usedByGMs: 0,
         tags: [],
+        isStocked: stockedScenarioIds.includes(s.id),
       }))}
-      stockedScenarioIds={stockedScenarioIds}
       onToggleStock={handleToggleStock}
       loadingScenarioId={loadingScenarioId}
     />

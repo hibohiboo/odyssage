@@ -9,4 +9,5 @@ export interface Scenario {
   readonly status: ScenarioStatus;
   readonly usedByGMs: number;
   readonly tags: string[];
+  readonly isStocked?: boolean;
 }
