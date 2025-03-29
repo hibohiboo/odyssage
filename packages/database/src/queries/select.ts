@@ -8,7 +8,12 @@ import {
   sql,
 } from 'drizzle-orm';
 import { getDb } from '../db';
-import { SelectUser, usersTable, scenariosTable } from '../schema';
+import {
+  SelectUser,
+  usersTable,
+  scenariosTable,
+  sessionsTable,
+} from '../schema';
 
 export async function getUserById(
   connectionString: string,
@@ -120,4 +125,43 @@ export async function getPublicScenarios(connectionString: string) {
     .from(scenariosTable)
     .where(eq(scenariosTable.visibility, 'public'))
     .orderBy(desc(scenariosTable.updatedAt));
+}
+
+export async function getSessionsByGmId(
+  connectionString: string,
+  gmId: string,
+) {
+  const db = getDb(connectionString);
+  return db
+    .select({
+      id: sessionsTable.id,
+      title: sessionsTable.title,
+      status: sessionsTable.status,
+      scenarioId: sessionsTable.scenarioId,
+      createdAt: sessionsTable.createdAt,
+      updatedAt: sessionsTable.updatedAt,
+      scenarioTitle: scenariosTable.title,
+    })
+    .from(sessionsTable)
+    .innerJoin(scenariosTable, eq(sessionsTable.scenarioId, scenariosTable.id))
+    .where(eq(sessionsTable.gmId, gmId))
+    .orderBy(desc(sessionsTable.updatedAt));
+}
+
+export async function getSessionById(connectionString: string, id: string) {
+  const db = getDb(connectionString);
+  return db
+    .select({
+      id: sessionsTable.id,
+      title: sessionsTable.title,
+      status: sessionsTable.status,
+      gmId: sessionsTable.gmId,
+      scenarioId: sessionsTable.scenarioId,
+      createdAt: sessionsTable.createdAt,
+      updatedAt: sessionsTable.updatedAt,
+      scenarioTitle: scenariosTable.title,
+    })
+    .from(sessionsTable)
+    .innerJoin(scenariosTable, eq(sessionsTable.scenarioId, scenariosTable.id))
+    .where(eq(sessionsTable.id, id));
 }

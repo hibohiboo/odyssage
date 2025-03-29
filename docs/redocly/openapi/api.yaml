@@ -24,6 +24,12 @@ paths:
     $ref: './paths/userScenarioStocks.yaml'
   /api/users/{uid}/stocked-scenarios/{scenario_id}:
     $ref: './paths/userScenarioStockItem.yaml'
+  /api/sessions:
+    $ref: './paths/sessions.yaml'
+  /api/sessions/{id}:
+    $ref: './paths/session.yaml'
+  /api/sessions/gm/{gm_id}:
+    $ref: './paths/sessionsByGm.yaml'
 
 components:
   schemas: {}

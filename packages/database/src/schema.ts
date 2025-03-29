@@ -45,9 +45,29 @@ export const scenarioStockTable = mySchema.table(
   }),
 );
 
+// セッションテーブルの定義
+export const sessionsTable = mySchema.table('sessions', {
+  id: uuid().primaryKey(),
+  gmId: varchar('gm_id', { length: 64 })
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  scenarioId: uuid('scenario_id')
+    .notNull()
+    .references(() => scenariosTable.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  status: varchar('status', { length: 10 }).notNull().default('未開始'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at')
+    .notNull()
+    .defaultNow()
+    .$onUpdate(() => new Date()),
+});
+
 export type InsertUser = typeof usersTable.$inferInsert;
 export type SelectUser = typeof usersTable.$inferSelect;
 export type InsertScenario = typeof scenariosTable.$inferInsert;
 export type SelectScenario = typeof scenariosTable.$inferSelect;
 export type InsertScenarioStock = typeof scenarioStockTable.$inferInsert;
 export type SelectScenarioStock = typeof scenarioStockTable.$inferSelect;
+export type InsertSession = typeof sessionsTable.$inferInsert;
+export type SelectSession = typeof sessionsTable.$inferSelect;
