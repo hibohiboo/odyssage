@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLoaderData } from 'react-router';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 import { PublicScenarioListData } from '../api/publicScenarioListLoader';
@@ -31,7 +32,9 @@ export const usePublicScenarioListPage = () => {
       }
 
       try {
-        const response = await fetch(`/api/users/${uid}/stocked-scenarios`);
+        const response = await apiClient.api.users[':uid'][
+          'stocked-scenarios'
+        ].$get({ param: { uid } });
         if (response.ok) {
           const data = await response.json();
           setStockedScenarioIds(
