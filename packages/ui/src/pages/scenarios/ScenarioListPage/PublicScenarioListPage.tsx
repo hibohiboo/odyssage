@@ -12,12 +12,10 @@ import { Scenario } from './types';
  */
 export default function PublicScenarioListPage({
   scenarios,
-  stockedScenarioIds = [],
   onToggleStock,
   loadingScenarioId,
 }: {
   readonly scenarios: Scenario[];
-  readonly stockedScenarioIds?: string[];
   readonly onToggleStock?: (scenarioId: string) => void;
   readonly loadingScenarioId?: string;
 }) {
@@ -28,9 +26,7 @@ export default function PublicScenarioListPage({
   const filteredScenarios =
     activeTab === 'public'
       ? scenarios
-      : scenarios.filter((scenario) =>
-          stockedScenarioIds.includes(scenario.id),
-        );
+      : scenarios.filter((scenario) => scenario.isStocked);
 
   // ページタイトルとサブタイトルをタブに応じて変更
   const pageTitle = activeTab === 'public' ? 'シナリオ一覧' : 'ストック一覧';
@@ -60,7 +56,7 @@ export default function PublicScenarioListPage({
             scenario={scenario}
             editable={false}
             linkPrefix={`/gm/scenario`}
-            isStocked={stockedScenarioIds.includes(scenario.id)}
+            isStocked={scenario.isStocked}
             onToggleStock={
               onToggleStock ? () => onToggleStock(scenario.id) : undefined
             }
