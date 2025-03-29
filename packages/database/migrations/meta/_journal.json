@@ -43,6 +43,13 @@
       "when": 1742736102810,
       "tag": "0005_nervous_maximus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743232983875,
+      "tag": "0006_dizzy_gladiator",
+      "breakpoints": true
     }
   ]
 }

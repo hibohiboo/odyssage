@@ -15,6 +15,7 @@
   "dependencies": {
     "@odyssage/schema": "workspace:*",
     "@odyssage/ui": "workspace:*",
+    "@odyssage/lib": "workspace:*",
     "@reduxjs/toolkit": "^2.6.1",
     "firebase": "^11.5.0",
     "hono": "^4.7.5",
@@ -22,8 +23,7 @@
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.4.0",
-    "swr": "^2.3.3",
-    "uuid": "^11.1.0"
+    "swr": "^2.3.3"
   },
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",

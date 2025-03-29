@@ -1,4 +1,3 @@
-// filepath: d:\projects\odyssage\apps\frontend\src\entities\session\hooks\useCreateSession.ts
 import { useState } from 'react';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';

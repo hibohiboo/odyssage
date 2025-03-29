@@ -109,11 +109,7 @@ export const createRouter = () =>
                 {
                   path: 'create',
                   element: <CreateSessionPage />,
-                  loader: ({ params }) =>
-                    stockedScenariosLoader({
-                      ...params,
-                      uid: params.uid || localStorage.getItem('uid') || '',
-                    }),
+                  loader: stockedScenariosLoader,
                 },
                 // 将来的にここにセッション一覧、セッション詳細ページなどを追加予定
               ],

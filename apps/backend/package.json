@@ -26,6 +26,7 @@
     "@hono/valibot-validator": "^0.5.2",
     "@odyssage/database": "workspace:*",
     "@odyssage/schema": "workspace:*",
+    "@odyssage/lib": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
     "hono": "^4.7.5",
     "neo4j-driver": "^5.28.1"

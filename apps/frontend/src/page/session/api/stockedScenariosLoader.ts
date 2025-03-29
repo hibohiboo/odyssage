@@ -1,14 +1,15 @@
 // filepath: d:\projects\odyssage\apps\frontend\src\page\session\api\stockedScenariosLoader.ts
+import { ClientResponse } from 'hono/client';
 import type { LoaderFunctionArgs } from 'react-router';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
-import { getIdToken } from '@odyssage/frontend/shared/lib/auth/firebaseAuth';
 
-export interface StockedScenario {
-  id: string;
-  title: string;
-  overview?: string;
-  updatedAt: string;
-}
+type R = Awaited<
+  ReturnType<
+    (typeof apiClient.api)['users'][':uid']['stocked-scenarios']['$get']
+  >
+>;
+type Res = R extends ClientResponse<infer T> ? T : never;
+export type StockedScenario = Res[number];
 
 /**
  * GMがストックしているシナリオ一覧を取得するローダー関数
@@ -17,9 +18,6 @@ export interface StockedScenario {
  */
 export async function stockedScenariosLoader({ params }: LoaderFunctionArgs) {
   try {
-    // 認証が必要なため、IDトークンを取得
-    await getIdToken();
-
     const { uid } = params;
     if (!uid) {
       throw new Error('ユーザーIDが見つかりません');

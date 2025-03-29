@@ -48,3 +48,5 @@
 言語|typescript
 バックエンドフレームワーク|hono
 フロントエンドからバックエンドへの通信|hono rpc
+フロントエンドUIライブラリ|react
+ページ遷移ライブラリ|react-router

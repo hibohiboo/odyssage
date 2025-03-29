@@ -1,4 +1,3 @@
-// filepath: d:\projects\odyssage\apps\frontend\src\entities\session\api\createSession.ts
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 /**

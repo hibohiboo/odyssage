@@ -1,7 +1,7 @@
 post:
   summary: セッション作成
   description: |
-    GMがシナリオを選択して新しいセッション（卓）を作成するためのエンドポイント。
+    GMがシナリオを選択して新しいセッションを作成するためのエンドポイント。
     作成したセッションはGMが管理し、参加者を招待できます。
   operationId: createSession
   tags:

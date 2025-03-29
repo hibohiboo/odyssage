@@ -64,7 +64,7 @@ const ScenarioSelector = ({
             </p>
           )}
           <p className="text-xs text-stone-500 mt-2">
-            最終更新: {new Date(scenario.updatedAt).toLocaleDateString()}
+            最終更新: {new Date(scenario.stockedAt).toLocaleDateString()}
           </p>
         </div>
       ))}
