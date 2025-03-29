@@ -4,58 +4,28 @@ import {
   SessionForm,
   SessionSidebar,
 } from '@odyssage/ui/index';
-import { FormEvent, useState } from 'react';
-import { Link, useLoaderData, useNavigate } from 'react-router';
-import { useCreateSession } from '@odyssage/frontend/entities/session/hooks/useCreateSession';
+import { Link, useLoaderData } from 'react-router';
 import { StockedScenario } from '../api/stockedScenariosLoader';
+import { useSessionForm } from '../hooks/useSessionForm';
 
 /**
  * セッション作成ページ
  * GMがストックしたシナリオを選択してセッションを作成するページ
  */
 const CreatePage = () => {
-  const navigate = useNavigate();
   const stockedScenarios = useLoaderData() as StockedScenario[];
-  const { createNewSession, loading, success, error } = useCreateSession();
-
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string>('');
-  const [title, setTitle] = useState<string>('');
-  const [formError, setFormError] = useState<string>('');
-
-  // 選択したシナリオの情報を取得
-  const selectedScenario = stockedScenarios.find(
-    (scenario) => scenario.id === selectedScenarioId,
-  );
-
-  /**
-   * セッション作成フォームの送信ハンドラ
-   * @param e フォームイベント
-   */
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setFormError('');
-
-    // バリデーション
-    if (!selectedScenarioId) {
-      setFormError('シナリオを選択してください');
-      return;
-    }
-
-    if (!title.trim()) {
-      setFormError('セッションタイトルを入力してください');
-      return;
-    }
-
-    try {
-      await createNewSession(selectedScenarioId, title);
-      // 成功したらセッション一覧ページに遷移
-      if (success) {
-        navigate('/gm/sessions');
-      }
-    } catch (err) {
-      console.error('セッション作成エラー:', err);
-    }
-  };
+  const {
+    selectedScenarioId,
+    setSelectedScenarioId,
+    title,
+    setTitle,
+    formError,
+    selectedScenario,
+    handleSubmit,
+    loading,
+    success,
+    error,
+  } = useSessionForm(stockedScenarios);
 
   return (
     <div className="container mx-auto px-4 py-8">
