@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router';
+import { ScenarioData } from '@odyssage/frontend/entities/scenario';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
-import { ScenarioData } from '../api/detailLoader';
 import {
   addScenarioToStock,
   removeScenarioFromStock,

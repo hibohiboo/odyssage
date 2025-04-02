@@ -15,7 +15,7 @@ import {
 } from '@odyssage/frontend/page/scenario';
 import {
   CreateSessionPage,
-  stockedScenariosLoader,
+  createSessionPageLoader,
 } from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
@@ -99,19 +99,18 @@ export const createRouter = () =>
                         <ScenarioDetailPage backLink="/gm/scenario/public" />
                       ),
                     },
+                    {
+                      path: 'session',
+                      children: [
+                        {
+                          path: 'create',
+                          element: <CreateSessionPage />,
+                          loader: createSessionPageLoader,
+                        },
+                      ],
+                    },
                   ],
                 },
-              ],
-            },
-            {
-              path: 'session',
-              children: [
-                {
-                  path: 'create',
-                  element: <CreateSessionPage />,
-                  loader: stockedScenariosLoader,
-                },
-                // 将来的にここにセッション一覧、セッション詳細ページなどを追加予定
               ],
             },
           ],

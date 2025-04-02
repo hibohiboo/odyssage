@@ -1,47 +1,35 @@
-import { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { FormEventHandler } from 'react';
+import { useLoaderData, useNavigate } from 'react-router';
+import { ScenarioData } from '@odyssage/frontend/entities/scenario';
 import { useCreateSession } from '@odyssage/frontend/entities/session/hooks/useCreateSession';
-import { StockedScenario } from '../api/stockedScenariosLoader';
 
 /**
  * セッション作成フォームのロジックを管理するカスタムフック
  * @param stockedScenarios ストックされたシナリオの配列
  * @returns フォーム状態と操作メソッド
  */
-export const useSessionForm = (stockedScenarios: StockedScenario[]) => {
+export const useSessionForm = () => {
   const navigate = useNavigate();
-  const { createNewSession, loading, success, error } = useCreateSession();
+  const { createNewSession, success } = useCreateSession();
 
-  const [selectedScenarioId, setSelectedScenarioId] = useState<string>('');
-  const [title, setTitle] = useState<string>('');
-  const [formError, setFormError] = useState<string>('');
-
-  // 選択したシナリオの情報を取得
-  const selectedScenario = stockedScenarios.find(
-    (scenario) => scenario.id === selectedScenarioId,
-  );
+  const loaderData = useLoaderData<ScenarioData>();
 
   /**
    * セッション作成フォームの送信ハンドラ
    * @param e フォームイベント
    */
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    setFormError('');
 
-    // バリデーション
-    if (!selectedScenarioId) {
-      setFormError('シナリオを選択してください');
+    const form = new FormData(e.currentTarget);
+
+    const sessionName = form.get('sessionName') as string;
+    if (!sessionName) {
+      console.error('Invalid form data', { sessionName });
       return;
     }
-
-    if (!title.trim()) {
-      setFormError('セッションタイトルを入力してください');
-      return;
-    }
-
     try {
-      await createNewSession(selectedScenarioId, title);
+      await createNewSession(loaderData.id, sessionName);
       // 成功したらセッション一覧ページに遷移
       if (success) {
         navigate('/gm/sessions');
@@ -52,15 +40,7 @@ export const useSessionForm = (stockedScenarios: StockedScenario[]) => {
   };
 
   return {
-    selectedScenarioId,
-    setSelectedScenarioId,
-    title,
-    setTitle,
-    formError,
-    selectedScenario,
+    sessionName: loaderData.title,
     handleSubmit,
-    loading,
-    success,
-    error,
   };
 };

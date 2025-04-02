@@ -32,9 +32,9 @@ const EditButton = ({ scenarioId }: { scenarioId: string }) => (
 /**
  * セッション作成ボタンコンポーネント
  */
-const CreateSessionButton = () => (
+const CreateSessionButton = ({ id }: { id: string }) => (
   <Link
-    to="/gm/session/create"
+    to={`/gm/scenario/${id}/session/create`}
     className={`${BUTTON_BASE_STYLE} bg-green-500 hover:bg-green-600 text-white`}
   >
     <Users className={ICON_STYLE} />
@@ -116,7 +116,7 @@ export const ActionButtons = ({
       <EditButton scenarioId={scenarioId} />
 
       {/* ストックされている場合にのみセッション作成ボタンを表示 */}
-      {isStockedByGM && <CreateSessionButton />}
+      {isStockedByGM && <CreateSessionButton id={scenarioId} />}
 
       {onToggleGMStock && (
         <StockToggleButton

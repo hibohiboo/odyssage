@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router';
-import { FormInput } from './CreateForm';
+import { CreateForm } from './CreateForm';
 import type { Meta, StoryObj } from '@storybook/react';
 
 /**
@@ -11,7 +11,7 @@ import type { Meta, StoryObj } from '@storybook/react';
  */
 const meta = {
   title: 'Page/Session/CreateForm',
-  component: FormInput,
+  component: CreateForm,
   parameters: {
     layout: 'centered',
   },
@@ -23,7 +23,7 @@ const meta = {
       </BrowserRouter>
     ),
   ],
-} satisfies Meta<typeof FormInput>;
+} satisfies Meta<typeof CreateForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
