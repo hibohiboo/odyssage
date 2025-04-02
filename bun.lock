@@ -16,6 +16,7 @@
       "dependencies": {
         "@hono/valibot-validator": "^0.5.2",
         "@odyssage/database": "workspace:*",
+        "@odyssage/lib": "workspace:*",
         "@odyssage/schema": "workspace:*",
         "firebase-auth-cloudflare-workers": "^2.0.6",
         "hono": "^4.7.5",
@@ -33,6 +34,7 @@
       "name": "@odyssage/frontend",
       "version": "0.0.0",
       "dependencies": {
+        "@odyssage/lib": "workspace:*",
         "@odyssage/schema": "workspace:*",
         "@odyssage/ui": "workspace:*",
         "@reduxjs/toolkit": "^2.6.1",
