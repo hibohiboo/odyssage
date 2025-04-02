@@ -46,6 +46,7 @@ export function CreateForm({ sessionName, description }: CreateFormProps) {
                 defaultValue={sessionName}
                 placeholder="卓の名前を入力してください"
                 className="input w-full"
+                required
               />
             </div>
             {description != null && (
