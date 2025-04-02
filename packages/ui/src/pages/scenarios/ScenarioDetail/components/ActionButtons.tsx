@@ -1,4 +1,4 @@
-import { Edit, Trash2, BookOpen, CheckCircle } from 'lucide-react';
+import { Edit, Trash2, BookOpen, CheckCircle, Users } from 'lucide-react';
 import { Link } from 'react-router';
 
 interface ActionButtonsProps {
@@ -26,6 +26,19 @@ const EditButton = ({ scenarioId }: { scenarioId: string }) => (
   >
     <Edit className={ICON_STYLE} />
     シナリオを編集
+  </Link>
+);
+
+/**
+ * セッション作成ボタンコンポーネント
+ */
+const CreateSessionButton = ({ id }: { id: string }) => (
+  <Link
+    to={`/gm/scenario/${id}/session/create`}
+    className={`${BUTTON_BASE_STYLE} bg-green-500 hover:bg-green-600 text-white`}
+  >
+    <Users className={ICON_STYLE} />
+    このシナリオでセッションを作成
   </Link>
 );
 
@@ -101,6 +114,9 @@ export const ActionButtons = ({
   <div className="card p-6 mb-6">
     <div className="space-y-3">
       <EditButton scenarioId={scenarioId} />
+
+      {/* ストックされている場合にのみセッション作成ボタンを表示 */}
+      {isStockedByGM && <CreateSessionButton id={scenarioId} />}
 
       {onToggleGMStock && (
         <StockToggleButton

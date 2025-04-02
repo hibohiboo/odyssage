@@ -7,6 +7,7 @@ import {
 import { idSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
+import { session } from './session';
 import { user } from './user';
 import type { Neo4jError } from 'neo4j-driver-core';
 
@@ -14,6 +15,7 @@ const route = new Hono<Env>()
   .get('/', (c) => c.text('Hello Cloudflare Workers!'))
   .use('/users/*', authorizeMiddleware)
   .route('/users', user)
+  .route('/sessions', session) // セッションルーターを統合
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 

@@ -1,3 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
+import { generateUUID } from '@odyssage/lib/index';
 
-export const generateUuid = (): string => uuidv4();
+export const generateUuid = generateUUID;

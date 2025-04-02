@@ -1,0 +1,41 @@
+post:
+  summary: セッション作成
+  description: |
+    GMがシナリオを選択して新しいセッションを作成するためのエンドポイント。
+    作成したセッションはGMが管理し、参加者を招待できます。
+  operationId: createSession
+  tags:
+    - session
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/session.yaml#/SessionRequest'
+  responses:
+    '201':
+      description: セッション作成成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/SessionResponse'
+    '400':
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションタイトルは必須です"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションの作成に失敗しました"

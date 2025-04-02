@@ -45,3 +45,28 @@ export const scenarioListItemSchema = v.object({
   status: v.optional(v.string()),
 });
 export type ScnearioListItem = v.InferOutput<typeof scenarioListItemSchema>;
+
+// セッション関連のスキーマ
+export enum SessionStatusEnum {
+  NotStarted = '未開始',
+  InProgress = '進行中',
+  Finished = '終了',
+}
+
+export const sessionRequestSchema = v.object({
+  gm_id: v.string(),
+  scenario_id: v.string(),
+  title: v.string(),
+});
+
+export const sessionResponseSchema = v.object({
+  id: v.string(),
+  gm_id: v.string(),
+  scenario_id: v.string(),
+  title: v.string(),
+  status: v.string(),
+  created_at: v.string(),
+});
+
+export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;
+export type SessionResponse = v.InferOutput<typeof sessionResponseSchema>;

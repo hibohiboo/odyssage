@@ -13,6 +13,10 @@ import {
   publicScenarioListLoader,
   PublicScenarioListPage,
 } from '@odyssage/frontend/page/scenario';
+import {
+  CreateSessionPage,
+  createSessionPageLoader,
+} from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
 
@@ -87,7 +91,6 @@ export const createRouter = () =>
                 },
                 {
                   path: ':id',
-
                   children: [
                     {
                       path: '',
@@ -95,6 +98,16 @@ export const createRouter = () =>
                       element: (
                         <ScenarioDetailPage backLink="/gm/scenario/public" />
                       ),
+                    },
+                    {
+                      path: 'session',
+                      children: [
+                        {
+                          path: 'create',
+                          element: <CreateSessionPage />,
+                          loader: createSessionPageLoader,
+                        },
+                      ],
                     },
                   ],
                 },

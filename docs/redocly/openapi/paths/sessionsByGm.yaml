@@ -1,0 +1,43 @@
+parameters:
+  - name: gm_id
+    in: path
+    description: GMのユーザーID
+    required: true
+    schema:
+      type: string
+
+get:
+  summary: GM管理セッション一覧
+  description: |
+    特定のGMが作成・管理しているセッション一覧を取得します。
+    未開始、進行中、終了などの異なるステータスのセッションがすべて含まれます。
+  operationId: getSessionsByGm
+  tags:
+    - session
+  responses:
+    '200':
+      description: セッション一覧取得成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/SessionList'
+    '400':
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "GM IDが必要です"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッション一覧の取得に失敗しました"

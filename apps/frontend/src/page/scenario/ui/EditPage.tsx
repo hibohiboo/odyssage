@@ -1,8 +1,8 @@
 import { ScenarioEditPage } from '@odyssage/ui/page-ui';
 import { FormEventHandler, useState } from 'react';
 import { useLoaderData, useParams } from 'react-router';
+import { ScenarioData } from '@odyssage/frontend/entities/scenario';
 import { useEditScenario } from '@odyssage/frontend/entities/scenario/hooks/useEditScenario';
-import { ScenarioData } from '../api/detailLoader';
 
 type Visibility = 'private' | 'public';
 const EditPage = () => {

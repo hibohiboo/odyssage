@@ -30,7 +30,8 @@ export const Button = ({
   onClick,
   type = 'button',
 }: ButtonProps) => {
-  const baseStyles = 'px-4 py-2 rounded font-medium transition-colors';
+  const baseStyles =
+    'px-4 py-2 rounded font-medium transition-colors flex align-center justify-center items-center';
 
   const variantStyles = {
     primary: 'bg-amber-600 hover:bg-amber-700 text-white',
