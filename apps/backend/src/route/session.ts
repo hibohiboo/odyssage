@@ -4,6 +4,7 @@ import { createSession } from '@odyssage/database/src/queries/insert';
 import {
   getSessionById,
   getSessionsByGmId,
+  getSessions,
 } from '@odyssage/database/src/queries/select';
 import {
   sessionRequestSchema,
@@ -15,11 +16,70 @@ import { generateUUID } from '../utils/generateUUID';
 
 /**
  * セッション関連のエンドポイント
+ * - GET /sessions: セッション一覧を取得（公開のみ、またはGM IDを指定）
  * - POST /sessions: 新しいセッションを作成
  * - GET /sessions/:id: 特定のセッションを取得
  * - GET /sessions/gm/:gm_id: 特定のGMが管理するセッション一覧を取得
  */
 export const session = new Hono<Env>()
+  // 1. 特定のパスを持つルートを先に定義
+  .get('/gm/:gm_id', async (c) => {
+    try {
+      const gmId = c.req.param('gm_id');
+
+      if (!gmId) {
+        return c.json({ message: 'GM IDが必要です' }, 400);
+      }
+
+      const sessions = await getSessionsByGmId(
+        c.env.NEON_CONNECTION_STRING,
+        gmId,
+      );
+
+      return c.json(
+        sessions.map((session) => ({
+          id: session.id,
+          title: session.title,
+          status: session.status,
+          scenario_id: session.scenarioId,
+          scenario_title: session.scenarioTitle,
+          created_at: session.createdAt.toISOString(),
+          updated_at: session.updatedAt.toISOString(),
+        })),
+      );
+    } catch (error) {
+      console.error('セッション一覧取得エラー:', error);
+      return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
+    }
+  })
+  // 2. セッション一覧を取得するルートを定義
+  .get('/', async (c) => {
+    try {
+      // クエリパラメータからGM IDを取得（オプション）
+      const gmId = c.req.query('gm_id');
+
+      // セッション一覧を取得
+      const sessions = await getSessions(c.env.NEON_CONNECTION_STRING, gmId);
+
+      // レスポンス形式に整形
+      return c.json(
+        sessions.map((session) => ({
+          id: session.id,
+          name: session.title,
+          gm: session.gmName,
+          // TODO: プレイヤー数とプレイヤー上限数はまだ実装されていない場合は仮の値を設定
+          players: 0,
+          maxPlayers: 5,
+          status: session.status,
+          createdAt: session.createdAt.toISOString(),
+        })),
+      );
+    } catch (error) {
+      console.error('セッション一覧取得エラー:', error);
+      return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
+    }
+  })
+  // 3. POST リクエストを処理するエンドポイント
   .post('/', vValidator('json', sessionRequestSchema), async (c) => {
     try {
       const json = c.req.valid('json');
@@ -63,6 +123,7 @@ export const session = new Hono<Env>()
       return c.json({ message: 'セッションの作成に失敗しました' }, 500);
     }
   })
+  // 4. 単一のセッションを取得するルートを最後に定義
   .get('/:id', vValidator('param', idSchema), async (c) => {
     try {
       const param = c.req.valid('param');
@@ -88,34 +149,5 @@ export const session = new Hono<Env>()
     } catch (error) {
       console.error('セッション取得エラー:', error);
       return c.json({ message: 'セッションの取得に失敗しました' }, 500);
-    }
-  })
-  .get('/gm/:gm_id', async (c) => {
-    try {
-      const gmId = c.req.param('gm_id');
-
-      if (!gmId) {
-        return c.json({ message: 'GM IDが必要です' }, 400);
-      }
-
-      const sessions = await getSessionsByGmId(
-        c.env.NEON_CONNECTION_STRING,
-        gmId,
-      );
-
-      return c.json(
-        sessions.map((session) => ({
-          id: session.id,
-          title: session.title,
-          status: session.status,
-          scenario_id: session.scenarioId,
-          scenario_title: session.scenarioTitle,
-          created_at: session.createdAt.toISOString(),
-          updated_at: session.updatedAt.toISOString(),
-        })),
-      );
-    } catch (error) {
-      console.error('セッション一覧取得エラー:', error);
-      return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
     }
   });
