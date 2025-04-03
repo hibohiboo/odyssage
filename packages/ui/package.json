@@ -11,7 +11,8 @@
     "ncu": "ncu -u",
     "dev": "storybook dev -p 6006",
     "build-storybook": "storybook build -o ../../docs/astro/public/odyssage-components",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "vitest"
   },
   "dependencies": {
     "lucide-react": "^0.487.0",

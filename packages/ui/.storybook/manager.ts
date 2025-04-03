@@ -5,7 +5,7 @@ addons.setConfig({
   theme: {
     ...themes.dark,
     brandTitle: 'Odyssage UI',
-    brandUrl: 'https://github.com/your-organization/odyssage',
+    brandUrl: 'https://github.com/hibohiboo/odyssage/packages/ui',
     brandTarget: '_blank',
   },
 });
