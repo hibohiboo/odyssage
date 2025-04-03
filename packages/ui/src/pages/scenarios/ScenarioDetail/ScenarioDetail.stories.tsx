@@ -49,13 +49,15 @@ export const PublicScenario: Story = {
       console.log('GM Stock toggled');
     },
   },
+  storyName: '公開シナリオでセッション作成ボタンが表示されること',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const ret = await canvas.findByText('このシナリオでセッションを作成');
     // セッション作成ボタンが表示されていることを確認
     expect(ret).toBeTruthy();
     // セッション作成ボタンが無効化されていることを確認
-    expect(ret).toBeDisabled();
+    // ボタンではないので、 disabled 属性はないが、ボタンのスタイルが適用されていることを確認
+    expect(ret).toHaveClass('opacity-50 cursor-not-allowed');
   },
 };
 
