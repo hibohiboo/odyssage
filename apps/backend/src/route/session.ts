@@ -13,6 +13,7 @@ import {
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { generateUUID } from '../utils/generateUUID';
+import { Logger } from '../utils/logger';
 
 /**
  * セッション関連のエンドポイント
@@ -48,7 +49,7 @@ export const session = new Hono<Env>()
         })),
       );
     } catch (error) {
-      console.error('セッション一覧取得エラー:', error);
+      Logger.error('セッション一覧取得エラー:', error);
       return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
     }
   })
@@ -75,7 +76,7 @@ export const session = new Hono<Env>()
         })),
       );
     } catch (error) {
-      console.error('セッション一覧取得エラー:', error);
+      Logger.error('セッション一覧取得エラー:', error);
       return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
     }
   })
@@ -119,7 +120,7 @@ export const session = new Hono<Env>()
         201,
       );
     } catch (error) {
-      console.error('セッション作成エラー:', error);
+      Logger.error('セッション作成エラー:', error);
       return c.json({ message: 'セッションの作成に失敗しました' }, 500);
     }
   })
@@ -147,7 +148,7 @@ export const session = new Hono<Env>()
         scenario_title: session.scenarioTitle,
       });
     } catch (error) {
-      console.error('セッション取得エラー:', error);
+      Logger.error('セッション取得エラー:', error);
       return c.json({ message: 'セッションの取得に失敗しました' }, 500);
     }
   });
