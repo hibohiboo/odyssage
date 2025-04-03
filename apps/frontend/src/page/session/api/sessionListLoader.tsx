@@ -8,7 +8,7 @@ import { apiClient } from '@odyssage/frontend/shared/api/client';
 export async function sessionListLoader() {
   try {
     const response = await apiClient.api.sessions.$get();
-
+    
     const data = await response.json();
     return data;
   } catch (error) {

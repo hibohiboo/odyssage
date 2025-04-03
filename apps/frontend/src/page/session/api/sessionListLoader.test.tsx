@@ -1,9 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { sessionListLoader } from './sessionListLoader';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 // apiClientのモック化
-vi.mock('@odyssage/frontend/shared/api/client', () => ({
+vi.mock('../../../shared/api/client', () => ({
   apiClient: {
     api: {
       sessions: {
@@ -37,7 +36,9 @@ describe('sessionListLoader', () => {
       json: vi.fn().mockResolvedValue(mockSessions),
     };
     
-    (apiClient.api.sessions.$get as any).mockResolvedValue(mockResponse);
+    // モックapiclientを取得
+    const { apiClient } = await import('../../../shared/api/client');
+    (apiClient.api.sessions.$get as vi.Mock).mockResolvedValue(mockResponse);
 
     // 関数の実行
     const result = await sessionListLoader();
@@ -51,7 +52,8 @@ describe('sessionListLoader', () => {
 
   it('APIエラー時に空の配列を返す', async () => {
     // Honoクライアントのエラーをモック化
-    (apiClient.api.sessions.$get as any).mockRejectedValue(new Error('API error'));
+    const { apiClient } = await import('../../../shared/api/client');
+    (apiClient.api.sessions.$get as vi.Mock).mockRejectedValue(new Error('API error'));
 
     // コンソールエラーをモック化して警告を抑制
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
