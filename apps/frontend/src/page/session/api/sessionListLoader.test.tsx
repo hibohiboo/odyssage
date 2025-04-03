@@ -1,5 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { sessionListLoader } from './sessionListLoader';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
+
+// apiClientのモック化
+vi.mock('@odyssage/frontend/shared/api/client', () => ({
+  apiClient: {
+    api: {
+      sessions: {
+        $get: vi.fn(),
+      },
+    },
+  },
+}));
 
 describe('sessionListLoader', () => {
   beforeEach(() => {
@@ -20,27 +32,26 @@ describe('sessionListLoader', () => {
       },
     ];
 
-    // fetchのモック化
-    global.fetch = vi.fn(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve(mockSessions),
-      }),
-    ) as any;
+    // Honoクライアントのモック化
+    const mockResponse = {
+      json: vi.fn().mockResolvedValue(mockSessions),
+    };
+    
+    (apiClient.api.sessions.$get as any).mockResolvedValue(mockResponse);
 
     // 関数の実行
     const result = await sessionListLoader();
 
-    // fetch関数が正しいURLで呼び出されたか確認
-    expect(global.fetch).toHaveBeenCalledWith('/api/sessions');
+    // apiClient.api.sessions.$get が呼び出されたか確認
+    expect(apiClient.api.sessions.$get).toHaveBeenCalled();
 
     // 結果が期待通りか確認
     expect(result).toEqual(mockSessions);
   });
 
   it('APIエラー時に空の配列を返す', async () => {
-    // fetchのエラーをモック化
-    global.fetch = vi.fn(() => Promise.reject(new Error('API error'))) as any;
+    // Honoクライアントのエラーをモック化
+    (apiClient.api.sessions.$get as any).mockRejectedValue(new Error('API error'));
 
     // コンソールエラーをモック化して警告を抑制
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});

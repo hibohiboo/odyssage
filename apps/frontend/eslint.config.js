@@ -16,6 +16,7 @@ export default tseslint.config(
           'lintsonarjs/no-empty-test-file': ['off'],
           'no-restricted-syntax': ['off'],
           'no-await-in-loop': ['off'],
+          '@typescript-eslint/no-explicit-any': ['off'],
         },
       },
       {
