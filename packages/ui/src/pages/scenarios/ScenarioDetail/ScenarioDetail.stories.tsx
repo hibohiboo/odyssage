@@ -1,3 +1,4 @@
+import { expect, within } from '@storybook/test';
 import { BrowserRouter } from 'react-router';
 import { ScenarioDetailPage } from './ScenarioDetail';
 import { scenarioData } from './types';
@@ -47,6 +48,14 @@ export const PublicScenario: Story = {
     onToggleGMStock: () => {
       console.log('GM Stock toggled');
     },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const ret = await canvas.findByText('このシナリオでセッションを作成');
+    // セッション作成ボタンが表示されていることを確認
+    expect(ret).toBeTruthy();
+    // セッション作成ボタンが無効化されていることを確認
+    expect(ret).toBeDisabled();
   },
 };
 

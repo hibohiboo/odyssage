@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url';
 import { storybookTest } from '@storybook/experimental-addon-test/vitest-plugin';
 import { defineConfig } from 'vitest/config';
 
-/// <reference types="@vitest/browser/providers/playwright" />
-
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname

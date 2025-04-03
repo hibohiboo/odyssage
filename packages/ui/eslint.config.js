@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+ 
 import customConfig from '@odyssage/eslint-config-custom/defaults.js';
 import tseslint from 'typescript-eslint';
 
@@ -13,6 +13,12 @@ export default tseslint.config({
         "import/no-extraneous-dependencies": ['off']
       },
     },
-    
+    {
+      files: ['src/**/*.stories.tsx'],
+      rules: {
+        'no-shadow': ['off'],
+
+      },
+    },
   ],
 });
