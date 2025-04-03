@@ -9,13 +9,15 @@
     "build": "tsc -b && bunx --bun vite build",
     "lint": "eslint .",
     "preview": "bunx --bun vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "ncu": "ncu -u",
     "e2e-test": "cd ../../packages/bdd-e2e-test && npm run e2e-test"
   },
   "dependencies": {
+    "@odyssage/lib": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "@odyssage/ui": "workspace:*",
-    "@odyssage/lib": "workspace:*",
     "@reduxjs/toolkit": "^2.6.1",
     "firebase": "^11.6.0",
     "hono": "^4.7.5",
@@ -29,14 +31,18 @@
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
     "@tailwindcss/vite": "^4.1.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^14.2.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
     "@vitejs/plugin-react-swc": "^3.8.1",
     "globals": "^16.0.0",
+    "jsdom": "^26.0.0",
     "msw": "^2.7.3",
     "npm-check-updates": "^17.1.16",
     "typescript": "^5.8.2",
-    "vite": "^6.2.4"
+    "vite": "^6.2.4",
+    "vitest": "^1.2.1"
   },
   "msw": {
     "workerDirectory": [

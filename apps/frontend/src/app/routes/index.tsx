@@ -16,6 +16,8 @@ import {
 import {
   CreateSessionPage,
   createSessionPageLoader,
+  SessionListPage,
+  sessionListLoader,
 } from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
@@ -41,6 +43,11 @@ export const createRouter = () =>
         {
           path: 'change-name',
           element: <ChangeNamePage />,
+        },
+        {
+          path: 'sessions',
+          element: <SessionListPage />,
+          loader: sessionListLoader,
         },
         {
           path: 'creator',

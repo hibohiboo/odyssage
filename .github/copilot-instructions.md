@@ -53,3 +53,6 @@
 フロントエンドからバックエンドへの通信|hono rpc
 フロントエンドUIライブラリ|react
 ページ遷移ライブラリ|react-router
+
+## 利用しないライブラリ
+- react-router-dom
