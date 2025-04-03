@@ -1,4 +1,4 @@
-// テスト対象のモジュールをインポートする前に、先にモックを設定する
+// テスト用のモジュールをインポート
 import * as selectQueries from '@odyssage/database/src/queries/select';
 import {
   env,
@@ -7,22 +7,15 @@ import {
 } from 'cloudflare:test';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-// テスト対象のモジュールをモック設定の後にインポート
+// テスト対象のモジュールと必要な依存関係をインポート
 import worker from '../src/index';
 
-// モックを設定
-vi.mock('@odyssage/database/src/queries/select', () => ({
-  getSessions: vi.fn(),
-  getSessionById: vi.fn(),
-  getSessionsByGmId: vi.fn(),
-  getScenarios: vi.fn(),
-  getScenariosByid: vi.fn(),
-  getPublicScenarios: vi.fn(),
-}));
+// 必要な関数に対してスパイを設定
+vi.spyOn(selectQueries, 'getSessions');
 
 describe('Sessions API', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   describe('GET /api/sessions', () => {
@@ -53,8 +46,8 @@ describe('Sessions API', () => {
         },
       ];
 
-      // モック関数の戻り値を設定
-      selectQueries.getSessions = vi.fn().mockResolvedValue(mockSessions);
+      // スパイに戻り値を設定
+      vi.mocked(selectQueries.getSessions).mockResolvedValueOnce(mockSessions);
 
       // リクエストを実行
       const request = new Request<unknown, IncomingRequestCfProperties>(
@@ -107,8 +100,8 @@ describe('Sessions API', () => {
         },
       ];
 
-      // モック関数の戻り値を設定
-      selectQueries.getSessions = vi.fn().mockResolvedValue(mockSessions);
+      // スパイに戻り値を設定
+      vi.mocked(selectQueries.getSessions).mockResolvedValueOnce(mockSessions);
 
       // GM IDをクエリパラメータとして渡す
       const request = new Request<unknown, IncomingRequestCfProperties>(
@@ -135,10 +128,10 @@ describe('Sessions API', () => {
     });
 
     it('エラー時に適切なレスポンスを返すこと', async () => {
-      // モック関数でエラーをスローするように設定
-      selectQueries.getSessions = vi
-        .fn()
-        .mockRejectedValue(new Error('Database error'));
+      // スパイにエラーを設定
+      vi.mocked(selectQueries.getSessions).mockRejectedValueOnce(
+        new Error('Database error'),
+      );
 
       // リクエストを実行
       const request = new Request<unknown, IncomingRequestCfProperties>(
