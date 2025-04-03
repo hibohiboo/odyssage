@@ -1,3 +1,6 @@
+
+# package.jsonの説明
+
 *   `private`: `true` になっているので、このパッケージは npm に公開できない（社内・個人プロジェクト向け）。
 *   `"build"`: `tsup` で TypeScript のビルドを行う（Tsup は高速な TypeScript バンドラー）。
 *   `react` と `react-dom` は `peerDependencies` に指定されており、**このパッケージを利用するプロジェクトが自前で用意する** ことを期待している。
@@ -6,3 +9,8 @@
 *   `module`: ESM（ES Modules）形式のエントリーポイント（`dist/index.mjs`）。
 *   `types`: TypeScript の型定義ファイル（`dist/index.d.ts`）。
 *   `files`: `"dist/**"` になっており、ビルド後の `dist/` ディレクトリのみを含める。
+
+# フロントエンドのテスト
+
+https://azukiazusa.dev/blog/storybook-and-vitest-integration/
+
