@@ -6,11 +6,13 @@ export default tseslint.config({
   extends: [
     ...customConfig,
     {
-      files: ['src/**'],
+      files: ['**/**'],
       rules: {
         'no-underscore-dangle': ['off'],
-        'no-restricted-exports':['off']
+        'no-restricted-exports':['off'],
+        "import/no-extraneous-dependencies": ['off']
       },
     },
+    
   ],
 });
