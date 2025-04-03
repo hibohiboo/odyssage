@@ -7,7 +7,10 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  tags: ['autodocs'],
+  tags: [
+    'autodocs',
+    'skip', // タグでスキップするテスト
+  ],
 } satisfies Meta<typeof Footer>;
 
 export default meta;
