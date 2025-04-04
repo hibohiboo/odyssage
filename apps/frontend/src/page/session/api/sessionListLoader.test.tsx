@@ -53,7 +53,7 @@ describe('sessionListLoader', () => {
   it('APIエラー時に空の配列を返す', async () => {
     // Honoクライアントのエラーをモック化
     const { apiClient } = await import('../../../shared/api/client');
-    (apiClient.api.sessions.$get as vi.Mock).mockRejectedValue(
+    (apiClient.api.sessions.$get as Mock).mockRejectedValue(
       new Error('API error'),
     );
 
