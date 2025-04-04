@@ -2,9 +2,9 @@
     "name": "odyssage",
     "devDependencies": {
         "concurrently": "^9.1.2",
-        "dependency-cruiser": "^16.10.0",
+        "dependency-cruiser": "^16.10.1",
         "prettier": "^3.5.3",
-        "turbo": "^2.4.4"
+        "turbo": "^2.5.0"
     },
     "packageManager": "bun@1.2.8",
     "private": true,

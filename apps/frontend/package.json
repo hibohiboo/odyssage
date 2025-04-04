@@ -30,9 +30,9 @@
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
-    "@tailwindcss/vite": "^4.1.1",
+    "@tailwindcss/vite": "^4.1.2",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^14.2.1",
+    "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.1",
     "@vitejs/plugin-react-swc": "^3.8.1",
@@ -41,8 +41,8 @@
     "msw": "^2.7.3",
     "npm-check-updates": "^17.1.16",
     "typescript": "^5.8.2",
-    "vite": "^6.2.4",
-    "vitest": "^1.2.1"
+    "vite": "^6.2.5",
+    "vitest": "^3.1.1"
   },
   "msw": {
     "workerDirectory": [
