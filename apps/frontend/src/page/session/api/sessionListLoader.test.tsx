@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import { sessionListLoader } from './sessionListLoader';
 
 // apiClientのモック化
@@ -35,10 +35,10 @@ describe('sessionListLoader', () => {
     const mockResponse = {
       json: vi.fn().mockResolvedValue(mockSessions),
     };
-    
+
     // モックapiclientを取得
     const { apiClient } = await import('../../../shared/api/client');
-    (apiClient.api.sessions.$get as vi.Mock).mockResolvedValue(mockResponse);
+    (apiClient.api.sessions.$get as Mock).mockResolvedValue(mockResponse);
 
     // 関数の実行
     const result = await sessionListLoader();
@@ -53,7 +53,9 @@ describe('sessionListLoader', () => {
   it('APIエラー時に空の配列を返す', async () => {
     // Honoクライアントのエラーをモック化
     const { apiClient } = await import('../../../shared/api/client');
-    (apiClient.api.sessions.$get as vi.Mock).mockRejectedValue(new Error('API error'));
+    (apiClient.api.sessions.$get as vi.Mock).mockRejectedValue(
+      new Error('API error'),
+    );
 
     // コンソールエラーをモック化して警告を抑制
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
