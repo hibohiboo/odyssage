@@ -48,7 +48,7 @@ export type ScnearioListItem = v.InferOutput<typeof scenarioListItemSchema>;
 
 // セッション関連のスキーマ
 export enum SessionStatusEnum {
-  NotStarted = '未開始',
+  NotStarted = '準備中',
   InProgress = '進行中',
   Finished = '終了',
 }

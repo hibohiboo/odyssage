@@ -10,7 +10,7 @@ get:
   summary: GM管理セッション一覧
   description: |
     特定のGMが作成・管理しているセッション一覧を取得します。
-    未開始、進行中、終了などの異なるステータスのセッションがすべて含まれます。
+    準備中、進行中、終了などの異なるステータスのセッションがすべて含まれます。
   operationId: getSessionsByGm
   tags:
     - session
