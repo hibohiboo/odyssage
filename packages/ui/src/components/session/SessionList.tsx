@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { SessionCard, SessionCardProps } from './SessionCard';
+import { SessionCardProps } from './SessionCard';
+import {
+  SearchInput,
+  StatusTabs,
+  SessionCards,
+  EmptySessions,
+} from './SessionListParts';
+import { filterSessions, SessionFilterCriteria } from './sessionListUtils';
 
 /**
  * セッションリストの型定義
@@ -25,109 +32,66 @@ export const SessionList: React.FC<SessionListProps> = ({
   showSearch = true,
   showStatusTabs = true,
 }) => {
+  // 検索とフィルタリングのステート管理
   const [searchText, setSearchText] = useState('');
   const [activeStatus, setActiveStatus] = useState<string | null>(null);
 
-  // セッション検索とフィルタリングのロジック
-  const filteredSessions = sessions.filter((session) => {
-    // 検索テキストによるフィルタリング
-    const matchesSearch =
-      searchText === '' ||
-      session.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      session.gm.toLowerCase().includes(searchText.toLowerCase()) ||
-      (session.description &&
-        session.description.toLowerCase().includes(searchText.toLowerCase()));
+  /**
+   * 検索入力フォームを表示する
+   */
+  const renderSearchInput = () => {
+    if (!showSearch) {
+      return null;
+    }
 
-    // ステータスによるフィルタリング
-    const matchesStatus =
-      !activeStatus ||
-      session.status.toLowerCase() === activeStatus.toLowerCase();
+    return <SearchInput value={searchText} onChange={setSearchText} />;
+  };
 
-    return matchesSearch && matchesStatus;
-  });
+  /**
+   * ステータスタブを表示する
+   */
+  const renderStatusTabs = () => {
+    if (!showStatusTabs) {
+      return null;
+    }
+
+    return (
+      <StatusTabs
+        activeStatus={activeStatus}
+        onStatusChange={setActiveStatus}
+      />
+    );
+  };
+
+  // フィルター条件を作成
+  const filterCriteria: SessionFilterCriteria = {
+    searchText,
+    activeStatus,
+  };
+
+  // フィルタリングされたセッションリスト
+  const filteredSessions = filterSessions(sessions, filterCriteria);
 
   // セッションリストが空の場合の表示
   if (sessions.length === 0) {
-    return (
-      <div className="card p-8 text-center">
-        <h3 className="text-lg font-medium text-stone-700 mb-2">
-          セッションがありません
-        </h3>
-        <p className="text-stone-500">
-          新しいセッションを作成するか、公開中のセッションに参加してください
-        </p>
-      </div>
-    );
+    return <EmptySessions />;
   }
 
   return (
     <div className="space-y-6">
       {/* 検索エリア */}
-      {showSearch && (
-        <div className="card p-4 mb-8">
-          <div className="relative">
-            <input
-              type="text"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder="セッションを検索..."
-              className="input pl-10 w-full"
-            />
-          </div>
-        </div>
-      )}
+      {renderSearchInput()}
 
       {/* ステータスタブ */}
-      {showStatusTabs && (
-        <div className="flex border-b border-stone-200 mb-6">
-          <button
-            onClick={() => setActiveStatus(null)}
-            className={`px-4 py-2 border-b-2 ${!activeStatus ? 'border-amber-700 text-amber-800 font-medium' : 'border-transparent text-stone-600 hover:text-amber-700'}`}
-          >
-            すべて
-          </button>
-          <button
-            onClick={() => setActiveStatus('active')}
-            className={`px-4 py-2 border-b-2 ${activeStatus === 'active' ? 'border-amber-700 text-amber-800 font-medium' : 'border-transparent text-stone-600 hover:text-amber-700'}`}
-          >
-            進行中
-          </button>
-          <button
-            onClick={() => setActiveStatus('waiting')}
-            className={`px-4 py-2 border-b-2 ${activeStatus === 'waiting' ? 'border-amber-700 text-amber-800 font-medium' : 'border-transparent text-stone-600 hover:text-amber-700'}`}
-          >
-            待機中
-          </button>
-          <button
-            onClick={() => setActiveStatus('completed')}
-            className={`px-4 py-2 border-b-2 ${activeStatus === 'completed' ? 'border-amber-700 text-amber-800 font-medium' : 'border-transparent text-stone-600 hover:text-amber-700'}`}
-          >
-            完了
-          </button>
-        </div>
-      )}
+      {renderStatusTabs()}
 
       {/* セッションリスト */}
-      <div className="space-y-6">
-        {filteredSessions.length > 0 ? (
-          filteredSessions.map((session) => (
-            <SessionCard
-              key={session.id}
-              {...session}
-              onViewDetails={onViewDetails}
-              onViewMessages={onViewMessages}
-              onPlay={onPlay}
-            />
-          ))
-        ) : (
-          <div className="card p-8 text-center">
-            <h3 className="text-lg font-medium text-stone-700 mb-2">
-              検索条件に一致するセッションがありません
-            </h3>
-            <p className="text-stone-500">検索条件を変更してください</p>
-          </div>
-        )}
-      </div>
+      <SessionCards
+        sessions={filteredSessions}
+        onViewDetails={onViewDetails}
+        onViewMessages={onViewMessages}
+        onPlay={onPlay}
+      />
     </div>
   );
 };
