@@ -55,7 +55,7 @@ export const sessionsTable = mySchema.table('sessions', {
     .notNull()
     .references(() => scenariosTable.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
-  status: varchar('status', { length: 10 }).notNull().default('未開始'),
+  status: varchar('status', { length: 10 }).notNull().default('準備中'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at')
     .notNull()

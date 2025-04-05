@@ -28,9 +28,9 @@ Session:
       example: "未知の洞窟探検"
     status:
       type: string
-      enum: ["未開始", "進行中", "終了"]
+      enum: ["準備中", "進行中", "終了"]
       description: セッションの現在の状態
-      example: "未開始"
+      example: "準備中"
     created_at:
       type: string
       format: date-time
@@ -97,9 +97,9 @@ SessionResponse:
       example: "未知の洞窟探検"
     status:
       type: string
-      enum: ["未開始", "進行中", "終了"]
+      enum: ["準備中", "進行中", "終了"]
       description: セッションの現在の状態
-      example: "未開始"
+      example: "準備中"
     created_at:
       type: string
       format: date-time
@@ -130,9 +130,9 @@ SessionList:
         example: "未知の洞窟探検"
       status:
         type: string
-        enum: ["未開始", "進行中", "終了"]
+        enum: ["準備中", "進行中", "終了"]
         description: セッションの現在の状態
-        example: "未開始"
+        example: "準備中"
       scenario_id:
         type: string
         format: uuid

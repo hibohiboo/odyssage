@@ -1,17 +1,17 @@
 get:
   operationId: getUserScenarioStocks
-  summary: Get scenarios stocked by a user
-  description: Returns a list of scenarios stocked by the specified user
+  summary: ユーザーがストックしたシナリオ一覧の取得
+  description: 指定されたユーザーがストックしたシナリオの一覧を返します
   parameters:
     - name: user_id
       in: path
       required: true
       schema:
         type: string
-      description: The ID of the user
+      description: ユーザーID
   responses:
     '200':
-      description: Successfully retrieved user's stocked scenarios
+      description: ユーザーのストックしたシナリオを正常に取得しました
       content:
         application/json:
           schema:

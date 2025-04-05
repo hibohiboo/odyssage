@@ -4,7 +4,7 @@ get:
     - bearerAuth: []
   responses:
     200:
-      description: "Successful response"
+      description: "正常に応答しました"
       content:
         application/json:
           schema:
