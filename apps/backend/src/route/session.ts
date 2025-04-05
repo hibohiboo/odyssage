@@ -9,7 +9,8 @@ import {
 import {
   sessionRequestSchema,
   idSchema,
-  SessionStatusEnum,
+  sessionStatuSchema,
+  parse,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { generateUUID } from '../utils/generateUUID';
@@ -70,7 +71,7 @@ export const sessionRoute = new Hono<Env>()
           gm: session.gmName,
           players: 0,
           maxPlayers: 5,
-          status: session.status,
+          status: parse(sessionStatuSchema, session.status),
           createdAt: session.createdAt.toISOString(),
         })),
       );
@@ -93,7 +94,7 @@ export const sessionRoute = new Hono<Env>()
         gmId: json.gm_id,
         scenarioId: json.scenario_id,
         title: json.title,
-        status: SessionStatusEnum.NotStarted,
+        status: '準備中',
       });
 
       // 作成したセッションを取得
@@ -141,7 +142,7 @@ export const sessionRoute = new Hono<Env>()
         gm_id: session.gmId,
         scenario_id: session.scenarioId,
         title: session.title,
-        status: session.status,
+        status: parse(sessionStatuSchema, session.status),
         created_at: session.createdAt.toISOString(),
         updated_at: session.updatedAt.toISOString(),
         scenario_title: session.scenarioTitle,

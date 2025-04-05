@@ -1,21 +1,6 @@
 import { SessionList, SessionCardProps } from '@odyssage/ui/index';
 import { useLoaderData, useNavigate } from 'react-router';
-
-/**
- * セッションの型定義
- */
-interface Session {
-  id: string;
-  name: string;
-  gm: string;
-  players: number;
-  maxPlayers: number;
-  status: string;
-  createdAt: string;
-  description?: string;
-  progress?: number;
-  currentScene?: string;
-}
+import { SessionListData } from '../api/sessionListLoader';
 
 /**
  * セッション一覧ページ
@@ -23,7 +8,7 @@ interface Session {
  */
 const SessionListPage = () => {
   // ローダーからのデータを取得
-  const sessions = useLoaderData() as Session[];
+  const sessions = useLoaderData<SessionListData>();
   const navigate = useNavigate();
 
   // セッションの詳細ページへ移動
@@ -42,18 +27,20 @@ const SessionListPage = () => {
   };
 
   // APIから取得したセッションデータをSessionCardPropsの形式に変換
-  const sessionItems: SessionCardProps[] = sessions.map((session) => ({
-    id: session.id,
-    name: session.name,
-    gm: session.gm,
-    players: session.players,
-    maxPlayers: session.maxPlayers,
-    status: session.status,
-    createdAt: session.createdAt,
-    description: session.description || '',
-    progress: session.progress || 0,
-    currentScene: session.currentScene || '',
-  }));
+  const sessionItems: SessionCardProps[] = Array.isArray(sessions)
+    ? sessions.map((session) => ({
+        id: session.id,
+        name: session.name,
+        gm: session.gm,
+        players: session.players,
+        maxPlayers: session.maxPlayers,
+        status: session.status,
+        createdAt: session.createdAt,
+        description: '',
+        progress: 0,
+        currentScene: '',
+      }))
+    : [];
 
   return (
     <div className="container mx-auto px-4 py-8">

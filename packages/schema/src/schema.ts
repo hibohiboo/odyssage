@@ -1,5 +1,6 @@
 import * as v from 'valibot';
 
+export const { parse } = v;
 export const scenarioResponseSchema = v.object({
   id: v.string(),
   title: v.string(),
@@ -47,11 +48,13 @@ export const scenarioListItemSchema = v.object({
 export type ScnearioListItem = v.InferOutput<typeof scenarioListItemSchema>;
 
 // セッション関連のスキーマ
-export enum SessionStatusEnum {
-  NotStarted = '準備中',
-  InProgress = '進行中',
-  Finished = '終了',
-}
+
+export const sessionStatuSchema = v.picklist([
+  '準備中',
+  '進行中',
+  '終了',
+] as const);
+export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
 
 export const sessionRequestSchema = v.object({
   gm_id: v.string(),

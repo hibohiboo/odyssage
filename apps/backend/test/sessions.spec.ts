@@ -25,7 +25,7 @@ describe('Sessions API', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174000',
           title: 'テストセッション1',
-          status: '募集中',
+          status: '準備中',
           gmId: 'user123',
           gmName: 'テストGM',
           scenarioId: '123e4567-e89b-12d3-a456-426614174001',
@@ -93,7 +93,7 @@ describe('Sessions API', () => {
         {
           id: '123e4567-e89b-12d3-a456-426614174000',
           title: 'テストセッション1',
-          status: '募集中',
+          status: '準備中',
           gmId,
           gmName: 'テストGM',
           scenarioId: '123e4567-e89b-12d3-a456-426614174001',

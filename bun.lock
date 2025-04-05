@@ -134,6 +134,7 @@
       "name": "@odyssage/ui",
       "version": "0.0.0",
       "dependencies": {
+        "@odyssage/schema": "workspace:*",
         "lucide-react": "^0.487.0",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",

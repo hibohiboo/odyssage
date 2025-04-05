@@ -1,7 +1,8 @@
+import { SessionStatuSchema } from '@odyssage/schema/src/schema';
 /**
  * セッションのステータスタイプ
  */
-export type SessionStatus = 'active' | 'waiting' | 'completed';
+export type SessionStatus = SessionStatuSchema;
 
 /**
  * ステータスに基づいてクラス名を取得する
@@ -9,17 +10,17 @@ export type SessionStatus = 'active' | 'waiting' | 'completed';
  * @returns 対応するCSSクラス名
  */
 export const getStatusClassName = (status: SessionStatus): string => {
-  const normalizedStatus = status.toLowerCase();
+  const normalizedStatus = status;
 
-  if (normalizedStatus === 'active' || normalizedStatus === '進行中') {
+  if (normalizedStatus === '進行中') {
     return 'bg-green-100 text-green-800';
   }
 
-  if (normalizedStatus === 'waiting' || normalizedStatus === '待機中') {
+  if (normalizedStatus === '準備中') {
     return 'bg-amber-100 text-amber-800';
   }
 
-  if (normalizedStatus === 'completed' || normalizedStatus === '完了') {
+  if (normalizedStatus === '終了') {
     return 'bg-blue-100 text-blue-800';
   }
 
@@ -31,23 +32,7 @@ export const getStatusClassName = (status: SessionStatus): string => {
  * @param status セッションのステータス
  * @returns 日本語の表示名
  */
-export const getStatusDisplayName = (status: SessionStatus): string => {
-  const normalizedStatus = status.toLowerCase();
-
-  if (normalizedStatus === 'active') {
-    return '進行中';
-  }
-
-  if (normalizedStatus === 'waiting') {
-    return '待機中';
-  }
-
-  if (normalizedStatus === 'completed') {
-    return '完了';
-  }
-
-  return status;
-};
+export const getStatusDisplayName = (status: SessionStatus): string => status;
 
 /**
  * セッションが進行中かどうかを判定する
