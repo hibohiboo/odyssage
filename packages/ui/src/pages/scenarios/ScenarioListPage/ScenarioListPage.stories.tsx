@@ -81,7 +81,14 @@ export const Empty: Story = {
 
 // モックのReactRouterリンクの代わりに使うためのモックコンポーネント
 const MockRouter = () => ({
-  Link: ({ to, children, ...props }) => (
+  Link: ({
+    to,
+    children,
+    ...props
+  }: {
+    to: string;
+    children: React.ReactNode;
+  }) => (
     <a href={to} {...props}>
       {children}
     </a>
