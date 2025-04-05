@@ -2,6 +2,8 @@ import { FormEventHandler } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { ScenarioData } from '@odyssage/frontend/entities/scenario';
 import { useCreateSession } from '@odyssage/frontend/entities/session/hooks/useCreateSession';
+import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
+import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
 /**
  * セッション作成フォームのロジックを管理するカスタムフック
@@ -11,6 +13,7 @@ import { useCreateSession } from '@odyssage/frontend/entities/session/hooks/useC
 export const useSessionForm = () => {
   const navigate = useNavigate();
   const { createNewSession, success } = useCreateSession();
+  const uid = useAppSelector(uidSelector);
 
   const loaderData = useLoaderData<ScenarioData>();
 
@@ -32,7 +35,7 @@ export const useSessionForm = () => {
       await createNewSession(loaderData.id, sessionName);
       // 成功したらセッション一覧ページに遷移
       if (success) {
-        navigate('/gm/sessions');
+        navigate(`/gm/sessions/${uid}`);
       }
     } catch (err) {
       console.error('セッション作成エラー:', err);

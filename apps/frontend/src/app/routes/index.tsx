@@ -93,10 +93,13 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
           children: [
             {
               path: 'sessions',
-              lazy: {
-                loader: async () => gmSessionListLoader,
-                Component: async () => SessionListPage,
-              },
+              children: [
+                {
+                  path: ':uid',
+                  loader: gmSessionListLoader,
+                  element: <SessionListPage />,
+                },
+              ],
             },
             {
               path: 'scenario',

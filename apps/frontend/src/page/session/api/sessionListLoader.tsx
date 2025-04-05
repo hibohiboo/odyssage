@@ -1,7 +1,6 @@
 import { ClientResponse } from 'hono/client';
-import { store } from '@odyssage/frontend/app/store';
+import { LoaderFunctionArgs } from 'react-router';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
-import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 
 /**
  * セッション一覧の読み込みを行う関数
@@ -23,11 +22,9 @@ export async function sessionListLoader() {
  * GMのセッション一覧の読み込みを行う関数
  * GET /api/sessions?gm_id=xxx APIを呼び出し、ログインユーザーが作成したセッションデータのみを取得する
  */
-export async function gmSessionListLoader() {
+export async function gmSessionListLoader(args: LoaderFunctionArgs) {
+  const { uid } = args.params;
   try {
-    // Reduxストアから現在のユーザーIDを取得
-    const uid = uidSelector(store.getState());
-
     if (!uid) {
       console.error('User not logged in');
       return [];

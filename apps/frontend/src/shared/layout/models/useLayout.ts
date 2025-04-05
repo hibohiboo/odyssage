@@ -27,7 +27,7 @@ export function useLayout() {
   const currentPath = location.pathname;
   const isAnonymous = useAppSelector(isAnonymousSelector);
   const userName = useAppSelector(userDisplayNameSelector);
-  const user = useAppSelector(uidSelector);
+  const uid = useAppSelector(uidSelector);
   const dispatch = useAppDispatch();
 
   // Compute navigation links based on user state
@@ -36,25 +36,27 @@ export function useLayout() {
       { to: '/', label: 'ホーム', icon: Home },
       { to: '/creator/scenario/list', label: 'シナリオ管理', icon: BookOpen },
       { to: '/gm/scenario/public', label: '公開シナリオ', icon: MapPin },
-      { to: '/gm/sessions', label: 'セッション一覧', icon: Calendar },
     ];
 
-    if (user == null) {
+    if (uid == null) {
       return [{ to: '/', label: 'ログイン中', icon: LoaderIcon }];
     }
-
+    const defaultLoginnedNavLinks = [
+      ...defaultNavLinks,
+      { to: `/gm/sessions/${uid}`, label: 'セッション一覧', icon: Calendar },
+    ];
     if (isAnonymous) {
       return [
-        ...defaultNavLinks,
+        ...defaultLoginnedNavLinks,
         { to: '/login', label: 'ログイン', icon: User },
       ];
     }
     const name = userName ?? 'ゲストユーザ';
     return [
-      ...defaultNavLinks,
+      ...defaultLoginnedNavLinks,
       { to: '/change-name', label: name, icon: User },
     ];
-  }, [isAnonymous, user, userName]);
+  }, [isAnonymous, uid, userName]);
 
   // Handle login on component mount
   useEffect(() => {
