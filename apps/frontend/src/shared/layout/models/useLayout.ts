@@ -1,4 +1,11 @@
-import { BookOpen, Calendar, Home, LoaderIcon, MapPin, User } from '@odyssage/ui/icons';
+import {
+  BookOpen,
+  Calendar,
+  Home,
+  LoaderIcon,
+  MapPin,
+  User,
+} from '@odyssage/ui/icons';
 import { useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router';
 import {

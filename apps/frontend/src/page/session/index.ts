@@ -2,4 +2,7 @@
 export { default as CreateSessionPage } from './ui/CreatePage';
 export { createSessionPageLoader } from './api/createSessionPageLoader';
 export { default as SessionListPage } from './ui/SessionListPage';
-export { sessionListLoader } from './api/sessionListLoader';
+export {
+  sessionListLoader,
+  gmSessionListLoader,
+} from './api/sessionListLoader';

@@ -18,6 +18,7 @@ import {
   createSessionPageLoader,
   SessionListPage,
   sessionListLoader,
+  gmSessionListLoader,
 } from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
@@ -87,7 +88,7 @@ export const createRouter = () =>
             {
               path: 'sessions',
               element: <SessionListPage />,
-              loader: sessionListLoader,
+              loader: gmSessionListLoader,
             },
             {
               path: 'scenario',
