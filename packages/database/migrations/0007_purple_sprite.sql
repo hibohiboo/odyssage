@@ -1,0 +1,1 @@
+ALTER TABLE "odyssage"."sessions" ALTER COLUMN "status" SET DEFAULT '準備中';
