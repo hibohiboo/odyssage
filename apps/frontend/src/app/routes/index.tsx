@@ -85,6 +85,11 @@ export const createRouter = () =>
           path: 'gm',
           children: [
             {
+              path: 'sessions',
+              element: <SessionListPage />,
+              loader: sessionListLoader,
+            },
+            {
               path: 'scenario',
               children: [
                 {
