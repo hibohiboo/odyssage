@@ -23,7 +23,7 @@ import {
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
 
-export const createRouter = () =>
+export const createRouter = (_: { dispatch: AppDispatch }) =>
   createBrowserRouter([
     {
       path: '/',
@@ -45,7 +45,6 @@ export const createRouter = () =>
           path: 'change-name',
           element: <ChangeNamePage />,
         },
-
         {
           path: 'creator',
           children: [
@@ -62,7 +61,6 @@ export const createRouter = () =>
                 },
                 {
                   path: ':id',
-
                   children: [
                     {
                       path: '',
