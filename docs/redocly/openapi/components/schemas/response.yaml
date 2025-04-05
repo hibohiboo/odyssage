@@ -1,5 +1,5 @@
 BadRequestResponse:
-  description: "Bad Request"
+  description: "不正なリクエスト"
   content:
     application/json:
       schema:

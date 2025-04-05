@@ -106,7 +106,7 @@ odysseyage/
 バックエンドフレームワーク|hono
 
 ### バックエンドの規約
-- APIを追加するときには docs\redocly\openapi\api.yaml にOpenAPIで追記すること
+- APIを追加するときには docs\redocly\openapi\api.yaml にOpenAPIで追記すること。説明は日本語で書くこと
 - APIのバリデーションは packages\schema にバリデーションスキーマを定義してそれを利用すること
 - RDBを利用するときは packages\database 以下のファイルを永続化層アダプタとして利用すること
 - RDBを利用するときにテーブル定義が不足していた場合は packages\database 以下でコードファーストで作成すること
