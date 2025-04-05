@@ -5,7 +5,7 @@ import {
   createExecutionContext,
   waitOnExecutionContext,
 } from 'cloudflare:test';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, assert } from 'vitest';
 
 // テスト対象のモジュールと必要な依存関係をインポート
 import worker from '../src/index';
@@ -60,7 +60,10 @@ describe('Sessions API', () => {
       // レスポンスの検証
       expect(response.status).toBe(200);
       const responseBody = await response.json();
-
+      if (!Array.isArray(responseBody)) {
+        // vitest で 失敗させる関数
+        assert.fail('このコードに到達してはいけません');
+      }
       // レスポンスのフォーマットを確認
       expect(Array.isArray(responseBody)).toBe(true);
       expect(responseBody.length).toBe(2);
@@ -115,6 +118,10 @@ describe('Sessions API', () => {
       // レスポンスの検証
       expect(response.status).toBe(200);
       const responseBody = await response.json();
+      if (!Array.isArray(responseBody)) {
+        // vitest で 失敗させる関数
+        assert.fail('このコードに到達してはいけません');
+      }
 
       // 期待する形式のデータが返されることを確認
       expect(Array.isArray(responseBody)).toBe(true);
@@ -143,7 +150,8 @@ describe('Sessions API', () => {
 
       // レスポンスの検証
       expect(response.status).toBe(500);
-      const responseBody = await response.json();
+      const responseBody = (await response.json()) as Record<string, unknown>;
+
       expect(responseBody).toHaveProperty('message');
       expect(responseBody.message).toContain(
         'セッション一覧の取得に失敗しました',

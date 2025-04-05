@@ -50,7 +50,7 @@ describe.todo('Scenario creation', () => {
     const response = await worker.fetch(request, env, ctx);
     await waitOnExecutionContext(ctx);
     expect(response.status).toBe(201);
-    const responseBody = await response.json();
+    const responseBody = (await response.json()) as { message: string };
     expect(responseBody.message).toBe('Scenario created successfully');
   });
 
@@ -71,7 +71,7 @@ describe.todo('Scenario creation', () => {
     const response = await worker.fetch(request, env, ctx);
     await waitOnExecutionContext(ctx);
     expect(response.status).toBe(400);
-    const responseBody = await response.json();
+    const responseBody = (await response.json()) as { message: string };
     expect(responseBody.message).toBe('Failed to create scenario');
   });
 });

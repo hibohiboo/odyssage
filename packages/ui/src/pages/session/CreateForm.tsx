@@ -19,12 +19,12 @@ export function CreateForm({ sessionName, description }: CreateFormProps) {
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h1 className="text-2xl md:text-3xl font-serif font-bold text-amber-800">
-          新しい卓を立てる
+          新しいセッションを立てる
         </h1>
 
         <Button type="submit">
           <Save className="mr-2 h-4 w-4" />
-          卓を作成する
+          作成する
         </Button>
       </div>
 
@@ -37,14 +37,14 @@ export function CreateForm({ sessionName, description }: CreateFormProps) {
                 htmlFor="sessionName"
                 className="block text-sm font-medium text-stone-700 mb-1"
               >
-                卓の名前
+                セッション名
               </label>
               <input
                 id="sessionName"
                 name="sessionName"
                 type="text"
                 defaultValue={sessionName}
-                placeholder="卓の名前を入力してください"
+                placeholder="セッション名を入力してください"
                 className="input w-full"
                 required
               />
