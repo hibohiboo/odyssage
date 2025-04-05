@@ -22,7 +22,7 @@ import { Logger } from '../utils/logger';
  * - GET /sessions/:id: 特定のセッションを取得
  * - GET /sessions/gm/:gm_id: 特定のGMが管理するセッション一覧を取得
  */
-export const session = new Hono<Env>()
+export const sessionRoute = new Hono<Env>()
   // 1. 特定のパスを持つルートを先に定義
   .get('/gm/:gm_id', async (c) => {
     try {
@@ -68,7 +68,6 @@ export const session = new Hono<Env>()
           id: session.id,
           name: session.title,
           gm: session.gmName,
-          // TODO: プレイヤー数とプレイヤー上限数はまだ実装されていない場合は仮の値を設定
           players: 0,
           maxPlayers: 5,
           status: session.status,
