@@ -8,8 +8,13 @@ interface StatusBadgeProps {
   displayName: string;
 }
 
-export const StatusBadge: React.FC<StatusBadgeProps> = ({ statusClassName, displayName }) => (
-  <div className={`px-2 py-1 rounded-full text-xs font-medium ${statusClassName}`}>
+export const StatusBadge: React.FC<StatusBadgeProps> = ({
+  statusClassName,
+  displayName,
+}) => (
+  <div
+    className={`px-2 py-1 rounded-full text-xs font-medium ${statusClassName}`}
+  >
     {displayName}
   </div>
 );
@@ -61,7 +66,7 @@ export const UnreadBadge: React.FC<UnreadBadgeProps> = ({ count }) => {
   if (count <= 0) {
     return null;
   }
-  
+
   return (
     <span className="ml-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs">
       {count}
@@ -78,11 +83,12 @@ interface ActionButtonProps {
   children: React.ReactNode;
 }
 
-export const ActionButton: React.FC<ActionButtonProps> = ({ onClick, className, children }) => (
-  <button
-    onClick={onClick}
-    className={className}
-  >
+export const ActionButton: React.FC<ActionButtonProps> = ({
+  onClick,
+  className,
+  children,
+}) => (
+  <button onClick={onClick} className={className}>
     {children}
   </button>
 );

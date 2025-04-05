@@ -16,14 +16,14 @@ export interface SessionFilterCriteria {
  */
 export const matchesSearchText = (
   session: SessionCardProps,
-  searchText: string
+  searchText: string,
 ): boolean => {
   if (!searchText) {
     return true;
   }
-  
+
   const normalizedSearchText = searchText.toLowerCase();
-  
+
   // 名前、GM名、説明文でマッチするか確認
   return (
     session.name.toLowerCase().includes(normalizedSearchText) ||
@@ -40,12 +40,12 @@ export const matchesSearchText = (
  */
 export const matchesStatus = (
   session: SessionCardProps,
-  activeStatus: string | null
+  activeStatus: string | null,
 ): boolean => {
   if (!activeStatus) {
     return true;
   }
-  
+
   return session.status.toLowerCase() === activeStatus.toLowerCase();
 };
 
@@ -57,11 +57,10 @@ export const matchesStatus = (
  */
 export const filterSessions = (
   sessions: SessionCardProps[],
-  criteria: SessionFilterCriteria
-): SessionCardProps[] => {
-  return sessions.filter(
+  criteria: SessionFilterCriteria,
+): SessionCardProps[] =>
+  sessions.filter(
     (session) =>
       matchesSearchText(session, criteria.searchText) &&
-      matchesStatus(session, criteria.activeStatus)
+      matchesStatus(session, criteria.activeStatus),
   );
-};
