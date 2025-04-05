@@ -1,7 +1,7 @@
 /**
  * セッションのステータスタイプ
  */
-export type SessionStatus = 'active' | 'waiting' | 'completed' | string;
+export type SessionStatus = 'active' | 'waiting' | 'completed';
 
 /**
  * ステータスに基づいてクラス名を取得する
