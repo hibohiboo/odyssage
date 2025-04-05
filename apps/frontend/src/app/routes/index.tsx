@@ -1,4 +1,5 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Outlet } from 'react-router';
+import { GmLayout } from '@odyssage/frontend/page/gm';
 import {
   ChangeNamePage,
   LoginPage,
@@ -22,6 +23,7 @@ import {
 } from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
+import { AppDispatch } from '../store';
 
 export const createRouter = (_: { dispatch: AppDispatch }) =>
   createBrowserRouter([
@@ -82,11 +84,19 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
         },
         {
           path: 'gm',
+          // 認証状態チェックのためのGmLayoutを適用
+          element: (
+            <GmLayout>
+              <Outlet />
+            </GmLayout>
+          ),
           children: [
             {
               path: 'sessions',
-              element: <SessionListPage />,
-              loader: gmSessionListLoader,
+              lazy: {
+                loader: async () => gmSessionListLoader,
+                Component: async () => SessionListPage,
+              },
             },
             {
               path: 'scenario',
