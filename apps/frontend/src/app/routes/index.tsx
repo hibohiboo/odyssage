@@ -44,11 +44,7 @@ export const createRouter = () =>
           path: 'change-name',
           element: <ChangeNamePage />,
         },
-        {
-          path: 'sessions',
-          element: <SessionListPage />,
-          loader: sessionListLoader,
-        },
+
         {
           path: 'creator',
           children: [
@@ -121,6 +117,16 @@ export const createRouter = () =>
               ],
             },
           ],
+        },
+      ],
+    },
+    {
+      path: 'player',
+      children: [
+        {
+          path: 'sessions',
+          element: <SessionListPage />,
+          loader: sessionListLoader,
         },
       ],
     },
