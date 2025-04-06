@@ -8,6 +8,7 @@
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
+    "integration-test": "DEBUG=testcontainers* vitest integration.spec.ts",
     "ncu": "ncu -u",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
@@ -18,15 +19,20 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.11",
     "@cloudflare/workers-types": "^4.20250405.0",
+    "@testcontainers/postgresql": "^10.24.0",
     "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.41.0",
+    "pg": "^8.14.1",
+    "postgres": "^3.4.5",
+    "testcontainers": "^10.24.0",
     "vitest": "3.1.1",
     "wrangler": "^4.7.2"
   },
   "dependencies": {
     "@hono/valibot-validator": "^0.5.2",
     "@odyssage/database": "workspace:*",
-    "@odyssage/schema": "workspace:*",
     "@odyssage/lib": "workspace:*",
+    "@odyssage/schema": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
     "hono": "^4.7.5",
     "neo4j-driver": "^5.28.1"

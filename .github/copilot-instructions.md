@@ -85,6 +85,9 @@ odysseyage/
 フロントエンドからバックエンドへの通信|hono rpc
 フロントエンドUIライブラリ|react
 ページ遷移ライブラリ|react-router
+ライブラリ管理|bun
+
+
 
 ### フロントエンドの規約
 - フロントエンドはFeature-Sliced Designのディレクトリ構成とする

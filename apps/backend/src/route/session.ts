@@ -84,7 +84,7 @@ export const sessionRoute = new Hono<Env>()
   .post('/', vValidator('json', sessionRequestSchema), async (c) => {
     try {
       const json = c.req.valid('json');
-
+      console.log('Received JSON:', json);
       // UUIDを生成
       const sessionId = generateUUID();
 
