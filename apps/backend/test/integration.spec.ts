@@ -8,6 +8,7 @@ import { Hono } from 'hono';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sessionRoute } from '../src/route/session';
 import { generateUUID } from '../src/utils/generateUUID';
+
 /**
  * セッション関連のエンドポイントに対する統合テスト
  * Testcontainersを使用して実際のPostgreSQLコンテナを起動し、
@@ -15,7 +16,6 @@ import { generateUUID } from '../src/utils/generateUUID';
  */
 describe('セッション統合テスト', () => {
   let postgresContainer: StartedPostgreSqlContainer;
-
   let connectionString: string;
   let app: Hono;
 
