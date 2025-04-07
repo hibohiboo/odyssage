@@ -7,26 +7,28 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest",
+    "test": "vitest --config vitest.config.worker.mts",
+    "integration-test": "DEBUG=testcontainers* vitest run --config vitest.config.integration.mts",
     "ncu": "ncu -u",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
     "put-secret-firebase-project-id": "wrangler secret put FIREBASE_PROJECT_ID",
-    "cf-typegen": "wrangler types",
-    "apply-db": "drizzle-kit generate"
+    "cf-typegen": "wrangler types"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.11",
     "@cloudflare/workers-types": "^4.20250405.0",
+    "@testcontainers/postgresql": "^10.24.0",
     "dotenv": "^16.4.7",
+    "testcontainers": "^10.24.0",
     "vitest": "3.1.1",
     "wrangler": "^4.7.2"
   },
   "dependencies": {
     "@hono/valibot-validator": "^0.5.2",
     "@odyssage/database": "workspace:*",
-    "@odyssage/schema": "workspace:*",
     "@odyssage/lib": "workspace:*",
+    "@odyssage/schema": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
     "hono": "^4.7.5",
     "neo4j-driver": "^5.28.1"
