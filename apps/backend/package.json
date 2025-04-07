@@ -8,22 +8,19 @@
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest --config vitest.config.worker.mts",
-    "integration-test": "DEBUG=testcontainers* vitest --config vitest.config.integration.mts",
+    "integration-test": "DEBUG=testcontainers* vitest run --config vitest.config.integration.mts",
     "ncu": "ncu -u",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
     "put-secret-firebase-project-id": "wrangler secret put FIREBASE_PROJECT_ID",
-    "cf-typegen": "wrangler types",
-    "apply-db": "drizzle-kit generate"
+    "cf-typegen": "wrangler types"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.11",
     "@cloudflare/workers-types": "^4.20250405.0",
     "@testcontainers/postgresql": "^10.24.0",
     "dotenv": "^16.4.7",
-    "drizzle-orm": "^0.41.0",
     "pg": "^8.14.1",
-    "postgres": "^3.4.5",
     "testcontainers": "^10.24.0",
     "vitest": "3.1.1",
     "wrangler": "^4.7.2"
