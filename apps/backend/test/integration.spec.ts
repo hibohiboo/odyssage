@@ -1,10 +1,10 @@
+import { execSql } from '@odyssage/database/test-utils/execSql';
 import { setupDb } from '@odyssage/database/test-utils/setupDb';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
 import { Hono } from 'hono';
-import { Client } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sessionRoute } from '../src/route/session';
 import { generateUUID } from '../src/utils/generateUUID';
@@ -17,7 +17,6 @@ describe('セッション統合テスト', () => {
   let postgresContainer: StartedPostgreSqlContainer;
 
   let connectionString: string;
-  let pgClient: Client;
   let app: Hono;
 
   // テストユーザーとシナリオの情報
@@ -36,29 +35,13 @@ describe('セッション統合テスト', () => {
       .start();
 
     connectionString = postgresContainer.getConnectionUri();
-    console.log(`PostgreSQLコンテナが起動しました: ${connectionString}`);
     await setupDb(connectionString);
-
-    // PGクライアントを作成してテスト用のテーブルを初期化
-    pgClient = new Client({
+    await execSql(
       connectionString,
-    });
-
-    await pgClient.connect();
-
-    // テストデータを作成
-    await pgClient.query(
       `
-      INSERT INTO odyssage.users (id, name) VALUES ($1, $2)
-    `,
-      [testUserId, testUserName],
-    );
-
-    await pgClient.query(
-      `
-      INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
-    `,
-      [testScenarioId, testScenarioTitle, testUserId],
+       INSERT INTO odyssage.users (id, name) VALUES ('${testUserId}', '${testUserName}');
+       INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP)
+      `,
     );
 
     // アプリを初期化
@@ -68,7 +51,6 @@ describe('セッション統合テスト', () => {
 
   // テスト終了後にコンテナを停止
   afterAll(async () => {
-    await pgClient.end();
     await postgresContainer.stop();
   });
 
