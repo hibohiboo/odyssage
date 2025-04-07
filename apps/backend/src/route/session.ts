@@ -120,8 +120,14 @@ export const sessionRoute = new Hono<Env>()
         201,
       );
     } catch (error) {
+      console.log('Received JSON:', error);
       Logger.error('セッション作成エラー:', error);
-      return c.json({ message: 'セッションの作成に失敗しました' }, 500);
+      return c.json(
+        {
+          message: `セッションの作成に失敗しました \n ${JSON.stringify(error)}`,
+        },
+        500,
+      );
     }
   })
   // 4. 単一のセッションを取得するルートを最後に定義

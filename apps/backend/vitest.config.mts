@@ -23,7 +23,7 @@ export default defineConfig({
       },
     },
     // コンソールログを抑制する設定
-    silent: true,
+    silent: false,
     // テストタイムアウトを延長（Testcontainersはコンテナの起動に時間がかかる）
     testTimeout: 60000,
   },

@@ -1,7 +1,11 @@
-import { PostgreSqlContainer } from '@testcontainers/postgresql';
+import {
+  PostgreSqlContainer,
+  StartedPostgreSqlContainer,
+} from '@testcontainers/postgresql';
 import { Hono } from 'hono';
 import { Client } from 'pg';
-import { afterAll, beforeAll, describe, it } from 'vitest';
+import { GenericContainer, Network, Wait } from 'testcontainers';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sessionRoute } from '../src/route/session';
 import { generateUUID } from '../src/utils/generateUUID';
 
@@ -11,7 +15,8 @@ import { generateUUID } from '../src/utils/generateUUID';
  * データベース操作を含む統合テストを実行します
  */
 describe('セッション統合テスト', () => {
-  let postgresContainer: PostgreSqlContainer;
+  let postgresContainer: StartedPostgreSqlContainer;
+  let neonProxyContainer: any;
   let connectionString: string;
   let pgClient: Client;
   let app: Hono;
@@ -24,15 +29,31 @@ describe('セッション統合テスト', () => {
 
   // テスト開始前にPostgreSQLコンテナを起動
   beforeAll(async () => {
+    const networkAlias = generateUUID();
+    const network = await new Network().start();
     // PostgreSQLコンテナを起動
     postgresContainer = await new PostgreSqlContainer()
+      .withNetwork(network)
+      .withNetworkAliases(networkAlias)
       .withDatabase('test_db')
       .withUsername('test_user')
       .withPassword('test_password')
       .start();
 
     connectionString = postgresContainer.getConnectionUri();
-
+    console.log('PostgreSQL connection string:', connectionString);
+    // Neon Proxyコンテナを起動
+    neonProxyContainer = await new GenericContainer(
+      'ghcr.io/timowilhelm/local-neon-http-proxy:main',
+    )
+      .withNetwork(network)
+      .withNetworkAliases(networkAlias)
+      .withEnvironment({
+        PG_CONNECTION_STRING: connectionString,
+      })
+      .withWaitStrategy(Wait.forLogMessage('INFO Starting proxy'))
+      .start();
+    console.log('port', neonProxyContainer.getPort());
     // PGクライアントを作成してテスト用のテーブルを初期化
     pgClient = new Client({
       connectionString,
@@ -92,14 +113,12 @@ describe('セッション統合テスト', () => {
     // アプリを初期化
     app = new Hono();
     app.route('/api/sessions', sessionRoute);
-
-    // 環境変数を設定
-    // app.env('NEON_CONNECTION_STRING', connectionString);
   }, 60000); // コンテナ起動に時間がかかるためタイムアウトを延長
 
   // テスト終了後にコンテナを停止
   afterAll(async () => {
     await pgClient.end();
+    await neonProxyContainer.stop();
     await postgresContainer.stop();
   });
 
@@ -111,5 +130,39 @@ describe('セッション統合テスト', () => {
       scenario_id: testScenarioId,
       title: 'テストセッション',
     };
+    // POST リクエストでセッションを作成
+    const postResponse = await app.request(
+      '/api/sessions',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sessionData),
+      },
+      {
+        CLOUDFLARE_ENV: 'test',
+        NEON_CONNECTION_STRING:
+          'postgres://postgres:postgres@db.localtest.me:5432/main',
+      },
+    );
+    console.error('POST response:', postResponse);
+    expect(postResponse.status).toBe(201);
+
+    const createdSession = (await postResponse.json()) as any;
+    expect(createdSession).toHaveProperty('id');
+    expect(createdSession.title).toBe(sessionData.title);
+    expect(createdSession.gm_id).toBe(sessionData.gm_id);
+    expect(createdSession.scenario_id).toBe(sessionData.scenario_id);
+
+    // 作成したセッションをGET リクエストで取得
+    const getResponse = await app.request(`/api/sessions/${createdSession.id}`);
+
+    expect(getResponse.status).toBe(200);
+
+    const retrievedSession = (await getResponse.json()) as any;
+    expect(retrievedSession.id).toBe(createdSession.id);
+    expect(retrievedSession.title).toBe(sessionData.title);
+    expect(retrievedSession.scenario_title).toBe(testScenarioTitle);
   });
 });
