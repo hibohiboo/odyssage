@@ -155,6 +155,7 @@ export const sessionRoute = new Hono<Env>()
       });
     } catch (error) {
       Logger.error('セッション取得エラー:', error);
+
       return c.json({ message: 'セッションの取得に失敗しました' }, 500);
     }
   });
