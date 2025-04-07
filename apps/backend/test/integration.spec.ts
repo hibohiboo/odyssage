@@ -1,3 +1,4 @@
+import { setupDb } from '@odyssage/database/test-utils/setupDb';
 import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
@@ -7,7 +8,6 @@ import { Client } from 'pg';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sessionRoute } from '../src/route/session';
 import { generateUUID } from '../src/utils/generateUUID';
-
 /**
  * セッション関連のエンドポイントに対する統合テスト
  * Testcontainersを使用して実際のPostgreSQLコンテナを起動し、
@@ -37,6 +37,7 @@ describe('セッション統合テスト', () => {
 
     connectionString = postgresContainer.getConnectionUri();
     console.log(`PostgreSQLコンテナが起動しました: ${connectionString}`);
+    await setupDb(connectionString);
 
     // PGクライアントを作成してテスト用のテーブルを初期化
     pgClient = new Client({
@@ -44,40 +45,6 @@ describe('セッション統合テスト', () => {
     });
 
     await pgClient.connect();
-
-    // スキーマとテーブルを作成
-    await pgClient.query(`CREATE SCHEMA odyssage;`);
-
-    await pgClient.query(`
-      CREATE TABLE odyssage.users (
-        id VARCHAR(64) PRIMARY KEY,
-        name TEXT NOT NULL DEFAULT ''
-      );
-    `);
-
-    await pgClient.query(`
-      CREATE TABLE odyssage.scenarios (
-        id UUID PRIMARY KEY,
-        title TEXT NOT NULL,
-        user_id VARCHAR(64) NOT NULL REFERENCES odyssage.users(id) ON DELETE CASCADE,
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        overview TEXT NOT NULL DEFAULT '',
-        visibility VARCHAR(10) NOT NULL DEFAULT 'private'
-      );
-    `);
-
-    await pgClient.query(`
-      CREATE TABLE odyssage.sessions (
-        id UUID PRIMARY KEY,
-        gm_id VARCHAR(64) NOT NULL REFERENCES odyssage.users(id) ON DELETE CASCADE,
-        scenario_id UUID NOT NULL REFERENCES odyssage.scenarios(id) ON DELETE CASCADE,
-        title TEXT NOT NULL,
-        status VARCHAR(10) NOT NULL DEFAULT '準備中',
-        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
-      );
-    `);
 
     // テストデータを作成
     await pgClient.query(
@@ -89,7 +56,7 @@ describe('セッション統合テスト', () => {
 
     await pgClient.query(
       `
-      INSERT INTO odyssage.scenarios (id, title, user_id) VALUES ($1, $2, $3)
+      INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
     `,
       [testScenarioId, testScenarioTitle, testUserId],
     );
