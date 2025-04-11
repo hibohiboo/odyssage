@@ -1,5 +1,4 @@
 // filepath: d:\projects\odyssage\apps\backend\test\integrations\test-utils.ts
-import { execSql } from '@odyssage/database/test-utils/execSql';
 import { setupDb } from '@odyssage/database/test-utils/setupDb';
 import {
   PostgreSqlContainer,
@@ -32,16 +31,13 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
   beforeAll(async () => {
     // PostgreSQLコンテナを起動
     postgresContainer = await new PostgreSqlContainer('postgres:17.4-alpine')
-      .withDatabase('test')
-      .withUsername('test')
-      .withPassword('test')
-      .withExposedPorts(5432)
+      .withDatabase('test_db')
+      .withUsername('test_user')
+      .withPassword('test_password')
       .start();
 
     // 接続文字列を生成
-    connectionString = `postgresql://test:test@${postgresContainer.getHost()}:${postgresContainer.getMappedPort(
-      5432,
-    )}/test`;
+    connectionString = postgresContainer.getConnectionUri();
 
     // データベースをセットアップ（マイグレーション実行）
     await setupDb(connectionString);
@@ -67,35 +63,4 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
     getConnectionString: () => connectionString,
     getApp: () => app,
   };
-};
-
-/**
- * テスト用にサンプルデータを挿入します
- * @param connectionString データベース接続文字列
- * @param userId テスト用ユーザーID
- * @param userName テスト用ユーザー名
- * @param scenarioId テスト用シナリオID
- * @param scenarioTitle テスト用シナリオタイトル
- */
-export const insertSampleData = async (
-  connectionString: string,
-  userId: string,
-  userName: string,
-  scenarioId: string,
-  scenarioTitle: string,
-) => {
-  // ユーザー情報を挿入
-  await execSql(
-    connectionString,
-    `INSERT INTO users (uid, display_name, created_at) VALUES ($1, $2, NOW())`,
-    [userId, userName],
-  );
-
-  // シナリオ情報を挿入
-  await execSql(
-    connectionString,
-    `INSERT INTO scenarios (id, title, author_id, status, created_at, updated_at) 
-     VALUES ($1, $2, $3, 'published', NOW(), NOW())`,
-    [scenarioId, scenarioTitle, userId],
-  );
 };

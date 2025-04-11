@@ -7,7 +7,7 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest --config vitest.config.worker.mts",
+    "test": "vitest --config vitest.config.mts",
     "integration-test": "DEBUG=testcontainers* vitest run --config vitest.config.integration.mts",
     "ncu": "ncu -u",
     "lint": "eslint .",
