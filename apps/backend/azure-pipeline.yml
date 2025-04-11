@@ -1,40 +1,49 @@
-resources:
-  containers:
-    - container: postgres
-      image: postgres:17.4-alpine
-      env:
-        POSTGRES_DB: test_db
-        POSTGRES_USER: test_user
-        POSTGRES_PASSWORD: test_password
-      ports:
-        - 5432:5432
-      options: >-
-        --health-cmd="pg_isready"
-        --health-interval=10s
-        --health-timeout=5s
-        --health-retries=5
-jobs:
-  - job: test
-    container: node:22
-    services:
-      postgres: postgres
-    steps:
-      - checkout: self
+trigger:
+  branches:
+    include:
+      - id/73/fixPipelineTest
 
-      - script: npm ci
-        displayName: Install deps
+pool:
+  vmImage: 'ubuntu-latest'
 
+variables:
+  CI_DATABASE_URL: 'postgres://postgres:postgres@127.0.0.1:5432/main'
 
-      - script: |
-          echo "Waiting for PostgreSQL to be ready..."
-          for i in {1..30}; do
-            pg_isready -h localhost -p 5432 -U test_user && break
-            sleep 2
-          done
-        displayName: Wait for DB
+services:
+  postgres:
+    image: postgres:17.4-alpine
+    ports:
+      - 5432:5432
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: main
+    options: >-
+      --health-cmd="pg_isready"
+      --health-interval=10s
+      --health-timeout=5s
+      --health-retries=5
 
+steps:
+  - checkout: self
 
-      - script: |
-          export NEON_CONNECTION_STRING="postgres://test_user:test_password@localhost:5432/test_db"
-          npm run test
-        displayName: Run tests
+  - task: UseNode@1
+    inputs:
+      version: '22.x'
+
+  - script: |
+      curl -fsSL https://bun.sh/install | bash
+    displayName: 'Install Bun'
+
+  - script: echo "##vso[task.setvariable variable=PATH]$(HOME)/.bun/bin:$(PATH)"
+    displayName: 'Add Bun to PATH'
+
+  - script: bun install
+    displayName: 'Install dependencies with Bun'
+
+  - script: bun run test
+    displayName: 'Run tests with Bun'
+    workingDirectory: apps/backend
+    env:
+      CI: true
+      NEON_CONNECTION_STRING: $(CI_DATABASE_URL)
