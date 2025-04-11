@@ -1,6 +1,6 @@
 {
     "name": "odyssage",
-    "packageManager": "bun@1.2.8",
+    "packageManager": "bun@1.2.9",
     "private": true,
     "scripts": {
         "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
@@ -13,7 +13,7 @@
         "dev": "bunx --bun turbo dev",
         "prebuild": "bun install",
         "build": "bunx --bun turbo build",
-        "ncu": "turbo ncu && ncu -u",
+        "ncu": "turbo ncu --force && ncu -u",
         "test": "vitest"
     },
     "turbo": {
