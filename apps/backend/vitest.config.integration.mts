@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['test/integration.spec.ts'],
+    poolOptions: { forks: { singleFork: true } },
     // 統合テストではNode.jsのAPIを使用するので、ポリフィルを有効化
     deps: {
       interopDefault: true,
