@@ -1,0 +1,40 @@
+resources:
+  containers:
+    - container: postgres
+      image: postgres:17.4-alpine
+      env:
+        POSTGRES_DB: test_db
+        POSTGRES_USER: test_user
+        POSTGRES_PASSWORD: test_password
+      ports:
+        - 5432:5432
+      options: >-
+        --health-cmd="pg_isready"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=5
+jobs:
+  - job: test
+    container: node:22
+    services:
+      postgres: postgres
+    steps:
+      - checkout: self
+
+      - script: npm ci
+        displayName: Install deps
+
+
+      - script: |
+          echo "Waiting for PostgreSQL to be ready..."
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U test_user && break
+            sleep 2
+          done
+        displayName: Wait for DB
+
+
+      - script: |
+          export NEON_CONNECTION_STRING="postgres://test_user:test_password@localhost:5432/test_db"
+          npm run test
+        displayName: Run tests
