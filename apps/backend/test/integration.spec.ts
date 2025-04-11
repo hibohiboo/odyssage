@@ -7,7 +7,6 @@ import {
 import { Hono } from 'hono';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sessionRoute } from '../src/route/session';
-import { generateUUID } from '../src/utils/generateUUID';
 
 /**
  * セッション関連のエンドポイントに対する統合テスト
@@ -22,7 +21,7 @@ describe('セッション統合テスト', () => {
   // テストユーザーとシナリオの情報
   const testUserId = 'test-user-id';
   const testUserName = 'テストユーザー';
-  const testScenarioId = generateUUID();
+  const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
   const testScenarioTitle = 'テストシナリオ';
 
   // テスト開始前にPostgreSQLコンテナを起動
