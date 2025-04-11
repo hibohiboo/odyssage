@@ -9,15 +9,13 @@ import { setupTestEnv } from './test-utils';
  * データベース操作を含む統合テストを実行します
  */
 describe('セッション統合テスト', () => {
-  let env: Record<string, string>;
-
   // テストユーザーとシナリオの情報
   const testUserId = 'test-user-id';
   const testUserName = 'テストユーザー';
   const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
   const testScenarioTitle = 'テストシナリオ';
   // テスト環境のセットアップ
-  const { getApp } = setupTestEnv({
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       await execSql(
         connectionString,
@@ -26,16 +24,13 @@ describe('セッション統合テスト', () => {
          INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP)
         `,
       );
-      env = {
-        CLOUDFLARE_ENV: 'test',
-        NEON_CONNECTION_STRING: connectionString,
-      };
     },
   });
 
   // テストケース：セッションを作成して取得できることを確認
   it('セッションを作成して正しく取得できること', async () => {
     const app = getApp();
+    const env = getEnv();
     // リクエストボディ
     const sessionData = {
       gm_id: testUserId,
@@ -53,7 +48,7 @@ describe('セッション統合テスト', () => {
         },
         body: JSON.stringify(sessionData),
       },
-      env,
+      getEnv(),
     );
     expect(postResponse.status).toBe(201);
 

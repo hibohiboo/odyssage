@@ -48,7 +48,6 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
     }
 
     // 環境変数を設定（Honoアプリがデータベース接続できるように）
-    process.env.DATABASE_URL = connectionString;
     process.env.NEON_CONNECTION_STRING = connectionString;
   }, 60000); // 60秒のタイムアウトを設定（コンテナ起動に時間がかかるため）
 
@@ -62,5 +61,9 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
   return {
     getConnectionString: () => connectionString,
     getApp: () => app,
+    getEnv: () => ({
+      CLOUDFLARE_ENV: 'test',
+      NEON_CONNECTION_STRING: connectionString,
+    }),
   };
 };
