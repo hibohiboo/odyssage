@@ -46,13 +46,13 @@ jobs:
         workingDirectory: apps/frontend
         displayName: 'download new browsers'
 
-      - script: cp .dev.vars.sample .dev.vars
+      - script: cp .dev.vars.ci .dev.vars
         workingDirectory: apps/backend
-        displayName: 'Copy .dev.vars.sample to .dev.vars'
+        displayName: 'Setting Backend env vars'
 
       - script: cp .env.sample .dev.local
         workingDirectory: apps/frontend
-        displayName: 'Copy env.sample .dev.local'
+        displayName: 'Setting Frontend env vars'
 
       - script: |
           bun run dev &
@@ -61,7 +61,7 @@ jobs:
         displayName: 'Start Backend'
 
       - script: |
-          bun run dev  &
+          bun run dev:ci  &
           echo $! > frontend.pid
         workingDirectory: apps/frontend
         displayName: 'Start Frontend'
