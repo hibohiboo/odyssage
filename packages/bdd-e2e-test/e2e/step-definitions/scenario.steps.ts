@@ -1,5 +1,6 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { chromium, expect } from '@playwright/test';
+import fs from 'fs';
 
 Before(async function (this) {
   const browser = await chromium.launch({
@@ -18,10 +19,15 @@ When(
   async function (this, text) {
     const { page } = this;
 
-    await page.screenshot({ path: 'screenshots/debug.png', fullPage: true });
+    await page.screenshot({
+      path: 'output/screenshots/debug.png',
+      fullPage: true,
+    });
+    const content = await page.content();
+    fs.writeFileSync('output/debug.html', content);
     await page.waitForLoadState('networkidle');
     await page.screenshot({
-      path: 'screenshots/after_networkidle.png',
+      path: 'output/screenshots/after_networkidle.png',
       fullPage: true,
     });
     await page.waitForSelector(`a:has-text("${text}")`);

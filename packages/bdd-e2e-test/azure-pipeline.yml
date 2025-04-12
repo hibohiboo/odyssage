@@ -94,8 +94,8 @@ jobs:
       - task: PublishBuildArtifacts@1
         condition: always()
         inputs:
-          pathToPublish: 'packages/bdd-e2e-test/screenshots'
-          artifactName: 'e2e-screenshots'
+          pathToPublish: 'packages/bdd-e2e-test/output'
+          artifactName: 'e2e-output'
         displayName: 'Upload screenshots as artifacts'
 
       - script: |
