@@ -6,12 +6,15 @@ import './styles/tailwind.css';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Root element not found');
-
+console.log('root', root);
 if (import.meta.env.DEV && import.meta.env.MODE === 'mock') {
   const { initMSW } = await import('../tests/msw/browser.ts');
   console.log('MSW使用開始');
   await initMSW();
 }
+
+// TODO: test
+console.log('createRoot');
 
 createRoot(root).render(
   <StrictMode>
