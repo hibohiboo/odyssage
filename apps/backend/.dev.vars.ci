@@ -1,6 +1,6 @@
 # ローカル実行時(npm run dev)は.sampleを外してrenameする
 
-NEON_CONNECTION_STRING=postgres://postgres:postgres@db.localtest.me:5432/main
+NEON_CONNECTION_STRING=postgres://test_user:postgres@localhost:5432/odyssage
 NEO4J_URL=neo4j://127.0.0.1:7687
 NEO4J_USER=neo4j
 NEO4J_PASSWORD=neo4jpassword

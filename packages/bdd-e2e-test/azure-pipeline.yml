@@ -9,7 +9,7 @@ jobs:
     pool:
       vmImage: 'ubuntu-latest'
     variables:
-      CI_DATABASE_URL: 'postgres://postgres:postgres@127.0.0.1:5432/main'
+      CI_DATABASE_URL: 'postgres://test_user:postgres@127.0.0.1:5432/main'
 
     services:
       postgres:
@@ -17,7 +17,7 @@ jobs:
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: postgres
+          POSTGRES_USER: test_user
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: main
         options: >-
