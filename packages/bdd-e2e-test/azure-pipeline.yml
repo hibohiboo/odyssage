@@ -9,7 +9,7 @@ resources:
       image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
       ports:
         - 9099:9099
-        - 4000:4000
+        - 9005:9005 # Firebase login
       command: firebase emulators:start
       workingDirectory: /opt/firebase
 
