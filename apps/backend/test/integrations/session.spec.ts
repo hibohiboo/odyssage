@@ -1,13 +1,7 @@
 import { execSql } from '@odyssage/database/test-utils/execSql';
-import { setupDb } from '@odyssage/database/test-utils/setupDb';
-import {
-  PostgreSqlContainer,
-  StartedPostgreSqlContainer,
-} from '@testcontainers/postgresql';
-import { Hono } from 'hono';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { sessionRoute } from '../src/route/session';
-import { generateUUID } from '../src/utils/generateUUID';
+
+import { describe, expect, it } from 'vitest';
+import { setupTestEnv } from './test-utils';
 
 /**
  * セッション関連のエンドポイントに対する統合テスト
@@ -15,57 +9,35 @@ import { generateUUID } from '../src/utils/generateUUID';
  * データベース操作を含む統合テストを実行します
  */
 describe('セッション統合テスト', () => {
-  let postgresContainer: StartedPostgreSqlContainer;
-  let connectionString: string;
-  let app: Hono;
-
   // テストユーザーとシナリオの情報
   const testUserId = 'test-user-id';
   const testUserName = 'テストユーザー';
-  const testScenarioId = generateUUID();
+  const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
   const testScenarioTitle = 'テストシナリオ';
-
-  // テスト開始前にPostgreSQLコンテナを起動
-  beforeAll(async () => {
-    // PostgreSQLコンテナを起動
-    postgresContainer = await new PostgreSqlContainer('postgres:17.4-alpine')
-      .withDatabase('test_db')
-      .withUsername('test_user')
-      .withPassword('test_password')
-      .start();
-
-    connectionString = postgresContainer.getConnectionUri();
-    await setupDb(connectionString);
-    await execSql(
-      connectionString,
-      `
-       INSERT INTO odyssage.users (id, name) VALUES ('${testUserId}', '${testUserName}');
-       INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP)
-      `,
-    );
-
-    // アプリを初期化
-    app = new Hono();
-    app.route('/api/sessions', sessionRoute);
-  }, 60000); // コンテナ起動に時間がかかるためタイムアウトを延長
-
-  // テスト終了後にコンテナを停止
-  afterAll(async () => {
-    await postgresContainer.stop();
+  // テスト環境のセットアップ
+  const { getApp, getEnv } = setupTestEnv({
+    beforeSetup: async (connectionString) => {
+      await execSql(
+        connectionString,
+        `
+         INSERT INTO odyssage.users (id, name) VALUES ('${testUserId}', '${testUserName}');
+         INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP)
+        `,
+      );
+    },
   });
 
   // テストケース：セッションを作成して取得できることを確認
   it('セッションを作成して正しく取得できること', async () => {
+    const app = getApp();
+    const env = getEnv();
     // リクエストボディ
     const sessionData = {
       gm_id: testUserId,
       scenario_id: testScenarioId,
       title: 'テストセッション',
     };
-    const env = {
-      CLOUDFLARE_ENV: 'test',
-      NEON_CONNECTION_STRING: connectionString,
-    };
+
     // POST リクエストでセッションを作成
     const postResponse = await app.request(
       '/api/sessions',
@@ -76,7 +48,7 @@ describe('セッション統合テスト', () => {
         },
         body: JSON.stringify(sessionData),
       },
-      env,
+      getEnv(),
     );
     expect(postResponse.status).toBe(201);
 
