@@ -2,7 +2,9 @@ import { Given, When, Then, Before } from '@cucumber/cucumber';
 import { chromium, expect } from '@playwright/test';
 
 Before(async function (this) {
-  const browser = await chromium.launch({ headless: false }); // headless: true にするとブラウザが表示されない
+  const browser = await chromium.launch({
+    headless: process.env.CI === 'true',
+  }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
 });
