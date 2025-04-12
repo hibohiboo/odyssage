@@ -91,6 +91,12 @@ jobs:
         env:
           CI: true
 
+      - task: PublishBuildArtifacts@1
+        inputs:
+          pathToPublish: 'screenshots'
+          artifactName: 'e2e-screenshots'
+        displayName: 'Upload screenshots as artifacts'
+
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
