@@ -38,7 +38,8 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
-
+    await page.waitForTimeout(1000);
+    await this.page.goto('http://localhost:5173');
     await page.screenshot({
       path: 'output/screenshots/debug.png',
       fullPage: true,
