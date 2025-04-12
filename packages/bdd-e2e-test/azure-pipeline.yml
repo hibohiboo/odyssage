@@ -3,22 +3,6 @@ trigger:
     include:
       - id/75/bddOnPipeline
 
-resources:
-  containers:
-    - container: firebase
-      image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
-      ports:
-      - 9099:9099 # Firebase Authentication
-      - 9005:9005 # Firebase login
-      - 4000:4000 # Firebase UI
-      command: firebase emulators:start
-      workingDirectory: /opt/firebase
-      options: >-
-        --health-cmd="firebase_isready"
-        --health-interval=10s
-        --health-timeout=5s
-        --health-retries=5
-
 jobs:
   - job: bdd_test
     displayName: 'Run BDD E2E tests'
@@ -100,30 +84,7 @@ jobs:
             fi
             sleep 2
           done
-           echo "Waiting for backend server..."
-          for i in {1..20}; do
-            if curl -s http://localhost:8787 > /dev/null; then
-              echo "Backend server is up."
-              break
-            fi
-            sleep 2
-          done
-          echo "Waiting for firebase auth server..."
-          for i in {1..20}; do
-            if curl -s http://localhost:9099 > /dev/null; then
-              echo "Firebase Auth is up."
-              break
-            fi
-            sleep 2
-          done
-          echo "Waiting for firebase login server..."
-          for i in {1..20}; do
-            if curl -s http://localhost:9005 > /dev/null; then
-              echo "Firebase Login is up."
-              break
-            fi
-            sleep 2
-          done
+
         displayName: 'Wait for servers to start'
 
       - script: bun run migrate:ci

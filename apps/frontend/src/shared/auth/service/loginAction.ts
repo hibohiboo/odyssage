@@ -15,13 +15,24 @@ export const loginAction = createAsyncThunk<
 >('loginAction', async (_, thunkAPI) => {
   if (import.meta.env.VITE_CI === 'true') {
     console.log('CI mode: login as anonymous user');
+    const uid = 'U11XurO3TszfIZHi38c2mev3zsGC';
     thunkAPI.dispatch(
       setUser({
-        uid: 'U11XurO3TszfIZHi38c2mev3zsGC',
+        uid,
         displayName: '',
         isAnonymous: true,
       }),
     );
+    await apiClient.api.users[':uid'].$put(
+      { param: { uid }, json: { name: '' } },
+      {
+        headers: {
+          Authorization: `Bearer test`,
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
     return;
   }
 
