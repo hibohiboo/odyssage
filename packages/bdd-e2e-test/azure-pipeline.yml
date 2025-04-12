@@ -56,14 +56,14 @@ jobs:
         displayName: 'Setting Frontend env vars'
 
       - script: |
-          bun run dev &
-          echo $! > backend.pid
+          bun run dev > backend.log 2>&1 &
+          echo $! > ../backend.pid
         workingDirectory: apps/backend
         displayName: 'Start Backend'
 
       - script: |
-          bun run dev:ci  &
-          echo $! > frontend.pid
+          bun run dev:ci > frontend.log 2>&1 &
+          echo $! > ../frontend.pid
         workingDirectory: apps/frontend
         displayName: 'Start Frontend'
 
@@ -109,4 +109,5 @@ jobs:
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
         displayName: 'Cleanup Servers'
+        workingDirectory: apps
         condition: always()
