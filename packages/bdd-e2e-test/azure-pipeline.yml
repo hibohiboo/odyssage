@@ -4,7 +4,7 @@ trigger:
       - id/75/bddOnPipeline
 
 jobs:
-  - job: e2e-test
+  - job: e2e_test
     displayName: 'Run E2E tests'
     pool:
       vmImage: 'ubuntu-latest'
