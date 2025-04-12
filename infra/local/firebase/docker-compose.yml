@@ -18,3 +18,8 @@ services:
     working_dir: /opt/firebase
     command: firebase emulators:start
     tty: true
+    healthcheck:
+      test: ["CMD", "firebase_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
