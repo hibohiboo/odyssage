@@ -4,8 +4,8 @@ trigger:
       - id/75/bddOnPipeline
 
 jobs:
-  - job: e2e_test
-    displayName: 'Run E2E tests'
+  - job: bdd_test
+    displayName: 'Run BDD E2E tests'
     pool:
       vmImage: 'ubuntu-latest'
     variables:
@@ -35,8 +35,10 @@ jobs:
 
       - script: |
           curl -fsSL https://bun.sh/install | bash
-          echo '##vso[task.prependpath]$HOME/.bun/bin'
         displayName: 'Install Bun'
+
+      - script: echo "##vso[task.setvariable variable=PATH]$(HOME)/.bun/bin:$(PATH)"
+        displayName: 'Add Bun to PATH'
 
       - script: bun install
         displayName: 'Install Dependencies'
