@@ -106,6 +106,13 @@ jobs:
           artifactName: 'e2e-output'
         displayName: 'Upload screenshots as artifacts'
 
+      - task: PublishBuildArtifacts@1
+        condition: always()
+        inputs:
+          pathToPublish: 'apps/backend/backend.log'
+          artifactName: 'backend-log'
+        displayName: 'Upload screenshots as artifacts'
+
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
