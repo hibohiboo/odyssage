@@ -89,7 +89,7 @@ jobs:
           done
         displayName: 'Wait for servers to start'
 
-      - script: bun run migrate:ci
+      - script: bun run migrate:azci
         workingDirectory: packages/database
         displayName: 'Migration RDB'
 
