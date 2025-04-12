@@ -13,6 +13,7 @@ export const loginAction = createAsyncThunk<
   void,
   { dispatch: AppDispatch; state: RootState }
 >('loginAction', async (_, thunkAPI) => {
+  console.log('import.meta.env.VITE_CI', import.meta.env.VITE_CI);
   if (import.meta.env.VITE_CI === 'true') {
     console.log('CI mode: login as anonymous user');
     const uid = 'U11XurO3TszfIZHi38c2mev3zsGC';

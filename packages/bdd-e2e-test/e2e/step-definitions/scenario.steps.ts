@@ -4,7 +4,7 @@ import fs from 'fs';
 
 Before(async function (this) {
   const browser = await chromium.launch({
-    headless: process.env.CI === 'true',
+    headless: true,
   }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
@@ -19,7 +19,6 @@ Before(async function (this) {
       console.log(`[Browser Console]: ${msg.text()}`);
     }
   });
-  // テストのセットアップなどで実行
   this.page.on('request', (request: any) =>
     console.log(`Request: ${request.method()} ${request.url()}`),
   );
