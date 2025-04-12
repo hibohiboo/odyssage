@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 RUN apt update && \
 apt --no-install-recommends install -y curl openjdk-17-jdk && \
