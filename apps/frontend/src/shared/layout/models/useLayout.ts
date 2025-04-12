@@ -30,6 +30,9 @@ export function useLayout() {
   const uid = useAppSelector(uidSelector);
   const dispatch = useAppDispatch();
 
+  // TODO: test
+  console.log('useLayout', uid, userName, isAnonymous);
+
   // Compute navigation links based on user state
   const navLinks = useMemo(() => {
     const defaultNavLinks = [
