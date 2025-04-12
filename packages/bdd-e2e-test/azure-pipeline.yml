@@ -3,6 +3,16 @@ trigger:
     include:
       - id/75/bddOnPipeline
 
+resources:
+  containers:
+    - container: firebase
+      image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
+      ports:
+        - 9099:9099
+        - 4000:4000
+      command: firebase emulators:start
+      workingDirectory: /opt/firebase
+
 jobs:
   - job: bdd_test
     displayName: 'Run BDD E2E tests'
@@ -25,23 +35,18 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-      firebase:
-        image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
-        ports:
-          - 9099:9099
-          - 4000:4000
-        working_dir: /opt/firebase
-        command: firebase emulators:start
-        tty: true
-        volumes:
-          - ./infra/local/firebase/firebase_ci.json:/opt/firebase/firebase.json
-          - ./infra/local/firebase/.firebaserc_ci:/opt/firebase/.firebaserc
+      firebase: firebase
     steps:
       - checkout: self
 
       - task: UseNode@1
         inputs:
           version: '22.x'
+      - script: |
+          docker ps
+          docker cp ./infra/local/firebase/firebase_ci.json $(docker ps -qf "name=firebase"):opt/firebase/firebase.json
+          docker cp ./infra/local/firebase/.firebaserc_ci $(docker ps -qf "name=firebase"):opt/firebase/.firebaserc
+        displayName: 'Copy Firebase config to container'
 
       - script: |
           curl -fsSL https://bun.sh/install | bash
