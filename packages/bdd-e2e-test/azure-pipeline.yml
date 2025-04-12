@@ -28,14 +28,7 @@ jobs:
       firebase: firebase
     steps:
       - checkout: self
-      # デバッグ用ステップ追加
-      - script: |
-          echo "Checking firebase_isready script..."
-          docker exec -i $(docker ps -q --filter name=firebase) which firebase_isready || echo "Script not found"
-          docker exec -i $(docker ps -q --filter name=firebase) ls -la /usr/local/bin/firebase_isready || echo "No access rights"
-          docker exec -i $(docker ps -q --filter name=firebase) bash -c "firebase_isready || echo Exit code: $?"
-        displayName: 'Debug firebase_isready'
-        condition: always()  # 常に実行
+
       - task: UseNode@1
         inputs:
           version: '22.x'
@@ -85,6 +78,14 @@ jobs:
             sleep 2
           done
 
+          echo "Waiting for backend server..."
+          for i in {1..20}; do
+            if curl -s http://localhost:8787 > /dev/null; then
+              echo "Backend server is up."
+              break
+            fi
+            sleep 2
+          done
         displayName: 'Wait for servers to start'
 
       - script: bun run migrate:ci
