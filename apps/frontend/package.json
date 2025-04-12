@@ -6,10 +6,11 @@
   "scripts": {
     "dev": "bunx --bun vite",
     "dev:mock": "bunx --bun vite --mode mock",
-    "dev:ci": "VITE_CI=true bunx --bun vite",
     "build": "tsc -b && bunx --bun vite build",
     "lint": "eslint .",
     "preview": "bunx --bun vite preview",
+    "prepreview:ci": "tsc -b && bunx --bun vite build",
+    "preview:ci": "VITE_CI=true vite preview --port 5173 ",
     "test": "vitest run",
     "test:watch": "vitest",
     "ncu": "ncu -u",

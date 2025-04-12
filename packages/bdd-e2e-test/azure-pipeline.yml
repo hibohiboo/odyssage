@@ -62,7 +62,7 @@ jobs:
         displayName: 'Start Backend'
 
       - script: |
-          bun run dev:ci > frontend.log 2>&1 &
+          bun run preview:ci > frontend.log 2>&1 &
           echo $! > ../frontend.pid
         workingDirectory: apps/frontend
         displayName: 'Start Frontend'
