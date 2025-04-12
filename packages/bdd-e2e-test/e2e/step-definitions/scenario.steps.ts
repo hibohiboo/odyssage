@@ -17,6 +17,7 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
+    await page.waitForSelector(`a:has-text("${text}")`);
     await page.getByRole('link', { name: text }).nth(0).click();
   },
 );
