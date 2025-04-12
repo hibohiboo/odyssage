@@ -42,11 +42,6 @@ jobs:
       - task: UseNode@1
         inputs:
           version: '22.x'
-      - script: |
-          docker ps
-          docker cp ./infra/local/firebase/firebase_ci.json $(docker ps -qf "name=firebase"):opt/firebase/firebase.json
-          docker cp ./infra/local/firebase/.firebaserc_ci $(docker ps -qf "name=firebase"):opt/firebase/.firebaserc
-        displayName: 'Copy Firebase config to container'
 
       - script: |
           curl -fsSL https://bun.sh/install | bash
