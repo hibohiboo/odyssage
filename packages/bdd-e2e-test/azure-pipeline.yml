@@ -18,6 +18,7 @@ resources:
         --health-interval=10s
         --health-timeout=5s
         --health-retries=5
+        --health-start-period=5s  # 追加: 起動に時間がかかるサービスの猶予期間
 
 jobs:
   - job: bdd_test
@@ -44,7 +45,14 @@ jobs:
       firebase: firebase
     steps:
       - checkout: self
-
+      # デバッグ用ステップ追加
+      - script: |
+          echo "Checking firebase_isready script..."
+          docker exec -i $(docker ps -q --filter name=firebase) which firebase_isready || echo "Script not found"
+          docker exec -i $(docker ps -q --filter name=firebase) ls -la /usr/local/bin/firebase_isready || echo "No access rights"
+          docker exec -i $(docker ps -q --filter name=firebase) bash -c "firebase_isready || echo Exit code: $?"
+        displayName: 'Debug firebase_isready'
+        condition: always()  # 常に実行
       - task: UseNode@1
         inputs:
           version: '22.x'

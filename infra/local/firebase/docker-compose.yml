@@ -23,3 +23,4 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 5s  # 追加: 5秒の猶予期間
