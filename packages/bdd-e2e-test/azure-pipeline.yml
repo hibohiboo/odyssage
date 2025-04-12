@@ -8,8 +8,6 @@ jobs:
     displayName: 'Run BDD E2E tests'
     pool:
       vmImage: 'ubuntu-latest'
-    variables:
-      CI_DATABASE_URL: 'postgres://test_user:postgres@127.0.0.1:5432/main'
 
     services:
       postgres:
