@@ -73,6 +73,12 @@ jobs:
 
       - script: |
           bun run dev  &
+          echo $! > frontend.pid
+        workingDirectory: apps/frontend
+        displayName: 'Start Frontend'
+
+      # 🕐 Backend / Frontend の起動待ち（適宜 curl でチェック）
+      - script: |
           echo "Waiting for frontend server..."
           for i in {1..20}; do
             if curl -s http://localhost:5173 > /dev/null; then
@@ -81,12 +87,6 @@ jobs:
             fi
             sleep 2
           done
-          echo $! > frontend.pid
-        workingDirectory: apps/frontend
-        displayName: 'Start Frontend'
-
-      # 🕐 Backend / Frontend の起動待ち（適宜 curl で健康チェックしてもOK）
-      - script: sleep 15
         displayName: 'Wait for servers to start'
 
       - script: bun run migrate:ci

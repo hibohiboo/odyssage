@@ -26,10 +26,13 @@ When(
     const content = await page.content();
     fs.writeFileSync('output/debug.html', content);
     await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
     await page.screenshot({
       path: 'output/screenshots/after_networkidle.png',
       fullPage: true,
     });
+    fs.writeFileSync('output/after_networkidle.html', await page.content());
+
     await page.waitForSelector(`a:has-text("${text}")`);
     await page.getByRole('link', { name: text }).nth(0).click();
   },
