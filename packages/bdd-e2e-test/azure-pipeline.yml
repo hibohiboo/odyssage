@@ -13,6 +13,11 @@ resources:
       - 4000:4000 # Firebase UI
       command: firebase emulators:start
       workingDirectory: /opt/firebase
+      options: >-
+        --health-cmd="firebase_isready"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=5
 
 jobs:
   - job: bdd_test
