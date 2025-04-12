@@ -43,7 +43,7 @@ jobs:
       - script: bun install
         displayName: 'Install Dependencies'
 
-      - script: npx playwright install   
+      - script: npx playwright install --with-deps chromium
         workingDirectory: apps/frontend
         displayName: 'download new browsers'
 
