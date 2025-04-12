@@ -6,7 +6,7 @@ IMAGE_NAME=ubuntu24-firebase-tools
 
 source $bin_dir/.env
 
-docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+docker login -u $DOCKER_USERNAME -p $DOCKER_TOKEN
 
 cd $bin_dir/../docker && docker build -t $IMAGE_NAME .
 docker tag $IMAGE_NAME $DOCKER_USERNAME/$IMAGE_NAME:latest
