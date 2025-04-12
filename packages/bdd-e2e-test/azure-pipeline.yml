@@ -88,6 +88,8 @@ jobs:
       - script: bun run bdd-test
         workingDirectory: packages/bdd-e2e-test
         displayName: 'Run E2E Tests'
+        env:
+          CI: true
 
       - script: |
           kill $(cat backend.pid)
