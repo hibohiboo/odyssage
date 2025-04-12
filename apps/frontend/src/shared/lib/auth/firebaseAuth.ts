@@ -21,7 +21,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV && import.meta.env.VITE_CI !== 'true') {
   console.log('connectAuthEmulator');
   connectAuthEmulator(auth, 'http://127.0.0.1:9099');
 }

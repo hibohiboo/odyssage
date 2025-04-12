@@ -19,6 +19,16 @@ Before(async function (this) {
       console.log(`[Browser Console]: ${msg.text()}`);
     }
   });
+  // テストのセットアップなどで実行
+  this.page.on('request', (request: any) =>
+    console.log(`Request: ${request.method()} ${request.url()}`),
+  );
+  this.page.on('response', (response: any) => {
+    console.log(`Response: ${response.status()} ${response.url()}`);
+    if (response.status() >= 400) {
+      console.error(`Error Response: ${response.status()} ${response.url()}`);
+    }
+  });
 });
 
 Given('アプリが起動している', async function (this) {
