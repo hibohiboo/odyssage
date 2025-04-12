@@ -19,6 +19,11 @@ When(
     const { page } = this;
 
     await page.screenshot({ path: 'screenshots/debug.png', fullPage: true });
+    await page.waitForLoadState('networkidle');
+    await page.screenshot({
+      path: 'screenshots/after_networkidle.png',
+      fullPage: true,
+    });
     await page.waitForSelector(`a:has-text("${text}")`);
     await page.getByRole('link', { name: text }).nth(0).click();
   },
