@@ -8,6 +8,17 @@ Before(async function (this) {
   }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
+
+  // ヘッドレスブラウザ―のコンソール出力をキャッチする
+  this.page.on('console', (msg: any) => {
+    if (msg.type() === 'error') {
+      console.error(`[Browser Console Error]: ${msg.text()}`);
+    } else if (msg.type() === 'warning') {
+      console.warn(`[Browser Console Warning]: ${msg.text()}`);
+    } else {
+      console.log(`[Browser Console]: ${msg.text()}`);
+    }
+  });
 });
 
 Given('アプリが起動している', async function (this) {
