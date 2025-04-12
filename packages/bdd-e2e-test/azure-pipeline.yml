@@ -8,8 +8,9 @@ resources:
     - container: firebase
       image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
       ports:
-        - 9099:9099
+        - 9099:9099 # Firebase Authentication
         - 9005:9005 # Firebase login
+        - 4000:4000 # Firebase UI
       command: firebase emulators:start
       workingDirectory: /opt/firebase
 
@@ -83,6 +84,27 @@ jobs:
           for i in {1..20}; do
             if curl -s http://localhost:5173 > /dev/null; then
               echo "Frontend server is up."
+              break
+            fi
+            sleep 2
+          done
+          for i in {1..20}; do
+            if curl -s http://localhost:8787 > /dev/null; then
+              echo "Backend server is up."
+              break
+            fi
+            sleep 2
+          done
+          for i in {1..20}; do
+            if curl -s http://localhost:9099 > /dev/null; then
+              echo "Firebase Auth is up."
+              break
+            fi
+            sleep 2
+          done
+          for i in {1..20}; do
+            if curl -s http://localhost:9005 > /dev/null; then
+              echo "Firebase Login is up."
               break
             fi
             sleep 2
