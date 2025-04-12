@@ -93,7 +93,7 @@ jobs:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          pathToPublish: 'screenshots'
+          pathToPublish: 'packages/bdd-e2e-test/screenshots'
           artifactName: 'e2e-screenshots'
         displayName: 'Upload screenshots as artifacts'
 
