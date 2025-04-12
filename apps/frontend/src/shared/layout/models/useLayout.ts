@@ -60,6 +60,7 @@ export function useLayout() {
 
   // Handle login on component mount
   useEffect(() => {
+    console.log('useLayout useEffect');
     dispatch(loginAction());
   }, [dispatch]);
 
