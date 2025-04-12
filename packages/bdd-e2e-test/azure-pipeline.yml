@@ -92,6 +92,7 @@ jobs:
           CI: true
 
       - task: PublishBuildArtifacts@1
+        condition: always()
         inputs:
           pathToPublish: 'packages/bdd-e2e-test/screenshots'
           artifactName: 'e2e-screenshots'
