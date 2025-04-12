@@ -4,7 +4,7 @@ import fs from 'fs';
 
 Before(async function (this) {
   const browser = await chromium.launch({
-    headless: true,
+    headless: process.env.CI === 'true',
   }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
@@ -38,8 +38,7 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
-    await page.waitForTimeout(1000);
-    await this.page.goto('http://localhost:5173');
+
     await page.screenshot({
       path: 'output/screenshots/debug.png',
       fullPage: true,
