@@ -1,50 +1,80 @@
 trigger:
   branches:
     include:
-      - develop
+      - id/75/bddOnPipeline
 
-pool:
-  vmImage: 'ubuntu-latest'
+jobs:
+  - job: e2e-test
+    displayName: 'Run E2E tests'
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+      CI_DATABASE_URL: 'postgres://postgres:postgres@127.0.0.1:5432/main'
 
-# variables:
-#   CI_DATABASE_URL: 'postgres://postgres:postgres@127.0.0.1:5432/main'
+    services:
+      postgres:
+        image: postgres:17.4-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: main
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
-# services:
-#   postgres:
-#     image: postgres:17.4-alpine
-#     ports:
-#       - 5432:5432
-#     env:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: postgres
-#       POSTGRES_DB: main
-#     options: >-
-#       --health-cmd="pg_isready"
-#       --health-interval=10s
-#       --health-timeout=5s
-#       --health-retries=5
+    steps:
+      - checkout: self
 
+      - task: UseNode@1
+        inputs:
+          version: '22.x'
 
-steps:
-  - checkout: self
+      - script: |
+          curl -fsSL https://bun.sh/install | bash
+          echo '##vso[task.prependpath]$HOME/.bun/bin'
+        displayName: 'Install Bun'
 
-  - task: UseNode@1
-    inputs:
-      version: '22.x'
+      - script: bun install
+        displayName: 'Install Dependencies'
 
-  - script: |
-      curl -fsSL https://bun.sh/install | bash
-    displayName: 'Install Bun'
+      - script: cp .dev.vars.sample .dev.vars
+        workingDirectory: apps/backend
+        displayName: 'Copy .dev.vars.sample to .dev.vars'
 
-  - script: echo "##vso[task.setvariable variable=PATH]$(HOME)/.bun/bin:$(PATH)"
-    displayName: 'Add Bun to PATH'
+      - script: cp .env.sample .dev.local
+        workingDirectory: apps/frontend
+        displayName: 'Copy env.sample .dev.local'
 
-  - script: bun install
-    displayName: 'Install dependencies with Bun'
+      - script: |
+          bun run dev &
+          echo $! > backend.pid
+        workingDirectory: apps/backend
+        displayName: 'Start Backend'
 
-  - script: bun run test
-    displayName: 'Run tests with Bun'
-    workingDirectory: apps/backend
-    env:
-      CI: true
-      # NEON_CONNECTION_STRING: $(CI_DATABASE_URL)
+      - script: |
+          bun run dev &
+          echo $! > frontend.pid
+        workingDirectory: apps/frontend
+        displayName: 'Start Frontend'
+
+      # 🕐 Backend / Frontend の起動待ち（適宜 curl で健康チェックしてもOK）
+      - script: sleep 10
+        displayName: 'Wait for servers to start'
+
+      - script: bun run migrate:ci
+        workingDirectory: packages/database
+        displayName: 'Migration RDB'
+
+      - script: bun run bdd-test
+        workingDirectory: packages/bdd-e2e-test
+        displayName: 'Run E2E Tests'
+
+      - script: |
+          kill $(cat backend.pid)
+          kill $(cat frontend.pid)
+        displayName: 'Cleanup Servers'
+        condition: always()
