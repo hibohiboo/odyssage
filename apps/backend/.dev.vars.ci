@@ -1,0 +1,15 @@
+# ローカル実行時(npm run dev)は.sampleを外してrenameする
+
+NEON_CONNECTION_STRING=postgres://postgres:postgres@db.localtest.me:5432/main
+NEO4J_URL=neo4j://127.0.0.1:7687
+NEO4J_USER=neo4j
+NEO4J_PASSWORD=neo4jpassword
+
+FIREBASE_PROJECT_ID=hogehoge
+FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099
+
+# 自動テストで失敗するのでやむを得ず追加。認証を実行時に確認したいときはコメントアウト
+CLOUDFLARE_ENV=test
+
+# パイプライン上のCIでは認証スキップ
+CI=true
