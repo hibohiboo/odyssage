@@ -17,6 +17,7 @@ setDefaultTimeout(10 * 1000);
 Given('GMがシナリオをストックしている', async function (this) {
   const { page } = this;
   await page.goto('http://localhost:5173');
+  await page.waitForTimeout(500);
   // 公開シナリオページに移動
   await page.getByRole('link', { name: '公開シナリオ' }).click();
   await page.waitForLoadState('networkidle');
