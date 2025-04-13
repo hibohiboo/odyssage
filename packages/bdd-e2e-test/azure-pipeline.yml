@@ -10,7 +10,7 @@ jobs:
       vmImage: 'ubuntu-latest'
 
     services:
-      db.localtest.me:
+      postgres:
         image: postgres:17.4-alpine
         ports:
           - 5432:5432
@@ -26,12 +26,16 @@ jobs:
       neon-proxy:
         image: ghcr.io/timowilhelm/local-neon-http-proxy:main
         env:
-          PG_CONNECTION_STRING: postgres://postgres:postgres@db.localtest.me:5432/main
+          PG_CONNECTION_STRING: postgres://postgres:postgres@postgres:5432/main
         ports:
           - 4444:4444
 
     steps:
       - checkout: self
+
+      - script: |
+          echo "127.0.0.1 db.localtest.me" | sudo tee -a /etc/hosts
+        displayName: "Add db.localtest.me to /etc/hosts"
 
       - task: UseNode@1
         inputs:
