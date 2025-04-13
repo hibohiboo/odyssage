@@ -51,7 +51,7 @@ jobs:
         workingDirectory: apps/frontend
         displayName: 'download new browsers'
 
-      - script: cp .dev.vars.sample .dev.vars
+      - script: cp .dev.vars.ci .dev.vars
         workingDirectory: apps/backend
         displayName: 'Setting Backend env vars'
 
@@ -94,7 +94,7 @@ jobs:
 
           echo "Waiting for PostgreSQL..."
           for i in {1..20}; do
-            if PGPASSWORD=postgres psql -h db.localtest.me -U test_user -d main -c "SELECT 1" &>/dev/null; then
+            if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
               echo "PostgreSQL is ready"
               break
             fi
