@@ -23,12 +23,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-      neon-proxy:
-        image: ghcr.io/timowilhelm/local-neon-http-proxy:main
-        env:
-          PG_CONNECTION_STRING: postgres://postgres:postgres@postgres:5432/main
-        ports:
-          - 4444:4444
 
     steps:
       - checkout: self
@@ -36,6 +30,35 @@ jobs:
       - script: |
           echo "127.0.0.1 db.localtest.me" | sudo tee -a /etc/hosts
         displayName: "Add db.localtest.me to /etc/hosts"
+
+      - script: |
+          echo "Waiting for PostgreSQL..."
+          for i in {1..20}; do
+            if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            sleep 2
+          done
+        displayName: 'Wait for rdb server to start'
+
+      - script: |
+          echo "Starting Neon Proxy..."
+          docker run -d --name neon-proxy \
+            -e PG_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/main \
+            -p 4444:4444 \
+            ghcr.io/timowilhelm/local-neon-http-proxy:main
+
+          # Proxy が立ち上がるまで待機
+          echo "Waiting for Neon Proxy..."
+          for i in {1..20}; do
+            if curl -s http://db.localtest.me:4444/sql &>/dev/null; then
+              echo "Neon Proxy is ready"
+              break
+            fi
+            sleep 2
+          done
+        displayName: 'Start Neon Proxy'
 
       - task: UseNode@1
         inputs:
@@ -90,24 +113,6 @@ jobs:
           for i in {1..20}; do
             if curl -s http://localhost:8787 > /dev/null; then
               echo "Backend server is up."
-              break
-            fi
-            sleep 2
-          done
-
-          echo "Waiting for PostgreSQL..."
-          for i in {1..20}; do
-            if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
-              echo "PostgreSQL is ready"
-              break
-            fi
-            sleep 2
-          done
-
-          echo "Waiting for Neon Proxy..."
-          for i in {1..20}; do
-            if curl -s http://db.localtest.me:4444/sql &>/dev/null; then
-              echo "Neon Proxy is ready"
               break
             fi
             sleep 2
