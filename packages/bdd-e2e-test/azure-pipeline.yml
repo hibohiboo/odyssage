@@ -10,13 +10,12 @@ jobs:
       vmImage: 'ubuntu-latest'
 
     services:
-      postgres:
+      db.localtest.me:
         image: postgres:17.4-alpine
-        container_name: db.localtest.me  # コンテナ名をホスト名として設定
         ports:
           - 5432:5432
         env:
-          POSTGRES_USER: test_user
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: main
         options: >-
@@ -112,7 +111,7 @@ jobs:
           done
         displayName: 'Wait for servers to start'
 
-      - script: bun run migrate:azci
+      - script: bun run migrate:ci
         workingDirectory: packages/database
         displayName: 'Migration RDB'
 
