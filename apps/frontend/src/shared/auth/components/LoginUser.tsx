@@ -8,11 +8,8 @@ const LoginUser: React.FC = () => {
   const userName = useAppSelector(userDisplayNameSelector);
   const user = useAppSelector(uidSelector);
   const dispatch = useAppDispatch();
-  // TODO: test
-  console.log('LoginUser', userName, user);
 
   useEffect(() => {
-    console.log('LoginUser useEffect');
     // ログイン状態を確認するために、loginActionをdispatchします。
     dispatch(loginAction());
   }, [dispatch]);
