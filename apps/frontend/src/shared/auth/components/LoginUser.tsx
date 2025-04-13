@@ -10,6 +10,7 @@ const LoginUser: React.FC = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    // ログイン状態を確認するために、loginActionをdispatchします。
     dispatch(loginAction());
   }, [dispatch]);
   if (user == null) {

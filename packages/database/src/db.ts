@@ -13,12 +13,11 @@ let db: NeonDBClient | null = null;
 export const getDb = (
   connectionString = process.env.NEON_CONNECTION_STRING!,
 ) => {
-  if (db != null) {
-    return db;
-  }
   if (connectionString.startsWith('postgres://test_user')) {
     console.log('testcontainersで起動したPostgreSQLコンテナを使用します');
-    db = nodePostgresDrizzle(connectionString) as unknown as NeonDBClient;
+    return nodePostgresDrizzle(connectionString) as unknown as NeonDBClient;
+  }
+  if (db != null) {
     return db;
   }
   if (

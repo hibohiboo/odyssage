@@ -17,6 +17,7 @@ setDefaultTimeout(10 * 1000);
 Given('GMがシナリオをストックしている', async function (this) {
   const { page } = this;
   await page.goto('http://localhost:5173');
+  await page.waitForTimeout(500);
   // 公開シナリオページに移動
   await page.getByRole('link', { name: '公開シナリオ' }).click();
   await page.waitForLoadState('networkidle');
@@ -25,9 +26,27 @@ Given('GMがシナリオをストックしている', async function (this) {
   // 最低1つのシナリオが存在するか確認
   const scenarios = await page.locator('.card').count();
   if (scenarios === 0) {
-    throw new Error(
-      '公開シナリオが存在しません。テスト前にシナリオを作成してください。',
-    );
+    await page.getByRole('link', { name: 'シナリオ管理' }).click();
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(500);
+    const newScenarioLink = page.getByRole('link', {
+      name: '新規シナリオ作成',
+    });
+    await newScenarioLink.waitFor({ state: 'visible' });
+    await page.waitForTimeout(500);
+    await newScenarioLink.click();
+    await page.getByRole('textbox', { name: 'シナリオタイトル' }).waitFor({
+      state: 'visible',
+      timeout: 5000,
+    });
+    await page
+      .getByRole('textbox', { name: 'シナリオタイトル' })
+      .fill('闇の森の試練');
+    await page
+      .getByRole('textbox', { name: 'シナリオ概要' })
+      .fill('テスト用のシナリオ');
+    await page.getByText('公開', { exact: true }).click();
+    await page.getByRole('button', { name: '保存する' }).click();
   }
 
   // 最初のシナリオを取得
