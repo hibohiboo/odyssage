@@ -72,7 +72,6 @@ jobs:
       - script: |
           bun run preview:ci > frontend.log 2>&1 &
           echo $! > ../frontend.pid
-          npx wait-on http://localhost:5173
         workingDirectory: apps/frontend
         displayName: 'Start Frontend'
 
