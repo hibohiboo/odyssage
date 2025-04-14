@@ -6,7 +6,3 @@ curl --proto "=https" --tlsv1.2 -L -fsSL https://deb.nodesource.com/setup_22.x |
 apt --no-install-recommends install -y nodejs && \
 apt clean && \
 npm install --ignore-scripts -g firebase-tools
-
-COPY ./firebase_ci.json /opt/firebase/firebase.json
-COPY ./.firebaserc_ci /opt/firebase/.firebaserc
-

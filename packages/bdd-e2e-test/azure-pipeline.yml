@@ -206,9 +206,8 @@ jobs:
         condition: always()
 
       - script: | 
-          cp .dev.local ./output/.env.local
+          cp apps/frontend/.dev.local packages/bdd-e2e-test/output/.env.local
         condition: always()
-        workingDirectory: apps/frontend
         displayName: 'Output envfile frontend'
 
       - task: PublishBuildArtifacts@1
