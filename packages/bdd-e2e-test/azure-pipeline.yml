@@ -32,8 +32,6 @@ jobs:
         displayName: "Add db.localtest.me to /etc/hosts"
 
       - script: |
-          echo "Waiting 10 seconds before starting Neon Proxy..."
-          sleep 10
           echo "Waiting for PostgreSQL..."
           for i in {1..20}; do
             if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
@@ -45,6 +43,8 @@ jobs:
         displayName: 'Wait for rdb server to start'
 
       - script: |
+          echo "Waiting  before starting Neon Proxy..."
+          sleep 20
           echo "Starting Neon Proxy..."
           docker run -d --name neon-proxy \
             -e PG_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/main \
