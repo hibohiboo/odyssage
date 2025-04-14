@@ -29,9 +29,10 @@ jobs:
     steps:
       - checkout: self
 
+      # https://docs.docker.com/compose/install/linux/
       - bash: |
           sudo mkdir $(dockerComposePath)
-          sudo curl -SL https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-x86_64 -o $(dockerComposePath)/docker-compose
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.35.0/docker-compose-linux-x86_64 -o $(dockerComposePath)/docker-compose
           sudo chmod 755 $(dockerComposePath)/docker-compose
         displayName: Download docker-compose
 
@@ -40,7 +41,7 @@ jobs:
           cd infra/local/firebase
           
           # docker-composeを直接使用してFirebaseエミュレータを起動
-          $(dockerComposePath)/docker-compose up -f docker-compose.ci.yml -d firebase
+          $(dockerComposePath)/docker-compose -f docker-compose.ci.yml up -d firebase
           
           # エミュレータの起動を確認するための待機ロジック
           echo "Waiting for Firebase Auth emulator..."
