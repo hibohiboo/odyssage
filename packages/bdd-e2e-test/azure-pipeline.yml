@@ -122,7 +122,6 @@ jobs:
 
       - script: | 
           cp .env.ci .dev.local
-          echo "VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY" >> .dev.local
         workingDirectory: apps/frontend
         displayName: 'Setting Frontend env vars'
 
