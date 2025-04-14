@@ -27,10 +27,16 @@ if (import.meta.env.DEV || import.meta.env.VITE_CI === 'true') {
 }
 
 export const getCurrentUser = () => auth.currentUser;
+
+// BDDのテストで、signInAnonymousを実行する前にonAuthStateChangedが呼ばれることがあるため、
+// その場合はsignInAnonymousを実行しないようにするためのフラグを追加
+let authInitialized = false;
 export const signInAnonymous = async () => {
+  // 既に初期化されている場合は処理をスキップ
+  if (authInitialized) return;
+  authInitialized = true;
   const ret = await signInAnonymously(auth);
   console.log('signInAnonymous', ret);
-  return ret;
 };
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);

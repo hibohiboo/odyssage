@@ -209,16 +209,17 @@ jobs:
         condition: always()
         displayName: 'Output envfile frontend'
 
-      - task: PublishBuildArtifacts@1
-        condition: always()
-        inputs:
-          pathToPublish: 'packages/bdd-e2e-test/output'
-          artifactName: 'e2e-output'
-        displayName: 'Upload screenshots as artifacts'
+      # 調査用に、E2Eテストの結果をアーティファクトとしてアップロードする
+      # - task: PublishBuildArtifacts@1
+      #   condition: always()
+      #   inputs:
+      #     pathToPublish: 'packages/bdd-e2e-test/output'
+      #     artifactName: 'e2e-output'
+      #   displayName: 'Upload screenshots as artifacts'
 
-      - task: PublishBuildArtifacts@1
-        condition: always()
-        inputs:
-          pathToPublish: 'apps/backend/backend.log'
-          artifactName: 'backend-log'
-        displayName: 'Upload screenshots as artifacts'
+      # - task: PublishBuildArtifacts@1
+      #   condition: always()
+      #   inputs:
+      #     pathToPublish: 'apps/backend/backend.log'
+      #     artifactName: 'backend-log'
+      #   displayName: 'Upload screenshots as artifacts'
