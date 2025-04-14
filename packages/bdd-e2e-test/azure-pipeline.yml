@@ -32,6 +32,8 @@ jobs:
         displayName: "Add db.localtest.me to /etc/hosts"
 
       - script: |
+          echo "Waiting 10 seconds before starting Neon Proxy..."
+          sleep 10
           echo "Waiting for PostgreSQL..."
           for i in {1..20}; do
             if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
@@ -146,6 +148,8 @@ jobs:
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
+          docker stop neon-proxy
+          docker rm neon-proxy
         displayName: 'Cleanup Servers'
         workingDirectory: apps
         condition: always()
