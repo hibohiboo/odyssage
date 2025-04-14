@@ -120,7 +120,10 @@ jobs:
         workingDirectory: apps/backend
         displayName: 'Setting Backend env vars'
 
-      - script: cp .env.sample .dev.local
+      - script: | 
+          cp .env.ci .dev.local
+          echo "VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY" >> .dev.local
+          cp .dev.local ./output/.env.local
         workingDirectory: apps/frontend
         displayName: 'Setting Frontend env vars'
 
@@ -203,3 +206,16 @@ jobs:
         workingDirectory: apps
         condition: always()
 
+      - task: PublishBuildArtifacts@1
+        condition: always()
+        inputs:
+          pathToPublish: 'packages/bdd-e2e-test/output'
+          artifactName: 'e2e-output'
+        displayName: 'Upload screenshots as artifacts'
+
+      - task: PublishBuildArtifacts@1
+        condition: always()
+        inputs:
+          pathToPublish: 'apps/backend/backend.log'
+          artifactName: 'backend-log'
+        displayName: 'Upload screenshots as artifacts'
