@@ -2,9 +2,7 @@
 # https://qiita.com/ppco/items/87682b3a14ceb3702dbb
 services:
   firebase:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile
+    image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
     volumes:
       - ./ci/firebase_ci.json:/opt/firebase/firebase.json
       - ./ci/.firebaserc_ci:/opt/firebase/.firebaserc
