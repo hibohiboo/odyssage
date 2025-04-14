@@ -123,7 +123,6 @@ jobs:
       - script: | 
           cp .env.ci .dev.local
           echo "VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY" >> .dev.local
-          cp .dev.local ./output/.env.local
         workingDirectory: apps/frontend
         displayName: 'Setting Frontend env vars'
 
@@ -205,6 +204,11 @@ jobs:
         displayName: 'Cleanup Servers'
         workingDirectory: apps
         condition: always()
+
+      - script: | 
+          cp .dev.local ./output/.env.local
+        workingDirectory: apps/frontend
+        displayName: 'Output envfile frontend'
 
       - task: PublishBuildArtifacts@1
         condition: always()
