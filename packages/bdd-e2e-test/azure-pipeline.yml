@@ -122,11 +122,6 @@ jobs:
         env:
           CI: true
 
-      - script: kill $(cat neon.pid)
-        displayName: 'Cleanup Neon Proxy logs'
-        workingDirectory: neon-proxy-logs
-        condition: always()
-
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
