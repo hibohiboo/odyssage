@@ -116,7 +116,7 @@ jobs:
         workingDirectory: apps/frontend
         displayName: 'download new browsers'
 
-      - script: cp .dev.vars.sample .dev.vars
+      - script: cp .dev.vars.ci .dev.vars
         workingDirectory: apps/backend
         displayName: 'Setting Backend env vars'
 

@@ -4,8 +4,8 @@ services:
   firebase:
     image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
     volumes:
-      - ./firebase.json:/opt/firebase/firebase.json
-      - ./.firebaserc:/opt/firebase/.firebaserc
+      - ./docker/firebase_ci.json:/opt/firebase/firebase.json
+      - ./docker/.firebaserc_ci:/opt/firebase/.firebaserc
     ports:
       - 9099:9099 # Firebase Authentication
       - 9005:9005 # Firebase login
