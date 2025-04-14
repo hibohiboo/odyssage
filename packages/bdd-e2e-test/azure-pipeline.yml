@@ -8,6 +8,8 @@ jobs:
     displayName: 'Run BDD E2E tests'
     pool:
       vmImage: 'ubuntu-latest'
+    variables:
+        dockerComposePath: /tmp/docker-compose
 
     services:
       postgres:
@@ -26,12 +28,19 @@ jobs:
 
     steps:
       - checkout: self
+
+      - bash: |
+          sudo mkdir $(dockerComposePath)
+          sudo curl -SL https://github.com/docker/compose/releases/download/1.29.2/docker-compose-linux-x86_64 -o $(dockerComposePath)/docker-compose
+          sudo chmod 755 $(dockerComposePath)/docker-compose
+        displayName: Download docker-compose
+
       - script: |
           # Firebaseディレクトリに移動
           cd infra/local/firebase
           
           # docker-composeを直接使用してFirebaseエミュレータを起動
-          docker-compose up -f docker-compose.ci.yml -d firebase
+          $(dockerComposePath)/docker-compose up -f docker-compose.ci.yml -d firebase
           
           # エミュレータの起動を確認するための待機ロジック
           echo "Waiting for Firebase Auth emulator..."
