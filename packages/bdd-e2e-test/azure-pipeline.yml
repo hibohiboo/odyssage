@@ -207,6 +207,7 @@ jobs:
 
       - script: | 
           cp .dev.local ./output/.env.local
+        condition: always()
         workingDirectory: apps/frontend
         displayName: 'Output envfile frontend'
 
