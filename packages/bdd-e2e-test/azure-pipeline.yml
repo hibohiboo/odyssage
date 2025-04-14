@@ -2,7 +2,16 @@ trigger:
   branches:
     include:
       - id/77/fixPipeline
-
+resources:
+  containers:
+    - container: firebase
+      image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
+      ports:
+      - 9099:9099 # Firebase Authentication
+      - 9005:9005 # Firebase login
+      - 4000:4000 # Firebase UI
+      command: firebase emulators:start
+      workingDirectory: /opt/firebase
 jobs:
   - job: bdd_test
     displayName: 'Run BDD E2E tests'
@@ -10,6 +19,7 @@ jobs:
       vmImage: 'ubuntu-latest'
 
     services:
+      firebase: firebase
       postgres:
         image: postgres:17.4-alpine
         ports:
@@ -44,7 +54,7 @@ jobs:
         workingDirectory: apps/frontend
         displayName: 'download new browsers'
 
-      - script: cp .dev.vars.ci .dev.vars
+      - script: cp .dev.vars.sample .dev.vars
         workingDirectory: apps/backend
         displayName: 'Setting Backend env vars'
 
