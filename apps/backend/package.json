@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.15",
-    "@cloudflare/workers-types": "^4.20250410.0",
+    "@cloudflare/workers-types": "^4.20250414.0",
     "@testcontainers/postgresql": "^10.24.2",
     "dotenv": "^16.5.0",
     "testcontainers": "^10.24.2",
