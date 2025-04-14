@@ -45,11 +45,20 @@ jobs:
       - script: |
           echo "Waiting  before starting Neon Proxy..."
           sleep 20
+          # ログファイルパスを定義
+          LOG_DIR=$(pwd)/neon-proxy-logs
+          mkdir -p $LOG_DIR
+
           echo "Starting Neon Proxy..."
           docker run -d --name neon-proxy \
             -e PG_CONNECTION_STRING=postgres://postgres:postgres@postgres:5432/main \
             -p 4444:4444 \
             ghcr.io/timowilhelm/local-neon-http-proxy:main
+
+          # バックグラウンドでログ収集を開始
+          docker logs -f neon-proxy > $LOG_DIR/neon-proxy.log 2>&1 &
+          LOGGER_PID=$!
+          echo $LOGGER_PID > $LOG_DIR/neon.pid
 
           # Proxy が立ち上がるまで待機
           echo "Waiting for Neon Proxy..."
@@ -145,6 +154,14 @@ jobs:
           artifactName: 'backend-log'
         displayName: 'Upload screenshots as artifacts'
 
+      # Neon Proxyログをアーティファクトとして保存するためのタスク
+      - task: PublishBuildArtifacts@1
+        condition: always()
+        inputs:
+          pathToPublish: 'neon-proxy-logs'
+          artifactName: 'neon-proxy-logs'
+        displayName: 'Upload Neon Proxy logs as artifacts'
+
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
@@ -152,4 +169,9 @@ jobs:
           docker rm neon-proxy
         displayName: 'Cleanup Servers'
         workingDirectory: apps
+        condition: always()
+
+      - script: kill $(cat neon.pid)
+        displayName: 'Cleanup Neon Proxy logs'
+        workingDirectory: neon-proxy-logs
         condition: always()
