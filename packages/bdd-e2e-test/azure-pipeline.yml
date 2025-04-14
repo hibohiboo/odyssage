@@ -194,6 +194,7 @@ jobs:
         displayName: 'Run E2E Tests'
         env:
           CI: true
+        name: runE2ETests  # 参照用に名前を追加
 
       - script: |
           kill $(cat backend.pid)
@@ -209,17 +210,26 @@ jobs:
         condition: always()
         displayName: 'Output envfile frontend'
 
-      # 調査用に、E2Eテストの結果をアーティファクトとしてアップロードする
-      # - task: PublishBuildArtifacts@1
-      #   condition: always()
-      #   inputs:
-      #     pathToPublish: 'packages/bdd-e2e-test/output'
-      #     artifactName: 'e2e-output'
-      #   displayName: 'Upload screenshots as artifacts'
+      # E2Eテストが失敗した場合にのみ、スクリーンショットとHTMLをアーティファクトとしてアップロード
+      - task: PublishBuildArtifacts@1
+        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'packages/bdd-e2e-test/output'
+          artifactName: 'e2e-output'
+        displayName: 'Upload screenshots as artifacts'
 
-      # - task: PublishBuildArtifacts@1
-      #   condition: always()
-      #   inputs:
-      #     pathToPublish: 'apps/backend/backend.log'
-      #     artifactName: 'backend-log'
-      #   displayName: 'Upload screenshots as artifacts'
+      # E2Eテストが失敗した場合にのみ、バックエンドログをアーティファクトとしてアップロード
+      - task: PublishBuildArtifacts@1
+        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'apps/backend/backend.log'
+          artifactName: 'backend-log'
+        displayName: 'Upload backend logs as artifacts'
+
+      # E2Eテストが失敗した場合にのみ、フロントエンドログをアーティファクトとしてアップロード
+      - task: PublishBuildArtifacts@1
+        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'apps/frontend/frontend.log'
+          artifactName: 'frontend-log'
+        displayName: 'Upload frontend logs as artifacts'
