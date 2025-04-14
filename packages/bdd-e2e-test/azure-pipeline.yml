@@ -51,8 +51,9 @@ jobs:
 
           echo "Starting Neon Proxy..."
           docker run -d --name neon-proxy \
-            -e PG_CONNECTION_STRING=postgres://postgres:postgres@db.localtest.me:5432/main \
+            -e PG_CONNECTION_STRING=postgres://postgres:postgres@host.docker.internal:5432/main \
             -p 4444:4444 \
+            --add-host=host.docker.internal:host-gateway \
             ghcr.io/timowilhelm/local-neon-http-proxy:main
 
           # バックグラウンドでログ収集を開始
@@ -162,6 +163,11 @@ jobs:
           artifactName: 'neon-proxy-logs'
         displayName: 'Upload Neon Proxy logs as artifacts'
 
+      - script: kill $(cat neon.pid)
+        displayName: 'Cleanup Neon Proxy logs'
+        workingDirectory: neon-proxy-logs
+        condition: always()
+
       - script: |
           kill $(cat backend.pid)
           kill $(cat frontend.pid)
@@ -171,7 +177,3 @@ jobs:
         workingDirectory: apps
         condition: always()
 
-      - script: kill $(cat neon.pid)
-        displayName: 'Cleanup Neon Proxy logs'
-        workingDirectory: neon-proxy-logs
-        condition: always()
