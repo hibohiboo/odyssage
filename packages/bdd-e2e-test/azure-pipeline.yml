@@ -122,14 +122,6 @@ jobs:
         env:
           CI: true
 
-      # Neon Proxyログをアーティファクトとして保存するためのタスク
-      - task: PublishBuildArtifacts@1
-        condition: always()
-        inputs:
-          pathToPublish: 'neon-proxy-logs'
-          artifactName: 'neon-proxy-logs'
-        displayName: 'Upload Neon Proxy logs as artifacts'
-
       - script: kill $(cat neon.pid)
         displayName: 'Cleanup Neon Proxy logs'
         workingDirectory: neon-proxy-logs
