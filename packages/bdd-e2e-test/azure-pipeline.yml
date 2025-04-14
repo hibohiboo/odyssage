@@ -2,16 +2,7 @@ trigger:
   branches:
     include:
       - id/77/fixPipeline
-resources:
-  containers:
-    - container: firebase
-      image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
-      ports:
-      - 9099:9099 # Firebase Authentication
-      - 9005:9005 # Firebase login
-      - 4000:4000 # Firebase UI
-      command: firebase emulators:start
-      workingDirectory: /opt/firebase
+
 jobs:
   - job: bdd_test
     displayName: 'Run BDD E2E tests'
@@ -19,7 +10,6 @@ jobs:
       vmImage: 'ubuntu-latest'
 
     services:
-      firebase: firebase
       postgres:
         image: postgres:17.4-alpine
         ports:
@@ -36,7 +26,39 @@ jobs:
 
     steps:
       - checkout: self
-
+      - script: |
+          # Firebaseディレクトリに移動
+          cd infra/local/firebase
+          
+          # docker-composeを直接使用してFirebaseエミュレータを起動
+          docker-compose up -f docker-compose.ci.yml -d firebase
+          
+          # エミュレータの起動を確認するための待機ロジック
+          echo "Waiting for Firebase Auth emulator..."
+          MAX_RETRIES=20
+          RETRY_COUNT=0
+          RETRY_INTERVAL=2
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Attempt $RETRY_COUNT/$MAX_RETRIES"
+            
+            # Firebase Auth エミュレータの状態確認
+            if curl -s http://localhost:9099/ > /dev/null; then
+              echo "Firebase Auth emulator is ready"
+              break
+            fi
+            
+            # 最大試行回数に達した場合はエラー
+            if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+              echo "##vso[task.logissue type=error]Firebase Auth emulator failed to start within timeout period"
+              echo "##vso[task.complete result=Failed;]Firebase service is not available"
+              exit 1
+            fi
+            
+            sleep $RETRY_INTERVAL
+          done
+        displayName: 'Start Firebase Emulator with docker-compose'
       - script: |
           echo "Waiting for Firebase Auth emulator..."
           MAX_RETRIES=20
@@ -48,7 +70,7 @@ jobs:
             echo "Attempt $RETRY_COUNT/$MAX_RETRIES"
             
             # Firebase Auth エミュレータの状態確認
-            if curl -s http://localhost:9099/identitytoolkit.googleapis.com/v1/projects/demo-odyssage > /dev/null; then
+            if curl -s http://localhost:9099/ > /dev/null; then
               echo "Firebase Auth emulator is ready"
               break
             fi
