@@ -1,4 +1,4 @@
-import { Given, When, Then, Before } from '@cucumber/cucumber';
+import { Given, When, Then, Before, After, Status } from '@cucumber/cucumber';
 import { chromium, expect } from '@playwright/test';
 import fs from 'fs';
 
@@ -9,7 +9,15 @@ Before(async function (this) {
   const context = await browser.newContext();
   this.page = await context.newPage();
 });
-
+After(async function (scenario) {
+  if (scenario.result?.status === Status.FAILED && this.page) {
+    const screenshot = await this.page.screenshot({
+      path: `output/screenshots/${scenario.pickle.name}.png`,
+      fullPage: true,
+    });
+    await this.attach(screenshot, 'image/png');
+  }
+});
 Given('アプリが起動している', async function (this) {
   await this.page.goto('http://localhost:5173');
 });

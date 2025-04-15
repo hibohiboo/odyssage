@@ -33,7 +33,11 @@ export const getCurrentUser = () => auth.currentUser;
 let authInitialized = false;
 export const signInAnonymous = async () => {
   // 既に初期化されている場合は処理をスキップ
-  if (authInitialized) return;
+  if (authInitialized) {
+    console.log('authInitialized', authInitialized);
+    return;
+  }
+
   authInitialized = true;
   const ret = await signInAnonymously(auth);
   console.log('signInAnonymous', ret);
@@ -41,6 +45,11 @@ export const signInAnonymous = async () => {
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);
 export const getIdToken = async () => {
+  // CI環境でのテスト実行時に、別ユーザとして認識されるとテストが失敗するためユーザを固定
+  if (import.meta.env.VITE_CI === 'true') {
+    const savedToken = localStorage.getItem('userToken');
+    if (savedToken) return savedToken;
+  }
   const user = auth.currentUser;
   if (user == null) {
     return null;
