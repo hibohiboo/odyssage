@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useUpdateSessionStatus } from '@odyssage/frontend/entities/session/hooks/useUpdateSessionStatus';
+import { useUpdateSessionStatus } from '@odyssage/frontend/entities/session';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { SessionDetailData } from '../api/sessionDetailLoader';
 
