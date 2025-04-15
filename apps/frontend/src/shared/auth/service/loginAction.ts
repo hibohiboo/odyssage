@@ -26,12 +26,12 @@ export const loginAction = createAsyncThunk<
           isAnonymous: parsedUser.isAnonymous,
         }),
       );
+      await apiClient.api.users[':uid'].$put(
+        { param: { uid: parsedUser.uid }, json: { name: '' } },
+        { headers: putHeaders },
+      );
       return;
     }
-    await apiClient.api.users[':uid'].$put(
-      { param: { uid: savedUser.uid }, json: { name: '' } },
-      { headers: putHeaders },
-    );
   }
   console.log('loginAction', 'onAuthStateChangedListener');
   // Firebase Authの状態が変化したときに呼ばれるリスナーを登録
