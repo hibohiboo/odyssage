@@ -247,4 +247,26 @@ export const gmRoute = new Hono<Env>()
 4. **エラーハンドリング**: 様々なエラーケース（存在しないセッション、認可エラーなど）に対応
 5. **OpenAPI**: ドキュメントを追加してAPIの情報を明確に記述
 
+#### テストにおける注意点
+
+1. **認証ミドルウェアのテスト**: `authorizeMiddleware`を使用するエンドポイントをテストする場合は、リクエストヘッダーに`Authorization`を含めることが必須です。
+```typescript
+// テスト時の認証ヘッダー例
+const headerWithAuth = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer test`,  // テスト環境ではこの形式で認証をパスできる
+};
+
+// リクエスト送信時にヘッダーを指定
+const response = await app.request(
+  `/api/gm/${testUserId}/sessions/${testSessionId}`,
+  {
+    method: 'PATCH',
+    headers: headerWithAuth,  // 認証ヘッダーを含める
+    body: JSON.stringify(updateData),
+  },
+  env,
+);
+```
+
 
