@@ -30,6 +30,11 @@ describe('セッション状態更新 統合テスト', () => {
     },
   });
 
+  const headerWithAuth = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer test`,
+  };
+
   // テストケース1: 正常系 - GMが自身のセッションのステータスを更新できる
   it('GMが自身のセッションのステータスを更新できる', async () => {
     const app = getApp();
@@ -45,9 +50,7 @@ describe('セッション状態更新 統合テスト', () => {
       `/api/gm/${testUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headerWithAuth,
         body: JSON.stringify(updateData),
       },
       env,
@@ -77,9 +80,7 @@ describe('セッション状態更新 統合テスト', () => {
       `/api/gm/${otherUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headerWithAuth,
         body: JSON.stringify(updateData),
       },
       env,
@@ -104,9 +105,7 @@ describe('セッション状態更新 統合テスト', () => {
       `/api/gm/${testUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headerWithAuth,
         body: JSON.stringify(updateData),
       },
       env,

@@ -17,7 +17,7 @@ const route = new Hono<Env>()
   .use('/users/*', authorizeMiddleware)
   .route('/users', user)
   .route('/sessions', sessionRoute) // セッションルーターを統合
-  .route('/api', gmRoute) // GM管理ルーターを統合
+  .route('/gm', gmRoute) // GM管理ルーターを統合
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 
