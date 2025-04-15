@@ -13,6 +13,7 @@ export const useCreateScenario = () => {
     uid: string;
     visibility?: 'private' | 'public';
   }) => {
+    if (loading) return; // Prevent multiple submissions
     setLoading(true);
     setSuccess(false);
     setError('');
