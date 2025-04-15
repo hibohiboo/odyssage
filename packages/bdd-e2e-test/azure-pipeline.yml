@@ -217,7 +217,6 @@ jobs:
         displayName: 'Run E2E Tests'
         env:
           CI: true
-        name: runE2ETests  # 参照用に名前を追加
 
       - script: |
           kill $(cat backend.pid)
@@ -231,11 +230,10 @@ jobs:
       - script: | 
           cp apps/frontend/.dev.local packages/bdd-e2e-test/output/.env.local
         condition: always()
-        displayName: 'Output envfile frontend'
+        displayName: 'Output envfile frontend'      # E2Eテストが失敗した場合にのみ、スクリーンショットとHTMLをアーティファクトとしてアップロード
 
-      # E2Eテストが失敗した場合にのみ、スクリーンショットとHTMLをアーティファクトとしてアップロード
       - task: PublishBuildArtifacts@1
-        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
         inputs:
           pathToPublish: 'packages/bdd-e2e-test/output'
           artifactName: 'e2e-output'
@@ -243,7 +241,7 @@ jobs:
 
       # E2Eテストが失敗した場合にのみ、バックエンドログをアーティファクトとしてアップロード
       - task: PublishBuildArtifacts@1
-        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
         inputs:
           pathToPublish: 'apps/backend/backend.log'
           artifactName: 'backend-log'
@@ -251,7 +249,7 @@ jobs:
 
       # E2Eテストが失敗した場合にのみ、フロントエンドログをアーティファクトとしてアップロード
       - task: PublishBuildArtifacts@1
-        condition: failed('runE2ETests')  # E2Eテストが失敗した場合のみ実行
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
         inputs:
           pathToPublish: 'apps/frontend/frontend.log'
           artifactName: 'frontend-log'
