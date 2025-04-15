@@ -8,26 +8,6 @@ Before(async function (this) {
   }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
-
-  // ヘッドレスブラウザ―のコンソール出力をキャッチする
-  this.page.on('console', (msg: any) => {
-    if (msg.type() === 'error') {
-      console.error(`[Browser Console Error]: ${msg.text()}`);
-    } else if (msg.type() === 'warning') {
-      console.warn(`[Browser Console Warning]: ${msg.text()}`);
-    } else {
-      console.log(`[Browser Console]: ${msg.text()}`);
-    }
-  });
-  this.page.on('request', (request: any) =>
-    console.log(`Request: ${request.method()} ${request.url()}`),
-  );
-  this.page.on('response', (response: any) => {
-    console.log(`Response: ${response.status()} ${response.url()}`);
-    if (response.status() >= 400) {
-      console.error(`Error Response: ${response.status()} ${response.url()}`);
-    }
-  });
 });
 
 Given('アプリが起動している', async function (this) {
@@ -38,20 +18,6 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
-
-    await page.screenshot({
-      path: 'output/screenshots/debug.png',
-      fullPage: true,
-    });
-    const content = await page.content();
-    fs.writeFileSync('output/debug.html', content);
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(500);
-    await page.screenshot({
-      path: 'output/screenshots/after_networkidle.png',
-      fullPage: true,
-    });
-    fs.writeFileSync('output/after_networkidle.html', await page.content());
 
     await page.waitForSelector(`a:has-text("${text}")`);
     await page.getByRole('link', { name: text }).nth(0).click();
