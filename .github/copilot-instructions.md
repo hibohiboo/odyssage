@@ -114,4 +114,137 @@ odysseyage/
 - RDBを利用するときは packages\database 以下のファイルを永続化層アダプタとして利用すること
 - RDBを利用するときにテーブル定義が不足していた場合は packages\database 以下でコードファーストで作成すること
 
+## API実装事例
+
+### セッション状態更新APIの実装例
+
+以下は `PATCH /api/gm/:uid/sessions/:id` というエンドポイントの実装例です。このAPIはGMがセッションの状態（「準備中」「進行中」「終了」）を更新するためのものです。
+
+#### 実装手順
+
+1. **データベース層の実装**:
+```typescript
+// packages/database/src/queries/update_session.ts
+import { eq } from 'drizzle-orm';
+import { getDb } from '../db';
+import { sessionsTable } from '../schema';
+
+/**
+ * セッションのステータスを更新する関数
+ * @param connectionString データベース接続文字列
+ * @param data セッションID、ステータス情報
+ */
+export async function updateSessionStatus(
+  connectionString: string,
+  data: { id: string; status: string },
+) {
+  const db = getDb(connectionString);
+  await db
+    .update(sessionsTable)
+    .set({ status: data.status })
+    .where(eq(sessionsTable.id, data.id));
+}
+```
+
+2. **バリデーションスキーマの定義**:
+```typescript
+// packages/schema/src/schema.ts の一部
+export const sessionStatuSchema = v.picklist([
+  '準備中',
+  '進行中',
+  '終了',
+] as const);
+export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
+
+// 状態更新用のリクエストスキーマ
+export const sessionStatusUpdateSchema = v.object({
+  status: sessionStatuSchema,
+});
+export type SessionStatusUpdate = v.InferOutput<typeof sessionStatusUpdateSchema>;
+```
+
+3. **ルートの定義**:
+```typescript
+// apps/backend/src/route/gm.ts
+export const gmRoute = new Hono<Env>()
+  .use('/:uid/*', authorizeMiddleware)
+  .patch(
+    '/:uid/sessions/:id',
+    vValidator('param', idSchema),
+    vValidator('json', sessionStatusUpdateSchema),
+    async (c) => {
+      try {
+        const uid = c.req.param('uid');
+        const sessionId = c.req.param('id');
+        const json = c.req.valid('json');
+
+        // セッションが存在するか確認
+        const [session] = await getSessionById(
+          c.env.NEON_CONNECTION_STRING,
+          sessionId,
+        );
+
+        // セッションが存在しない場合
+        if (!session) {
+          return c.json({ message: 'セッションが見つかりません' }, 404);
+        }
+
+        // GMが一致するか確認（認可チェック）
+        if (session.gmId !== uid) {
+          return c.json(
+            { message: 'このセッションの状態を更新する権限がありません' },
+            403,
+          );
+        }
+
+        // セッションの状態を更新
+        await updateSessionStatus(c.env.NEON_CONNECTION_STRING, {
+          id: sessionId,
+          status: json.status,
+        });
+
+        // 更新後のセッションを取得して返す
+        // ...省略
+      } catch (error) {
+        // エラーハンドリング
+        // ...省略
+      }
+    },
+  );
+```
+
+4. **OpenAPIドキュメントの更新**:
+   
+   a. `api.yaml` への新しいパスの追加:
+   ```yaml
+   /api/gm/{uid}/sessions/{id}:
+     $ref: './paths/gmSessionUpdate.yaml'
+   ```
+
+   b. パスの詳細を記述した新ファイル `gmSessionUpdate.yaml`:
+   ```yaml
+   parameters:
+     - name: uid
+       in: path
+       description: GMのユーザーID
+       required: true
+       schema:
+         type: string
+     # ...以下省略
+   
+   patch:
+     summary: セッション状態更新
+     description: |
+       GMが自分のセッションの状態を更新するためのエンドポイント。
+       # ...以下省略
+   ```
+
+#### 設計上のポイント
+
+1. **単一責任の原則**: データベース操作、バリデーション、ルートハンドラがそれぞれ異なるファイルで定義され、明確な役割分担
+2. **認可**: エンドポイントでuidパラメータとセッションのgm_idの一致を確認
+3. **バリデーション**: Valibotを使用したリクエスト内容の検証
+4. **エラーハンドリング**: 様々なエラーケース（存在しないセッション、認可エラーなど）に対応
+5. **OpenAPI**: ドキュメントを追加してAPIの情報を明確に記述
+
 
