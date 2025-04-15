@@ -46,7 +46,7 @@ export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);
 export const getIdToken = async () => {
   // CI環境でのテスト実行時に、別ユーザとして認識されるとテストが失敗するためユーザを固定
-  if (process.env.VITE_CI === 'true') {
+  if (import.meta.env.VITE_CI === 'true') {
     const savedToken = localStorage.getItem('userToken');
     if (savedToken) return savedToken;
   }
