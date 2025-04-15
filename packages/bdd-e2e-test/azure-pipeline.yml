@@ -2,6 +2,13 @@ trigger:
   branches:
     include:
       - develop
+  paths:
+    include:
+      - apps/backend/**
+      - apps/frontend/**
+      - packages/bdd-e2e-test/**
+      - packages/database/**
+      - packages/schema/**
 
 jobs:
   - job: bdd_test
@@ -43,7 +50,7 @@ jobs:
           # Firebaseディレクトリに移動
           cd infra/local/firebase
           
-          # ディレクトリの内容を確認（デバッグ用）
+          # ディレクトリの内容を確認（デバッグ用） 
           ls -la
           
           # docker-composeファイルの存在を確認
@@ -145,7 +152,7 @@ jobs:
             -p 4444:4444 \
             --add-host=host.docker.internal:host-gateway \
             ghcr.io/timowilhelm/local-neon-http-proxy:main
-            
+          
           # プロキシが起動したことを確認
           sleep 5
           docker ps | grep neon-proxy || { echo "##vso[task.logissue type=error]Neon Proxy failed to start"; exit 1; }
