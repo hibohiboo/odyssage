@@ -1,8 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+// filepath: d:\projects\odyssage\apps\frontend\src\page\session\ui\SessionEditPage.tsx
 import { useLoaderData, useParams } from 'react-router';
-import { useUpdateSessionStatus } from '@odyssage/frontend/entities/session/hooks/useUpdateSessionStatus';
-import { useAuth } from '@odyssage/frontend/shared/auth/useAuth';
 import { SessionDetailData } from '../api/sessionDetailLoader';
+import { useSessionEdit } from '../hooks/useSessionEdit';
 
 /**
  * セッション編集ページコンポーネント
@@ -12,47 +11,10 @@ const SessionEditPage = () => {
   // ローダーからのセッション詳細データを取得
   const sessionData = useLoaderData<SessionDetailData | null>();
   const { uid } = useParams<{ uid: string }>();
-  const { user } = useAuth();
 
-  // 現在のセッション状態を保持するステート
-  const [currentStatus, setCurrentStatus] = useState<
-    '準備中' | '進行中' | '終了'
-  >(sessionData?.status || '準備中');
-
-  // セッション状態更新用のフックを取得
-  const { updateStatus, loading } = useUpdateSessionStatus();
-
-  // セッションデータが変更された場合にステートを更新
-  useEffect(() => {
-    if (sessionData?.status) {
-      setCurrentStatus(sessionData.status);
-    }
-  }, [sessionData]);
-
-  // ログインユーザーがGMかどうかをチェック
-  const isGm = user?.uid === sessionData?.gm_id;
-
-  // セッション状態が変更された時の処理
-  const handleStatusChange = useCallback(
-    async (event: React.ChangeEvent<HTMLSelectElement>) => {
-      const newStatus = event.target.value as '準備中' | '進行中' | '終了';
-
-      if (!uid || !sessionData?.id) {
-        console.error('UID or Session ID is missing');
-        return;
-      }
-
-      try {
-        const response = await updateStatus(uid, sessionData.id, newStatus);
-        if (response.ok) {
-          setCurrentStatus(newStatus);
-        }
-      } catch (error) {
-        console.error('Failed to update session status:', error);
-      }
-    },
-    [uid, sessionData?.id, updateStatus],
-  );
+  // セッション編集用のカスタムフックを使用
+  const { currentStatus, isGm, loading, handleStatusChange } =
+    useSessionEdit(sessionData);
 
   // セッションデータがない場合の表示
   if (!sessionData) {
@@ -116,7 +78,7 @@ const SessionEditPage = () => {
                   <select
                     id="sessionStatus"
                     value={currentStatus}
-                    onChange={handleStatusChange}
+                    onChange={(e) => uid && handleStatusChange(e, uid)}
                     disabled={loading}
                     className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500 sm:text-sm"
                   >
