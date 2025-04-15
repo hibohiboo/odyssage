@@ -7,6 +7,7 @@ import {
 import { idSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
+import { gmRoute } from './gm';
 import { sessionRoute } from './session';
 import { user } from './user';
 import type { Neo4jError } from 'neo4j-driver-core';
@@ -16,6 +17,7 @@ const route = new Hono<Env>()
   .use('/users/*', authorizeMiddleware)
   .route('/users', user)
   .route('/sessions', sessionRoute) // セッションルーターを統合
+  .route('/api', gmRoute) // GM管理ルーターを統合
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 

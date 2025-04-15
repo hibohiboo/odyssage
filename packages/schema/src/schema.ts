@@ -62,6 +62,13 @@ export const sessionRequestSchema = v.object({
   title: v.string(),
 });
 
+export const sessionStatusUpdateSchema = v.object({
+  status: sessionStatuSchema,
+});
+export type SessionStatusUpdate = v.InferOutput<
+  typeof sessionStatusUpdateSchema
+>;
+
 export const sessionResponseSchema = v.object({
   id: v.string(),
   gm_id: v.string(),
