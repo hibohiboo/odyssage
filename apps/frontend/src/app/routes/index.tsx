@@ -18,8 +18,10 @@ import {
   CreateSessionPage,
   createSessionPageLoader,
   SessionListPage,
+  SessionEditPage,
   sessionListLoader,
   gmSessionListLoader,
+  sessionDetailLoader,
 } from '@odyssage/frontend/page/session';
 import { TopPage } from '@odyssage/frontend/page/top';
 import { Layout } from '@odyssage/frontend/shared/layout';
@@ -91,6 +93,11 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
             </GmLayout>
           ),
           children: [
+            {
+              path: ':uid/sessions/:id',
+              element: <SessionEditPage />,
+              loader: sessionDetailLoader,
+            },
             {
               path: 'sessions',
               children: [
