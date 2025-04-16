@@ -30,11 +30,10 @@ describe('セッション統合テスト', () => {
   // テストケース：セッションを作成して取得できることを確認
   it('セッションを作成して正しく取得できること', async () => {
     const app = getApp();
-    const env = getEnv();
-    // リクエストボディ
+    const env = getEnv(); // リクエストボディ（キャメルケースに修正）
     const sessionData = {
-      gm_id: testUserId,
-      scenario_id: testScenarioId,
+      gmId: testUserId,
+      scenarioId: testScenarioId,
       title: 'テストセッション',
     };
 
@@ -51,12 +50,11 @@ describe('セッション統合テスト', () => {
       getEnv(),
     );
     expect(postResponse.status).toBe(201);
-
     const createdSession = (await postResponse.json()) as any;
     expect(createdSession).toHaveProperty('id');
     expect(createdSession.title).toBe(sessionData.title);
-    expect(createdSession.gm_id).toBe(sessionData.gm_id);
-    expect(createdSession.scenario_id).toBe(sessionData.scenario_id);
+    expect(createdSession.gmId).toBe(sessionData.gmId);
+    expect(createdSession.scenarioId).toBe(sessionData.scenarioId);
 
     // 作成したセッションをGET リクエストで取得
     const getResponse = await app.request(
@@ -70,6 +68,6 @@ describe('セッション統合テスト', () => {
     const retrievedSession = (await getResponse.json()) as any;
     expect(retrievedSession.id).toBe(createdSession.id);
     expect(retrievedSession.title).toBe(sessionData.title);
-    expect(retrievedSession.scenario_title).toBe(testScenarioTitle);
+    expect(retrievedSession.scenarioTitle).toBe(testScenarioTitle); // キャメルケースに修正
   });
 });

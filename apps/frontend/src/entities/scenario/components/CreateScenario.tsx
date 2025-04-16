@@ -12,6 +12,7 @@ const CreateScenario = () => {
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    if (loading) return; // Prevent multiple submissions
     const form = new FormData(e.currentTarget);
 
     const title = form.get('title') as string;

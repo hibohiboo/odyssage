@@ -401,6 +401,60 @@ export const idUidSchema = v.object({
 vValidator('param', idUidSchema)
 ```
 
+### API リクエスト/レスポンスの命名規則
+
+1. **一貫した命名規則の使用**:
+   - バックエンドとフロントエンド間の通信では、一貫した命名規則（キャメルケースまたはスネークケース）を使用します
+   - プロジェクト全体でキャメルケースを採用する場合、API のリクエスト・レスポンスもすべてキャメルケースに統一します
+
+```typescript
+// リクエストボディの例 - キャメルケースに統一
+const sessionData = {
+  gmId: testUserId,      // スネークケース(gm_id)ではなくキャメルケース
+  scenarioId: testId,    // スネークケース(scenario_id)ではなくキャメルケース
+  title: 'テストセッション',
+};
+
+// レスポンスの検証 - キャメルケースに統一
+expect(createdSession.title).toBe(sessionData.title);
+expect(createdSession.gmId).toBe(sessionData.gmId);        // キャメルケース
+expect(createdSession.scenarioId).toBe(sessionData.scenarioId);  // キャメルケース
+```
+
+2. **データベースとAPI間の変換**:
+   - データベース（通常はスネークケース）と API（キャメルケース）の間に命名規則の差異がある場合、明示的な変換を行います
+   - 変換は一貫した場所（データアクセスレイヤーやAPI応答前）で行うことを推奨します
+
+```typescript
+// データベースからの結果（スネークケース）をAPI応答（キャメルケース）に変換
+return c.json({
+  id: session.id,
+  title: session.title,
+  gmId: session.gm_id,           // スネークケースからキャメルケースに変換
+  scenarioId: session.scenario_id, // スネークケースからキャメルケースに変換
+  scenarioTitle: session.scenario_title,
+});
+```
+
+3. **テストにおける命名規則の統一**:
+   - テストコードでは、APIの実際の動作を正確に反映した命名規則を使用します
+   - テストデータ作成時とレスポンス検証時で同じ命名規則を使用します
+
+```typescript
+// テストデータ作成（キャメルケース）
+const testData = { gmId: 'user-123', title: 'テスト' };
+
+// API呼び出し
+const response = await app.request('/api/sessions', {
+  method: 'POST',
+  body: JSON.stringify(testData)
+});
+
+// レスポンス検証（同じくキャメルケース）
+const result = await response.json();
+expect(result.gmId).toBe(testData.gmId); // 同じ命名規則で検証
+```
+
 ### フロントエンドUIコンポーネントのデータ連携
 
 1. **必要なすべてのデータフィールドの伝達**:
