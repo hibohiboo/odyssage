@@ -8,7 +8,7 @@ Before(async function (this) {
   const context = await browser.newContext();
   this.page = await context.newPage();
 
-  if (process.env.CI !== 'true') {
+  if (process.env.CI === 'true') {
     // ヘッドレスブラウザ―のコンソール出力をキャッチする
     this.page.on('console', (msg: any) => {
       if (msg.type() === 'error') {
@@ -64,7 +64,7 @@ When(
 );
 Then('{string}と画面に表示される', async function (this, text) {
   const { page } = this;
-  await expect(page.getByText(text)).toBeVisible();
+  await expect(await page.getByText(text)).toBeVisible();
 });
 
 When('概要を {string} と設定する', async function (this, scenarioDetail) {
