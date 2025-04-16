@@ -1,5 +1,6 @@
 import { ScenarioEditPage } from '@odyssage/ui/page-ui';
 import { FormEventHandler, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
@@ -9,7 +10,7 @@ const CreateScenario = () => {
   const { createScenario, loading, success } = useCreateScenario();
   const uid = useAppSelector(uidSelector);
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
-
+  const navigate = useNavigate();
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (loading) return; // Prevent multiple submissions
@@ -23,6 +24,7 @@ const CreateScenario = () => {
     }
     const id = generateUuid();
     await createScenario({ id, uid, title, overview, visibility });
+    navigate('/creator/scenario/list');
   };
 
   const handleVisibilityChange = (value: 'private' | 'public') => {
