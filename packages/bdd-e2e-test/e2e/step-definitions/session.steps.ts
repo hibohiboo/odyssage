@@ -102,9 +102,11 @@ When('セッションを作成する:', async function (this, dataTable: DataTab
 
   // シナリオ詳細画面からセッション作成ボタンをクリック
   await page.waitForTimeout(500);
-  await page
-    .getByRole('link', { name: 'このシナリオでセッションを作成' })
-    .click();
+  const button = await page.getByRole('link', {
+    name: 'このシナリオでセッションを作成',
+  });
+  await page.waitForTimeout(500);
+  await button.click();
 
   await page.waitForTimeout(1000);
   // セッション情報を入力
