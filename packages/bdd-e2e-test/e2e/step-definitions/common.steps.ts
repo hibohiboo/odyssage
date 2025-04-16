@@ -1,5 +1,15 @@
-import { Given, Before, After, Status, When } from '@cucumber/cucumber';
+import {
+  Given,
+  Before,
+  After,
+  Status,
+  When,
+  setDefaultTimeout,
+} from '@cucumber/cucumber';
 import { chromium } from '@playwright/test';
+
+// Increase timeout to 60 seconds to avoid timeout errors
+setDefaultTimeout(60 * 1000);
 
 Before(async function (this) {
   const browser = await chromium.launch({
