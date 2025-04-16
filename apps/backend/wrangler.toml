@@ -1,12 +1,9 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "odyssage-backend"
 main = "src/index.ts"
-compatibility_date = "2024-12-18"
+compatibility_date = "2025-04-01"
 compatibility_flags = ["nodejs_compat"]
 
-# 外部モジュールの設定 - PostgreSQLモジュールを外部依存として指定
-[node_compat]
-network_files = ["postgres"]
 
 # Workers Logs
 # Docs: https://developers.cloudflare.com/workers/observability/logs/workers-logs/
