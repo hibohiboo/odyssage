@@ -5,9 +5,8 @@ get:
     GMがリクエストする場合は、GM IDをクエリパラメータで指定することで、自分の非公開セッションも含めて取得できます。
   operationId: getSessions
   tags:
-    - session
-  parameters:
-    - name: gm_id
+    - session  parameters:
+    - name: gmId
       in: query
       description: GM ID (指定すると、そのGMのセッションのみを取得)
       required: false

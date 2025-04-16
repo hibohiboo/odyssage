@@ -38,15 +38,16 @@ export const sessionRoute = new Hono<Env>()
         gmId,
       );
 
+      // 直接キャメルケースのプロパティ名を指定してレスポンス
       return c.json(
         sessions.map((session) => ({
           id: session.id,
           title: session.title,
           status: session.status,
-          scenario_id: session.scenarioId,
-          scenario_title: session.scenarioTitle,
-          created_at: session.createdAt.toISOString(),
-          updated_at: session.updatedAt.toISOString(),
+          scenarioId: session.scenarioId,
+          scenarioTitle: session.scenarioTitle,
+          createdAt: session.createdAt.toISOString(),
+          updatedAt: session.updatedAt.toISOString(),
         })),
       );
     } catch (error) {
@@ -64,18 +65,19 @@ export const sessionRoute = new Hono<Env>()
       const sessions = await getSessions(c.env.NEON_CONNECTION_STRING, gmId);
 
       // レスポンス形式に整形
-      return c.json(
-        sessions.map((session) => ({
-          id: session.id,
-          name: session.title,
-          gm: session.gmName,
-          gmId: session.gmId,
-          players: 0,
-          maxPlayers: 5,
-          status: parse(sessionStatuSchema, session.status),
-          createdAt: session.createdAt.toISOString(),
-        })),
-      );
+      const response = sessions.map((session) => ({
+        id: session.id,
+        name: session.title,
+        gm: session.gmName,
+        gmId: session.gmId,
+        players: 0,
+        maxPlayers: 5,
+        status: parse(sessionStatuSchema, session.status),
+        createdAt: session.createdAt.toISOString(),
+      }));
+
+      // このエンドポイントはすでにキャメルケースで統一されているため、変換は不要
+      return c.json(response);
     } catch (error) {
       Logger.error('セッション一覧取得エラー:', error);
       return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
@@ -92,8 +94,8 @@ export const sessionRoute = new Hono<Env>()
       // セッションをデータベースに登録
       await createSession(c.env.NEON_CONNECTION_STRING, {
         id: sessionId,
-        gmId: json.gm_id,
-        scenarioId: json.scenario_id,
+        gmId: json.gmId,
+        scenarioId: json.scenarioId,
         title: json.title,
         status: '準備中',
       });
@@ -108,18 +110,17 @@ export const sessionRoute = new Hono<Env>()
         return c.json({ message: 'Failed to retrieve created session' }, 500);
       }
 
-      // レスポンス形式に整形
-      return c.json(
-        {
-          id: createdSession.id,
-          gm_id: createdSession.gmId,
-          scenario_id: createdSession.scenarioId,
-          title: createdSession.title,
-          status: createdSession.status,
-          created_at: createdSession.createdAt.toISOString(),
-        },
-        201,
-      );
+      // レスポンス形式に整形し、直接キャメルケースのプロパティ名を指定
+      const response = {
+        id: createdSession.id,
+        gmId: createdSession.gmId,
+        scenarioId: createdSession.scenarioId,
+        title: createdSession.title,
+        status: createdSession.status,
+        createdAt: createdSession.createdAt.toISOString(),
+      };
+
+      return c.json(response, 201);
     } catch (error) {
       console.log('Received JSON:', error);
       Logger.error('セッション作成エラー:', error);
@@ -144,19 +145,20 @@ export const sessionRoute = new Hono<Env>()
         return c.json({ message: 'セッションが見つかりません' }, 404);
       }
 
-      return c.json({
+      // レスポンス形式に整形し、直接キャメルケースのプロパティ名を指定
+      const response = {
         id: session.id,
-        gm_id: session.gmId,
-        scenario_id: session.scenarioId,
+        gmId: session.gmId,
+        scenarioId: session.scenarioId,
         title: session.title,
         status: parse(sessionStatuSchema, session.status),
-        created_at: session.createdAt.toISOString(),
-        updated_at: session.updatedAt.toISOString(),
-        scenario_title: session.scenarioTitle,
-      });
+        createdAt: session.createdAt.toISOString(),
+        updatedAt: session.updatedAt.toISOString(),
+        scenarioTitle: session.scenarioTitle,
+      };
+      return c.json(response);
     } catch (error) {
       Logger.error('セッション取得エラー:', error);
-
       return c.json({ message: 'セッションの取得に失敗しました' }, 500);
     }
   });

@@ -44,18 +44,18 @@ const SessionEditPage = () => {
             <div className="bg-stone-50 p-4 rounded">
               <p className="mb-2">
                 <span className="font-medium text-stone-600">シナリオ: </span>
-                <span>{sessionData.scenario_title}</span>
+                <span>{sessionData.scenarioTitle}</span>
               </p>
               <p className="mb-2">
                 <span className="font-medium text-stone-600">作成日: </span>
                 <span>
-                  {new Date(sessionData.created_at).toLocaleDateString('ja-JP')}
+                  {new Date(sessionData.createdAt).toLocaleDateString('ja-JP')}
                 </span>
               </p>
               <p className="mb-2">
                 <span className="font-medium text-stone-600">更新日: </span>
                 <span>
-                  {new Date(sessionData.updated_at).toLocaleDateString('ja-JP')}
+                  {new Date(sessionData.updatedAt).toLocaleDateString('ja-JP')}
                 </span>
               </p>
             </div>
