@@ -219,7 +219,7 @@ jobs:
         workingDirectory: packages/database
         displayName: 'Migration RDB'
 
-      - script: bun run bdd-test
+      - script: bun run bdd-test-debug
         workingDirectory: packages/bdd-e2e-test
         displayName: 'Run E2E Tests'
         env:
