@@ -20,7 +20,7 @@
     "@odyssage/lib": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "@odyssage/ui": "workspace:*",
-    "@reduxjs/toolkit": "^2.6.1",
+    "@reduxjs/toolkit": "^2.7.0",
     "firebase": "^11.6.0",
     "hono": "^4.7.7",
     "react": "^19.1.0",
