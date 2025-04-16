@@ -15,8 +15,8 @@ export async function createSession(
   try {
     const response = await apiClient.api.sessions.$post({
       json: {
-        gm_id: gmId,
-        scenario_id: scenarioId,
+        gmId,
+        scenarioId,
         title,
       },
     });

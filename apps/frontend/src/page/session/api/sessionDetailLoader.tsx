@@ -6,13 +6,13 @@ import { apiClient } from '@odyssage/frontend/shared/api/client';
  */
 export interface SessionDetailData {
   id: string;
-  gm_id: string;
-  scenario_id: string;
+  gmId: string;
+  scenarioId: string;
   title: string;
   status: '準備中' | '進行中' | '終了';
-  created_at: string;
-  updated_at: string;
-  scenario_title: string;
+  createdAt: string;
+  updatedAt: string;
+  scenarioTitle: string;
 }
 
 /**

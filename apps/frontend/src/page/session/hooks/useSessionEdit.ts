@@ -32,7 +32,7 @@ export const useSessionEdit = (sessionData: SessionDetailData | null) => {
   }, [sessionData]);
 
   // ログインユーザーがGMかどうかを判定
-  const isGm = currentUserId === sessionData?.gm_id;
+  const isGm = currentUserId === sessionData?.gmId;
 
   /**
    * セッション状態変更時の処理
