@@ -4,7 +4,7 @@ put:
     - bearerAuth: []
   responses:
     204:
-      description: "Successful response"
+      description: "正常に応答しました"
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
   operationId: "putApiUserByUid"

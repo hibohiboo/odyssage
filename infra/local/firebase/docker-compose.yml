@@ -1,11 +1,10 @@
-version: '3.9'
 
 # https://qiita.com/ppco/items/87682b3a14ceb3702dbb
 services:
   firebase:
     build:
-      context: .
-      dockerfile: ./docker/Dockerfile
+      context: ./docker
+      dockerfile: Dockerfile
     volumes:
       - ./firebase.json:/opt/firebase/firebase.json
       - ./.firebaserc:/opt/firebase/.firebaserc
@@ -19,3 +18,4 @@ services:
     working_dir: /opt/firebase
     command: firebase emulators:start
     tty: true
+

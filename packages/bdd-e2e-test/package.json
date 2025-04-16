@@ -7,7 +7,8 @@
     "ncu": "ncu -u",
     "test": "cucumber-js --config cucumber.mjs --exit",
     "e2e-test": "playwright test",
-    "bdd-test": "cucumber-js --config cucumber.mjs --exit"
+    "bdd-test": "cucumber-js --config cucumber.mjs --exit",
+    "bdd-test-debug": "DEBUG=pw:api cucumber-js --config cucumber.mjs --exit"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^11.2.0",

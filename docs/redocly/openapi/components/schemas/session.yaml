@@ -1,0 +1,171 @@
+Session:
+  type: object
+  required:
+    - id
+    - gm_id
+    - scenario_id
+    - title
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: セッションの一意識別子
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    gm_id:
+      type: string
+      description: セッションを管理するGMのユーザーID
+      example: "user123"
+    scenario_id:
+      type: string
+      format: uuid
+      description: セッションのベースとなるシナリオID
+      example: "550e8400-e29b-41d4-a716-446655440001"
+    title:
+      type: string
+      description: セッションのタイトル
+      example: "未知の洞窟探検"
+    status:
+      type: string
+      enum: ["準備中", "進行中", "終了"]
+      description: セッションの現在の状態
+      example: "準備中"
+    created_at:
+      type: string
+      format: date-time
+      description: セッションが作成された日時
+      example: "2025-04-01T12:00:00Z"
+    updated_at:
+      type: string
+      format: date-time
+      description: セッションが最後に更新された日時
+      example: "2025-04-01T12:00:00Z"
+    scenario_title:
+      type: string
+      description: 関連するシナリオのタイトル
+      example: "失われた遺跡の秘宝"
+
+SessionRequest:
+  type: object
+  required:
+    - gm_id
+    - scenario_id
+    - title
+  properties:
+    gm_id:
+      type: string
+      description: セッションを管理するGMのユーザーID
+      example: "user123"
+    scenario_id:
+      type: string
+      format: uuid
+      description: セッションのベースとなるシナリオID
+      example: "550e8400-e29b-41d4-a716-446655440001"
+    title:
+      type: string
+      description: セッションのタイトル
+      example: "未知の洞窟探検"
+
+SessionResponse:
+  type: object
+  required:
+    - id
+    - gm_id
+    - scenario_id
+    - title
+    - status
+    - created_at
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: セッションの一意識別子
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    gm_id:
+      type: string
+      description: セッションを管理するGMのユーザーID
+      example: "user123"
+    scenario_id:
+      type: string
+      format: uuid
+      description: セッションのベースとなるシナリオID
+      example: "550e8400-e29b-41d4-a716-446655440001"
+    title:
+      type: string
+      description: セッションのタイトル
+      example: "未知の洞窟探検"
+    status:
+      type: string
+      enum: ["準備中", "進行中", "終了"]
+      description: セッションの現在の状態
+      example: "準備中"
+    created_at:
+      type: string
+      format: date-time
+      description: セッションが作成された日時
+      example: "2025-04-01T12:00:00Z"
+      
+SessionList:
+  type: array
+  items:
+    type: object
+    required:
+      - id
+      - name
+      - gm
+      - gmId
+      - players
+      - maxPlayers
+      - status
+      - createdAt
+    properties:
+      id:
+        type: string
+        format: uuid
+        description: セッションの一意識別子
+        example: "550e8400-e29b-41d4-a716-446655440000"
+      name:
+        type: string
+        description: セッションのタイトル
+        example: "未知の洞窟探検"
+      gm:
+        type: string
+        description: セッションを管理するGMの名前
+        example: "マスター太郎"
+      gmId:
+        type: string
+        description: セッションを管理するGMのユーザーID
+        example: "user123"
+      players:
+        type: integer
+        description: 現在の参加プレイヤー数
+        example: 0
+      maxPlayers:
+        type: integer
+        description: 最大参加可能プレイヤー数
+        example: 5
+      status:
+        type: string
+        enum: ["準備中", "進行中", "終了"]
+        description: セッションの現在の状態
+        example: "準備中"
+      scenario_id:
+        type: string
+        format: uuid
+        description: セッションのベースとなるシナリオID
+        example: "550e8400-e29b-41d4-a716-446655440001"
+      scenario_title:
+        type: string
+        description: 関連するシナリオのタイトル
+        example: "失われた遺跡の秘宝"
+      created_at:
+        type: string
+        format: date-time
+        description: セッションが作成された日時
+        example: "2025-04-01T12:00:00Z"
+      updated_at:
+        type: string
+        format: date-time
+        description: セッションが最後に更新された日時
+        example: "2025-04-01T12:00:00Z"

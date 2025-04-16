@@ -1,0 +1,15 @@
+
+# https://qiita.com/ppco/items/87682b3a14ceb3702dbb
+services:
+  firebase:
+    image: docker.io/hibohiboo66/ubuntu24-firebase-tools:latest
+    volumes:
+      - ./ci/firebase_ci.json:/opt/firebase/firebase.json
+      - ./ci/.firebaserc_ci:/opt/firebase/.firebaserc
+    ports:
+      - 9099:9099 # Firebase Authentication
+      - 9005:9005 # Firebase login
+    working_dir: /opt/firebase
+    command: firebase emulators:start
+    tty: true
+

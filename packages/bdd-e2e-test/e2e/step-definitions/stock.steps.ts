@@ -72,13 +72,15 @@ Then(
     await page.getByRole('tab', { name: '公開シナリオ' }).click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
-    
+
     // シナリオカードを探す - シナリオ名を含むカードを特定
-    const scenarioCards = page.locator('.card:has(h3:text("' + scenarioName + '"))');
-    
+    const scenarioCards = page.locator(
+      '.card:has(h3:text("' + scenarioName + '"))',
+    );
+
     // 最初のカードを選択
     const firstCard = scenarioCards.first();
-    
+
     // このカードに「ストックする」ボタンがあることを確認
     const stockButton = firstCard.getByText('ストックする');
     await expect(stockButton).toBeVisible();
@@ -179,26 +181,11 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
       await newScenarioLink.click({ timeout: 1000 });
     }
 
-    // クリック後のページ遷移を確認
-    try {
-      // シナリオタイトル入力欄が表示されるまで待機
-      await page.getByRole('textbox', { name: 'シナリオタイトル' }).waitFor({
-        state: 'visible',
-        timeout: 5000,
-      });
-    } catch (e) {
-      console.log(
-        '通常のクリックでは遷移しませんでした。強制ナビゲーションを試みます',
-      );
-
-      // JavaScriptを使って直接ナビゲーションを実行
-      const href = await newScenarioLink.getAttribute('href');
-      if (href) {
-        await page.goto(`http://localhost:5173${href}`);
-      } else {
-        throw new Error('新規シナリオ作成リンクのURLを取得できませんでした');
-      }
-    }
+    // シナリオタイトル入力欄が表示されるまで待機
+    await page.getByRole('textbox', { name: 'シナリオタイトル' }).waitFor({
+      state: 'visible',
+      timeout: 5000,
+    });
 
     // ページが安定するのを待つ
     await page.waitForLoadState('networkidle');

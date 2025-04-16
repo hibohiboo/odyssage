@@ -2,3 +2,5 @@
 export * from './components/Button';
 export * from './components/FeatureCard';
 export * from './components/CtaButton';
+export * from './components/session';
+export * from './components/LoadingSpinner';

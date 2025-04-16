@@ -1,0 +1,256 @@
+trigger:
+  branches:
+    include:
+      - develop
+
+jobs:
+  - job: bdd_test
+    displayName: 'Run BDD E2E tests'
+    pool:
+      vmImage: 'ubuntu-latest'
+    variables:
+        dockerComposePath: /tmp/docker-compose
+        DOCKER_BUILDKIT: 1  # BuildKitを有効化
+        COMPOSE_DOCKER_CLI_BUILD: 1  # Docker CLIのビルド改善
+
+    services:
+      postgres:
+        image: postgres:17.4-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: main
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - checkout: self 
+      # https://docs.docker.com/compose/install/linux/
+      - bash: |
+          sudo mkdir -p $(dockerComposePath)
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.35.0/docker-compose-linux-x86_64 -o $(dockerComposePath)/docker-compose
+          sudo chmod 755 $(dockerComposePath)/docker-compose
+          # バージョン確認でインストールを検証
+          $(dockerComposePath)/docker-compose version
+        displayName: Download docker-compose
+        
+      - script: |
+          # Firebaseディレクトリに移動
+          cd infra/local/firebase
+          
+          # ディレクトリの内容を確認（デバッグ用）
+          ls -la
+          
+          # docker-composeファイルの存在を確認
+          if [ ! -f "docker-compose.ci.yml" ]; then
+            echo "##vso[task.logissue type=error]docker-compose.ci.yml が見つかりません"
+            exit 1
+          fi
+          
+          # docker-composeを直接使用してFirebaseエミュレータを起動
+          $(dockerComposePath)/docker-compose -f docker-compose.ci.yml up -d firebase
+          
+          # エミュレータの起動を確認するための待機ロジック
+          echo "Waiting for Firebase Auth emulator..."
+          MAX_RETRIES=20
+          RETRY_COUNT=0
+          RETRY_INTERVAL=2
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Attempt $RETRY_COUNT/$MAX_RETRIES"
+            
+            # Firebase Auth エミュレータの状態確認
+            if curl -s http://localhost:9099/ > /dev/null; then
+              echo "Firebase Auth emulator is ready"
+              break
+            fi
+            
+            # デバッグ情報の追加
+            docker ps
+            docker logs $(docker ps -q --filter "name=firebase") 2>/dev/null || echo "Firebase container logs not available"
+            
+            # 最大試行回数に達した場合はエラー
+            if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+              echo "##vso[task.logissue type=error]Firebase Auth emulator failed to start within timeout period"
+              echo "##vso[task.complete result=Failed;]Firebase service is not available"
+              exit 1
+            fi
+            
+            sleep $RETRY_INTERVAL
+          done
+        displayName: 'Start Firebase Emulator with docker-compose'      # 前のステップで既にFirebaseエミュレータの待機を行っているため、このステップを削除
+
+      - task: UseNode@1
+        inputs:
+          version: '22.x'
+
+      - script: |
+          curl -fsSL https://bun.sh/install | bash
+        displayName: 'Install Bun'
+
+      - script: echo "##vso[task.setvariable variable=PATH]$(HOME)/.bun/bin:$(PATH)"
+        displayName: 'Add Bun to PATH'
+
+      - script: bun install
+        displayName: 'Install Dependencies'
+
+      - script: npx playwright install --with-deps chromium
+        workingDirectory: apps/frontend
+        displayName: 'download new browsers'
+
+      - script: cp .dev.vars.ci .dev.vars
+        workingDirectory: apps/backend
+        displayName: 'Setting Backend env vars'
+
+      - script: | 
+          cp .env.ci .dev.local
+        workingDirectory: apps/frontend
+        displayName: 'Setting Frontend env vars'
+
+      - script: |
+          echo "127.0.0.1 db.localtest.me" | sudo tee -a /etc/hosts
+        displayName: "Add db.localtest.me to /etc/hosts"
+      
+      - script: |
+          echo "Waiting for PostgreSQL..."
+          for i in {1..20}; do
+            if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            if [ $i -eq 20 ]; then
+              echo "##vso[task.logissue type=error]PostgreSQL failed to start within timeout period"
+              echo "##vso[task.complete result=Failed;]Database service is not available"
+              exit 1
+            fi
+            echo "Attempt $i/20 - PostgreSQL not ready yet, waiting..."
+            sleep 2
+          done
+          # 接続情報を表示（デバッグ用）
+          PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "\conninfo"
+        displayName: 'Wait for PostgreSQL server to start'      # Neon Proxyはserviceとして起動すると postgresの起動を待たないので、docker runで起動する
+
+      - script: |
+          echo "Starting Neon Proxy..."
+          # Docker内からホストのPostgreSQLに接続するための設定
+          # --add-host=host.docker.internal:host-gateway は Linuxで host.docker.internal を使うためのオプション
+          docker run -d --name neon-proxy \
+            -e PG_CONNECTION_STRING=postgres://postgres:postgres@host.docker.internal:5432/main \
+            -p 4444:4444 \
+            --add-host=host.docker.internal:host-gateway \
+            ghcr.io/timowilhelm/local-neon-http-proxy:main
+            
+          # プロキシが起動したことを確認
+          sleep 5
+          docker ps | grep neon-proxy || { echo "##vso[task.logissue type=error]Neon Proxy failed to start"; exit 1; }
+          
+          # ログを表示（デバッグ用）
+          docker logs neon-proxy
+        displayName: 'Start Neon Proxy'
+
+      - script: |
+          bun run dev > backend.log 2>&1 &
+          echo $! > ../backend.pid
+        workingDirectory: apps/backend
+        displayName: 'Start Backend'
+
+      - script: |
+          bun run preview:ci > frontend.log 2>&1 &
+          echo $! > ../frontend.pid
+        workingDirectory: apps/frontend
+        displayName: 'Start Frontend'
+      # 🕐 Backend / Frontend の起動待ち（適宜 curl でチェック）
+      - script: |
+          echo "Waiting for frontend server..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5173 > /dev/null; then
+              echo "Frontend server is up."
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "##vso[task.logissue type=error]Frontend server failed to start within timeout period"
+              echo "Frontend server logs:"
+              cat apps/frontend/frontend.log
+              echo "##vso[task.complete result=Failed;]Frontend server is not available"
+              exit 1
+            fi
+            echo "Attempt $i/30 - Frontend server not ready yet, waiting..."
+            sleep 2
+          done
+
+          echo "Waiting for backend server..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8787 > /dev/null; then
+              echo "Backend server is up."
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "##vso[task.logissue type=error]Backend server failed to start within timeout period"
+              echo "Backend server logs:"
+              cat apps/backend/backend.log
+              echo "##vso[task.complete result=Failed;]Backend server is not available"
+              exit 1
+            fi
+            echo "Attempt $i/30 - Backend server not ready yet, waiting..."
+            sleep 2
+          done
+          
+          # サーバーの状態を確認（デバッグ用）
+          echo "Checking frontend server response:"
+          curl -s -i http://localhost:5173 | head -10
+          echo "Checking backend server response:"
+          curl -s -i http://localhost:8787 | head -10
+        displayName: 'Wait for servers to start'
+
+      - script: bun run migrate:ci
+        workingDirectory: packages/database
+        displayName: 'Migration RDB'
+
+      - script: bun run bdd-test
+        workingDirectory: packages/bdd-e2e-test
+        displayName: 'Run E2E Tests'
+        env:
+          CI: true
+
+      - script: |
+          kill $(cat backend.pid)
+          kill $(cat frontend.pid)
+          docker stop neon-proxy
+          docker rm neon-proxy
+        displayName: 'Cleanup Servers'
+        workingDirectory: apps
+        condition: always()
+
+      - script: | 
+          cp apps/frontend/.dev.local packages/bdd-e2e-test/output/.env.local
+        condition: always()
+        displayName: 'Output envfile frontend'      # E2Eテストが失敗した場合にのみ、スクリーンショットとHTMLをアーティファクトとしてアップロード
+
+      - task: PublishBuildArtifacts@1
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'packages/bdd-e2e-test/output'
+          artifactName: 'e2e-output'
+        displayName: 'Upload screenshots as artifacts'
+
+      # E2Eテストが失敗した場合にのみ、バックエンドログをアーティファクトとしてアップロード
+      - task: PublishBuildArtifacts@1
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'apps/backend/backend.log'
+          artifactName: 'backend-log'
+        displayName: 'Upload backend logs as artifacts'
+
+      # E2Eテストが失敗した場合にのみ、フロントエンドログをアーティファクトとしてアップロード
+      - task: PublishBuildArtifacts@1
+        condition: failed()  # E2Eテストが失敗した場合のみ実行
+        inputs:
+          pathToPublish: 'apps/frontend/frontend.log'
+          artifactName: 'frontend-log'
+        displayName: 'Upload frontend logs as artifacts'

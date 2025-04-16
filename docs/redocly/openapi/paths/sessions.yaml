@@ -1,0 +1,73 @@
+get:
+  summary: セッション一覧取得
+  description: |
+    公開セッションの一覧を取得するエンドポイント。
+    GMがリクエストする場合は、GM IDをクエリパラメータで指定することで、自分の非公開セッションも含めて取得できます。
+  operationId: getSessions
+  tags:
+    - session
+  parameters:
+    - name: gm_id
+      in: query
+      description: GM ID (指定すると、そのGMのセッションのみを取得)
+      required: false
+      schema:
+        type: string
+  responses:
+    '200':
+      description: セッション一覧取得成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/SessionList'
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッション一覧の取得に失敗しました"
+post:
+  summary: セッション作成
+  description: |
+    GMがシナリオを選択して新しいセッションを作成するためのエンドポイント。
+    作成したセッションはGMが管理し、参加者を招待できます。
+  operationId: createSession
+  tags:
+    - session
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/session.yaml#/SessionRequest'
+  responses:
+    '201':
+      description: セッション作成成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/SessionResponse'
+    '400':
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションタイトルは必須です"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションの作成に失敗しました"

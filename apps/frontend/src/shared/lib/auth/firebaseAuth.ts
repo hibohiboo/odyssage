@@ -21,20 +21,35 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 
-if (import.meta.env.DEV) {
+if (import.meta.env.DEV || import.meta.env.VITE_CI === 'true') {
   console.log('connectAuthEmulator');
   connectAuthEmulator(auth, 'http://127.0.0.1:9099');
 }
 
 export const getCurrentUser = () => auth.currentUser;
+
+// BDDのテストで、signInAnonymousを実行する前にonAuthStateChangedが呼ばれることがあるため、
+// その場合はsignInAnonymousを実行しないようにするためのフラグを追加
+let authInitialized = false;
 export const signInAnonymous = async () => {
+  // 既に初期化されている場合は処理をスキップ
+  if (authInitialized) {
+    console.log('authInitialized', authInitialized);
+    return;
+  }
+
+  authInitialized = true;
   const ret = await signInAnonymously(auth);
   console.log('signInAnonymous', ret);
-  return ret;
 };
 export const onAuthStateChangedListener = (callback: NextOrObserver<User>) =>
   onAuthStateChanged(auth, callback);
 export const getIdToken = async () => {
+  // CI環境でのテスト実行時に、別ユーザとして認識されるとテストが失敗するためユーザを固定
+  if (import.meta.env.VITE_CI === 'true') {
+    const savedToken = localStorage.getItem('userToken');
+    if (savedToken) return savedToken;
+  }
   const user = auth.currentUser;
   if (user == null) {
     return null;

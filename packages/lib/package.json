@@ -8,6 +8,7 @@
     "ncu": "ncu -u"
   },
   "dependencies": {
-    "date-fns": "^4.1.0"
+    "date-fns": "^4.1.0",
+    "uuid": "^11.1.0"
   }
 }

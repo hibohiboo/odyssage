@@ -1,12 +1,6 @@
 {
     "name": "odyssage",
-    "devDependencies": {
-        "concurrently": "^9.1.2",
-        "dependency-cruiser": "^16.10.0",
-        "prettier": "^3.5.3",
-        "turbo": "^2.4.4"
-    },
-    "packageManager": "bun@1.2.5",
+    "packageManager": "bun@1.2.9",
     "private": true,
     "scripts": {
         "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
@@ -19,7 +13,8 @@
         "dev": "bunx --bun turbo dev",
         "prebuild": "bun install",
         "build": "bunx --bun turbo build",
-        "ncu": "turbo ncu && ncu -u"
+        "ncu": "turbo ncu --force && ncu -u",
+        "test": "vitest"
     },
     "turbo": {
         "pipeline": {
@@ -31,6 +26,13 @@
                 "cache": false
             }
         }
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2",
+        "dependency-cruiser": "^16.10.1",
+        "prettier": "^3.5.3",
+        "turbo": "^2.5.0",
+        "vitest": "^3.1.1"
     },
     "workspaces": [
         "packages/*",

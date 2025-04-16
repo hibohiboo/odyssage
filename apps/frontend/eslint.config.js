@@ -7,7 +7,7 @@ export default tseslint.config(
     extends: [
       ...customConfig,
       {
-        files: ['**/tests/**'],
+        files: ['**/tests/**','**/*.test.tsx','vitest.config.ts'],
         rules: {
           'import/extensions': ['off'],
           'import/no-extraneous-dependencies': ['off'],
@@ -16,6 +16,7 @@ export default tseslint.config(
           'lintsonarjs/no-empty-test-file': ['off'],
           'no-restricted-syntax': ['off'],
           'no-await-in-loop': ['off'],
+          '@typescript-eslint/no-explicit-any': ['off'],
         },
       },
       {

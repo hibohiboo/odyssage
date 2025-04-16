@@ -6,6 +6,8 @@ import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
 export const Page = () => {
   const uid = useAppSelector(uidSelector);
+  console.log('uid', uid);
+
   if (!uid) {
     return <></>;
   }

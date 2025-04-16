@@ -43,6 +43,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # 後述のcode-maatでgit logを取得するために必要
+          # https://qiita.com/h_tyokinuhata/items/bd5488264f0e6aa41c89
+          # リポジトリをクローンする
+          # コミット履歴をどこまで遡って参照できるかの設定
+          # デフォルトでは 1 に設定されており、最新のコミット履歴しか参照できない
+          # 0 に変更することで、リポジトリの完全なコミット履歴を参照できるようになる
+          # ただし、コミット履歴が大きくなるとクローンに時間がかかるため、ボトルネックになる場合は適切な値を設定する
+          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -109,15 +118,15 @@ jobs:
         working-directory: ./docs/code-maat
 
       - name: create git log 
-        run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2023-01-01 > ./logfile.log
+        run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2024-01-01 > ./logfile.log
         working-directory: ./docs/code-maat
 
       - name: Run Code Maat
-        run: java -jar code-maat-1.0.4-standalone.jar -l logfile.log -c git2 -c git2 -a revisions > ./revisions.csv
+        run: java -jar code-maat-1.0.4-standalone.jar -l logfile.log -c git2 -a revisions > ./revisions.csv
         working-directory: ./docs/code-maat
 
       - name: Run Cloc
-        run: docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 10 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/complexity.csv
+        run: docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 20 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/complexity.csv
 
       - uses: actions/setup-python@v5
         with:
@@ -125,7 +134,6 @@ jobs:
 
       - run: python csv_as_enclosure_json.py --structure complexity.csv --weights revisions.csv > ../astro/dist/crime-scene-hotspots/hotspots.json
         working-directory: ./docs/code-maat
-
 
       # astro ドキュメントアップロード
       - name: Upload artifact

@@ -1,12 +1,22 @@
-import { Given, When, Then, Before } from '@cucumber/cucumber';
+import { Given, When, Then, Before, After, Status } from '@cucumber/cucumber';
 import { chromium, expect } from '@playwright/test';
 
 Before(async function (this) {
-  const browser = await chromium.launch({ headless: false }); // headless: true にするとブラウザが表示されない
+  const browser = await chromium.launch({
+    headless: process.env.CI === 'true',
+  }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   this.page = await context.newPage();
 });
-
+After(async function (scenario) {
+  if (scenario.result?.status === Status.FAILED && this.page) {
+    const screenshot = await this.page.screenshot({
+      path: `output/screenshots/${scenario.pickle.name}.png`,
+      fullPage: true,
+    });
+    await this.attach(screenshot, 'image/png');
+  }
+});
 Given('アプリが起動している', async function (this) {
   await this.page.goto('http://localhost:5173');
 });
@@ -15,6 +25,8 @@ When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
     const { page } = this;
+
+    await page.waitForSelector(`a:has-text("${text}")`);
     await page.getByRole('link', { name: text }).nth(0).click();
   },
 );
