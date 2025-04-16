@@ -3,10 +3,10 @@ import { vValidator } from '@hono/valibot-validator';
 import { getSessionById } from '@odyssage/database/src/queries/select';
 import { updateSessionStatus } from '@odyssage/database/src/queries/update_session';
 import {
-  idSchema,
   sessionStatusUpdateSchema,
   sessionStatuSchema,
   parse,
+  idUidSchema,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
@@ -21,7 +21,7 @@ export const gmRoute = new Hono<Env>()
   // GMがセッションの状態を更新するエンドポイント
   .patch(
     '/:uid/sessions/:id',
-    vValidator('param', idSchema),
+    vValidator('param', idUidSchema),
     vValidator('json', sessionStatusUpdateSchema),
     async (c) => {
       try {

@@ -22,6 +22,7 @@ export interface SessionCardProps {
   name: string;
   description?: string;
   gm: string;
+  gmId: string;
   players: number;
   maxPlayers: number;
   status: SessionStatus;
@@ -29,7 +30,7 @@ export interface SessionCardProps {
   createdAt: string;
   currentScene?: string;
   unreadMessages?: number;
-  onViewDetails?: (id: string) => void;
+  onViewDetails?: (id: string, gmId: string) => void;
   onViewMessages?: (id: string) => void;
   onPlay?: (id: string) => void;
 }
@@ -43,6 +44,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
   name,
   description,
   gm,
+  gmId,
   players,
   maxPlayers,
   status,
@@ -55,7 +57,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
   onPlay,
 }) => {
   // イベントハンドラー
-  const handleViewDetails = () => onViewDetails?.(id);
+  const handleViewDetails = () => onViewDetails?.(id, gmId);
   const handleViewMessages = () => onViewMessages?.(id);
   const handlePlay = () => onPlay?.(id);
 

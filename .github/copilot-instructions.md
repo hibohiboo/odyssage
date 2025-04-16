@@ -353,4 +353,108 @@ const currentUserId = useSelector(uidSelector);
 
 これらのプラクティスに従うことで、コードベースの保守性、可読性、拡張性が向上します。
 
+## APIとルーティングに関する実装ガイドライン
+
+### HTTP メソッドとCORSの設定
+
+1. **必要なHTTPメソッドの許可**:
+   - バックエンドAPIでは、必要なすべてのHTTPメソッドを明示的に許可する必要があります
+   - 特に`PATCH`メソッドを使用するエンドポイントがある場合は、CORSの`allowMethods`に必ず含めてください
+
+```typescript
+// apps/backend/src/index.ts - 正しい例
+const app = new Hono<Env>()
+  .use(
+    '/api/*',
+    cors({
+      origin: [
+        'https://odyssage.pages.dev',
+        'https://develop.odyssage.pages.dev',
+        'http://localhost:5173',
+      ],
+      // PATCHメソッドを含むすべての必要なメソッドを許可
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowHeaders: ['Content-Type', 'Authorization'],
+    }),
+  )
+```
+
+### パラメータバリデーションとスキーマ設計
+
+1. **複合パラメータのバリデーション**:
+   - 複数のパラメータが必要なエンドポイントでは、それらをまとめて検証するスキーマを作成します
+   - 例: ID と UID の両方が必要な場合は、個別のスキーマではなく複合スキーマを使用します
+
+```typescript
+// packages/schema/src/schema.ts - 正しい例
+export const idSchema = v.object({
+  id: v.string(),
+});
+
+// 複合パラメータ用のスキーマ
+export const idUidSchema = v.object({
+  id: v.string(),
+  uid: v.string(),
+});
+
+// 使用例
+vValidator('param', idUidSchema)
+```
+
+### フロントエンドUIコンポーネントのデータ連携
+
+1. **必要なすべてのデータフィールドの伝達**:
+   - UIコンポーネントには、処理に必要なすべてのデータフィールドを必ず含めます
+   - 例: セッションカードがGMのIDを使用する場合、APIからのレスポンスにもそのフィールドを含めます
+
+```typescript
+// APIレスポンス形式の例 - 必要なフィールドを含む
+return c.json(
+  sessions.map((session) => ({
+    id: session.id,
+    name: session.title,
+    gm: session.gmName,
+    gmId: session.gmId, // GMのIDを含める
+    players: session.players,
+    // ...他のフィールド
+  })),
+);
+```
+
+2. **コンポーネント間のプロパティ一貫性**:
+   - 親コンポーネントから子コンポーネントに渡すプロパティは型定義を一致させます
+   - コールバック関数の引数も正確に一致させる必要があります
+
+```typescript
+// 親コンポーネントの型定義
+interface SessionListProps {
+  onViewDetails?: (id: string, gmId: string) => void; // 両方のパラメータを含む
+}
+
+// 子コンポーネントの型定義
+interface SessionCardProps {
+  onViewDetails?: (id: string, gmId: string) => void; // 親と同じシグネチャ
+}
+```
+
+### フロントエンドのルーティング設計
+
+1. **一貫したURLパス構造**:
+   - APIエンドポイントとフロントエンドのルーティングパスは一貫性を持たせます
+   - 例: 単数形/複数形の使い分けを統一する（`/session/:id` vs `/sessions/:id`）
+
+```typescript
+// 一貫したパス構造の例
+// バックエンドAPI
+.patch('/:uid/sessions/:id', ...)
+
+// フロントエンドルーティング - APIと一致させる
+{
+  path: ':uid/session/:id', // 単数形を使用する場合は一貫して使用する
+  element: <SessionEditPage />,
+}
+```
+
+これらの実装ガイドラインに従うことで、APIとルーティングの一貫性が保たれ、予期せぬエラーやバグを防ぐことができます。
+
 

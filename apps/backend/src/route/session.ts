@@ -69,6 +69,7 @@ export const sessionRoute = new Hono<Env>()
           id: session.id,
           name: session.title,
           gm: session.gmName,
+          gmId: session.gmId,
           players: 0,
           maxPlayers: 5,
           status: parse(sessionStatuSchema, session.status),

@@ -14,6 +14,10 @@ export const userSchema = v.object({
 export const idSchema = v.object({
   id: v.string(),
 });
+export const idUidSchema = v.object({
+  id: v.string(),
+  uid: v.string(),
+});
 export const userRequestSchema = v.object({
   name: v.string(),
 });

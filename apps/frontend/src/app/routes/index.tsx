@@ -94,7 +94,7 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
           ),
           children: [
             {
-              path: ':uid/sessions/:id',
+              path: ':uid/session/:id',
               element: <SessionEditPage />,
               loader: sessionDetailLoader,
             },

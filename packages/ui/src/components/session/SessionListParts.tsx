@@ -101,10 +101,22 @@ const StatusTabButton: React.FC<StatusTabButtonProps> = ({
  */
 interface SessionCardsProps {
   sessions: SessionCardProps[];
-  onViewDetails?: (id: string) => void;
+  onViewDetails?: (id: string, gmId: string) => void;
   onViewMessages?: (id: string) => void;
   onPlay?: (id: string) => void;
 }
+
+/**
+ * 検索結果が空の場合の表示
+ */
+const EmptySearchResult: React.FC = () => (
+  <div className="card p-8 text-center">
+    <h3 className="text-lg font-medium text-stone-700 mb-2">
+      検索条件に一致するセッションがありません
+    </h3>
+    <p className="text-stone-500">検索条件を変更してください</p>
+  </div>
+);
 
 /**
  * セッションカードのリスト表示
@@ -145,17 +157,5 @@ export const EmptySessions: React.FC = () => (
     <p className="text-stone-500">
       新しいセッションを作成するか、公開中のセッションに参加してください
     </p>
-  </div>
-);
-
-/**
- * 検索結果が空の場合の表示
- */
-export const EmptySearchResult: React.FC = () => (
-  <div className="card p-8 text-center">
-    <h3 className="text-lg font-medium text-stone-700 mb-2">
-      検索条件に一致するセッションがありません
-    </h3>
-    <p className="text-stone-500">検索条件を変更してください</p>
   </div>
 );
