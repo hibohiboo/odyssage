@@ -6,13 +6,18 @@ on:
     branches:
       - develop
       - docs
-      - id/55/addGithubActionsDBDoc
+      - id/86/bdd-actions
     paths:
       - .github/workflows/**
       - docs/** # documentsフォルダ内が更新されたときに実施
       - tests/**
       - src/**/tests/**
       - stories/**
+      - apps/backend/**
+      - apps/frontend/**
+      - packages/bdd-e2e-test/**
+      - packages/database/**
+      - packages/schema/**
   workflow_dispatch:
     
 permissions:
@@ -27,9 +32,256 @@ env:
   # BUILD_PATH: subfolder
 # https://zenn.dev/a_da_chi/articles/76f499fd15894a
 jobs:
+  # BDD E2Eテストを実行するジョブ
+  bdd-test:
+    name: BDD E2E Tests
+    runs-on: ubuntu-latest
+    # PostgreSQLサービスの設定
+    services:
+      postgres:
+        image: postgres:17.4-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: main
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      # Firebaseエミュレータのセットアップ
+      - name: Install docker-compose
+        run: |
+          DOCKER_COMPOSE_PATH=/tmp/docker-compose
+          sudo mkdir -p $DOCKER_COMPOSE_PATH
+          sudo curl -SL https://github.com/docker/compose/releases/download/v2.35.0/docker-compose-linux-x86_64 -o $DOCKER_COMPOSE_PATH/docker-compose
+          sudo chmod 755 $DOCKER_COMPOSE_PATH/docker-compose
+          # バージョン確認でインストールを検証
+          $DOCKER_COMPOSE_PATH/docker-compose version
+          echo "$DOCKER_COMPOSE_PATH" >> $GITHUB_PATH
+        
+      - name: Start Firebase Emulator
+        run: |
+          cd infra/local/firebase
+          
+          # ディレクトリの内容を確認（デバッグ用）
+          ls -la
+          
+          # docker-composeファイルの存在を確認
+          if [ ! -f "docker-compose.ci.yml" ]; then
+            echo "::error::docker-compose.ci.yml が見つかりません"
+            exit 1
+          fi
+          
+          # docker-composeを使用してFirebaseエミュレータを起動
+          docker-compose -f docker-compose.ci.yml up -d firebase
+          
+          # エミュレータの起動を確認するための待機ロジック
+          echo "Waiting for Firebase Auth emulator..."
+          MAX_RETRIES=20
+          RETRY_COUNT=0
+          RETRY_INTERVAL=2
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RETRY_COUNT=$((RETRY_COUNT + 1))
+            echo "Attempt $RETRY_COUNT/$MAX_RETRIES"
+            
+            # Firebase Auth エミュレータの状態確認
+            if curl -s http://localhost:9099/ > /dev/null; then
+              echo "Firebase Auth emulator is ready"
+              break
+            fi
+            
+            # デバッグ情報の追加
+            docker ps
+            docker logs $(docker ps -q --filter "name=firebase") 2>/dev/null || echo "Firebase container logs not available"
+            
+            # 最大試行回数に達した場合はエラー
+            if [ $RETRY_COUNT -eq $MAX_RETRIES ]; then
+              echo "::error::Firebase Auth emulator failed to start within timeout period"
+              exit 1
+            fi
+            
+            sleep $RETRY_INTERVAL
+          done
+          
+      # Bunのセットアップ
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          
+      - name: Install Dependencies
+        run: bun install
+        
+      # Playwrightのセットアップ
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+        working-directory: apps/frontend
+        
+      # 環境変数の設定
+      - name: Setup Backend Environment
+        run: cp .dev.vars.ci .dev.vars
+        working-directory: apps/backend
+        
+      - name: Setup Frontend Environment
+        run: cp .env.ci .dev.local
+        working-directory: apps/frontend
+        
+      # ホスト名の設定
+      - name: Setup hosts file
+        run: |
+          echo "127.0.0.1 db.localtest.me" | sudo tee -a /etc/hosts
+        
+      # PostgreSQLの起動確認
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL..."
+          for i in {1..20}; do
+            if PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "SELECT 1" &>/dev/null; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            if [ $i -eq 20 ]; then
+              echo "::error::PostgreSQL failed to start within timeout period"
+              exit 1
+            fi
+            echo "Attempt $i/20 - PostgreSQL not ready yet, waiting..."
+            sleep 2
+          done
+          # 接続情報を表示（デバッグ用）
+          PGPASSWORD=postgres psql -h db.localtest.me -U postgres -d main -c "\conninfo"
+        
+      # Neon Proxyの起動
+      - name: Start Neon Proxy
+        run: |
+          echo "Starting Neon Proxy..."
+          # Docker内からホストのPostgreSQLに接続するための設定
+          docker run -d --name neon-proxy \
+            -e PG_CONNECTION_STRING=postgres://postgres:postgres@host.docker.internal:5432/main \
+            -p 4444:4444 \
+            --add-host=host.docker.internal:host-gateway \
+            ghcr.io/timowilhelm/local-neon-http-proxy:main
+          
+          # プロキシが起動したことを確認
+          sleep 5
+          docker ps | grep neon-proxy || { echo "::error::Neon Proxy failed to start"; exit 1; }
+          
+          # ログを表示（デバッグ用）
+          docker logs neon-proxy
+        
+      # バックエンドとフロントエンドの起動
+      - name: Start Backend
+        run: |
+          bun run dev > backend.log 2>&1 &
+          echo $! > ../backend.pid
+        working-directory: apps/backend
+        
+      - name: Start Frontend
+        run: |
+          bun run preview:ci > frontend.log 2>&1 &
+          echo $! > ../frontend.pid
+        working-directory: apps/frontend
+        
+      # サーバー起動待機
+      - name: Wait for servers
+        run: |
+          echo "Waiting for frontend server..."
+          for i in {1..30}; do
+            if curl -s http://localhost:5173 > /dev/null; then
+              echo "Frontend server is up."
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "::error::Frontend server failed to start within timeout period"
+              echo "Frontend server logs:"
+              cat apps/frontend/frontend.log
+              exit 1
+            fi
+            echo "Attempt $i/30 - Frontend server not ready yet, waiting..."
+            sleep 2
+          done
+
+          echo "Waiting for backend server..."
+          for i in {1..30}; do
+            if curl -s http://localhost:8787 > /dev/null; then
+              echo "Backend server is up."
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "::error::Backend server failed to start within timeout period"
+              echo "Backend server logs:"
+              cat apps/backend/backend.log
+              exit 1
+            fi
+            echo "Attempt $i/30 - Backend server not ready yet, waiting..."
+            sleep 2
+          done
+          
+          # サーバーの状態を確認（デバッグ用）
+          echo "Checking frontend server response:"
+          curl -s -i http://localhost:5173 | head -10
+          echo "Checking backend server response:"
+          curl -s -i http://localhost:8787 | head -10
+        
+      # データベースマイグレーション
+      - name: Run database migration
+        run: bun run migrate:ci
+        working-directory: packages/database
+        
+      # BDD E2Eテストの実行
+      - name: Run BDD E2E Tests
+        run: bun run bdd-test-debug
+        working-directory: packages/bdd-e2e-test
+        env:
+          CI: true
+        
+      # リソースのクリーンアップ
+      - name: Cleanup resources
+        if: always()
+        run: |
+          kill $(cat apps/backend/backend.pid) || true
+          kill $(cat apps/frontend/frontend.pid) || true
+          docker stop neon-proxy || true
+          docker rm neon-proxy || true
+      
+      # 環境ファイルの出力
+      - name: Copy environment files for artifacts
+        if: always()
+        run: cp apps/frontend/.dev.local packages/bdd-e2e-test/output/.env.local
+      
+      # テスト失敗時のアーティファクトのアップロード
+      - name: Upload screenshots and HTML artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: e2e-output
+          path: packages/bdd-e2e-test/output
+      
+      - name: Upload backend logs
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: backend-log
+          path: apps/backend/backend.log
+      
+      - name: Upload frontend logs
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: frontend-log
+          path: apps/frontend/frontend.log
+          
+  # ドキュメント生成のビルドジョブ
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: bdd-test
     # dbdoc生成のためにPostgreSQLのコンテナを立ち上げる
     services:
       postgres:
