@@ -14,6 +14,10 @@ export const userSchema = v.object({
 export const idSchema = v.object({
   id: v.string(),
 });
+export const idUidSchema = v.object({
+  id: v.string(),
+  uid: v.string(),
+});
 export const userRequestSchema = v.object({
   name: v.string(),
 });
@@ -57,18 +61,25 @@ export const sessionStatuSchema = v.picklist([
 export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
 
 export const sessionRequestSchema = v.object({
-  gm_id: v.string(),
-  scenario_id: v.string(),
+  gmId: v.string(),
+  scenarioId: v.string(),
   title: v.string(),
 });
 
+export const sessionStatusUpdateSchema = v.object({
+  status: sessionStatuSchema,
+});
+export type SessionStatusUpdate = v.InferOutput<
+  typeof sessionStatusUpdateSchema
+>;
+
 export const sessionResponseSchema = v.object({
   id: v.string(),
-  gm_id: v.string(),
-  scenario_id: v.string(),
+  gmId: v.string(),
+  scenarioId: v.string(),
   title: v.string(),
   status: v.string(),
-  created_at: v.string(),
+  createdAt: v.string(),
 });
 
 export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;

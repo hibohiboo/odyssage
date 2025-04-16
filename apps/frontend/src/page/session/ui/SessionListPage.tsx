@@ -12,8 +12,8 @@ const SessionListPage = () => {
   const navigate = useNavigate();
 
   // セッションの詳細ページへ移動
-  const handleViewDetails = (id: string) => {
-    navigate(`/session/${id}`);
+  const handleViewDetails = (id: string, gmId: string) => {
+    navigate(`/gm/${gmId}/session/${id}`);
   };
 
   // セッションのメッセージページへ移動
@@ -32,6 +32,7 @@ const SessionListPage = () => {
         id: session.id,
         name: session.name,
         gm: session.gm,
+        gmId: session.gmId,
         players: session.players,
         maxPlayers: session.maxPlayers,
         status: session.status,

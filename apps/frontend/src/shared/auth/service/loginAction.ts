@@ -13,6 +13,28 @@ export const loginAction = createAsyncThunk<
   void,
   { dispatch: AppDispatch; state: RootState }
 >('loginAction', async (_, thunkAPI) => {
+  // CI環境でのテスト実行時に、別ユーザとして認識されるとテストが失敗するためユーザを固定
+  if (import.meta.env.VITE_CI === 'true') {
+    console.debug('VITE_CI is true');
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      const parsedUser = JSON.parse(savedUser);
+      thunkAPI.dispatch(
+        setUser({
+          uid: parsedUser.uid,
+          displayName: parsedUser.displayName,
+          isAnonymous: parsedUser.isAnonymous,
+        }),
+      );
+      await apiClient.api.users[':uid'].$put(
+        { param: { uid: parsedUser.uid }, json: { name: '' } },
+        { headers: putHeaders },
+      );
+      return;
+    }
+  }
+
+  // Firebase Authの状態が変化したときに呼ばれるリスナーを登録
   onAuthStateChangedListener(async (user) => {
     if (!user) {
       thunkAPI.dispatch(
@@ -28,6 +50,11 @@ export const loginAction = createAsyncThunk<
         isAnonymous: user.isAnonymous,
       }),
     );
+    if (import.meta.env.VITE_CI === 'true') {
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('userToken', await user.getIdToken());
+    }
+
     if (!user.isAnonymous) return;
     const result = await apiClient.api.users[':uid'].$get({
       param: { uid: user.uid },

@@ -3,6 +3,25 @@ test.beforeAll(async () => {
   const browser = await chromium.launch({ headless: true }); // headless: true にするとブラウザが表示されない
   const context = await browser.newContext();
   const page = await context.newPage();
+  // ヘッドレスブラウザ―のコンソール出力をキャッチする
+  page.on('console', (msg: any) => {
+    if (msg.type() === 'error') {
+      console.error(`[Browser Console Error]: ${msg.text()}`);
+    } else if (msg.type() === 'warning') {
+      console.warn(`[Browser Console Warning]: ${msg.text()}`);
+    } else {
+      console.log(`[Browser Console]: ${msg.text()}`);
+    }
+  });
+  page.on('request', (request: any) =>
+    console.log(`Request: ${request.method()} ${request.url()}`),
+  );
+  page.on('response', (response: any) => {
+    console.log(`Response: ${response.status()} ${response.url()}`);
+    if (response.status() >= 400) {
+      console.error(`Error Response: ${response.status()} ${response.url()}`);
+    }
+  });
   await page.goto('http://127.0.0.1:4000/');
   await page.getByRole('link', { name: 'Go to auth emulator' }).click();
   if (await page.isVisible("text='testuser'")) {

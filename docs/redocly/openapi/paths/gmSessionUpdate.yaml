@@ -1,0 +1,87 @@
+parameters:
+  - name: uid
+    in: path
+    description: GMのユーザーID
+    required: true
+    schema:
+      type: string
+  - name: id
+    in: path
+    description: 更新対象のセッションID
+    required: true
+    schema:
+      type: string
+      format: uuid
+
+patch:
+  summary: セッション状態更新
+  description: |
+    GMが自分のセッションの状態を更新するためのエンドポイント。
+    セッションの状態を「準備中」「進行中」「終了」のいずれかに変更できます。
+    セッションのGMであるユーザーのみが更新可能です。
+  operationId: updateSessionStatus
+  tags:
+    - session
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: string
+              enum: ["準備中", "進行中", "終了"]
+              description: 更新するセッションの状態
+              example: "進行中"
+  responses:
+    '200':
+      description: セッション状態更新成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/Session'
+    '400':
+      description: 不正なリクエスト
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "不正なステータス値です"
+    '403':
+      description: 権限エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "このセッションの状態を更新する権限がありません"
+    '404':
+      description: セッションが見つかりません
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションが見つかりません"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションの状態更新に失敗しました"
