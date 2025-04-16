@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "@apiture/openapi-down-convert": "^0.14.1",
-    "@redocly/cli": "1.34.1"
+    "@redocly/cli": "1.34.2"
   },
   "private": true,
   "scripts": {
@@ -16,6 +16,6 @@
     "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html"
   },
   "devDependencies": {
-    "npm-check-updates": "^17.1.16"
+    "npm-check-updates": "^17.1.18"
   }
 }

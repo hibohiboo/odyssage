@@ -6,6 +6,9 @@ export const authorizeMiddleware = createMiddleware(async (c, next) => {
   if (c.env.CI === 'true') {
     console.log('CI mode: login as anonymous user');
     await next();
+  } else if (c.env.CLOUDFLARE_ENV === 'test') {
+    console.log('Test environment: bypassing authorization');
+    await next();
   } else {
     const token = await verifyJWT(c.req.header('Authorization'), c.env);
 

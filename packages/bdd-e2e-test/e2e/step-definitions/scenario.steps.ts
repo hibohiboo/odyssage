@@ -1,6 +1,5 @@
 import { Given, When, Then, Before, After, Status } from '@cucumber/cucumber';
 import { chromium, expect } from '@playwright/test';
-import fs from 'fs';
 
 Before(async function (this) {
   const browser = await chromium.launch({

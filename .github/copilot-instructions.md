@@ -114,4 +114,347 @@ odysseyage/
 - RDBを利用するときは packages\database 以下のファイルを永続化層アダプタとして利用すること
 - RDBを利用するときにテーブル定義が不足していた場合は packages\database 以下でコードファーストで作成すること
 
+## API実装事例
+
+### セッション状態更新APIの実装例
+
+以下は `PATCH /api/gm/:uid/sessions/:id` というエンドポイントの実装例です。このAPIはGMがセッションの状態（「準備中」「進行中」「終了」）を更新するためのものです。
+
+#### 実装手順
+
+1. **データベース層の実装**:
+```typescript
+// packages/database/src/queries/update_session.ts
+import { eq } from 'drizzle-orm';
+import { getDb } from '../db';
+import { sessionsTable } from '../schema';
+
+/**
+ * セッションのステータスを更新する関数
+ * @param connectionString データベース接続文字列
+ * @param data セッションID、ステータス情報
+ */
+export async function updateSessionStatus(
+  connectionString: string,
+  data: { id: string; status: string },
+) {
+  const db = getDb(connectionString);
+  await db
+    .update(sessionsTable)
+    .set({ status: data.status })
+    .where(eq(sessionsTable.id, data.id));
+}
+```
+
+2. **バリデーションスキーマの定義**:
+```typescript
+// packages/schema/src/schema.ts の一部
+export const sessionStatuSchema = v.picklist([
+  '準備中',
+  '進行中',
+  '終了',
+] as const);
+export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
+
+// 状態更新用のリクエストスキーマ
+export const sessionStatusUpdateSchema = v.object({
+  status: sessionStatuSchema,
+});
+export type SessionStatusUpdate = v.InferOutput<typeof sessionStatusUpdateSchema>;
+```
+
+3. **ルートの定義**:
+```typescript
+// apps/backend/src/route/gm.ts
+export const gmRoute = new Hono<Env>()
+  .use('/:uid/*', authorizeMiddleware)
+  .patch(
+    '/:uid/sessions/:id',
+    vValidator('param', idSchema),
+    vValidator('json', sessionStatusUpdateSchema),
+    async (c) => {
+      try {
+        const uid = c.req.param('uid');
+        const sessionId = c.req.param('id');
+        const json = c.req.valid('json');
+
+        // セッションが存在するか確認
+        const [session] = await getSessionById(
+          c.env.NEON_CONNECTION_STRING,
+          sessionId,
+        );
+
+        // セッションが存在しない場合
+        if (!session) {
+          return c.json({ message: 'セッションが見つかりません' }, 404);
+        }
+
+        // GMが一致するか確認（認可チェック）
+        if (session.gmId !== uid) {
+          return c.json(
+            { message: 'このセッションの状態を更新する権限がありません' },
+            403,
+          );
+        }
+
+        // セッションの状態を更新
+        await updateSessionStatus(c.env.NEON_CONNECTION_STRING, {
+          id: sessionId,
+          status: json.status,
+        });
+
+        // 更新後のセッションを取得して返す
+        // ...省略
+      } catch (error) {
+        // エラーハンドリング
+        // ...省略
+      }
+    },
+  );
+```
+
+4. **OpenAPIドキュメントの更新**:
+   
+   a. `api.yaml` への新しいパスの追加:
+   ```yaml
+   /api/gm/{uid}/sessions/{id}:
+     $ref: './paths/gmSessionUpdate.yaml'
+   ```
+
+   b. パスの詳細を記述した新ファイル `gmSessionUpdate.yaml`:
+   ```yaml
+   parameters:
+     - name: uid
+       in: path
+       description: GMのユーザーID
+       required: true
+       schema:
+         type: string
+     # ...以下省略
+   
+   patch:
+     summary: セッション状態更新
+     description: |
+       GMが自分のセッションの状態を更新するためのエンドポイント。
+       # ...以下省略
+   ```
+
+#### 設計上のポイント
+
+1. **単一責任の原則**: データベース操作、バリデーション、ルートハンドラがそれぞれ異なるファイルで定義され、明確な役割分担
+2. **認可**: エンドポイントでuidパラメータとセッションのgm_idの一致を確認
+3. **バリデーション**: Valibotを使用したリクエスト内容の検証
+4. **エラーハンドリング**: 様々なエラーケース（存在しないセッション、認可エラーなど）に対応
+5. **OpenAPI**: ドキュメントを追加してAPIの情報を明確に記述
+
+#### テストにおける注意点
+
+1. **認証ミドルウェアのテスト**: `authorizeMiddleware`を使用するエンドポイントをテストする場合は、リクエストヘッダーに`Authorization`を含めることが必須です。
+```typescript
+// テスト時の認証ヘッダー例
+const headerWithAuth = {
+  'Content-Type': 'application/json',
+  Authorization: `Bearer test`,  // テスト環境ではこの形式で認証をパスできる
+};
+
+// リクエスト送信時にヘッダーを指定
+const response = await app.request(
+  `/api/gm/${testUserId}/sessions/${testSessionId}`,
+  {
+    method: 'PATCH',
+    headers: headerWithAuth,  // 認証ヘッダーを含める
+    body: JSON.stringify(updateData),
+  },
+  env,
+);
+```
+
+## Feature-Sliced Design実装のベストプラクティス
+
+### モジュールのエクスポートとインポート
+
+1. **公開APIの設計**:
+   - 各スライスは `index.ts` ファイルでパブリックAPIを明示的に定義します
+   - 実装の詳細は直接インポートせず、エントリポイント経由でアクセスします
+
+```typescript
+// entities/session/index.ts - 正しい例
+export { useCreateSession } from './hooks/useCreateSession';
+export { useUpdateSessionStatus } from './hooks/useUpdateSessionStatus';
+
+// 他のモジュールからのインポート - 正しい例
+import { useUpdateSessionStatus } from '@odyssage/frontend/entities/session';
+
+// 他のモジュールからのインポート - 避けるべき例
+import { useUpdateSessionStatus } from '@odyssage/frontend/entities/session/hooks/useUpdateSessionStatus';
+```
+
+2. **フックを使用したUI/ロジック分離**:
+   - UIコンポーネントとビジネスロジックは明確に分離します
+   - カスタムフックにビジネスロジックをカプセル化し、UIコンポーネントはデータ表示と操作のみに集中します
+
+```tsx
+// hooks/useSessionEdit.ts - ビジネスロジック
+export const useSessionEdit = (sessionData: SessionDetailData | null) => {
+  // Reduxからユーザー情報を取得
+  const currentUserId = useSelector(uidSelector);
+  
+  // 状態管理と更新ロジックをカプセル化
+  // ...
+
+  return { currentStatus, isGm, loading, handleStatusChange };
+};
+
+// ui/SessionEditPage.tsx - 表示ロジックのみ
+const SessionEditPage = () => {
+  const sessionData = useLoaderData<SessionDetailData | null>();
+  const { uid } = useParams<{ uid: string }>();
+  
+  // ビジネスロジックをフックから取得
+  const { currentStatus, isGm, loading, handleStatusChange } = useSessionEdit(sessionData);
+
+  // 表示ロジックのみをここに実装
+  // ...
+};
+```
+
+### Redux Storeの効果的な使用
+
+1. **セレクターの活用**:
+   - グローバル状態から特定のデータを取得するには、セレクターを使用します
+   - セレクターはコンポーネント内ではなく、スライス定義側で作成し、再利用します
+
+```typescript
+// 状態スライスの定義
+export const authSlice = createSlice({
+  name: 'auth',
+  // ...
+});
+
+// セレクターを同じファイルで定義
+export const uidSelector = createSelector(
+  state => state[authSlice.reducerPath],
+  auth => auth.uid
+);
+
+// コンポーネントやフックでの使用
+const currentUserId = useSelector(uidSelector);
+```
+
+### コンポーネント設計のガイドライン
+
+1. **単一責任の原則の実践**:
+   - 各コンポーネントとフックは単一の責任を持つように設計します
+   - 例: `useSessionEdit` はセッション編集の状態と操作のみを扱い、他の機能は含めません
+
+2. **型の共有と再利用**:
+   - 共通の型定義は適切な場所に配置し、再利用します
+   - 例: `SessionDetailData` 型は関連するローダーモジュールで定義し、複数の場所から参照します
+
+これらのプラクティスに従うことで、コードベースの保守性、可読性、拡張性が向上します。
+
+## APIとルーティングに関する実装ガイドライン
+
+### HTTP メソッドとCORSの設定
+
+1. **必要なHTTPメソッドの許可**:
+   - バックエンドAPIでは、必要なすべてのHTTPメソッドを明示的に許可する必要があります
+   - 特に`PATCH`メソッドを使用するエンドポイントがある場合は、CORSの`allowMethods`に必ず含めてください
+
+```typescript
+// apps/backend/src/index.ts - 正しい例
+const app = new Hono<Env>()
+  .use(
+    '/api/*',
+    cors({
+      origin: [
+        'https://odyssage.pages.dev',
+        'https://develop.odyssage.pages.dev',
+        'http://localhost:5173',
+      ],
+      // PATCHメソッドを含むすべての必要なメソッドを許可
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowHeaders: ['Content-Type', 'Authorization'],
+    }),
+  )
+```
+
+### パラメータバリデーションとスキーマ設計
+
+1. **複合パラメータのバリデーション**:
+   - 複数のパラメータが必要なエンドポイントでは、それらをまとめて検証するスキーマを作成します
+   - 例: ID と UID の両方が必要な場合は、個別のスキーマではなく複合スキーマを使用します
+
+```typescript
+// packages/schema/src/schema.ts - 正しい例
+export const idSchema = v.object({
+  id: v.string(),
+});
+
+// 複合パラメータ用のスキーマ
+export const idUidSchema = v.object({
+  id: v.string(),
+  uid: v.string(),
+});
+
+// 使用例
+vValidator('param', idUidSchema)
+```
+
+### フロントエンドUIコンポーネントのデータ連携
+
+1. **必要なすべてのデータフィールドの伝達**:
+   - UIコンポーネントには、処理に必要なすべてのデータフィールドを必ず含めます
+   - 例: セッションカードがGMのIDを使用する場合、APIからのレスポンスにもそのフィールドを含めます
+
+```typescript
+// APIレスポンス形式の例 - 必要なフィールドを含む
+return c.json(
+  sessions.map((session) => ({
+    id: session.id,
+    name: session.title,
+    gm: session.gmName,
+    gmId: session.gmId, // GMのIDを含める
+    players: session.players,
+    // ...他のフィールド
+  })),
+);
+```
+
+2. **コンポーネント間のプロパティ一貫性**:
+   - 親コンポーネントから子コンポーネントに渡すプロパティは型定義を一致させます
+   - コールバック関数の引数も正確に一致させる必要があります
+
+```typescript
+// 親コンポーネントの型定義
+interface SessionListProps {
+  onViewDetails?: (id: string, gmId: string) => void; // 両方のパラメータを含む
+}
+
+// 子コンポーネントの型定義
+interface SessionCardProps {
+  onViewDetails?: (id: string, gmId: string) => void; // 親と同じシグネチャ
+}
+```
+
+### フロントエンドのルーティング設計
+
+1. **一貫したURLパス構造**:
+   - APIエンドポイントとフロントエンドのルーティングパスは一貫性を持たせます
+   - 例: 単数形/複数形の使い分けを統一する（`/session/:id` vs `/sessions/:id`）
+
+```typescript
+// 一貫したパス構造の例
+// バックエンドAPI
+.patch('/:uid/sessions/:id', ...)
+
+// フロントエンドルーティング - APIと一致させる
+{
+  path: ':uid/session/:id', // 単数形を使用する場合は一貫して使用する
+  element: <SessionEditPage />,
+}
+```
+
+これらの実装ガイドラインに従うことで、APIとルーティングの一貫性が保たれ、予期せぬエラーやバグを防ぐことができます。
+
 

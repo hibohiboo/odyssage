@@ -13,7 +13,7 @@ import { filterSessions, SessionFilterCriteria } from './sessionListUtils';
  */
 export interface SessionListProps {
   sessions: SessionCardProps[];
-  onViewDetails?: (id: string) => void;
+  onViewDetails?: (id: string, gmId: string) => void;
   onViewMessages?: (id: string) => void;
   onPlay?: (id: string) => void;
   showSearch?: boolean;

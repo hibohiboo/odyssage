@@ -83,7 +83,7 @@ export const usePublicScenarioListPage = () => {
   const scenarios = loaderData.map((s) => ({
     id: s.id,
     title: s.title,
-    description: s.overview || '',
+    description: s.overview ?? '',
     updatedAt: s.updatedAt,
     status: 'public' as const,
     usedByGMs: 0,

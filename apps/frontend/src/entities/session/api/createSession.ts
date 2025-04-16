@@ -15,15 +15,15 @@ export async function createSession(
   try {
     const response = await apiClient.api.sessions.$post({
       json: {
-        gm_id: gmId,
-        scenario_id: scenarioId,
+        gmId,
+        scenarioId,
         title,
       },
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'セッションの作成に失敗しました');
+      throw new Error(errorData.message ?? 'セッションの作成に失敗しました');
     }
 
     return await response.json();

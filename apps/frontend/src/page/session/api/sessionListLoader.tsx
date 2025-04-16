@@ -28,11 +28,9 @@ export async function gmSessionListLoader(args: LoaderFunctionArgs) {
     if (!uid) {
       console.error('User not logged in');
       return [];
-    }
-
-    // ログインユーザーIDをGM IDとして使用してセッション一覧を取得
+    } // ログインユーザーIDをGM IDとして使用してセッション一覧を取得
     const response = await apiClient.api.sessions.$get({
-      query: { gm_id: uid },
+      query: { gmId: uid },
     });
 
     const data = await response.json();
