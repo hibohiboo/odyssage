@@ -105,6 +105,7 @@ When('公開設定を {string} に変更する', async function (this, visibilit
   } else {
     await page.locator('label:has-text("非公開（下書き）")').click();
   }
+  await page.waitForTimeout(100);
 });
 
 Then(
