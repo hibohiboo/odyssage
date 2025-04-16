@@ -47,6 +47,9 @@ Given('GMがシナリオをストックしている', async function (this) {
       .fill('テスト用のシナリオ');
     await page.getByText('公開', { exact: true }).click();
     await page.getByRole('button', { name: '保存する' }).click();
+    await page.waitForTimeout(500);
+    await page.getByRole('link', { name: '公開シナリオ' }).click();
+    await page.waitForTimeout(500);
   }
 
   // 最初のシナリオを取得
