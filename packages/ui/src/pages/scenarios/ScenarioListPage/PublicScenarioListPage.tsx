@@ -49,7 +49,7 @@ export default function PublicScenarioListPage({
       {/* タブ表示 */}
       <ScenarioTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-      <div className="space-y-6">
+      <div className="space-y-6 scenario-list">
         {filteredScenarios.map((scenario) => (
           <ScenarioCard
             key={scenario.id}

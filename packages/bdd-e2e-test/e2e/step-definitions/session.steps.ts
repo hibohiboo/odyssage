@@ -24,7 +24,7 @@ Given('GMがシナリオをストックしている', async function (this) {
   await page.waitForTimeout(500);
 
   // 最低1つのシナリオが存在するか確認
-  const scenarios = await page.locator('.card').count();
+  const scenarios = await page.locator('.scenario-list .card').count();
   if (scenarios === 0) {
     await page.getByRole('link', { name: 'シナリオ管理' }).click();
     await page.waitForLoadState('networkidle');
@@ -53,7 +53,7 @@ Given('GMがシナリオをストックしている', async function (this) {
   }
 
   // 最初のシナリオを取得
-  const firstScenario = page.locator('.card').first();
+  const firstScenario = page.locator('.scenario-list .card').first();
   const scenarioName = await firstScenario.locator('h3').textContent();
 
   // ストック状態を確認
