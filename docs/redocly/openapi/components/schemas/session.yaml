@@ -112,22 +112,39 @@ SessionList:
     type: object
     required:
       - id
-      - title
+      - name
+      - gm
+      - gmId
+      - players
+      - maxPlayers
       - status
-      - scenario_id
-      - scenario_title
-      - created_at
-      - updated_at
+      - createdAt
     properties:
       id:
         type: string
         format: uuid
         description: セッションの一意識別子
         example: "550e8400-e29b-41d4-a716-446655440000"
-      title:
+      name:
         type: string
         description: セッションのタイトル
         example: "未知の洞窟探検"
+      gm:
+        type: string
+        description: セッションを管理するGMの名前
+        example: "マスター太郎"
+      gmId:
+        type: string
+        description: セッションを管理するGMのユーザーID
+        example: "user123"
+      players:
+        type: integer
+        description: 現在の参加プレイヤー数
+        example: 0
+      maxPlayers:
+        type: integer
+        description: 最大参加可能プレイヤー数
+        example: 5
       status:
         type: string
         enum: ["準備中", "進行中", "終了"]

@@ -36,7 +36,7 @@ export async function gmSessionListLoader(args: LoaderFunctionArgs) {
     });
 
     const data = await response.json();
-    return data; // GM IDを追加して返す
+    return data;
   } catch (error) {
     console.error('Error loading GM sessions:', error);
     return [];
