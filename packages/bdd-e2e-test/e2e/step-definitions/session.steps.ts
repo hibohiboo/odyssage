@@ -106,7 +106,7 @@ When('セッションを作成する:', async function (this, dataTable: DataTab
     .getByRole('link', { name: 'このシナリオでセッションを作成' })
     .click();
   await page.waitForLoadState('networkidle');
-
+  await page.waitForTimeout(500);
   // セッション情報を入力
   await page.getByLabel('セッション名').fill(sessionName);
 
