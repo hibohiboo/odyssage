@@ -1,8 +1,7 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "odyssage-backend"
 main = "src/index.ts"
-compatibility_date = "2024-12-18"
-compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2025-04-01"
 
 # 外部モジュールの設定 - PostgreSQLモジュールを外部依存として指定
 [node_compat]
