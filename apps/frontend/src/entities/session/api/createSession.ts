@@ -23,7 +23,7 @@ export async function createSession(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'セッションの作成に失敗しました');
+      throw new Error(errorData.message ?? 'セッションの作成に失敗しました');
     }
 
     return await response.json();
