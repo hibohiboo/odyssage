@@ -19,6 +19,10 @@ export const loginAction = createAsyncThunk<
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       const parsedUser = JSON.parse(savedUser);
+      await apiClient.api.users[':uid'].$put(
+        { param: { uid: parsedUser.uid }, json: { name: '' } },
+        { headers: putHeaders },
+      );
       thunkAPI.dispatch(
         setUser({
           uid: parsedUser.uid,
@@ -26,10 +30,7 @@ export const loginAction = createAsyncThunk<
           isAnonymous: parsedUser.isAnonymous,
         }),
       );
-      await apiClient.api.users[':uid'].$put(
-        { param: { uid: parsedUser.uid }, json: { name: '' } },
-        { headers: putHeaders },
-      );
+
       return;
     }
   }
@@ -42,29 +43,35 @@ export const loginAction = createAsyncThunk<
       );
       return;
     }
+    const storeUserData = {
+      uid: user.uid,
+      displayName: user.displayName,
+      isAnonymous: user.isAnonymous,
+    };
 
-    thunkAPI.dispatch(
-      setUser({
-        uid: user.uid,
-        displayName: user.displayName,
-        isAnonymous: user.isAnonymous,
-      }),
-    );
     if (import.meta.env.VITE_CI === 'true') {
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('userToken', await user.getIdToken());
     }
 
-    if (!user.isAnonymous) return;
+    if (!user.isAnonymous) {
+      thunkAPI.dispatch(setUser(storeUserData));
+      return;
+    }
     const result = await apiClient.api.users[':uid'].$get({
       param: { uid: user.uid },
     });
-    if (result.status !== 404) return;
+    if (result.status !== 404) {
+      thunkAPI.dispatch(setUser(storeUserData));
+      return;
+    }
     console.log('Creating user');
     const ret = await apiClient.api.users[':uid'].$put(
       { param: { uid: user.uid }, json: { name: '' } },
       { headers: putHeaders },
     );
+    // ユーザが作成されていない状態でシナリオを作成しようとするとエラーになる
+    thunkAPI.dispatch(setUser(storeUserData));
 
     if (ret.status !== 204) {
       console.error('Failed to create user');
