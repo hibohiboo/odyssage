@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 export const useCreateScenario = () => {
-  const [loading, setLoading] = useState(false);
+  const loading = useRef(false); // useState の更新は非同期だが、useRef は 同期的に扱えるため、ボタンをクリックした瞬間に isSubmitting.current を即座に true にできる。これによって ダブルクリックや二重発火を正確に防げる。
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -13,8 +13,8 @@ export const useCreateScenario = () => {
     uid: string;
     visibility?: 'private' | 'public';
   }) => {
-    if (loading) return; // Prevent multiple submissions
-    setLoading(true);
+    if (loading.current) return; // Prevent multiple submissions
+    loading.current = true;
     setSuccess(false);
     setError('');
     try {
@@ -32,9 +32,9 @@ export const useCreateScenario = () => {
       console.error('Error creating scenario:', err);
       setError('Failed to create scenario');
     } finally {
-      setLoading(false);
+      loading.current = false;
     }
   };
 
-  return { createScenario, loading, success, error };
+  return { createScenario, loading: loading.current, success, error };
 };
