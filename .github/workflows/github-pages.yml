@@ -405,8 +405,8 @@ jobs:
         run: |
           mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
           if [ -d "packages/bdd-e2e-test/output" ]; then
-            cp -r packages/bdd-e2e-test/output/* ${{ env.BUILD_PATH }}/dist/e2e-output/
-            echo "E2Eテスト結果を ${{ env.BUILD_PATH }}/dist/e2e-output/ にコピーしました"
+            cp -r packages/bdd-e2e-test/output/* ${{ env.BUILD_PATH }}/astro/dist/e2e-output/
+            echo "E2Eテスト結果を ${{ env.BUILD_PATH }}/astro/dist/e2e-output/ にコピーしました"
           else
             echo "E2Eテスト出力ディレクトリが見つかりません。ディレクトリを作成します。"
             mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
