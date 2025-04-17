@@ -25,16 +25,16 @@ concurrency:
 jobs:
   # E2Eテストを実行
   e2e-tests:
-    uses: ./.github/workflows/reusable/e2e-test.yml
+    uses: ./.github/workflows/reusable-e2e-test.yml
   
   # ドキュメントを生成
   build-docs:
     needs: e2e-tests
-    uses: ./.github/workflows/reusable/build-docs.yml
+    uses: ./.github/workflows/reusable-build-docs.yml
     with:
       build_path: ./docs/astro
   
   # GitHub Pagesにデプロイ
   deploy-pages:
     needs: build-docs
-    uses: ./.github/workflows/reusable/deploy-pages.yml
+    uses: ./.github/workflows/reusable-deploy-pages.yml
