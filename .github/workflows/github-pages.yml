@@ -249,20 +249,23 @@ jobs:
           kill $(cat apps/frontend/frontend.pid) || true
           docker stop neon-proxy || true
           docker rm neon-proxy || true
-      
-      # 環境ファイルの出力
-      - name: Copy environment files for artifacts
-        if: always()
-        run: cp apps/frontend/.dev.local packages/bdd-e2e-test/output/.env.local
-      
-      # テスト失敗時のアーティファクトのアップロード
+            # E2Eテスト結果をアーティファクトとしてアップロード (GitHub Actions UI で確認用)
       - name: Upload screenshots and HTML artifacts
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: e2e-output
           path: packages/bdd-e2e-test/output
+
+      # E2Eテスト出力を次のジョブで使用するためにキャッシュに保存
+      - name: Cache E2E test output for documentation
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: packages/bdd-e2e-test/output
+          key: e2e-output-${{ github.run_id }}
       
+      # テスト失敗時のアーティファクトのアップロード    
       - name: Upload backend logs
         uses: actions/upload-artifact@v4
         if: failure()
@@ -304,10 +307,11 @@ jobs:
           # 0 に変更することで、リポジトリの完全なコミット履歴を参照できるようになる
           # ただし、コミット履歴が大きくなるとクローンに時間がかかるため、ボトルネックになる場合は適切な値を設定する
           fetch-depth: 0
+          
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
+          
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
@@ -382,10 +386,32 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.13' 
-
+          python-version: '3.13'
+          
       - run: python csv_as_enclosure_json.py --structure complexity.csv --weights revisions.csv > ../astro/dist/crime-scene-hotspots/hotspots.json
         working-directory: ./docs/code-maat
+
+                
+      # E2Eテスト出力を前のジョブからキャッシュで取得
+      - name: Restore E2E test output
+        uses: actions/cache@v4
+        with:
+          path: packages/bdd-e2e-test/output
+          key: e2e-output-${{ github.run_id }}
+
+      # E2Eテスト結果をAstroのビルドディレクトリにコピーする
+      - name: Copy E2E test results to Astro build directory
+        if: always()
+        run: |
+          mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
+          if [ -d "packages/bdd-e2e-test/output" ]; then
+            cp -r packages/bdd-e2e-test/output/* ${{ env.BUILD_PATH }}/dist/e2e-output/
+            echo "E2Eテスト結果を ${{ env.BUILD_PATH }}/dist/e2e-output/ にコピーしました"
+          else
+            echo "E2Eテスト出力ディレクトリが見つかりません。ディレクトリを作成します。"
+            mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
+            echo "<html><head><title>E2E Test Results</title></head><body><h1>E2Eテスト結果</h1><p>テスト結果はありません</p></body></html>" > ${{ env.BUILD_PATH }}/dist/e2e-output/index.html
+          fi
 
       # astro ドキュメントアップロード
       - name: Upload artifact
