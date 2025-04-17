@@ -45,7 +45,7 @@ export const SIDEBAR: Sidebar = {
       },
       {
         text: 'BDD E2Eテストレポート',
-        link: `${BASE_PATH}/e2e-output/cucumber-report.html`,
+        link: `${BASE_PATH}/odyssage-e2e-output/cucumber-report.html`,
       },
       // { text: 'Jestレポート', link: `${BASE_PATH}/odyssage-jest-reports/jest.html` },
       // {

@@ -6,7 +6,7 @@ on:
     branches:
       - develop
       - docs
-      - id/86/bdd-actions
+
     paths:
       - .github/workflows/**
       - docs/** # documentsフォルダ内が更新されたときに実施
@@ -249,7 +249,7 @@ jobs:
           kill $(cat apps/frontend/frontend.pid) || true
           docker stop neon-proxy || true
           docker rm neon-proxy || true
-            # E2Eテスト結果をアーティファクトとしてアップロード (GitHub Actions UI で確認用)
+      # E2Eテスト結果をアーティファクトとしてアップロード (GitHub Actions UI で確認用)
       - name: Upload screenshots and HTML artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -403,10 +403,10 @@ jobs:
       - name: Copy E2E test results to Astro build directory
         if: always()
         run: |
-          mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
+          mkdir -p ${{ env.BUILD_PATH }}/dist/odyssage-e2e-output
           if [ -d "packages/bdd-e2e-test/output" ]; then
-            cp -r packages/bdd-e2e-test/output/* ${{ env.BUILD_PATH }}/dist/e2e-output/
-            echo "E2Eテスト結果を ${{ env.BUILD_PATH }}/dist/e2e-output/ にコピーしました"
+            cp -r packages/bdd-e2e-test/output/* ${{ env.BUILD_PATH }}/dist/odyssage-e2e-output/
+            echo "E2Eテスト結果を ${{ env.BUILD_PATH }}/dist/odyssage-e2e-output/ にコピーしました"
           else
             echo "E2Eテスト出力ディレクトリが見つかりません。ディレクトリを作成します。"
             mkdir -p ${{ env.BUILD_PATH }}/dist/e2e-output
