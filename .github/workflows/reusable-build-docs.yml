@@ -24,6 +24,12 @@ jobs:
           - 5432:5432
           
     steps:
+      # Node.js v22をセットアップ
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
