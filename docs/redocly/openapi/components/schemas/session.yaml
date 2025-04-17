@@ -94,7 +94,8 @@ SessionResponse:
     title:
       type: string
       description: セッションのタイトル
-      example: "未知の洞窟探検"    status:
+      example: "未知の洞窟探検"
+    status:
       type: string
       enum: ["準備中", "進行中", "終了"]
       description: セッションの現在の状態
@@ -143,7 +144,8 @@ SessionList:
       maxPlayers:
         type: integer
         description: 最大参加可能プレイヤー数
-        example: 5      status:
+        example: 5
+      status:
         type: string
         enum: ["準備中", "進行中", "終了"]
         description: セッションの現在の状態
