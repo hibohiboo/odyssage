@@ -1,0 +1,142 @@
+name: Reusable Document Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      build_path:
+        description: 'ドキュメントビルドパス'
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build Documents
+    runs-on: ubuntu-latest
+    # dbdoc生成のためにPostgreSQLのコンテナを立ち上げる
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: main
+        ports:
+          - 5432:5432
+          
+    steps:
+      # Node.js v22をセットアップ
+      - name: Setup Node.js v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 後述のcode-maatでgit logを取得するために必要
+          fetch-depth: 0
+          
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+          
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Install document dependencies
+        run: bun install
+        working-directory: ${{ inputs.build_path }}
+
+      # ドキュメント作成用の依存関係をインストール
+      - name: Install monorepo dependencies
+        run: bun install --ignore-scripts
+
+      # マイグレーションを実行
+      - name: Migration
+        run: bun run migrate:ci
+        working-directory: ./packages/database
+
+      # dbdoc作成
+      - name: Build dbdoc with Schemaspy
+        run: docker compose up
+        working-directory: ./docs/dbdoc
+
+      # OpenAPI ドキュメント作成
+      - name: Build with OpenAPI
+        run: bun install && bun run build
+        working-directory: ./docs/redocly
+
+      # build storybook
+      - name: Build Storybook
+        run: bun install && bun run build-storybook
+        working-directory: ./packages/ui
+
+      # ドキュメント作成
+      - name: Build with Astro
+        run: |
+          npm run astro build \
+            --site "${{ steps.pages.outputs.origin }}" \
+            --base "${{ steps.pages.outputs.base_path }}"
+        working-directory: ${{ inputs.build_path }}
+
+      # eslint ドキュメント作成
+      - name: Build with eslint-inspect
+        run: bun run build-inspect
+        working-directory: ./packages/eslint-config-custom
+      
+      # hotspot ドキュメント作成
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4.5.0
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Download Code Maat
+        run: wget https://github.com/adamtornhill/code-maat/releases/download/v1.0.4/code-maat-1.0.4-standalone.jar
+        working-directory: ./docs/code-maat
+
+      - name: create git log 
+        run: git log --all --numstat --date=short --pretty=format:'--%h--%ad--%aN' --no-renames --after=2024-01-01 > ./logfile.log
+        working-directory: ./docs/code-maat
+
+      - name: Run Code Maat
+        run: java -jar code-maat-1.0.4-standalone.jar -l logfile.log -c git2 -a revisions > ./revisions.csv
+        working-directory: ./docs/code-maat
+
+      - name: Run Cloc
+        run: docker run --rm -v .:/tmp aldanial/cloc --unix --by-file --csv --quiet --timeout 20 --vcs=git --exclude-dir=docs,.vscode,.github --not-match-f=\.json --report-file=./docs/code-maat/complexity.csv
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          
+      - run: python csv_as_enclosure_json.py --structure complexity.csv --weights revisions.csv > ../astro/dist/crime-scene-hotspots/hotspots.json
+        working-directory: ./docs/code-maat
+        
+      # E2Eテスト出力を前のジョブからキャッシュで取得
+      - name: Restore E2E test output
+        uses: actions/cache@v4
+        with:
+          path: packages/bdd-e2e-test/output
+          key: e2e-output-${{ github.run_id }}
+
+      # E2Eテスト結果をAstroのビルドディレクトリにコピーする
+      - name: Copy E2E test results to Astro build directory
+        if: always()
+        run: |
+          mkdir -p ${{ inputs.build_path }}/dist/odyssage-e2e-output
+          if [ -d "packages/bdd-e2e-test/output" ]; then
+            cp -r packages/bdd-e2e-test/output/* ${{ inputs.build_path }}/dist/odyssage-e2e-output/
+            echo "E2Eテスト結果を ${{ inputs.build_path }}/dist/odyssage-e2e-output/ にコピーしました"
+          else
+            echo "E2Eテスト出力ディレクトリが見つかりません。ディレクトリを作成します。"
+            mkdir -p ${{ inputs.build_path }}/dist/e2e-output
+            echo "<html><head><title>E2E Test Results</title></head><body><h1>E2Eテスト結果</h1><p>テスト結果はありません</p></body></html>" > ${{ inputs.build_path }}/dist/e2e-output/index.html
+          fi
+
+      # astro ドキュメントアップロード
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ inputs.build_path }}/dist

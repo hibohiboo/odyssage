@@ -43,7 +43,10 @@ export const SIDEBAR: Sidebar = {
         text: 'ホットスポットプロファイル',
         link: `${BASE_PATH}/crime-scene-hotspots/`,
       },
-      // { text: 'Storybook', link: `${BASE_PATH}/odyssage-components/index.html` },
+      {
+        text: 'BDD E2Eテストレポート',
+        link: `${BASE_PATH}/odyssage-e2e-output/cucumber-report.html`,
+      },
       // { text: 'Jestレポート', link: `${BASE_PATH}/odyssage-jest-reports/jest.html` },
       // {
       //   text: 'Jestカバレッジ',
