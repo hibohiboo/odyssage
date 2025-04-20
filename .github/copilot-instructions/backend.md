@@ -11,6 +11,7 @@
 - APIのバリデーションは packages\schema にバリデーションスキーマを定義してそれを利用すること
 - RDBを利用するときは packages\database 以下のファイルを永続化層アダプタとして利用すること
 - RDBを利用するときにテーブル定義が不足していた場合は packages\database 以下でコードファーストで作成すること
+- GraphDBを利用するときは packages\graph-database 以下のファイルを永続化層アダプタとして利用すること
 
 ## API実装事例
 
