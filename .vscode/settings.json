@@ -9,7 +9,8 @@
   ],
   "eslint.useFlatConfig": true,
   "eslint.useESLintClass": true,
-
+  "editor.defaultFormatter": "dprint.dprint",
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -18,11 +19,11 @@
   "editor.tabSize": 2,
   "editor.tabCompletion": "on",
   "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "dprint.dprint",
     "editor.formatOnSave": true,
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "dprint.dprint",
     "editor.formatOnSave": true,
   },
   // デフォルトの設定はオフにしておく
