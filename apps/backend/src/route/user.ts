@@ -1,7 +1,7 @@
 import { vValidator } from '@hono/valibot-validator';
 import {
-  upsertUser,
   createScenario,
+  upsertUser,
 } from '@odyssage/database/src/queries/insert';
 import {
   getScenariosByUid,
@@ -14,10 +14,10 @@ import {
 } from '@odyssage/database/src/queries/stock';
 import { updateScenario } from '@odyssage/database/src/queries/update';
 import {
-  userParamSchema,
-  userRequestSchema,
   scenarioRequestSchema,
   scenarioUpdateRequestSchema,
+  userParamSchema,
+  userRequestSchema,
   userScenarioParamSchema,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
@@ -72,7 +72,6 @@ export const user = new Hono<Env>()
     );
     return c.json(data);
   })
-
   .put(
     '/:uid/scenario/:id',
     vValidator('param', userScenarioParamSchema),
