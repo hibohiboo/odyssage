@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { TopDecoration } from './TopDecoration';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Components/TopDecoration',

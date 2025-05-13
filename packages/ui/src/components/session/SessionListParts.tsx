@@ -1,5 +1,23 @@
 import React from 'react';
 import { SessionCard, SessionCardProps } from './SessionCard';
+/**
+ * ステータスタブボタンのプロパティ
+ */
+interface StatusTabButtonProps {
+  isActive: boolean;
+  onClick: () => void;
+  label: string;
+}
+
+/**
+ * セッションカードリストのプロパティ
+ */
+interface SessionCardsProps {
+  sessions: SessionCardProps[];
+  onViewDetails?: (id: string, gmId: string) => void;
+  onViewMessages?: (id: string) => void;
+  onPlay?: (id: string) => void;
+}
 
 /**
  * 検索入力フォームのプロパティ
@@ -36,7 +54,24 @@ interface StatusTabsProps {
   activeStatus: string | null;
   onStatusChange: (status: string | null) => void;
 }
+/**
+ * ステータスタブの個別ボタン
+ */
+const StatusTabButton: React.FC<StatusTabButtonProps> = ({
+  isActive,
+  onClick,
+  label,
+}) => {
+  const activeClass = isActive
+    ? 'border-amber-700 text-amber-800 font-medium'
+    : 'border-transparent text-stone-600 hover:text-amber-700';
 
+  return (
+    <button onClick={onClick} className={`px-4 py-2 border-b-2 ${activeClass}`}>
+      {label}
+    </button>
+  );
+};
 /**
  * ステータスによるフィルタリングタブ
  */
@@ -67,44 +102,6 @@ export const StatusTabs: React.FC<StatusTabsProps> = ({
     />
   </div>
 );
-
-/**
- * ステータスタブボタンのプロパティ
- */
-interface StatusTabButtonProps {
-  isActive: boolean;
-  onClick: () => void;
-  label: string;
-}
-
-/**
- * ステータスタブの個別ボタン
- */
-const StatusTabButton: React.FC<StatusTabButtonProps> = ({
-  isActive,
-  onClick,
-  label,
-}) => {
-  const activeClass = isActive
-    ? 'border-amber-700 text-amber-800 font-medium'
-    : 'border-transparent text-stone-600 hover:text-amber-700';
-
-  return (
-    <button onClick={onClick} className={`px-4 py-2 border-b-2 ${activeClass}`}>
-      {label}
-    </button>
-  );
-};
-
-/**
- * セッションカードリストのプロパティ
- */
-interface SessionCardsProps {
-  sessions: SessionCardProps[];
-  onViewDetails?: (id: string, gmId: string) => void;
-  onViewMessages?: (id: string) => void;
-  onPlay?: (id: string) => void;
-}
 
 /**
  * 検索結果が空の場合の表示

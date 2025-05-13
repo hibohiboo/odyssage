@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react';
 import { BookOpen, Users, Map } from 'lucide-react';
 
 import { FeatureCard } from './FeatureCard';
+import type { Meta, StoryObj } from '@storybook/react';
 
 const meta = {
   title: 'Components/FeatureCard',

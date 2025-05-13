@@ -1,7 +1,6 @@
 import { Compass, Map } from 'lucide-react';
 
-export const TopDecoration = () => {
-  return (
+export const TopDecoration = () => (
     <>
       <div className="absolute -bottom-16 -left-16 w-32 h-32 opacity-10 rotate-12">
         <Compass className="w-full h-full text-amber-900" />
@@ -11,6 +10,5 @@ export const TopDecoration = () => {
       </div>
     </>
   );
-};
 
 export default TopDecoration;
