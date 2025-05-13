@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /build
-/package
+/dist
 .env
 .env.*
 !.env.example
@@ -12,5 +12,5 @@ tsconfig.tsbuildinfo
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml
 package-lock.json
-eslintrc.cjs
+
 

@@ -1,6 +1,6 @@
-import path from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { FlatCompat } from '@eslint/eslintrc';
 import reactRefreshPlugin from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -10,16 +10,19 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
 const compat = new FlatCompat({
-    baseDirectory: dirname
+  baseDirectory: dirname,
 });
 
 export default tseslint.config({
   files: ['**/*.ts', '**/*.tsx'],
   ignores: ['dist', 'public'],
-  extends: [...customConfig
-           , ...compat.extends('plugin:react-hooks/recommended')
-           , ...compat.extends('plugin:@conarti/eslint-plugin-feature-sliced/recommended')
-          ],
+  extends: [
+    ...customConfig,
+    ...compat.extends('plugin:react-hooks/recommended'),
+    ...compat.extends(
+      'plugin:@conarti/eslint-plugin-feature-sliced/recommended',
+    ),
+  ],
   plugins: {
     'react-refresh': reactRefreshPlugin,
   },
@@ -29,8 +32,9 @@ export default tseslint.config({
       { allowConstantExport: true },
     ],
     'import/extensions': ['off'],
-    "no-alert": "off",
-    "no-console": "off",
+
+    'no-alert': 'off',
+    'no-console': 'off',
 
     // ↓ bulletproof-react の推奨 https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md
     // 'import/no-restricted-paths': [
