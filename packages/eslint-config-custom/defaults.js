@@ -26,6 +26,7 @@ export default tseslint.config({
           ],
   plugins: { 'unused-imports': unuserdPlugin, sonarjs },
   rules: {
+    'linebreak-style': ['error', 'unix'],
     semi: ['error', 'always'],
     complexity: ['error', 7], // 複雑度の設定
     // The typescript-eslint FAQ provides guidance here:
