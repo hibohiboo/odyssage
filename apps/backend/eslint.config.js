@@ -2,7 +2,7 @@ import customConfig from '@odyssage/eslint-config-custom/backend.js';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config({
-  ignores: [...customConfig[0].ignores, '.wrangler/*'],
+  ignores: [...customConfig[0].ignores, '**/.wrangler/**'],
   extends: [
     ...customConfig,
     {
