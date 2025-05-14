@@ -25,7 +25,7 @@
       },
       "devDependencies": {
         "@cloudflare/vitest-pool-workers": "^0.8.28",
-        "@cloudflare/workers-types": "^4.20250513.0",
+        "@cloudflare/workers-types": "^4.20250514.0",
         "@testcontainers/postgresql": "^10.25.0",
         "dotenv": "^16.5.0",
         "testcontainers": "^10.25.0",
@@ -243,7 +243,7 @@
 
     "@cloudflare/workerd-windows-64": ["@cloudflare/workerd-windows-64@1.20250508.0", "", { "os": "win32", "cpu": "x64" }, "sha512-EJj8iTWFMqjgvZUxxNvzK7frA1JMFi3y/9eDIdZPL/OaQh3cmk5Lai5DCXsKYUxfooMBZWYTp53zOLrvuJI8VQ=="],
 
-    "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20250513.0", "", {}, "sha512-TXaQyWLqhxEmi/DHx+VSaHZ4DHF/uJCPVv/hRyC7M/eWBo/I7mBtAkUEsrhqcKKO9oCeeRUHUHoeRLh5Gd96Gg=="],
+    "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20250514.0", "", {}, "sha512-zjyqRjoFnAzg7n+mxMxJAbIeOggUXLJTXA8WyT+xGDE+6MF9bSf1ypEULu4DXQQYLf6nDM6NwzLex/8ABTH+Lw=="],
 
     "@colors/colors": ["@colors/colors@1.5.0", "", {}, "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ=="],
 
