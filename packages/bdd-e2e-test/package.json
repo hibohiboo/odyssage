@@ -11,7 +11,7 @@
     "bdd-test-debug": "DEBUG=pw:api cucumber-js --config cucumber.mjs --exit"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^11.2.0",
+    "@cucumber/cucumber": "^11.3.0",
     "@odyssage/tsconfig": "workspace:*",
     "@playwright/test": "^1.52.0",
     "ts-node": "^10.9.2"
