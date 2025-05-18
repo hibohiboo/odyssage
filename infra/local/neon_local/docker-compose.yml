@@ -1,6 +1,6 @@
 services:
   neon-local:
-    image: neondatabase/neon_local:latest
+    image: neondatabase/neon_local:37adbc13286731b37192d3172cba0fc2faedf5a6
     ports:
       - '5432:5432'
     environment:
