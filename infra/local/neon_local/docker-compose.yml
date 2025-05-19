@@ -8,5 +8,6 @@ services:
       NEON_PROJECT_ID: ${NEON_PROJECT_ID}
       DRIVER: postgres
       DELETE_BRANCH: true
+      PARENT_BRANCH_ID: ${PARENT_BRANCH_ID}
     profiles:
       - dev

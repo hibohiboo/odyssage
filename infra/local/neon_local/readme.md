@@ -1,6 +1,4 @@
 # 概要
-NeonのPostgresqlを模したローカルPostgres
 
-# tbls
-
-[option](https://tech.arms-soft.co.jp/entry/2024/10/23/090000)
+[Neon Local](https://neon.tech/docs/local/neon-local)
+[How to set up Neon Local with Docker Compose and JavaScript Postgres clients](https://neon.tech/guides/neon-local-docker-compose-javascript)
