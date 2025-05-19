@@ -28,6 +28,10 @@ export const getDb = (
     neonConfig.fetchEndpoint = `http://db.localtest.me:4444/sql`;
     neonConfig.useSecureWebSocket = false;
   }
+  if (connectionString.endsWith('5432/odyssage_rdb')) {
+    console.log('Neon Localを使用します');
+    neonConfig.fetchEndpoint = `http://db.localtest.me:5432/sql`;
+  }
   const sql = neon(connectionString);
   db = drizzle({ client: sql });
   return db;
