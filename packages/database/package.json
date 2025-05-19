@@ -6,8 +6,8 @@
   "scripts": {
     "ncu": "ncu -u",
     "generate": "drizzle-kit generate",
-    "migrate": "cross-env DOTENV_CONFIG_PATH=.env.prod drizzle-kit migrate",
-    "push": "cross-env DOTENV_CONFIG_PATH=.env.prod drizzle-kit push",
+    "migrate": "cross-env DOTENV_CONFIG_PATH=.env.dev drizzle-kit migrate",
+    "push": "cross-env DOTENV_CONFIG_PATH=.env.dev drizzle-kit push",
     "migrate:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit migrate",
     "push:local": "cross-env DOTENV_CONFIG_PATH=.env.local drizzle-kit push",
     "migrate:ci": "cross-env DOTENV_CONFIG_PATH=.env.ci drizzle-kit migrate --config ./drizzle.config.ts",

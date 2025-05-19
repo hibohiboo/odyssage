@@ -1,0 +1,13 @@
+services:
+  neon-local:
+    image: neondatabase/neon_local:37adbc13286731b37192d3172cba0fc2faedf5a6
+    ports:
+      - '5432:5432'
+    environment:
+      NEON_API_KEY: ${NEON_API_KEY}
+      NEON_PROJECT_ID: ${NEON_PROJECT_ID}
+      DRIVER: postgres
+      DELETE_BRANCH: true
+      PARENT_BRANCH_ID: ${PARENT_BRANCH_ID}
+    profiles:
+      - dev
