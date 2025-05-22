@@ -1,6 +1,6 @@
 {
     "name": "odyssage",
-    "packageManager": "bun@1.2.13",
+    "packageManager": "bun@1.2.14",
     "private": true,
     "scripts": {
         "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
