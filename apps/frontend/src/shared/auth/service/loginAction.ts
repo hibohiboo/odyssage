@@ -56,8 +56,7 @@ export const loginAction = createAsyncThunk<
     }
 
     if (!user.isAnonymous) {
-      thunkAPI.dispatch(setUser(storeUserData));
-      return;
+      console.log('loggined user', user);
     }
     const result = await apiClient.api.users[':uid'].$get({
       param: { uid: user.uid },
