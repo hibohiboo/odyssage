@@ -1,7 +1,9 @@
+import { Button } from '@odyssage/ui/index';
 import React, { FormEventHandler } from 'react';
 import { useNavigate } from 'react-router';
 import { userDisplayNameSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { changeNameAction } from '@odyssage/frontend/shared/auth/service/changeNameAction';
+import { logoutAction } from '@odyssage/frontend/shared/auth/service/logoutAction';
 import {
   useAppDispatch,
   useAppSelector,
@@ -23,6 +25,10 @@ export const ChangeName: React.FC = () => {
     );
     navigate('/');
   };
+  const logoutHandler = async () => {
+    await dispatch(logoutAction());
+    navigate('/login');
+  };
   return (
     <div className="pl-4">
       <form onSubmit={handleSubmit}>
@@ -39,10 +45,13 @@ export const ChangeName: React.FC = () => {
           />
         </div>
 
-        <button className="button is-primary" type="submit">
-          保存
-        </button>
+        <Button type="submit">保存</Button>
       </form>
+      <div className="mt-4">
+        <Button variant="secondary" type="button" onClick={logoutHandler}>
+          ログアウト
+        </Button>
+      </div>
     </div>
   );
 };
