@@ -9,8 +9,8 @@
 - [テスト指示書](./copilot-instructions/testing.md) - テスト駆動開発のフロー、テストケースの書き方
 - [フロントエンド指示書](./copilot-instructions/frontend.md) - フロントエンド特有の規約、Feature-Sliced Design
 - [バックエンド指示書](./copilot-instructions/backend.md) - バックエンド特有の規約、API実装ガイドライン
-- [ドキュメント指示書](./copilot-instructions/rules/docs.md)
-- [プロジェクトの開発ルールとAI Agent動作基準](./copilot-instructions/rules/project-development-rules.md)
+- [ドキュメント指示書](./prompts/docs.prompt.md)
+- [プロジェクトの開発ルールとAI Agent動作基準](./prompts/project-development-rules.prompt.md)
 
 ## 使い方
 

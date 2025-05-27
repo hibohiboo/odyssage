@@ -56,5 +56,7 @@
   "github.copilot.chat.commitMessageGeneration.instructions": [
     { "file": ".github/copilot-instructions.commit-msg.md" },
     { "text": "何のための変更かを記載すること" }
-  ]
+  ],
+  "chat.tools.autoApprove": false,
+  "chat.promptFiles": true
 }
