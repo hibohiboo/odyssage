@@ -12,8 +12,8 @@ export const useCreateScenario = () => {
     overview: string;
     uid: string;
     visibility?: 'private' | 'public';
-  }): Promise<{success: boolean; error?: string}> => {
-    if (loading.current) return {success: false, error: 'Already submitting'}; // Prevent multiple submissions
+  }): Promise<{ success: boolean; error?: string }> => {
+    if (loading.current) return { success: false, error: 'Already submitting' }; // Prevent multiple submissions
     loading.current = true;
     setSuccess(false);
     setError('');
@@ -24,18 +24,17 @@ export const useCreateScenario = () => {
       });
       if (response.ok) {
         setSuccess(true);
-        return {success: true};
-      } else {
-        const errorData = await response.json();
-        const errorMessage = errorData.message || 'シナリオの作成に失敗しました';
-        setError(errorMessage);
-        return {success: false, error: errorMessage};
+        return { success: true };
       }
+      const errorData = await response.json();
+      const errorMessage = errorData.message ?? 'シナリオの作成に失敗しました';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } catch (err) {
       console.error('Error creating scenario:', err);
       const errorMessage = 'シナリオの作成に失敗しました';
       setError(errorMessage);
-      return {success: false, error: errorMessage};
+      return { success: false, error: errorMessage };
     } finally {
       loading.current = false;
     }
