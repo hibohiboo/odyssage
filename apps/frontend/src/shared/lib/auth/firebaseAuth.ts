@@ -10,6 +10,7 @@ import {
   updateProfile,
   User,
   validatePassword,
+  signOut,
 } from 'firebase/auth';
 import { initializeApp } from 'firebase/app';
 
@@ -93,4 +94,7 @@ export const changeUserName = async (name: string) => {
   await updateProfile(auth.currentUser, {
     displayName: name,
   });
+};
+export const logOut = async () => {
+  await signOut(auth);
 };

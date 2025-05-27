@@ -37,6 +37,7 @@ export const loginAction = createAsyncThunk<
 
   // Firebase Authの状態が変化したときに呼ばれるリスナーを登録
   onAuthStateChangedListener(async (user) => {
+    console.log('test', user);
     if (!user) {
       thunkAPI.dispatch(
         setUser({ uid: null, displayName: null, isAnonymous: null }),
@@ -55,8 +56,7 @@ export const loginAction = createAsyncThunk<
     }
 
     if (!user.isAnonymous) {
-      thunkAPI.dispatch(setUser(storeUserData));
-      return;
+      console.log('loggined user', user);
     }
     const result = await apiClient.api.users[':uid'].$get({
       param: { uid: user.uid },

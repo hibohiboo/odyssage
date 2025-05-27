@@ -23,7 +23,19 @@ const CreateScenario = () => {
       return;
     }
     const id = generateUuid();
-    await createScenario({ id, uid, title, overview, visibility });
+    const { error } = await createScenario({
+      id,
+      uid,
+      title,
+      overview,
+      visibility,
+    });
+    if (error) {
+      alert('シナリオの作成に失敗しました。');
+      console.error('Error creating scenario:', error);
+      return;
+    }
+
     navigate('/creator/scenario/list');
   };
 
