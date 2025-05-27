@@ -1,41 +1,47 @@
 {
-    "name": "odyssage",
-    "packageManager": "bun@1.2.14",
-    "private": true,
-    "scripts": {
-        "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
-        "local:rdb": "bash ./infra/local/neon/bin/up.sh",
-        "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
-        "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
-        "local:all": "bunx concurrently \"npm:local:rdb\" \"npm:local:graphdb\" \"npm:local:firebase\"",
-        "dev:backend": "cd apps/backend && bun run dev",
-        "dev:frontend": "cd apps/frontend && bun run dev",
-        "dev": "bunx --bun turbo dev",
-        "prebuild": "bun install",
-        "build": "bunx --bun turbo build",
-        "ncu": "turbo ncu --force && ncu -u",
-        "test": "vitest"
-    },
-    "turbo": {
-        "pipeline": {
-            "build": {
-                "dependsOn": ["^build"],
-                "outputs": [".next/**", "dist/**"]
-            },
-            "dev": {
-                "cache": false
-            }
-        }
-    },
-    "devDependencies": {
-        "concurrently": "^9.1.2",
-        "dependency-cruiser": "^16.10.2",
-        "prettier": "^3.5.3",
-        "turbo": "^2.5.3",
-        "vitest": "^3.1.4"
-    },
-    "workspaces": [
-        "packages/*",
-        "apps/*"
-    ]
+  "name": "odyssage",
+  "packageManager": "bun@1.2.14",
+  "private": true,
+  "scripts": {
+    "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
+    "local:rdb": "bash ./infra/local/neon/bin/up.sh",
+    "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
+    "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
+    "local:all": "bunx concurrently \"npm:local:rdb\" \"npm:local:graphdb\" \"npm:local:firebase\"",
+    "dev:backend": "cd apps/backend && bun run dev",
+    "dev:frontend": "cd apps/frontend && bun run dev",
+    "dev:ui": "cd packages/ui && bun run dev",
+    "dev": "bunx concurrently \"npm:dev:backend\" \"npm:dev:frontend\" \"npm:dev:ui\"",
+    "prebuild": "bun install",
+    "build": "bunx --bun turbo build",
+    "ncu": "turbo ncu --force && ncu -u",
+    "test": "vitest"
+  },
+  "turbo": {
+    "pipeline": {
+      "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          ".next/**",
+          "dist/**"
+        ]
+      },
+      "dev": {
+        "cache": false
+      }
+    }
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "dependency-cruiser": "^16.10.2",
+    "prettier": "^3.5.3",
+    "turbo": "^2.5.3",
+    "vitest": "^3.1.4"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ]
 }

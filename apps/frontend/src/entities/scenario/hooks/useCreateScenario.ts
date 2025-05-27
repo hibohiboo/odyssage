@@ -12,8 +12,8 @@ export const useCreateScenario = () => {
     overview: string;
     uid: string;
     visibility?: 'private' | 'public';
-  }) => {
-    if (loading.current) return; // Prevent multiple submissions
+  }): Promise<{success: boolean; error?: string}> => {
+    if (loading.current) return {success: false, error: 'Already submitting'}; // Prevent multiple submissions
     loading.current = true;
     setSuccess(false);
     setError('');
@@ -24,13 +24,18 @@ export const useCreateScenario = () => {
       });
       if (response.ok) {
         setSuccess(true);
+        return {success: true};
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Failed to create scenario');
+        const errorMessage = errorData.message || 'シナリオの作成に失敗しました';
+        setError(errorMessage);
+        return {success: false, error: errorMessage};
       }
     } catch (err) {
       console.error('Error creating scenario:', err);
-      setError('Failed to create scenario');
+      const errorMessage = 'シナリオの作成に失敗しました';
+      setError(errorMessage);
+      return {success: false, error: errorMessage};
     } finally {
       loading.current = false;
     }
