@@ -49,7 +49,7 @@ export const PublicScenario: Story = {
       console.log('GM Stock toggled');
     },
   },
-  storyName: '公開シナリオでセッション作成ボタンが表示されること',
+  name: '公開シナリオでセッション作成ボタンが表示されること',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const ret = await canvas.findByText('このシナリオでセッションを作成');
