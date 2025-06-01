@@ -1,5 +1,5 @@
-import { expect, within } from 'storybook/test';
 import { BrowserRouter } from 'react-router';
+import { expect, within } from 'storybook/test';
 import { ScenarioDetailPage } from './ScenarioDetail';
 import { scenarioData } from './types';
 import type { Meta, StoryObj } from '@storybook/react-vite';
