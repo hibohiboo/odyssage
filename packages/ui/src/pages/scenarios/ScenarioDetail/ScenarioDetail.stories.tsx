@@ -1,8 +1,8 @@
-import { expect, within } from '@storybook/test';
 import { BrowserRouter } from 'react-router';
+import { expect, within } from 'storybook/test';
 import { ScenarioDetailPage } from './ScenarioDetail';
 import { scenarioData } from './types';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ScenarioDetailPage> = {
   title: 'Pages/Scenarios/ScenarioDetailPage',
@@ -49,7 +49,7 @@ export const PublicScenario: Story = {
       console.log('GM Stock toggled');
     },
   },
-  storyName: '公開シナリオでセッション作成ボタンが表示されること',
+  name: '公開シナリオでセッション作成ボタンが表示されること',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const ret = await canvas.findByText('このシナリオでセッションを作成');

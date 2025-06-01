@@ -8,20 +8,20 @@ export default tseslint.config({
     {
       files: ['**/test/**'],
       rules: {
-				'no-undef': ['off'],
+        'no-undef': ['off'],
         'import/extensions': ['off'],
         'import/no-extraneous-dependencies': ['off'],
         'import/no-unresolved': ['off'],
-        'sonarjs/slow-regex':['off'],
+        'sonarjs/slow-regex': ['off'],
         '@typescript-eslint/no-explicit-any': ['off'],
-      }
+      },
     },
-		{
-			"files": ["*.mts"],
-			rules: {
+    {
+      files: ['*.mts'],
+      rules: {
         'no-undef': ['off'],
-				"import/no-extraneous-dependencies": ["off"],
-      }
-		}
+        'import/no-extraneous-dependencies': ['off'],
+      },
+    },
   ],
 });

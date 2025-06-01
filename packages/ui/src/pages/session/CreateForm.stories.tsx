@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router';
 import { CreateForm } from './CreateForm';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
  * セッション作成フォームコンポーネント

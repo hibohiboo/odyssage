@@ -1,5 +1,3 @@
-'use client';
-
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router';
 import { FlowchartViewer } from './components/FlowchartViewer';
