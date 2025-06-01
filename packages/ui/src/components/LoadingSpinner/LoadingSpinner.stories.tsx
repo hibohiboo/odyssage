@@ -1,5 +1,5 @@
 import { LoadingSpinner } from './LoadingSpinner';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 /**
  * `LoadingSpinner`コンポーネントはデータロード中などの待機状態を表示するためのコンポーネントです。

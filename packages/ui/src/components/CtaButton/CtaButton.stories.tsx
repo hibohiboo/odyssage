@@ -1,7 +1,7 @@
 import { ArrowRight } from 'lucide-react';
 import { BrowserRouter } from 'react-router';
 import { CtaButton } from './CtaButton';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
   title: 'Components/CtaButton',

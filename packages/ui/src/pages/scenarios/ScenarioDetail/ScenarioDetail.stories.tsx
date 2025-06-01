@@ -1,8 +1,8 @@
-import { expect, within } from '@storybook/test';
+import { expect, within } from 'storybook/test';
 import { BrowserRouter } from 'react-router';
 import { ScenarioDetailPage } from './ScenarioDetail';
 import { scenarioData } from './types';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof ScenarioDetailPage> = {
   title: 'Pages/Scenarios/ScenarioDetailPage',

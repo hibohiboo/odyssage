@@ -1,7 +1,7 @@
 import { BookOpen, Home, PlusCircle, User } from 'lucide-react';
 import { BrowserRouter } from 'react-router';
 import Navigation from './navigation';
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const navLinks = [
   { to: '/', label: 'ホーム', icon: Home },
