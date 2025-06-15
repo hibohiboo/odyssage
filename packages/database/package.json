@@ -19,7 +19,7 @@
     "drizzle-kit": "^0.31.1"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.0",
+    "@neondatabase/serverless": "^1.0.1",
     "drizzle-orm": "^0.44.2",
     "postgres": "^3.4.7"
   }

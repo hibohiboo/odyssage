@@ -21,7 +21,7 @@
     "@odyssage/schema": "workspace:*",
     "@odyssage/ui": "workspace:*",
     "@reduxjs/toolkit": "^2.8.2",
-    "firebase": "^11.8.1",
+    "firebase": "^11.9.1",
     "hono": "^4.7.11",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -32,19 +32,19 @@
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",
     "@odyssage/tsconfig": "workspace:*",
-    "@tailwindcss/vite": "^4.1.8",
+    "@tailwindcss/vite": "^4.1.10",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
-    "@types/react": "^19.1.6",
+    "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "@vitejs/plugin-react-swc": "^3.10.1",
+    "@vitejs/plugin-react-swc": "^3.10.2",
     "globals": "^16.2.0",
     "jsdom": "^26.1.0",
-    "msw": "^2.9.0",
+    "msw": "^2.10.2",
     "npm-check-updates": "^18.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vitest": "^3.2.1"
+    "vitest": "^3.2.3"
   },
   "msw": {
     "workerDirectory": [

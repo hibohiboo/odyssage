@@ -16,13 +16,13 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.8.36",
-    "@cloudflare/workers-types": "^4.20250604.0",
-    "@testcontainers/postgresql": "^11.0.0",
+    "@cloudflare/vitest-pool-workers": "^0.8.38",
+    "@cloudflare/workers-types": "^4.20250614.0",
+    "@testcontainers/postgresql": "^11.0.3",
     "dotenv": "^16.5.0",
-    "testcontainers": "^11.0.0",
-    "vitest": "3.2.1",
-    "wrangler": "^4.19.1"
+    "testcontainers": "^11.0.3",
+    "vitest": "3.2.3",
+    "wrangler": "^4.20.0"
   },
   "dependencies": {
     "@hono/valibot-validator": "^0.5.2",
