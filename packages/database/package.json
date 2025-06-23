@@ -16,7 +16,7 @@
   "devDependencies": {
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
-    "drizzle-kit": "^0.31.1"
+    "drizzle-kit": "^0.31.2"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
