@@ -4,11 +4,6 @@ import { handlers } from './handlers';
 export const initMSW = async () => {
   if (globalThis.location.host.includes('localhost')) {
     const worker = setupWorker(...handlers);
-    await worker.start({
-      serviceWorker: {
-        url: `/mockServiceWorker.js`,
-      },
-      onUnhandledRequest: 'bypass',
-    });
+    await worker.start();
   }
 };
