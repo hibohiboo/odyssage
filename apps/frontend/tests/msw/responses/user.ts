@@ -3,7 +3,7 @@ import { baseUrl, okResponseStatus } from '../utils';
 
 export const userHandlers = [
   http.get(
-    `${baseUrl}/user/:uid`,
+    `${baseUrl}/users/:uid`,
     () =>
       new HttpResponse(
         JSON.stringify([

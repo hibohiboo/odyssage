@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "ncu": "ncu -u",
-    "e2e-test": "cd ../../packages/bdd-e2e-test && npm run e2e-test"
+    "e2e-test": "cd ../../packages/bdd-e2e-test && npm run e2e-test",
+    "upgrade-msw": "bunx msw init public --save"
   },
   "dependencies": {
     "@odyssage/lib": "workspace:*",
@@ -22,7 +23,7 @@
     "@odyssage/ui": "workspace:*",
     "@reduxjs/toolkit": "^2.8.2",
     "firebase": "^11.9.1",
-    "hono": "^4.8.2",
+    "hono": "^4.8.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
@@ -43,7 +44,7 @@
     "msw": "^2.10.2",
     "npm-check-updates": "^18.0.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^7.0.0",
     "vitest": "^3.2.4"
   },
   "msw": {
