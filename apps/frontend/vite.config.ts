@@ -5,7 +5,6 @@ import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  // @ts-expect-error @tailwindcss/viteがviteのv6までしか対応していない。2025.06.25
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
