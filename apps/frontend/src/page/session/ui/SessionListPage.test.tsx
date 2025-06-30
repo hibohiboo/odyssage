@@ -3,11 +3,6 @@ import * as reactRouter from 'react-router';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import SessionListPage from './SessionListPage';
 
-// react-routerをモック
-vi.mock('react-router', () => ({
-  useLoaderData: vi.fn(),
-}));
-
 describe('SessionListPage', () => {
   // モック関数の参照を取得
   // react-routerモジュールを手動でインポートして実装を置き換える
