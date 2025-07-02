@@ -28,7 +28,7 @@
     "react-dom": "^19.1.0",
     "react-redux": "^9.2.0",
     "react-router": "^7.6.3",
-    "swr": "^2.3.3"
+    "swr": "^2.3.4"
   },
   "devDependencies": {
     "@odyssage/eslint-config-custom": "workspace:*",
@@ -39,7 +39,7 @@
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react-swc": "^3.10.2",
-    "globals": "^16.2.0",
+    "globals": "^16.3.0",
     "jsdom": "^26.1.0",
     "msw": "^2.10.2",
     "npm-check-updates": "^18.0.1",

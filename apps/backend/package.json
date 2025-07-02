@@ -7,7 +7,8 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest --config vitest.config.mts",
+    "test": "vitest run --config vitest.config.mts",
+    "watch": "vitest --config vitest.config.mts",
     "integration-test": "DEBUG=testcontainers* vitest run --config vitest.config.integration.mts",
     "ncu": "ncu -u",
     "lint": "eslint .",
@@ -16,10 +17,10 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.8.47",
-    "@cloudflare/workers-types": "^4.20250628.0",
+    "@cloudflare/vitest-pool-workers": "^0.8.48",
+    "@cloudflare/workers-types": "^4.20250702.0",
     "@testcontainers/postgresql": "^11.0.3",
-    "dotenv": "^17.0.0",
+    "dotenv": "^17.0.1",
     "testcontainers": "^11.0.3",
     "vitest": "3.2.4",
     "wrangler": "^4.22.0"
