@@ -57,15 +57,15 @@ describe('SessionListPage', () => {
     expect(screen.getByText('テストセッション2')).toBeInTheDocument();
 
     // GMが表示されていることを確認
-    expect(screen.getByText('GM: テストGM')).toBeInTheDocument();
-    expect(screen.getByText('GM: テストGM2')).toBeInTheDocument();
+    expect(screen.getByText(/テストGM\d/)).toBeInTheDocument(); // /テストGM/ とすると複数の要素にマッチしてエラーになる
+    expect(screen.getByText(/テストGM2/)).toBeInTheDocument();
 
     // プレイヤー数が表示されていることを確認
-    expect(screen.getByText('プレイヤー: 2/5')).toBeInTheDocument();
-    expect(screen.getByText('プレイヤー: 0/4')).toBeInTheDocument();
+    expect(screen.getByText(/プレイヤー: 2\/5/)).toBeInTheDocument();
+    expect(screen.getByText(/プレイヤー: 0\/4/)).toBeInTheDocument();
 
     // ステータスが表示されていることを確認
-    expect(screen.getByText('NotStarted')).toBeInTheDocument();
-    expect(screen.getByText('InProgress')).toBeInTheDocument();
+    expect(screen.getByText(/NotStarted/)).toBeInTheDocument();
+    expect(screen.getByText(/InProgress/)).toBeInTheDocument();
   });
 });

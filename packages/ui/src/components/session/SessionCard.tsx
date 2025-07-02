@@ -136,7 +136,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
         {renderHeader()}
 
         <p className="text-sm text-stone-500 mb-2">
-          GM: {gm} • 参加プレイヤー: {players}/{maxPlayers}人
+          {`GM: ${gm}`} • {`参加プレイヤー: ${players}/${maxPlayers}人`}
         </p>
 
         {description && (
