@@ -1,6 +1,6 @@
 {
   "name": "odyssage",
-  "packageManager": "bun@1.2.18",
+  "packageManager": "bun@1.2.19",
   "private": true,
   "scripts": {
     "init": "git config --local core.hooksPath .githooks && echo Changed hooks directory when npm install",
@@ -37,7 +37,7 @@
     "concurrently": "^9.2.0",
     "dependency-cruiser": "^16.10.4",
     "prettier": "^3.6.2",
-    "turbo": "^2.5.4",
+    "turbo": "^2.5.5",
     "vitest": "^3.2.4"
   },
   "workspaces": [
