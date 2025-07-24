@@ -25,7 +25,7 @@
       },
       "devDependencies": {
         "@cloudflare/vitest-pool-workers": "^0.8.56",
-        "@cloudflare/workers-types": "^4.20250723.0",
+        "@cloudflare/workers-types": "^4.20250724.0",
         "@testcontainers/postgresql": "^11.4.0",
         "dotenv": "^17.2.0",
         "testcontainers": "^11.4.0",
@@ -63,7 +63,7 @@
         "msw": "^2.10.4",
         "npm-check-updates": "^18.0.2",
         "typescript": "^5.8.3",
-        "vite": "^7.0.5",
+        "vite": "^7.0.6",
         "vitest": "^3.2.4",
       },
     },
@@ -241,7 +241,7 @@
 
     "@cloudflare/workerd-windows-64": ["@cloudflare/workerd-windows-64@1.20250712.0", "", { "os": "win32", "cpu": "x64" }, "sha512-qS8H5RCYwE21Om9wo5/F807ClBJIfknhuLBj16eYxvJcj9JqgAKWi12BGgjyGxHuJJjeoQ63lr4wHAdbFntDDg=="],
 
-    "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20250723.0", "", {}, "sha512-4k0w5IKAP2pnEGJjxv4hjSwftCVEAbZ+EFmJGWhLaCfByaiPpWbiOJiWMUk8xf/Zp7atZkyRbH8+yRFz5hZHDg=="],
+    "@cloudflare/workers-types": ["@cloudflare/workers-types@4.20250724.0", "", {}, "sha512-TRuz+kMArBpW3lR7xoPR7Ek+/ymvukE5JC7RITlaRyHbs6vWPfwpH9TWQ1dfztYFmSQl5ZiAbLcK8UDRjgiW7g=="],
 
     "@colors/colors": ["@colors/colors@1.5.0", "", {}, "sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ=="],
 
@@ -2159,7 +2159,7 @@
 
     "validate-npm-package-license": ["validate-npm-package-license@3.0.4", "", { "dependencies": { "spdx-correct": "^3.0.0", "spdx-expression-parse": "^3.0.0" } }, "sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew=="],
 
-    "vite": ["vite@7.0.5", "", { "dependencies": { "esbuild": "^0.25.0", "fdir": "^6.4.6", "picomatch": "^4.0.2", "postcss": "^8.5.6", "rollup": "^4.40.0", "tinyglobby": "^0.2.14" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "jiti": ">=1.21.0", "less": "^4.0.0", "lightningcss": "^1.21.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "jiti", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-1mncVwJxy2C9ThLwz0+2GKZyEXuC3MyWtAAlNftlZZXZDP3AJt5FmwcMit/IGGaNZ8ZOB2BNO/HFUB+CpN0NQw=="],
+    "vite": ["vite@7.0.6", "", { "dependencies": { "esbuild": "^0.25.0", "fdir": "^6.4.6", "picomatch": "^4.0.3", "postcss": "^8.5.6", "rollup": "^4.40.0", "tinyglobby": "^0.2.14" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^20.19.0 || >=22.12.0", "jiti": ">=1.21.0", "less": "^4.0.0", "lightningcss": "^1.21.0", "sass": "^1.70.0", "sass-embedded": "^1.70.0", "stylus": ">=0.54.8", "sugarss": "^5.0.0", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "jiti", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-MHFiOENNBd+Bd9uvc8GEsIzdkn1JxMmEeYX35tI3fv0sJBUTfW5tQsoaOwuY4KhBI09A3dUJ/DXf2yxPVPUceg=="],
 
     "vite-node": ["vite-node@3.2.4", "", { "dependencies": { "cac": "^6.7.14", "debug": "^4.4.1", "es-module-lexer": "^1.7.0", "pathe": "^2.0.3", "vite": "^5.0.0 || ^6.0.0 || ^7.0.0-0" }, "bin": { "vite-node": "vite-node.mjs" } }, "sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg=="],
 
@@ -2590,6 +2590,8 @@
     "unplugin/acorn": ["acorn@8.14.0", "", { "bin": { "acorn": "bin/acorn" } }, "sha512-cl669nCJTZBsL97OF4kUQm5g5hC2uihk0NxY3WENAC0TYdILVkAyHymAntgxGkl7K+t0cXIrH5siy5S4XkFycA=="],
 
     "vite/esbuild": ["esbuild@0.25.5", "", { "optionalDependencies": { "@esbuild/aix-ppc64": "0.25.5", "@esbuild/android-arm": "0.25.5", "@esbuild/android-arm64": "0.25.5", "@esbuild/android-x64": "0.25.5", "@esbuild/darwin-arm64": "0.25.5", "@esbuild/darwin-x64": "0.25.5", "@esbuild/freebsd-arm64": "0.25.5", "@esbuild/freebsd-x64": "0.25.5", "@esbuild/linux-arm": "0.25.5", "@esbuild/linux-arm64": "0.25.5", "@esbuild/linux-ia32": "0.25.5", "@esbuild/linux-loong64": "0.25.5", "@esbuild/linux-mips64el": "0.25.5", "@esbuild/linux-ppc64": "0.25.5", "@esbuild/linux-riscv64": "0.25.5", "@esbuild/linux-s390x": "0.25.5", "@esbuild/linux-x64": "0.25.5", "@esbuild/netbsd-arm64": "0.25.5", "@esbuild/netbsd-x64": "0.25.5", "@esbuild/openbsd-arm64": "0.25.5", "@esbuild/openbsd-x64": "0.25.5", "@esbuild/sunos-x64": "0.25.5", "@esbuild/win32-arm64": "0.25.5", "@esbuild/win32-ia32": "0.25.5", "@esbuild/win32-x64": "0.25.5" }, "bin": { "esbuild": "bin/esbuild" } }, "sha512-P8OtKZRv/5J5hhz0cUAdu/cLuPIKXpQl1R9pZtvmHWQvrAUVd0UNIPT4IB4W3rNOqVO0rlqHmCIbSwxh/c9yUQ=="],
+
+    "vite/picomatch": ["picomatch@4.0.3", "", {}, "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q=="],
 
     "vite-node/vite": ["vite@6.3.5", "", { "dependencies": { "esbuild": "^0.25.0", "fdir": "^6.4.4", "picomatch": "^4.0.2", "postcss": "^8.5.3", "rollup": "^4.34.9", "tinyglobby": "^0.2.13" }, "optionalDependencies": { "fsevents": "~2.3.3" }, "peerDependencies": { "@types/node": "^18.0.0 || ^20.0.0 || >=22.0.0", "jiti": ">=1.21.0", "less": "*", "lightningcss": "^1.21.0", "sass": "*", "sass-embedded": "*", "stylus": "*", "sugarss": "*", "terser": "^5.16.0", "tsx": "^4.8.1", "yaml": "^2.4.2" }, "optionalPeers": ["@types/node", "jiti", "less", "lightningcss", "sass", "sass-embedded", "stylus", "sugarss", "terser", "tsx", "yaml"], "bin": { "vite": "bin/vite.js" } }, "sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ=="],
 
