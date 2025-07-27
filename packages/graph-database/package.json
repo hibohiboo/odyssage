@@ -1,0 +1,11 @@
+{
+  "name": "@odyssage/graph-database",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "ncu": "ncu -u",
+    "local:graphdb": "bash ../../infra/local/neo4j/bin/up.sh",
+    "test": "vitest run"
+  }
+}
