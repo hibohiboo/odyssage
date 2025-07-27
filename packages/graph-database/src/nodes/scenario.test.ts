@@ -2,26 +2,29 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createScenarioNode, getScenarioNode } from './scenario';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scenario Node Operations', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run('MATCH (s:Scenario {id: $id}) DELETE s', { id: 'test-scenario-1' });
+    cleanup = new TestCleanupHelper(session);
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run('MATCH (s:Scenario {id: $id}) DELETE s', { id: 'test-scenario-1' });
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should create a scenario node with all properties', async () => {
     // Arrange
+    const testIds = generateTestIdSet('scenario-create');
+    cleanup.addTestId(testIds.scenarioId);
+    
     const scenarioData = {
-      id: 'test-scenario-1',
+      id: testIds.scenarioId,
       title: 'テストシナリオ',
       overview: 'これはテスト用のシナリオです',
       userId: 'user-1',
@@ -34,7 +37,7 @@ describe('Scenario Node Operations', () => {
     // Assert
     expect(result.records).toHaveLength(1);
     const node = result.records[0].get('s');
-    expect(node.properties.id).toBe('test-scenario-1');
+    expect(node.properties.id).toBe(testIds.scenarioId);
     expect(node.properties.title).toBe('テストシナリオ');
     expect(node.properties.overview).toBe('これはテスト用のシナリオです');
     expect(node.properties.userId).toBe('user-1');
@@ -43,8 +46,11 @@ describe('Scenario Node Operations', () => {
 
   it('should retrieve a scenario node by id', async () => {
     // Arrange
+    const testIds = generateTestIdSet('scenario-get');
+    cleanup.addTestId(testIds.scenarioId);
+    
     const scenarioData = {
-      id: 'test-scenario-1',
+      id: testIds.scenarioId,
       title: 'テストシナリオ',
       overview: 'これはテスト用のシナリオです',
       userId: 'user-1',
@@ -53,12 +59,12 @@ describe('Scenario Node Operations', () => {
     await createScenarioNode(session, scenarioData);
 
     // Act
-    const result = await getScenarioNode(session, 'test-scenario-1');
+    const result = await getScenarioNode(session, testIds.scenarioId);
 
     // Assert
     expect(result.records).toHaveLength(1);
     const node = result.records[0].get('s');
-    expect(node.properties.id).toBe('test-scenario-1');
+    expect(node.properties.id).toBe(testIds.scenarioId);
     expect(node.properties.title).toBe('テストシナリオ');
   });
 });

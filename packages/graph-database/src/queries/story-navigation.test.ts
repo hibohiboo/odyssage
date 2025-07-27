@@ -18,75 +18,84 @@ import {
   getReachableEvents,
   findPlayerChoiceHistory
 } from './story-navigation';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Story Navigation Queries', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (n) WHERE n.id STARTS WITH 'test-'
-      DETACH DELETE n
-    `);
+    cleanup = new TestCleanupHelper(session);
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (n) WHERE n.id STARTS WITH 'test-'
-      DETACH DELETE n
-    `);
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should track player path through the story', async () => {
     // Arrange - 分岐のあるストーリーを作成
-    await createCompleteStoryStructure(session);
+    const testIds = generateTestIdSet('path-track');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
 
     // Act - プレイヤーのパスを記録
-    const startResult = await navigateToEvent(session, 'test-player-1', 'test-event-1');
-    const nextResult = await navigateToEvent(session, 'test-player-1', 'test-event-2');
+    const playerId = `player-${testIds.scenarioId}`;
+    cleanup.addTestId(playerId);
+    
+    const startResult = await navigateToEvent(session, playerId, testIds.eventId);
+    const nextResult = await navigateToEvent(session, playerId, testIds.eventId2!);
 
     // Assert - パスが正しく記録されているか確認
-    const pathResult = await getPlayerPath(session, 'test-player-1');
+    const pathResult = await getPlayerPath(session, playerId);
     expect(pathResult.records.length).toBeGreaterThan(0);
     
     const visitedEvents = pathResult.records.map(record => 
       record.get('event').properties.id
     );
-    expect(visitedEvents).toContain('test-event-1');
-    expect(visitedEvents).toContain('test-event-2');
+    expect(visitedEvents).toContain(testIds.eventId);
+    expect(visitedEvents).toContain(testIds.eventId2);
   });
 
   it('should get available choices for current player position', async () => {
     // Arrange
-    await createCompleteStoryStructure(session);
-    await navigateToEvent(session, 'test-player-1', 'test-event-1');
+    const testIds = generateTestIdSet('choices');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
+    const playerId = `player-${testIds.scenarioId}`;
+    cleanup.addTestId(playerId);
+    
+    await navigateToEvent(session, playerId, testIds.eventId);
 
     // Act
-    const choicesResult = await getAvailableChoices(session, 'test-player-1');
+    const choicesResult = await getAvailableChoices(session, playerId);
 
     // Assert
     expect(choicesResult.records.length).toBeGreaterThan(0);
     const choice = choicesResult.records[0];
     expect(choice.get('choice').properties.text).toBe('右の道へ進む');
-    expect(choice.get('nextEvent').properties.id).toBe('test-event-2');
+    expect(choice.get('nextEvent').properties.id).toBe(testIds.eventId2);
   });
 
   it('should validate if a story path is possible', async () => {
     // Arrange
-    await createCompleteStoryStructure(session);
+    const testIds = generateTestIdSet('validate');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
 
     // Act
     const validPath = await validateStoryPath(session, [
-      'test-event-1',
-      'test-event-2'
+      testIds.eventId,
+      testIds.eventId2!
     ]);
 
     const invalidPath = await validateStoryPath(session, [
-      'test-event-1',
-      'test-event-3' // 存在しないイベント
+      testIds.eventId,
+      'nonexistent-event'
     ]);
 
     // Assert
@@ -96,57 +105,72 @@ describe('Story Navigation Queries', () => {
 
   it('should get current player position', async () => {
     // Arrange
-    await createCompleteStoryStructure(session);
-    await navigateToEvent(session, 'test-player-1', 'test-event-1');
-    await navigateToEvent(session, 'test-player-1', 'test-event-2');
+    const testIds = generateTestIdSet('position');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
+    const playerId = `player-${testIds.scenarioId}`;
+    cleanup.addTestId(playerId);
+    
+    await navigateToEvent(session, playerId, testIds.eventId);
+    await navigateToEvent(session, playerId, testIds.eventId2!);
 
     // Act
-    const result = await getCurrentPlayerPosition(session, 'test-player-1');
+    const result = await getCurrentPlayerPosition(session, playerId);
 
     // Assert
     expect(result.records.length).toBe(1);
     const currentEvent = result.records[0].get('currentEvent');
-    expect(currentEvent.properties.id).toBe('test-event-2');
+    expect(currentEvent.properties.id).toBe(testIds.eventId2);
   });
 
   it('should get reachable events from start point', async () => {
     // Arrange
-    await createCompleteStoryStructure(session);
+    const testIds = generateTestIdSet('reachable');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
 
     // Act
-    const result = await getReachableEvents(session, 'test-event-1', 3);
+    const result = await getReachableEvents(session, testIds.eventId, 3);
 
     // Assert
     expect(result.records.length).toBeGreaterThan(0);
     const reachableEvent = result.records.find(record => 
-      record.get('reachable').properties.id === 'test-event-2'
+      record.get('reachable').properties.id === testIds.eventId2
     );
     expect(reachableEvent).toBeDefined();
   });
 
   it('should find player choice history', async () => {
     // Arrange
-    await createCompleteStoryStructure(session);
-    await navigateToEvent(session, 'test-player-1', 'test-event-1');
-    await navigateToEvent(session, 'test-player-1', 'test-event-2');
+    const testIds = generateTestIdSet('history');
+    cleanup.addTestIdSet(testIds);
+    
+    await createCompleteStoryStructure(session, testIds);
+    const playerId = `player-${testIds.scenarioId}`;
+    cleanup.addTestId(playerId);
+    
+    await navigateToEvent(session, playerId, testIds.eventId);
+    await navigateToEvent(session, playerId, testIds.eventId2!);
 
     // Act
-    const result = await findPlayerChoiceHistory(session, 'test-player-1');
+    const result = await findPlayerChoiceHistory(session, playerId);
 
     // Assert
     expect(result.records.length).toBeGreaterThan(0);
     const choiceRecord = result.records.find(record => 
-      record.get('event').properties.id === 'test-event-1'
+      record.get('event').properties.id === testIds.eventId
     );
     expect(choiceRecord).toBeDefined();
     expect(choiceRecord.get('choice').properties.text).toBe('右の道へ進む');
   });
 });
 
-async function createCompleteStoryStructure(session: any) {
+async function createCompleteStoryStructure(session: any, testIds: any) {
   // シナリオ作成
   await createScenarioNode(session, {
-    id: 'test-scenario-1',
+    id: testIds.scenarioId,
     title: 'テストシナリオ',
     overview: 'これはテスト用のシナリオです',
     userId: 'user-1',
@@ -155,42 +179,42 @@ async function createCompleteStoryStructure(session: any) {
 
   // シーン作成
   await createSceneNode(session, {
-    id: 'test-scene-1',
+    id: testIds.sceneId,
     title: '森の入り口',
     description: '深い森の入り口。木々が鬱蒼と茂っている。',
     order: 1,
-    scenarioId: 'test-scenario-1',
+    scenarioId: testIds.scenarioId,
   });
 
   // イベント作成
   await createEventNode(session, {
-    id: 'test-event-1',
+    id: testIds.eventId,
     title: '選択の瞬間',
     description: '道が二股に分かれています。',
     order: 1,
-    sceneId: 'test-scene-1',
+    sceneId: testIds.sceneId,
   });
 
   await createEventNode(session, {
-    id: 'test-event-2',
+    id: testIds.eventId2,
     title: '右の道',
     description: '右の道を進んだ結果。',
     order: 2,
-    sceneId: 'test-scene-1',
+    sceneId: testIds.sceneId,
   });
 
   // メッセージ作成
   await createMessageNode(session, {
-    id: 'test-message-1',
+    id: testIds.messageId,
     text: 'どちらの道を選びますか？',
     order: 1,
-    eventId: 'test-event-1',
+    eventId: testIds.eventId,
   });
 
   // リレーション作成
-  await createScenarioSceneRelation(session, 'test-scenario-1', 'test-scene-1');
-  await createSceneEventRelation(session, 'test-scene-1', 'test-event-1');
-  await createSceneEventRelation(session, 'test-scene-1', 'test-event-2');
-  await createEventMessageRelation(session, 'test-event-1', 'test-message-1');
-  await createMessageChoiceRelation(session, 'test-message-1', 'test-event-2', '右の道へ進む');
+  await createScenarioSceneRelation(session, testIds.scenarioId, testIds.sceneId);
+  await createSceneEventRelation(session, testIds.sceneId, testIds.eventId);
+  await createSceneEventRelation(session, testIds.sceneId, testIds.eventId2);
+  await createEventMessageRelation(session, testIds.eventId, testIds.messageId);
+  await createMessageChoiceRelation(session, testIds.messageId, testIds.eventId2, '右の道へ進む');
 }

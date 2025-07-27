@@ -4,36 +4,29 @@ import { driver } from '../driver';
 import { createScenarioNode } from '../nodes/scenario';
 import { createSceneNode } from '../nodes/scene';
 import { createScenarioSceneRelation, getScenarioScenes } from './scenario-scene';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scenario-Scene Relationship Operations', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (s:Scenario {id: $scenarioId})-[r:HAS_SCENE]->(sc:Scene {id: $sceneId}) 
-      DELETE r
-    `, { scenarioId: 'test-scenario-1', sceneId: 'test-scene-1' });
-    await session.run('MATCH (s:Scenario {id: $id}) DELETE s', { id: 'test-scenario-1' });
-    await session.run('MATCH (s:Scene {id: $id}) DELETE s', { id: 'test-scene-1' });
+    cleanup = new TestCleanupHelper(session);
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (s:Scenario {id: $scenarioId})-[r:HAS_SCENE]->(sc:Scene {id: $sceneId}) 
-      DELETE r
-    `, { scenarioId: 'test-scenario-1', sceneId: 'test-scene-1' });
-    await session.run('MATCH (s:Scenario {id: $id}) DELETE s', { id: 'test-scenario-1' });
-    await session.run('MATCH (s:Scene {id: $id}) DELETE s', { id: 'test-scene-1' });
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should create a HAS_SCENE relationship between scenario and scene', async () => {
     // Arrange
+    const testIds = generateTestIdSet('rel-create');
+    cleanup.addTestIdSet(testIds);
+    
     const scenarioData = {
-      id: 'test-scenario-1',
+      id: testIds.scenarioId,
       title: 'テストシナリオ',
       overview: 'これはテスト用のシナリオです',
       userId: 'user-1',
@@ -41,18 +34,18 @@ describe('Scenario-Scene Relationship Operations', () => {
     };
 
     const sceneData = {
-      id: 'test-scene-1',
+      id: testIds.sceneId,
       title: '森の入り口',
       description: '深い森の入り口。木々が鬱蒼と茂っている。',
       order: 1,
-      scenarioId: 'test-scenario-1',
+      scenarioId: testIds.scenarioId,
     };
 
     await createScenarioNode(session, scenarioData);
     await createSceneNode(session, sceneData);
 
     // Act
-    const result = await createScenarioSceneRelation(session, 'test-scenario-1', 'test-scene-1');
+    const result = await createScenarioSceneRelation(session, testIds.scenarioId, testIds.sceneId);
 
     // Assert
     expect(result.records).toHaveLength(1);
@@ -62,8 +55,11 @@ describe('Scenario-Scene Relationship Operations', () => {
 
   it('should retrieve all scenes for a scenario', async () => {
     // Arrange
+    const testIds = generateTestIdSet('rel-get');
+    cleanup.addTestIdSet(testIds);
+    
     const scenarioData = {
-      id: 'test-scenario-1',
+      id: testIds.scenarioId,
       title: 'テストシナリオ',
       overview: 'これはテスト用のシナリオです',
       userId: 'user-1',
@@ -71,24 +67,24 @@ describe('Scenario-Scene Relationship Operations', () => {
     };
 
     const sceneData = {
-      id: 'test-scene-1',
+      id: testIds.sceneId,
       title: '森の入り口',
       description: '深い森の入り口。木々が鬱蒼と茂っている。',
       order: 1,
-      scenarioId: 'test-scenario-1',
+      scenarioId: testIds.scenarioId,
     };
 
     await createScenarioNode(session, scenarioData);
     await createSceneNode(session, sceneData);
-    await createScenarioSceneRelation(session, 'test-scenario-1', 'test-scene-1');
+    await createScenarioSceneRelation(session, testIds.scenarioId, testIds.sceneId);
 
     // Act
-    const result = await getScenarioScenes(session, 'test-scenario-1');
+    const result = await getScenarioScenes(session, testIds.scenarioId);
 
     // Assert
     expect(result.records).toHaveLength(1);
     const scene = result.records[0].get('scene');
-    expect(scene.properties.id).toBe('test-scene-1');
+    expect(scene.properties.id).toBe(testIds.sceneId);
     expect(scene.properties.title).toBe('森の入り口');
   });
 });
