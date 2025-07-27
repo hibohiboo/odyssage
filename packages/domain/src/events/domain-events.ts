@@ -16,8 +16,11 @@ export interface DomainEvent {
  */
 export class ScenarioCreatedEvent implements DomainEvent {
   readonly eventId: string;
+
   readonly occurredAt: Date;
+
   readonly eventType = 'ScenarioCreated';
+
   readonly version = 1;
 
   constructor(
@@ -40,8 +43,11 @@ export class ScenarioCreatedEvent implements DomainEvent {
  */
 export class ScenarioPublishedEvent implements DomainEvent {
   readonly eventId: string;
+
   readonly occurredAt: Date;
+
   readonly eventType = 'ScenarioPublished';
+
   readonly version = 1;
 
   constructor(
@@ -63,8 +69,11 @@ export class ScenarioPublishedEvent implements DomainEvent {
  */
 export class GameStartedEvent implements DomainEvent {
   readonly eventId: string;
+
   readonly occurredAt: Date;
+
   readonly eventType = 'GameStarted';
+
   readonly version = 1;
 
   constructor(
@@ -87,8 +96,11 @@ export class GameStartedEvent implements DomainEvent {
  */
 export class ChoiceMadeEvent implements DomainEvent {
   readonly eventId: string;
+
   readonly occurredAt: Date;
+
   readonly eventType = 'ChoiceMade';
+
   readonly version = 1;
 
   constructor(
@@ -113,8 +125,11 @@ export class ChoiceMadeEvent implements DomainEvent {
  */
 export class GameCompletedEvent implements DomainEvent {
   readonly eventId: string;
+
   readonly occurredAt: Date;
+
   readonly eventType = 'GameCompleted';
+
   readonly version = 1;
 
   constructor(

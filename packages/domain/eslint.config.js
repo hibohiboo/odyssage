@@ -1,3 +1,14 @@
-import baseConfig from '@odyssage/eslint-config-custom/defaults.js';
+import customConfig from '@odyssage/eslint-config-custom/backend.js';
+import tseslint from 'typescript-eslint';
 
-export default baseConfig;
+export default tseslint.config(customConfig, {
+  files: ['**/**/*.test.ts'],
+  rules: {
+    'no-undef': ['off'],
+    'import/extensions': ['off'],
+    'import/no-extraneous-dependencies': ['off'],
+    'import/no-unresolved': ['off'],
+    'sonarjs/slow-regex': ['off'],
+    '@typescript-eslint/no-explicit-any': ['off'],
+  },
+});

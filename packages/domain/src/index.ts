@@ -8,6 +8,7 @@ export * from './entities/message';
 
 // 値オブジェクト
 export * from './value-objects/choice';
+export * from './value-objects/choice-conditions';
 
 // リポジトリインターフェース
 export * from './repositories/scenario-repository';
