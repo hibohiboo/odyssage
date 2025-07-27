@@ -4,55 +4,48 @@ import { driver } from '../driver';
 import { createSceneNode } from '../nodes/scene';
 import { createEventNode } from '../nodes/event';
 import { createSceneEventRelation, getSceneEvents } from './scene-event';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scene-Event Relationship Operations', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (s:Scene {id: $sceneId})-[r:HAS_EVENT]->(e:Event {id: $eventId}) 
-      DELETE r
-    `, { sceneId: 'test-scene-1', eventId: 'test-event-1' });
-    await session.run('MATCH (s:Scene {id: $id}) DELETE s', { id: 'test-scene-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
+    cleanup = new TestCleanupHelper(session);
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (s:Scene {id: $sceneId})-[r:HAS_EVENT]->(e:Event {id: $eventId}) 
-      DELETE r
-    `, { sceneId: 'test-scene-1', eventId: 'test-event-1' });
-    await session.run('MATCH (s:Scene {id: $id}) DELETE s', { id: 'test-scene-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should create a HAS_EVENT relationship between scene and event', async () => {
     // Arrange
+    const testIds = generateTestIdSet('scene-event-create');
+    cleanup.addTestIdSet(testIds);
+    
     const sceneData = {
-      id: 'test-scene-1',
+      id: testIds.sceneId,
       title: '森の入り口',
       description: '深い森の入り口。木々が鬱蒼と茂っている。',
       order: 1,
-      scenarioId: 'scenario-1',
+      scenarioId: testIds.scenarioId,
     };
 
     const eventData = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '奇妙な音',
       description: '森の奥から奇妙な音が聞こえる。',
       order: 1,
-      sceneId: 'test-scene-1',
+      sceneId: testIds.sceneId,
     };
 
     await createSceneNode(session, sceneData);
     await createEventNode(session, eventData);
 
     // Act
-    const result = await createSceneEventRelation(session, 'test-scene-1', 'test-event-1');
+    const result = await createSceneEventRelation(session, testIds.sceneId, testIds.eventId);
 
     // Assert
     expect(result.records).toHaveLength(1);
@@ -62,33 +55,36 @@ describe('Scene-Event Relationship Operations', () => {
 
   it('should retrieve all events for a scene', async () => {
     // Arrange
+    const testIds = generateTestIdSet('scene-event-get');
+    cleanup.addTestIdSet(testIds);
+    
     const sceneData = {
-      id: 'test-scene-1',
+      id: testIds.sceneId,
       title: '森の入り口',
       description: '深い森の入り口。木々が鬱蒼と茂っている。',
       order: 1,
-      scenarioId: 'scenario-1',
+      scenarioId: testIds.scenarioId,
     };
 
     const eventData = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '奇妙な音',
       description: '森の奥から奇妙な音が聞こえる。',
       order: 1,
-      sceneId: 'test-scene-1',
+      sceneId: testIds.sceneId,
     };
 
     await createSceneNode(session, sceneData);
     await createEventNode(session, eventData);
-    await createSceneEventRelation(session, 'test-scene-1', 'test-event-1');
+    await createSceneEventRelation(session, testIds.sceneId, testIds.eventId);
 
     // Act
-    const result = await getSceneEvents(session, 'test-scene-1');
+    const result = await getSceneEvents(session, testIds.sceneId);
 
     // Assert
     expect(result.records).toHaveLength(1);
     const event = result.records[0].get('event');
-    expect(event.properties.id).toBe('test-event-1');
+    expect(event.properties.id).toBe(testIds.eventId);
     expect(event.properties.title).toBe('奇妙な音');
   });
 });

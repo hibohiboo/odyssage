@@ -4,54 +4,47 @@ import { driver } from '../driver';
 import { createEventNode } from '../nodes/event';
 import { createMessageNode } from '../nodes/message';
 import { createEventMessageRelation, getEventMessages } from './event-message';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Event-Message Relationship Operations', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (e:Event {id: $eventId})-[r:HAS_MESSAGE]->(m:Message {id: $messageId}) 
-      DELETE r
-    `, { eventId: 'test-event-1', messageId: 'test-message-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
-    await session.run('MATCH (m:Message {id: $id}) DELETE m', { id: 'test-message-1' });
+    cleanup = new TestCleanupHelper(session);
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (e:Event {id: $eventId})-[r:HAS_MESSAGE]->(m:Message {id: $messageId}) 
-      DELETE r
-    `, { eventId: 'test-event-1', messageId: 'test-message-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
-    await session.run('MATCH (m:Message {id: $id}) DELETE m', { id: 'test-message-1' });
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should create a HAS_MESSAGE relationship between event and message', async () => {
     // Arrange
+    const testIds = generateTestIdSet('event-msg-create');
+    cleanup.addTestIdSet(testIds);
+    
     const eventData = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '奇妙な音',
       description: '森の奥から奇妙な音が聞こえる。',
       order: 1,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const messageData = {
-      id: 'test-message-1',
+      id: testIds.messageId,
       text: 'あなたは森の入り口に立っています。奥から奇妙な音が聞こえます。',
       order: 1,
-      eventId: 'test-event-1',
+      eventId: testIds.eventId,
     };
 
     await createEventNode(session, eventData);
     await createMessageNode(session, messageData);
 
     // Act
-    const result = await createEventMessageRelation(session, 'test-event-1', 'test-message-1');
+    const result = await createEventMessageRelation(session, testIds.eventId, testIds.messageId);
 
     // Assert
     expect(result.records).toHaveLength(1);
@@ -61,32 +54,35 @@ describe('Event-Message Relationship Operations', () => {
 
   it('should retrieve all messages for an event', async () => {
     // Arrange
+    const testIds = generateTestIdSet('event-msg-get');
+    cleanup.addTestIdSet(testIds);
+    
     const eventData = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '奇妙な音',
       description: '森の奥から奇妙な音が聞こえる。',
       order: 1,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const messageData = {
-      id: 'test-message-1',
+      id: testIds.messageId,
       text: 'あなたは森の入り口に立っています。奥から奇妙な音が聞こえます。',
       order: 1,
-      eventId: 'test-event-1',
+      eventId: testIds.eventId,
     };
 
     await createEventNode(session, eventData);
     await createMessageNode(session, messageData);
-    await createEventMessageRelation(session, 'test-event-1', 'test-message-1');
+    await createEventMessageRelation(session, testIds.eventId, testIds.messageId);
 
     // Act
-    const result = await getEventMessages(session, 'test-event-1');
+    const result = await getEventMessages(session, testIds.eventId);
 
     // Assert
     expect(result.records).toHaveLength(1);
     const message = result.records[0].get('message');
-    expect(message.properties.id).toBe('test-message-1');
+    expect(message.properties.id).toBe(testIds.messageId);
     expect(message.properties.text).toBe('あなたは森の入り口に立っています。奥から奇妙な音が聞こえます。');
   });
 });
