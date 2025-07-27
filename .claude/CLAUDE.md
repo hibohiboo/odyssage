@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 常に日本語で返答してください
 t_wadaのテスト駆動の手法で開発してください。
+改行コードは必ずLF（Line Feed）を使用してください。
 
 テスト駆動開発の定義は以下です。
 

@@ -1,0 +1,14 @@
+{
+  "name": "@odyssage/domain",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "vitest",
+    "ncu": "ncu -u"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "dependencies": {}
+}

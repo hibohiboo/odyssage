@@ -5,6 +5,7 @@ export default defineConfig({
     projects: [
       'apps/backend/vitest.config.integration.mts',
       'apps/frontend/vitest.config.ts',
+      'packages/domain/vitest.config.ts',
     ],
   },
 });

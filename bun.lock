@@ -91,6 +91,13 @@
         "drizzle-kit": "^0.31.4",
       },
     },
+    "packages/domain": {
+      "name": "@odyssage/domain",
+      "version": "0.0.0",
+      "devDependencies": {
+        "vitest": "^3.2.4",
+      },
+    },
     "packages/eslint-config-custom": {
       "name": "@odyssage/eslint-config-custom",
       "version": "0.0.0",
@@ -128,9 +135,6 @@
       "version": "0.0.0",
       "dependencies": {
         "valibot": "^1.1.0",
-      },
-      "devDependencies": {
-        "vitest": "^3.2.4",
       },
     },
     "packages/typescript-config": {
@@ -565,6 +569,8 @@
     "@odyssage/bdd-e2e-test": ["@odyssage/bdd-e2e-test@workspace:packages/bdd-e2e-test"],
 
     "@odyssage/database": ["@odyssage/database@workspace:packages/database"],
+
+    "@odyssage/domain": ["@odyssage/domain@workspace:packages/domain"],
 
     "@odyssage/eslint-config-custom": ["@odyssage/eslint-config-custom@workspace:packages/eslint-config-custom"],
 

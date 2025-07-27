@@ -4,12 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "vitest",
     "ncu": "ncu -u"
   },
-  "devDependencies": {
-    "vitest": "^3.2.4"
-  },
+  "devDependencies": {},
   "dependencies": {
     "valibot": "^1.1.0"
   }
