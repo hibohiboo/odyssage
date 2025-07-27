@@ -13,7 +13,10 @@ import {
   getPlayerPath, 
   getAvailableChoices, 
   navigateToEvent, 
-  validateStoryPath 
+  validateStoryPath,
+  getCurrentPlayerPosition,
+  getReachableEvents,
+  findPlayerChoiceHistory
 } from './story-navigation';
 
 describe('Story Navigation Queries', () => {
@@ -89,6 +92,54 @@ describe('Story Navigation Queries', () => {
     // Assert
     expect(validPath.records[0].get('isValid')).toBe(true);
     expect(invalidPath.records[0].get('isValid')).toBe(false);
+  });
+
+  it('should get current player position', async () => {
+    // Arrange
+    await createCompleteStoryStructure(session);
+    await navigateToEvent(session, 'test-player-1', 'test-event-1');
+    await navigateToEvent(session, 'test-player-1', 'test-event-2');
+
+    // Act
+    const result = await getCurrentPlayerPosition(session, 'test-player-1');
+
+    // Assert
+    expect(result.records.length).toBe(1);
+    const currentEvent = result.records[0].get('currentEvent');
+    expect(currentEvent.properties.id).toBe('test-event-2');
+  });
+
+  it('should get reachable events from start point', async () => {
+    // Arrange
+    await createCompleteStoryStructure(session);
+
+    // Act
+    const result = await getReachableEvents(session, 'test-event-1', 3);
+
+    // Assert
+    expect(result.records.length).toBeGreaterThan(0);
+    const reachableEvent = result.records.find(record => 
+      record.get('reachable').properties.id === 'test-event-2'
+    );
+    expect(reachableEvent).toBeDefined();
+  });
+
+  it('should find player choice history', async () => {
+    // Arrange
+    await createCompleteStoryStructure(session);
+    await navigateToEvent(session, 'test-player-1', 'test-event-1');
+    await navigateToEvent(session, 'test-player-1', 'test-event-2');
+
+    // Act
+    const result = await findPlayerChoiceHistory(session, 'test-player-1');
+
+    // Assert
+    expect(result.records.length).toBeGreaterThan(0);
+    const choiceRecord = result.records.find(record => 
+      record.get('event').properties.id === 'test-event-1'
+    );
+    expect(choiceRecord).toBeDefined();
+    expect(choiceRecord.get('choice').properties.text).toBe('右の道へ進む');
   });
 });
 
