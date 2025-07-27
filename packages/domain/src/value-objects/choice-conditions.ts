@@ -58,24 +58,21 @@ export class VariableCondition implements ChoiceCondition {
   evaluate(playerState: PlayerState): boolean {
     const currentValue = playerState.variables[this.variableName] ?? 0;
 
-    if (this.operator === '>') {
-      return currentValue > this.value;
+    switch (this.operator) {
+      case '>':
+        return currentValue > this.value;
+      case '<':
+        return currentValue < this.value;
+      case '>=':
+        return currentValue >= this.value;
+      case '<=':
+        return currentValue <= this.value;
+      case '==':
+        return currentValue === this.value;
+      case '!=':
+        return currentValue !== this.value;
+      default:
+        return false;
     }
-    if (this.operator === '<') {
-      return currentValue < this.value;
-    }
-    if (this.operator === '>=') {
-      return currentValue >= this.value;
-    }
-    if (this.operator === '<=') {
-      return currentValue <= this.value;
-    }
-    if (this.operator === '==') {
-      return currentValue === this.value;
-    }
-    if (this.operator === '!=') {
-      return currentValue !== this.value;
-    }
-    return false;
   }
 }

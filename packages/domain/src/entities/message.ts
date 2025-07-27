@@ -20,67 +20,67 @@ export class Message {
 
   readonly eventId: string;
 
-  private text_: string;
+  #text: string;
 
-  private order_: number;
+  #order: number;
 
-  private choices_: Choice[];
+  #choices: Choice[];
 
   readonly createdAt: Date;
 
-  private updatedAt_: Date;
+  #updatedAt: Date;
 
   constructor(props: MessageProps) {
     this.id = props.id;
     this.eventId = props.eventId;
-    this.text_ = props.text;
-    this.order_ = props.order;
-    this.choices_ = props.choices || [];
+    this.#text = props.text;
+    this.#order = props.order;
+    this.#choices = props.choices || [];
     this.createdAt = props.createdAt || new Date();
-    this.updatedAt_ = props.updatedAt || new Date();
+    this.#updatedAt = props.updatedAt || new Date();
   }
 
   get text(): string {
-    return this.text_;
+    return this.#text;
   }
 
   get order(): number {
-    return this.order_;
+    return this.#order;
   }
 
   get choices(): Choice[] {
-    return [...this.choices_];
+    return [...this.#choices];
   }
 
   get updatedAt(): Date {
-    return this.updatedAt_;
+    return this.#updatedAt;
   }
 
   updateText(text: string): void {
-    this.text_ = text;
-    this.updatedAt_ = new Date();
+    this.#text = text;
+    this.#updatedAt = new Date();
   }
 
   updateOrder(order: number): void {
-    this.order_ = order;
-    this.updatedAt_ = new Date();
+    this.#order = order;
+    this.#updatedAt = new Date();
   }
 
   addChoice(choice: Choice): void {
-    this.choices_.push(choice);
-    this.updatedAt_ = new Date();
+    this.#choices.push(choice);
+    this.#updatedAt = new Date();
   }
 
   removeChoice(choiceId: string): void {
-    this.choices_ = this.choices_.filter((choice) => choice.id !== choiceId);
-    this.updatedAt_ = new Date();
+    this.#choices = this.#choices.filter((choice) => choice.id !== choiceId);
+    this.#updatedAt = new Date();
   }
 
   updateChoice(choiceId: string, updates: Partial<Omit<Choice, 'id'>>): void {
-    const choice = this.choices_.find((c) => c.id === choiceId);
+    const choice = this.#choices.find((c) => c.id === choiceId);
     if (choice) {
       Object.assign(choice, updates);
-      this.updatedAt_ = new Date();
+      this.#updatedAt = new Date();
     }
   }
 }

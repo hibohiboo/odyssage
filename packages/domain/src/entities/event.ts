@@ -17,73 +17,73 @@ export class Event {
 
   readonly sceneId: string;
 
-  private title_: string;
+  #title: string;
 
-  private description_: string;
+  #description: string;
 
-  private order_: number;
+  #order: number;
 
-  private messages_: Message[];
+  #messages: Message[];
 
   readonly createdAt: Date;
 
-  private updatedAt_: Date;
+  #updatedAt: Date;
 
   constructor(props: EventProps) {
     this.id = props.id;
     this.sceneId = props.sceneId;
-    this.title_ = props.title;
-    this.description_ = props.description;
-    this.order_ = props.order;
-    this.messages_ = props.messages || [];
+    this.#title = props.title;
+    this.#description = props.description;
+    this.#order = props.order;
+    this.#messages = props.messages || [];
     this.createdAt = props.createdAt || new Date();
-    this.updatedAt_ = props.updatedAt || new Date();
+    this.#updatedAt = props.updatedAt || new Date();
   }
 
   get title(): string {
-    return this.title_;
+    return this.#title;
   }
 
   get description(): string {
-    return this.description_;
+    return this.#description;
   }
 
   get order(): number {
-    return this.order_;
+    return this.#order;
   }
 
   get messages(): Message[] {
-    return [...this.messages_];
+    return [...this.#messages];
   }
 
   get updatedAt(): Date {
-    return this.updatedAt_;
+    return this.#updatedAt;
   }
 
   updateTitle(title: string): void {
-    this.title_ = title;
-    this.updatedAt_ = new Date();
+    this.#title = title;
+    this.#updatedAt = new Date();
   }
 
   updateDescription(description: string): void {
-    this.description_ = description;
-    this.updatedAt_ = new Date();
+    this.#description = description;
+    this.#updatedAt = new Date();
   }
 
   updateOrder(order: number): void {
-    this.order_ = order;
-    this.updatedAt_ = new Date();
+    this.#order = order;
+    this.#updatedAt = new Date();
   }
 
   addMessage(message: Message): void {
-    this.messages_.push(message);
-    this.updatedAt_ = new Date();
+    this.#messages.push(message);
+    this.#updatedAt = new Date();
   }
 
   removeMessage(messageId: string): void {
-    this.messages_ = this.messages_.filter(
+    this.#messages = this.#messages.filter(
       (message) => message.id !== messageId,
     );
-    this.updatedAt_ = new Date();
+    this.#updatedAt = new Date();
   }
 }

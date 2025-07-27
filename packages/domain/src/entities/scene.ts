@@ -17,71 +17,71 @@ export class Scene {
 
   readonly scenarioId: string;
 
-  private title_: string;
+  #title: string;
 
-  private description_: string;
+  #description: string;
 
-  private order_: number;
+  #order: number;
 
-  private events_: Event[];
+  #events: Event[];
 
   readonly createdAt: Date;
 
-  private updatedAt_: Date;
+  #updatedAt: Date;
 
   constructor(props: SceneProps) {
     this.id = props.id;
     this.scenarioId = props.scenarioId;
-    this.title_ = props.title;
-    this.description_ = props.description;
-    this.order_ = props.order;
-    this.events_ = props.events || [];
+    this.#title = props.title;
+    this.#description = props.description;
+    this.#order = props.order;
+    this.#events = props.events || [];
     this.createdAt = props.createdAt || new Date();
-    this.updatedAt_ = props.updatedAt || new Date();
+    this.#updatedAt = props.updatedAt || new Date();
   }
 
   get title(): string {
-    return this.title_;
+    return this.#title;
   }
 
   get description(): string {
-    return this.description_;
+    return this.#description;
   }
 
   get order(): number {
-    return this.order_;
+    return this.#order;
   }
 
   get events(): Event[] {
-    return [...this.events_];
+    return [...this.#events];
   }
 
   get updatedAt(): Date {
-    return this.updatedAt_;
+    return this.#updatedAt;
   }
 
   updateTitle(title: string): void {
-    this.title_ = title;
-    this.updatedAt_ = new Date();
+    this.#title = title;
+    this.#updatedAt = new Date();
   }
 
   updateDescription(description: string): void {
-    this.description_ = description;
-    this.updatedAt_ = new Date();
+    this.#description = description;
+    this.#updatedAt = new Date();
   }
 
   updateOrder(order: number): void {
-    this.order_ = order;
-    this.updatedAt_ = new Date();
+    this.#order = order;
+    this.#updatedAt = new Date();
   }
 
   addEvent(event: Event): void {
-    this.events_.push(event);
-    this.updatedAt_ = new Date();
+    this.#events.push(event);
+    this.#updatedAt = new Date();
   }
 
   removeEvent(eventId: string): void {
-    this.events_ = this.events_.filter(event => event.id !== eventId);
-    this.updatedAt_ = new Date();
+    this.#events = this.#events.filter(event => event.id !== eventId);
+    this.#updatedAt = new Date();
   }
 }

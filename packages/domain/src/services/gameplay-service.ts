@@ -231,19 +231,31 @@ export class GameplayService {
     };
   }
 
-  private findStartEvent(scenario: any): any {
+  private findStartEvent(scenario: {
+    scenes: Array<{ order: number; events: Array<{ order: number; id: string }> }>;
+  }): { id: string } | null {
     // 最初のシーンの最初のイベントを開始イベントとする
     if (scenario.scenes.length === 0) return null;
 
     const firstScene = scenario.scenes.sort(
-      (a: any, b: any) => a.order - b.order,
+      (a, b) => a.order - b.order,
     )[0];
     if (firstScene.events.length === 0) return null;
 
-    return firstScene.events.sort((a: any, b: any) => a.order - b.order)[0];
+    return firstScene.events.sort((a, b) => a.order - b.order)[0];
   }
 
-  private buildGameState(scenario: any, progress: PlayerProgress): GameState {
+  private buildGameState(
+    scenario: {
+      scenes: Array<{
+        events: Array<{
+          id: string;
+          messages: Array<{ order: number; text: string }>;
+        }>;
+      }>;
+    },
+    progress: PlayerProgress,
+  ): GameState {
     const currentEvent = this.findEventById(scenario, progress.currentEventId!);
     if (!currentEvent) {
       throw new Error('現在のイベントが見つかりません');
@@ -257,8 +269,8 @@ export class GameplayService {
 
     // 現在のメッセージを取得
     const currentMessage = currentEvent.messages
-      .sort((a: any, b: any) => a.order - b.order)
-      .map((m: any) => m.text)
+      .sort((a, b) => a.order - b.order)
+      .map((m) => m.text)
       .join('\n');
 
     return {
@@ -270,7 +282,12 @@ export class GameplayService {
     };
   }
 
-  private findEventById(scenario: any, eventId: string): any {
+  private findEventById(
+    scenario: {
+      scenes: Array<{ events: Array<{ id: string; messages: Array<{ order: number; text: string }> }> }>;
+    },
+    eventId: string,
+  ): { id: string; messages: Array<{ order: number; text: string }> } | null {
     for (const scene of scenario.scenes) {
       for (const event of scene.events) {
         if (event.id === eventId) {
@@ -282,8 +299,8 @@ export class GameplayService {
   }
 
   private getAvailableChoices(
-    scenario: any,
-    eventId: string,
+    _scenario: unknown,
+    _eventId: string,
   ): Array<{ text: string; targetEventId: string }> {
     // この部分は実際のシナリオ構造に基づいて実装
     // 現在は簡易実装
@@ -291,19 +308,19 @@ export class GameplayService {
   }
 
   private validateChoice(
-    scenario: any,
-    fromEventId: string,
-    toEventId: string,
+    _scenario: unknown,
+    _fromEventId: string,
+    _toEventId: string,
   ): boolean {
     // 選択の妥当性を検証
     // 現在は簡易実装
     return true;
   }
 
-  private checkGameCompletion(scenario: any, currentEventId: string): boolean {
+  private checkGameCompletion(_scenario: unknown, currentEventId: string): boolean {
     // ゲーム完了条件をチェック
     // 終了イベントに到達したか、または選択肢がないかなど
-    const availableChoices = this.getAvailableChoices(scenario, currentEventId);
+    const availableChoices = this.getAvailableChoices(_scenario, currentEventId);
     return availableChoices.length === 0;
   }
 

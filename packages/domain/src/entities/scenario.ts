@@ -19,71 +19,71 @@ export class Scenario {
 
   readonly userId: string;
 
-  private title_: string;
+  #title: string;
 
-  private overview_: string;
+  #overview: string;
 
-  private visibility_: Visibility;
+  #visibility: Visibility;
 
-  private scenes_: Scene[];
+  #scenes: Scene[];
 
   readonly createdAt: Date;
 
-  private updatedAt_: Date;
+  #updatedAt: Date;
 
   constructor(props: ScenarioProps) {
     this.id = props.id;
     this.userId = props.userId;
-    this.title_ = props.title;
-    this.overview_ = props.overview;
-    this.visibility_ = props.visibility;
-    this.scenes_ = props.scenes || [];
+    this.#title = props.title;
+    this.#overview = props.overview;
+    this.#visibility = props.visibility;
+    this.#scenes = props.scenes || [];
     this.createdAt = props.createdAt || new Date();
-    this.updatedAt_ = props.updatedAt || new Date();
+    this.#updatedAt = props.updatedAt || new Date();
   }
 
   get title(): string {
-    return this.title_;
+    return this.#title;
   }
 
   get overview(): string {
-    return this.overview_;
+    return this.#overview;
   }
 
   get visibility(): Visibility {
-    return this.visibility_;
+    return this.#visibility;
   }
 
   get scenes(): Scene[] {
-    return [...this.scenes_];
+    return [...this.#scenes];
   }
 
   get updatedAt(): Date {
-    return this.updatedAt_;
+    return this.#updatedAt;
   }
 
   updateTitle(title: string): void {
-    this.title_ = title;
-    this.updatedAt_ = new Date();
+    this.#title = title;
+    this.#updatedAt = new Date();
   }
 
   updateOverview(overview: string): void {
-    this.overview_ = overview;
-    this.updatedAt_ = new Date();
+    this.#overview = overview;
+    this.#updatedAt = new Date();
   }
 
   updateVisibility(visibility: Visibility): void {
-    this.visibility_ = visibility;
-    this.updatedAt_ = new Date();
+    this.#visibility = visibility;
+    this.#updatedAt = new Date();
   }
 
   addScene(scene: Scene): void {
-    this.scenes_.push(scene);
-    this.updatedAt_ = new Date();
+    this.#scenes.push(scene);
+    this.#updatedAt = new Date();
   }
 
   removeScene(sceneId: string): void {
-    this.scenes_ = this.scenes_.filter((scene) => scene.id !== sceneId);
-    this.updatedAt_ = new Date();
+    this.#scenes = this.#scenes.filter((scene) => scene.id !== sceneId);
+    this.#updatedAt = new Date();
   }
 }
