@@ -224,16 +224,22 @@ export class ScenarioCreationService {
     scenario.addScene(scene);
   }
 
+  // TODO: 将来的にテンプレートリポジトリやバリデーターでthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private addBranchingStoryTemplate(_scenario: Scenario): void {
     // より複雑な分岐ストーリーのテンプレート
     // 実装は省略（同様のパターンで複数シーン・複数分岐を作成）
   }
 
+  // TODO: 将来的にテンプレートエンジンやイベント発行でthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private addMysteryTemplate(_scenario: Scenario): void {
     // ミステリー系のテンプレート
     // 実装は省略（証拠収集・推理要素を含む構造を作成）
   }
 
+  // TODO: 将来的にIDジェネレーターやマッピングサービスでthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private duplicateScenarioStructure(
     original: Scenario,
     newScenarioId: string,

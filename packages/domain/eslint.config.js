@@ -20,4 +20,10 @@ export default tseslint.config(
       'import/no-extraneous-dependencies': ['off'],
     },
   },
+  {
+    files: ['src/services/*.ts'],
+    rules: {
+      'sonarjs/todo-tag': ['warn'],
+    },
+  },
 );

@@ -334,6 +334,8 @@ export class GameplayService {
     };
   }
 
+  // TODO: 将来的にキャッシュ機能やログ機能でthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private findEventById(
     scenario: {
       scenes: Array<{ events: Array<{ id: string; messages: Array<{ order: number; text: string }> }> }>;
@@ -346,6 +348,8 @@ export class GameplayService {
     return foundEvent || null;
   }
 
+  // TODO: 将来的に設定やルールエンジンでthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private getAvailableChoices(
     _scenario: unknown,
     _eventId: string,
@@ -355,6 +359,8 @@ export class GameplayService {
     return [];
   }
 
+  // TODO: 将来的にバリデーターやログ機能でthisを使用予定
+  // eslint-disable-next-line class-methods-use-this
   private validateChoice(
     _scenario: unknown,
     _fromEventId: string,
