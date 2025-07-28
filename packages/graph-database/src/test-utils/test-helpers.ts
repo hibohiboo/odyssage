@@ -10,12 +10,14 @@ export function generateTestId(prefix: string = 'test'): string {
 }
 
 /**
- * テスト用のタイムスタンプ付きIDを生成
+ * テスト用のタイムスタンプ付きIDを生成（並列実行対応）
  */
 export function generateTimestampedTestId(prefix: string = 'test'): string {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(2, 8);
-  return `${prefix}-${timestamp}-${random}`;
+  const processId = process.pid;
+  const threadId = Math.floor(Math.random() * 10000);
+  return `${prefix}-${timestamp}-${processId}-${threadId}-${random}`;
 }
 
 /**
@@ -87,14 +89,16 @@ export function generateMultiTestIdSet(basePrefix: string = 'test', count: numbe
 }
 
 /**
- * テスト実行前後のクリーンアップヘルパー
+ * テスト実行前後のクリーンアップヘルパー（並列実行対応）
  */
 export class TestCleanupHelper {
   private testIds: string[] = [];
   private session: Session;
+  private testSuiteId: string;
 
   constructor(session: Session) {
     this.session = session;
+    this.testSuiteId = generateTimestampedTestId('suite');
   }
 
   /**
@@ -114,21 +118,50 @@ export class TestCleanupHelper {
   }
 
   /**
+   * テストスイート固有のIDを生成
+   */
+  generateSuiteSpecificId(baseId: string): string {
+    return `${baseId}-${this.testSuiteId}`;
+  }
+
+  /**
    * すべての追跡されたテストデータをクリーンアップ
    */
   async cleanup(): Promise<void> {
     if (this.testIds.length === 0) return;
 
-    // ユニークな接頭辞を抽出してクリーンアップ
-    const prefixes = [...new Set(this.testIds.map(id => {
-      const parts = id.split('-');
-      return parts.length >= 3 ? `${parts[0]}-${parts[1]}` : parts[0];
-    }))];
+    try {
+      // より確実なクリーンアップのため、個別IDでの削除を追加
+      for (const testId of this.testIds) {
+        await this.cleanupSingleTestId(testId);
+      }
 
-    for (const prefix of prefixes) {
-      await cleanupTestNodes(this.session, prefix);
+      // 従来の接頭辞ベースクリーンアップも実行
+      const prefixes = [...new Set(this.testIds.map(id => {
+        const parts = id.split('-');
+        return parts.length >= 3 ? `${parts[0]}-${parts[1]}` : parts[0];
+      }))];
+
+      for (const prefix of prefixes) {
+        await cleanupTestNodes(this.session, prefix);
+      }
+
+      this.testIds = [];
+    } catch (error) {
+      console.warn('クリーンアップ中にエラーが発生:', error);
+      // エラーが発生してもテストは続行
     }
+  }
 
-    this.testIds = [];
+  /**
+   * 単一のテストIDでの確実なクリーンアップ
+   */
+  private async cleanupSingleTestId(testId: string): Promise<void> {
+    const query = `
+      MATCH (n {id: $testId})
+      DETACH DELETE n
+    `;
+    
+    await this.session.run(query, { testId });
   }
 }

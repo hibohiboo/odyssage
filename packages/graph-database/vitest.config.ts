@@ -15,9 +15,11 @@ export default defineConfig({
     pool: 'forks',
     poolOptions: {
       forks: {
-        singleFork: true,
+        minForks: 1,
+        maxForks: 4,
       },
     },
-    fileParallelism: false,
+    testTimeout: 30000,
+    maxConcurrency: 4,
   },
 });

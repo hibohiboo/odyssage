@@ -13,6 +13,9 @@ describe('Scenario-Scene Relationship Operations', () => {
   beforeEach(async () => {
     session = driver.session();
     cleanup = new TestCleanupHelper(session);
+    
+    // テスト開始前にクリーンアップを実行
+    await cleanup.cleanup();
   });
 
   afterEach(async () => {
@@ -22,7 +25,7 @@ describe('Scenario-Scene Relationship Operations', () => {
 
   it('should create a HAS_SCENE relationship between scenario and scene', async () => {
     // Arrange
-    const testIds = generateTestIdSet('rel-create');
+    const testIds = generateTestIdSet(`rel-create-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
     cleanup.addTestIdSet(testIds);
     
     const scenarioData = {
@@ -55,7 +58,7 @@ describe('Scenario-Scene Relationship Operations', () => {
 
   it('should retrieve all scenes for a scenario', async () => {
     // Arrange
-    const testIds = generateTestIdSet('rel-get');
+    const testIds = generateTestIdSet(`rel-get-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
     cleanup.addTestIdSet(testIds);
     
     const scenarioData = {
