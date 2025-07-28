@@ -1,7 +1,7 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode, getChoiceNode, getChoicesByMessage } from './choice';
+import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode } from './choice';
 
 describe('Choice Node', () => {
   let session: Session;
@@ -109,5 +109,75 @@ describe('Choice Node', () => {
     expect(choices[0].text).toBe(choice1.text);
     expect(choices[1].id).toBe(choice2.id);
     expect(choices[1].text).toBe(choice2.text);
+  });
+
+  it('Choiceノードが更新できる', async () => {
+    // Arrange
+    const originalChoice = {
+      id: 'choice5',
+      text: '元の選択肢',
+      order: 1,
+      messageId: 'message5',
+      targetEventId: 'event5',
+      conditions: '{"original": true}',
+    };
+
+    // 事前にChoiceノードを作成
+    await createChoiceNode(session, originalChoice);
+
+    const updates = {
+      text: '更新された選択肢',
+      order: 2,
+      conditions: '{"updated": true}',
+    };
+
+    // Act
+    const updateResult = await updateChoiceNode(session, originalChoice.id, updates);
+
+    // Assert
+    expect(updateResult.records).toHaveLength(1);
+    const updatedChoice = updateResult.records[0].get('c').properties;
+    
+    // 更新された値の確認
+    expect(updatedChoice.text).toBe(updates.text);
+    expect(updatedChoice.order).toBe(updates.order);
+    expect(updatedChoice.conditions).toBe(updates.conditions);
+    
+    // 更新されない値の確認
+    expect(updatedChoice.id).toBe(originalChoice.id);
+    expect(updatedChoice.messageId).toBe(originalChoice.messageId);
+    expect(updatedChoice.targetEventId).toBe(originalChoice.targetEventId);
+    
+    // updatedAtが更新されていることを確認
+    expect(updatedChoice.updatedAt).toBeDefined();
+  });
+
+  it('Choiceノードが削除できる', async () => {
+    // Arrange
+    const choiceData = {
+      id: 'choice6',
+      text: '削除される選択肢',
+      order: 1,
+      messageId: 'message6',
+      targetEventId: 'event6',
+      conditions: undefined,
+    };
+
+    // 事前にChoiceノードを作成
+    await createChoiceNode(session, choiceData);
+
+    // 作成されたことを確認
+    const beforeDelete = await getChoiceNode(session, choiceData.id);
+    expect(beforeDelete.records).toHaveLength(1);
+
+    // Act
+    const deleteResult = await deleteChoiceNode(session, choiceData.id);
+
+    // Assert
+    expect(deleteResult.records).toHaveLength(0); // 削除操作は通常レコードを返さない
+
+    // 削除されたことを確認
+    const afterDelete = await getChoiceNode(session, choiceData.id);
+    expect(afterDelete.records).toHaveLength(0);
   });
 });
