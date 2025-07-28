@@ -22,11 +22,11 @@ export class ScenarioCreationService {
     overview: string,
   ): Promise<Scenario> {
     // シナリオIDを生成
-    const scenarioId = this.generateId('scenario');
+    const scenarioId = ScenarioCreationService.generateId('scenario');
 
     // 基本シーンを作成
     const sceneProps: SceneProps = {
-      id: this.generateId('scene'),
+      id: ScenarioCreationService.generateId('scene'),
       title: '始まりのシーン',
       description: 'ストーリーの始まりです。',
       order: 1,
@@ -35,7 +35,7 @@ export class ScenarioCreationService {
 
     // 基本イベントを作成
     const eventProps: EventProps = {
-      id: this.generateId('event'),
+      id: ScenarioCreationService.generateId('event'),
       title: '物語の開始',
       description: 'あなたの冒険が始まります。',
       order: 1,
@@ -44,7 +44,7 @@ export class ScenarioCreationService {
 
     // 基本メッセージを作成
     const messageProps: MessageProps = {
-      id: this.generateId('message'),
+      id: ScenarioCreationService.generateId('message'),
       text: 'ここから物語が始まります。どのような冒険が待っているでしょうか？',
       order: 1,
       eventId: eventProps.id,
@@ -84,7 +84,7 @@ export class ScenarioCreationService {
     title: string,
     overview: string,
   ): Promise<Scenario> {
-    const scenarioId = this.generateId('scenario');
+    const scenarioId = ScenarioCreationService.generateId('scenario');
 
     const scenarioProps: ScenarioProps = {
       id: scenarioId,
@@ -99,7 +99,7 @@ export class ScenarioCreationService {
 
     switch (templateType) {
       case 'simple-choice':
-        this.addSimpleChoiceTemplate(scenario);
+        ScenarioCreationService.addSimpleChoiceTemplate(scenario);
         break;
       case 'branching-story':
         this.addBranchingStoryTemplate(scenario);
@@ -107,6 +107,8 @@ export class ScenarioCreationService {
       case 'mystery':
         this.addMysteryTemplate(scenario);
         break;
+      default:
+        throw new Error(`未対応のテンプレートタイプです: ${templateType}`);
     }
 
     await this.scenarioRepository.save(scenario);
@@ -131,7 +133,7 @@ export class ScenarioCreationService {
     }
 
     // 新しいIDで全要素を複製
-    const newScenarioId = this.generateId('scenario');
+    const newScenarioId = ScenarioCreationService.generateId('scenario');
     const idMapping = new Map<string, string>();
 
     // シナリオを複製
@@ -147,9 +149,9 @@ export class ScenarioCreationService {
     return duplicatedScenario;
   }
 
-  private addSimpleChoiceTemplate(scenario: Scenario): void {
+  private static addSimpleChoiceTemplate(scenario: Scenario): void {
     // 簡単な2択選択のテンプレートを追加
-    const sceneId = this.generateId('scene');
+    const sceneId = ScenarioCreationService.generateId('scene');
     const scene = new Scene({
       id: sceneId,
       title: '分かれ道',
@@ -159,7 +161,7 @@ export class ScenarioCreationService {
     });
 
     // 選択イベント
-    const choiceEventId = this.generateId('event');
+    const choiceEventId = ScenarioCreationService.generateId('event');
     const choiceEvent = new Event({
       id: choiceEventId,
       title: '道の選択',
@@ -169,7 +171,7 @@ export class ScenarioCreationService {
     });
 
     const choiceMessage = new Message({
-      id: this.generateId('message'),
+      id: ScenarioCreationService.generateId('message'),
       text: '目の前に二つの道があります。左の道は明るく、右の道は暗い森へと続いています。',
       order: 1,
       eventId: choiceEventId,
@@ -179,7 +181,7 @@ export class ScenarioCreationService {
     scene.addEvent(choiceEvent);
 
     // 結果イベント（左）
-    const leftEventId = this.generateId('event');
+    const leftEventId = ScenarioCreationService.generateId('event');
     const leftEvent = new Event({
       id: leftEventId,
       title: '明るい道',
@@ -189,7 +191,7 @@ export class ScenarioCreationService {
     });
 
     const leftMessage = new Message({
-      id: this.generateId('message'),
+      id: ScenarioCreationService.generateId('message'),
       text: '明るい道を選んだあなたは、美しい花畑に辿り着きました。',
       order: 1,
       eventId: leftEventId,
@@ -199,7 +201,7 @@ export class ScenarioCreationService {
     scene.addEvent(leftEvent);
 
     // 結果イベント（右）
-    const rightEventId = this.generateId('event');
+    const rightEventId = ScenarioCreationService.generateId('event');
     const rightEvent = new Event({
       id: rightEventId,
       title: '暗い森',
@@ -209,7 +211,7 @@ export class ScenarioCreationService {
     });
 
     const rightMessage = new Message({
-      id: this.generateId('message'),
+      id: ScenarioCreationService.generateId('message'),
       text: '暗い森に入ったあなたは、神秘的な光を発見しました。',
       order: 1,
       eventId: rightEventId,
@@ -221,12 +223,12 @@ export class ScenarioCreationService {
     scenario.addScene(scene);
   }
 
-  private addBranchingStoryTemplate(scenario: Scenario): void {
+  private addBranchingStoryTemplate(_scenario: Scenario): void {
     // より複雑な分岐ストーリーのテンプレート
     // 実装は省略（同様のパターンで複数シーン・複数分岐を作成）
   }
 
-  private addMysteryTemplate(scenario: Scenario): void {
+  private addMysteryTemplate(_scenario: Scenario): void {
     // ミステリー系のテンプレート
     // 実装は省略（証拠収集・推理要素を含む構造を作成）
   }
@@ -251,8 +253,8 @@ export class ScenarioCreationService {
     });
 
     // シーンを複製
-    for (const scene of original.scenes) {
-      const newSceneId = this.generateId('scene');
+    original.scenes.forEach((scene) => {
+      const newSceneId = ScenarioCreationService.generateId('scene');
       idMapping.set(scene.id, newSceneId);
 
       const newScene = new Scene({
@@ -264,8 +266,8 @@ export class ScenarioCreationService {
       });
 
       // イベントを複製
-      for (const event of scene.events) {
-        const newEventId = this.generateId('event');
+      scene.events.forEach((event) => {
+        const newEventId = ScenarioCreationService.generateId('event');
         idMapping.set(event.id, newEventId);
 
         const newEvent = new Event({
@@ -277,8 +279,8 @@ export class ScenarioCreationService {
         });
 
         // メッセージを複製
-        for (const message of event.messages) {
-          const newMessageId = this.generateId('message');
+        event.messages.forEach((message) => {
+          const newMessageId = ScenarioCreationService.generateId('message');
           idMapping.set(message.id, newMessageId);
 
           const newMessage = new Message({
@@ -289,18 +291,18 @@ export class ScenarioCreationService {
           });
 
           newEvent.addMessage(newMessage);
-        }
+        });
 
         newScene.addEvent(newEvent);
-      }
+      });
 
       newScenario.addScene(newScene);
-    }
+    });
 
     return newScenario;
   }
 
-  private generateId(prefix: string): string {
+  private static generateId(prefix: string): string {
     return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
   }
 }

@@ -59,13 +59,13 @@ export class GameplayService {
 
     if (!progress) {
       // 新規ゲーム開始
-      const startEvent = this.findStartEvent(scenario);
+      const startEvent = GameplayService.findStartEvent(scenario);
       if (!startEvent) {
         throw new Error('開始イベントが見つかりません');
       }
 
       progress = {
-        id: this.generateProgressId(),
+        id: GameplayService.generateProgressId(),
         userId,
         scenarioId,
         currentEventId: startEvent.id,
@@ -96,66 +96,27 @@ export class GameplayService {
     targetEventId: string,
   ): Promise<ChoiceResult> {
     try {
-      // 現在の進行状況を取得
-      const progress = await this.playerRepository.findProgress(
-        userId,
-        scenarioId,
-      );
-      if (!progress) {
-        return { success: false, error: 'ゲームが開始されていません' };
-      }
-
-      // シナリオを取得
-      const scenario =
-        await this.scenarioRepository.findByIdWithFullStructure(scenarioId);
-      if (!scenario) {
-        return { success: false, error: 'シナリオが見つかりません' };
-      }
-
-      // 選択の妥当性を検証
-      const isValidChoice = this.validateChoice(
-        scenario,
-        progress.currentEventId!,
-        targetEventId,
-      );
-
-      if (!isValidChoice) {
-        return { success: false, error: '無効な選択です' };
-      }
-
-      // 選択を記録
-      await this.playerRepository.recordChoice(
-        userId,
-        scenarioId,
-        progress.currentEventId!,
-        targetEventId,
-        choiceText,
-      );
-
-      // 現在位置を更新
-      await this.playerRepository.updateCurrentPosition(
+      const validationResult = await this.validateChoiceRequest(
         userId,
         scenarioId,
         targetEventId,
       );
+      if (!validationResult.success) {
+        return { success: false, error: validationResult.error };
+      }
 
-      // 新しい進行状況を取得
-      const updatedProgress = await this.playerRepository.findProgress(
-        userId,
-        scenarioId,
-      );
+      const { progress, scenario } = validationResult;
+
+      await this.executeChoice(userId, scenarioId, progress!, choiceText, targetEventId);
+
+      const updatedProgress = await this.getUpdatedProgress(userId, scenarioId);
       if (!updatedProgress) {
         return { success: false, error: '進行状況の更新に失敗しました' };
       }
 
-      // ゲーム完了チェック
-      const isCompleted = this.checkGameCompletion(scenario, targetEventId);
-      if (isCompleted) {
-        updatedProgress.isCompleted = true;
-        await this.playerRepository.saveProgress(updatedProgress);
-      }
+      await this.handleGameCompletion(scenario!, targetEventId, updatedProgress);
 
-      const newGameState = this.buildGameState(scenario, updatedProgress);
+      const newGameState = this.buildGameState(scenario!, updatedProgress);
 
       return {
         success: true,
@@ -167,6 +128,77 @@ export class GameplayService {
         error:
           error instanceof Error ? error.message : '選択の実行に失敗しました',
       };
+    }
+  }
+
+  private async validateChoiceRequest(
+    userId: string,
+    scenarioId: string,
+    targetEventId: string,
+  ): Promise<{
+    success: boolean;
+    error?: string;
+    progress?: any;
+    scenario?: any;
+  }> {
+    const progress = await this.playerRepository.findProgress(userId, scenarioId);
+    if (!progress) {
+      return { success: false, error: 'ゲームが開始されていません' };
+    }
+
+    const scenario = await this.scenarioRepository.findByIdWithFullStructure(scenarioId);
+    if (!scenario) {
+      return { success: false, error: 'シナリオが見つかりません' };
+    }
+
+    const isValidChoice = this.validateChoice(
+      scenario,
+      progress.currentEventId!,
+      targetEventId,
+    );
+
+    if (!isValidChoice) {
+      return { success: false, error: '無効な選択です' };
+    }
+
+    return { success: true, progress, scenario };
+  }
+
+  private async executeChoice(
+    userId: string,
+    scenarioId: string,
+    progress: any,
+    choiceText: string,
+    targetEventId: string,
+  ): Promise<void> {
+    await this.playerRepository.recordChoice(
+      userId,
+      scenarioId,
+      progress.currentEventId!,
+      targetEventId,
+      choiceText,
+    );
+
+    await this.playerRepository.updateCurrentPosition(
+      userId,
+      scenarioId,
+      targetEventId,
+    );
+  }
+
+  private async getUpdatedProgress(userId: string, scenarioId: string): Promise<any> {
+    return this.playerRepository.findProgress(userId, scenarioId);
+  }
+
+  private async handleGameCompletion(
+    scenario: any,
+    targetEventId: string,
+    updatedProgress: any,
+  ): Promise<void> {
+    const isCompleted = this.checkGameCompletion(scenario, targetEventId);
+    if (isCompleted) {
+      updatedProgress.isCompleted = true;
+      await this.playerRepository.saveProgress(updatedProgress);
     }
   }
 
@@ -231,7 +263,7 @@ export class GameplayService {
     };
   }
 
-  private findStartEvent(scenario: {
+  private static findStartEvent(scenario: {
     scenes: Array<{ order: number; events: Array<{ order: number; id: string }> }>;
   }): { id: string } | null {
     // 最初のシーンの最初のイベントを開始イベントとする
@@ -288,14 +320,10 @@ export class GameplayService {
     },
     eventId: string,
   ): { id: string; messages: Array<{ order: number; text: string }> } | null {
-    for (const scene of scenario.scenes) {
-      for (const event of scene.events) {
-        if (event.id === eventId) {
-          return event;
-        }
-      }
-    }
-    return null;
+    const foundEvent = scenario.scenes
+      .flatMap((scene) => scene.events)
+      .find((event) => event.id === eventId);
+    return foundEvent || null;
   }
 
   private getAvailableChoices(
@@ -324,7 +352,7 @@ export class GameplayService {
     return availableChoices.length === 0;
   }
 
-  private generateProgressId(): string {
+  private static generateProgressId(): string {
     return `progress_${Date.now()}_${Math.random().toString(36).substring(2)}`;
   }
 }
