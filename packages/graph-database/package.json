@@ -8,5 +8,8 @@
     "ncu": "ncu -u",
     "local:graphdb": "bash ../../infra/local/neo4j/bin/up.sh",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "neo4j-driver": "^5.28.1"
   }
 }

@@ -125,6 +125,9 @@
     "packages/graph-database": {
       "name": "@odyssage/graph-database",
       "version": "0.0.0",
+      "dependencies": {
+        "neo4j-driver": "^5.28.1",
+      },
     },
     "packages/lib": {
       "name": "@odyssage/lib",
