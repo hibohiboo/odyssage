@@ -139,8 +139,16 @@ export class GameplayService {
   ): Promise<{
     success: boolean;
     error?: string;
-    progress?: any;
-    scenario?: any;
+    progress?: PlayerProgress;
+    scenario?: { 
+      id: string;
+      scenes: Array<{ 
+        events: Array<{ 
+          id: string; 
+          messages: Array<{ order: number; text: string }> 
+        }> 
+      }>;
+    };
   }> {
     const progress = await this.playerRepository.findProgress(userId, scenarioId);
     if (!progress) {
@@ -168,7 +176,7 @@ export class GameplayService {
   private async executeChoice(
     userId: string,
     scenarioId: string,
-    progress: any,
+    progress: PlayerProgress,
     choiceText: string,
     targetEventId: string,
   ): Promise<void> {
@@ -187,19 +195,30 @@ export class GameplayService {
     );
   }
 
-  private async getUpdatedProgress(userId: string, scenarioId: string): Promise<any> {
+  private async getUpdatedProgress(userId: string, scenarioId: string): Promise<PlayerProgress | null> {
     return this.playerRepository.findProgress(userId, scenarioId);
   }
 
   private async handleGameCompletion(
-    scenario: any,
+    scenario: { 
+      id: string;
+      scenes: Array<{ 
+        events: Array<{ 
+          id: string; 
+          messages: Array<{ order: number; text: string }> 
+        }> 
+      }>;
+    },
     targetEventId: string,
-    updatedProgress: any,
+    updatedProgress: PlayerProgress,
   ): Promise<void> {
     const isCompleted = this.checkGameCompletion(scenario, targetEventId);
     if (isCompleted) {
-      updatedProgress.isCompleted = true;
-      await this.playerRepository.saveProgress(updatedProgress);
+      const completedProgress: PlayerProgress = {
+        ...updatedProgress,
+        isCompleted: true,
+      };
+      await this.playerRepository.saveProgress(completedProgress);
     }
   }
 

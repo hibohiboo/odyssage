@@ -107,7 +107,12 @@ src/
   - プレフィックス付きUUID（`event_`, `scenario_`など）
   - 将来的なID生成方式変更への対応
 - **Math.random()置き換え**: sonarjs/pseudo-randomエラー（7箇所）を完全解決
-- **エラー大幅削減**: 63個 → 13個（sonarjs/pseudo-randomを含む50個を解決）
+- **エラー大幅削減**: 63個 → 13個 → 6個（sonarjs/pseudo-randomを含む57個を解決）
+
+### 型安全性の向上
+- **any型の排除**: PlayerProgressとScenario関連の型を適切に定義
+- **no-param-reassign対応**: オブジェクトの直接変更を避けてスプレッド構文で新オブジェクト作成
+- **インターフェース活用**: 既存のPlayerProgressインターフェースを活用して型安全性を向上
 
 ### 教訓
 - **ファイル作成時の行末**: 新規ファイル作成時はLF行末を明示的に指定する必要がある
