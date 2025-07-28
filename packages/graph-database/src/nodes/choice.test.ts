@@ -1,7 +1,7 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode } from './choice';
+import { createChoiceNode, getChoiceNode } from './choice';
 
 describe('Choice Node', () => {
   let session: Session;
@@ -39,5 +39,33 @@ describe('Choice Node', () => {
     expect(createdChoice.conditions).toBe(choiceData.conditions);
     expect(createdChoice.createdAt).toBeDefined();
     expect(createdChoice.updatedAt).toBeDefined();
+  });
+
+  it('作成されたChoiceノードが取得できる', async () => {
+    // Arrange
+    const choiceData = {
+      id: 'choice2',
+      text: '選択肢2',
+      order: 2,
+      messageId: 'message2',
+      targetEventId: 'event2',
+      conditions: '{"requiresItem": "sword"}',
+    };
+
+    // 事前にChoiceノードを作成
+    await createChoiceNode(session, choiceData);
+
+    // Act
+    const result = await getChoiceNode(session, choiceData.id);
+
+    // Assert
+    expect(result.records).toHaveLength(1);
+    const retrievedChoice = result.records[0].get('c').properties;
+    expect(retrievedChoice.id).toBe(choiceData.id);
+    expect(retrievedChoice.text).toBe(choiceData.text);
+    expect(retrievedChoice.order).toBe(choiceData.order);
+    expect(retrievedChoice.messageId).toBe(choiceData.messageId);
+    expect(retrievedChoice.targetEventId).toBe(choiceData.targetEventId);
+    expect(retrievedChoice.conditions).toBe(choiceData.conditions);
   });
 });
