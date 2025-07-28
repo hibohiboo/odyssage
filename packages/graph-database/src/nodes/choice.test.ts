@@ -1,7 +1,7 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode, getChoiceNode } from './choice';
+import { createChoiceNode, getChoiceNode, getChoicesByMessage } from './choice';
 
 describe('Choice Node', () => {
   let session: Session;
@@ -67,5 +67,47 @@ describe('Choice Node', () => {
     expect(retrievedChoice.messageId).toBe(choiceData.messageId);
     expect(retrievedChoice.targetEventId).toBe(choiceData.targetEventId);
     expect(retrievedChoice.conditions).toBe(choiceData.conditions);
+  });
+
+  it('messageIdでChoiceノード一覧が取得できる', async () => {
+    // Arrange
+    const messageId = 'message_shared';
+    const choice1 = {
+      id: 'choice3',
+      text: '選択肢3',
+      order: 1,
+      messageId,
+      targetEventId: 'event3',
+      conditions: undefined,
+    };
+    const choice2 = {
+      id: 'choice4', 
+      text: '選択肢4',
+      order: 2,
+      messageId,
+      targetEventId: 'event4',
+      conditions: '{"requiresLevel": 5}',
+    };
+
+    // 事前に複数のChoiceノードを作成
+    await createChoiceNode(session, choice1);
+    await createChoiceNode(session, choice2);
+
+    // Act
+    const result = await getChoicesByMessage(session, messageId);
+
+    // Assert
+    expect(result.records).toHaveLength(2);
+    
+    // orderでソートされているか確認
+    const choices = result.records.map(record => record.get('c').properties);
+    expect(choices[0].order).toBe(1);
+    expect(choices[1].order).toBe(2);
+    
+    // 各選択肢の内容確認
+    expect(choices[0].id).toBe(choice1.id);
+    expect(choices[0].text).toBe(choice1.text);
+    expect(choices[1].id).toBe(choice2.id);
+    expect(choices[1].text).toBe(choice2.text);
   });
 });
