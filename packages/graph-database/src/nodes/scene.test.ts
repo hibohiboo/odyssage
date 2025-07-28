@@ -1,10 +1,11 @@
 // @copilot-context testing
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { Session } from 'neo4j-driver';
 import { driver } from '../driver';
 import { createSceneNode, getSceneNode } from './scene';
 
 describe('Scene Node Operations', () => {
-  let session: any;
+  let session: Session;
 
   beforeEach(async () => {
     session = driver.session();
