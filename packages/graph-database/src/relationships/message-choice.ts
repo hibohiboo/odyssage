@@ -14,7 +14,7 @@ export async function createMessageChoiceRelation(
     RETURN r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     messageId,
     targetEventId,
     choiceText,
@@ -31,7 +31,7 @@ export async function getMessageChoices(
     ORDER BY choice.text
   `;
 
-  return await session.run(query, { messageId });
+  return session.run(query, { messageId });
 }
 
 export async function deleteMessageChoiceRelation(
@@ -44,7 +44,7 @@ export async function deleteMessageChoiceRelation(
     DELETE r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     messageId,
     targetEventId,
   });
@@ -62,7 +62,7 @@ export async function updateChoiceText(
     RETURN r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     messageId,
     targetEventId,
     newText,

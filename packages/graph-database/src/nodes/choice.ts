@@ -49,7 +49,7 @@ export async function getChoiceNode(
     RETURN c
   `;
 
-  return await session.run(query, { id: choiceId });
+  return session.run(query, { id: choiceId });
 }
 
 export async function getChoicesByMessage(
@@ -62,7 +62,7 @@ export async function getChoicesByMessage(
     ORDER BY c.order
   `;
 
-  return await session.run(query, { messageId });
+  return session.run(query, { messageId });
 }
 
 export async function updateChoiceNode(
@@ -80,7 +80,7 @@ export async function updateChoiceNode(
     RETURN c
   `;
 
-  return await session.run(query, { id: choiceId, ...updates });
+  return session.run(query, { id: choiceId, ...updates });
 }
 
 export async function deleteChoiceNode(
@@ -92,7 +92,7 @@ export async function deleteChoiceNode(
     DETACH DELETE c
   `;
 
-  return await session.run(query, { id: choiceId });
+  return session.run(query, { id: choiceId });
 }
 
 export async function createChoiceToEventRelationship(
@@ -107,7 +107,7 @@ export async function createChoiceToEventRelationship(
     RETURN c, e
   `;
 
-  return await session.run(query, { choiceId, eventId });
+  return session.run(query, { choiceId, eventId });
 }
 
 export async function getEventFromChoice(
@@ -132,7 +132,7 @@ export async function getChoicesLeadingToEvent(
     ORDER BY c.order
   `;
 
-  return await session.run(query, { eventId });
+  return session.run(query, { eventId });
 }
 
 export async function updateChoiceEventRelationship(
@@ -150,5 +150,5 @@ export async function updateChoiceEventRelationship(
     RETURN c, newEvent
   `;
 
-  return await session.run(query, { choiceId, newEventId });
+  return session.run(query, { choiceId, newEventId });
 }

@@ -13,7 +13,7 @@ export async function createScenarioSceneRelation(
     RETURN r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     scenarioId,
     sceneId,
   });
@@ -29,7 +29,7 @@ export async function getScenarioScenes(
     ORDER BY scene.order
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function deleteScenarioSceneRelation(
@@ -42,7 +42,7 @@ export async function deleteScenarioSceneRelation(
     DELETE r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     scenarioId,
     sceneId,
   });
@@ -58,5 +58,5 @@ export async function getScenarioWithScenes(
     RETURN scenario, collect(scene) as scenes
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }

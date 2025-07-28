@@ -13,7 +13,7 @@ export async function createEventMessageRelation(
     RETURN r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     eventId,
     messageId,
   });
@@ -29,7 +29,7 @@ export async function getEventMessages(
     ORDER BY message.order
   `;
 
-  return await session.run(query, { eventId });
+  return session.run(query, { eventId });
 }
 
 export async function deleteEventMessageRelation(
@@ -42,7 +42,7 @@ export async function deleteEventMessageRelation(
     DELETE r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     eventId,
     messageId,
   });
@@ -58,5 +58,5 @@ export async function getEventWithMessages(
     RETURN event, collect(message) as messages
   `;
 
-  return await session.run(query, { eventId });
+  return session.run(query, { eventId });
 }

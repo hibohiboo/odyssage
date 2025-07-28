@@ -28,7 +28,7 @@ export async function createSceneNode(
     RETURN s
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     id: data.id,
     title: data.title,
     description: data.description,
@@ -46,7 +46,7 @@ export async function getSceneNode(
     RETURN s
   `;
 
-  return await session.run(query, { id: sceneId });
+  return session.run(query, { id: sceneId });
 }
 
 export async function updateSceneNode(
@@ -64,7 +64,7 @@ export async function updateSceneNode(
     RETURN s
   `;
 
-  return await session.run(query, { id: sceneId, ...updates });
+  return session.run(query, { id: sceneId, ...updates });
 }
 
 export async function deleteSceneNode(
@@ -76,5 +76,5 @@ export async function deleteSceneNode(
     DETACH DELETE s
   `;
 
-  return await session.run(query, { id: sceneId });
+  return session.run(query, { id: sceneId });
 }

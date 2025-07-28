@@ -26,7 +26,7 @@ export async function createMessageNode(
     RETURN m
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     id: data.id,
     text: data.text,
     order: data.order,
@@ -43,7 +43,7 @@ export async function getMessageNode(
     RETURN m
   `;
 
-  return await session.run(query, { id: messageId });
+  return session.run(query, { id: messageId });
 }
 
 export async function updateMessageNode(
@@ -61,7 +61,7 @@ export async function updateMessageNode(
     RETURN m
   `;
 
-  return await session.run(query, { id: messageId, ...updates });
+  return session.run(query, { id: messageId, ...updates });
 }
 
 export async function deleteMessageNode(
@@ -73,5 +73,5 @@ export async function deleteMessageNode(
     DETACH DELETE m
   `;
 
-  return await session.run(query, { id: messageId });
+  return session.run(query, { id: messageId });
 }

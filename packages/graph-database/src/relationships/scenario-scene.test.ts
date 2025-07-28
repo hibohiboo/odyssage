@@ -1,4 +1,5 @@
 // @copilot-context testing
+import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createScenarioNode } from '../nodes/scenario';
@@ -7,7 +8,7 @@ import { TestCleanupHelper } from '../test-utils/test-helpers';
 import { createScenarioSceneRelation, getScenarioScenes } from './scenario-scene';
 
 describe('Scenario-Scene Relationship Operations', () => {
-  let session: any;
+  let session: Session;
   let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {

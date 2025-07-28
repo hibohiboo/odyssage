@@ -28,7 +28,7 @@ export async function createScenarioNode(
     RETURN s
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     id: data.id,
     title: data.title,
     overview: data.overview,
@@ -46,7 +46,7 @@ export async function getScenarioNode(
     RETURN s
   `;
 
-  return await session.run(query, { id: scenarioId });
+  return session.run(query, { id: scenarioId });
 }
 
 export async function updateScenarioNode(
@@ -64,7 +64,7 @@ export async function updateScenarioNode(
     RETURN s
   `;
 
-  return await session.run(query, { id: scenarioId, ...updates });
+  return session.run(query, { id: scenarioId, ...updates });
 }
 
 export async function deleteScenarioNode(
@@ -76,5 +76,5 @@ export async function deleteScenarioNode(
     DETACH DELETE s
   `;
 
-  return await session.run(query, { id: scenarioId });
+  return session.run(query, { id: scenarioId });
 }

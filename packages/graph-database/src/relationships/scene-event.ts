@@ -13,7 +13,7 @@ export async function createSceneEventRelation(
     RETURN r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     sceneId,
     eventId,
   });
@@ -29,7 +29,7 @@ export async function getSceneEvents(
     ORDER BY event.order
   `;
 
-  return await session.run(query, { sceneId });
+  return session.run(query, { sceneId });
 }
 
 export async function deleteSceneEventRelation(
@@ -42,7 +42,7 @@ export async function deleteSceneEventRelation(
     DELETE r
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     sceneId,
     eventId,
   });
@@ -58,5 +58,5 @@ export async function getSceneWithEvents(
     RETURN scene, collect(event) as events
   `;
 
-  return await session.run(query, { sceneId });
+  return session.run(query, { sceneId });
 }

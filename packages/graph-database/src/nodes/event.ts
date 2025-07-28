@@ -28,7 +28,7 @@ export async function createEventNode(
     RETURN e
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     id: data.id,
     title: data.title,
     description: data.description,
@@ -46,7 +46,7 @@ export async function getEventNode(
     RETURN e
   `;
 
-  return await session.run(query, { id: eventId });
+  return session.run(query, { id: eventId });
 }
 
 export async function updateEventNode(
@@ -64,7 +64,7 @@ export async function updateEventNode(
     RETURN e
   `;
 
-  return await session.run(query, { id: eventId, ...updates });
+  return session.run(query, { id: eventId, ...updates });
 }
 
 export async function deleteEventNode(
@@ -76,5 +76,5 @@ export async function deleteEventNode(
     DETACH DELETE e
   `;
 
-  return await session.run(query, { id: eventId });
+  return session.run(query, { id: eventId });
 }

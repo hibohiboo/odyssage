@@ -14,9 +14,9 @@ export function generateTestId(prefix: string = 'test'): string {
  */
 export function generateTimestampedTestId(prefix: string = 'test'): string {
   const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 8);
+  const random = randomUUID().substring(0, 8);
   const processId = process.pid;
-  const threadId = Math.floor(Math.random() * 10000);
+  const threadId = Date.now() % 10000; // Math.random()を避ける
   return `${prefix}-${timestamp}-${processId}-${threadId}-${random}`;
 }
 
@@ -37,9 +37,7 @@ export async function cleanupTestNodes(session: Session, idPattern: string): Pro
  * 特定のテストIDを使用して完全なクリーンアップを実行
  */
 export async function cleanupTestData(session: Session, testIds: string[]): Promise<void> {
-  for (const testId of testIds) {
-    await cleanupTestNodes(session, testId);
-  }
+  await Promise.all(testIds.map(testId => cleanupTestNodes(session, testId)));
 }
 
 /**
@@ -78,9 +76,9 @@ export function generateMultiTestIdSet(basePrefix: string = 'test', count: numbe
   
   return {
     scenarioId: `scenario-${uniqueId}`,
-    scenes: Array.from({ length: count }, (_, sceneIndex) => ({
+    scenes: Array.from({ length: count }, (__, sceneIndex) => ({
       sceneId: `scene-${sceneIndex + 1}-${uniqueId}`,
-      events: Array.from({ length: 2 }, (_, eventIndex) => ({
+      events: Array.from({ length: 2 }, (___, eventIndex) => ({
         eventId: `event-${sceneIndex + 1}-${eventIndex + 1}-${uniqueId}`,
         messageId: `message-${sceneIndex + 1}-${eventIndex + 1}-${uniqueId}`,
       }))
@@ -155,9 +153,7 @@ export class TestCleanupHelper {
 
     try {
       // より確実なクリーンアップのため、個別IDでの削除を追加
-      for (const testId of this.testIds) {
-        await this.cleanupSingleTestId(testId);
-      }
+      await Promise.all(this.testIds.map(testId => this.cleanupSingleTestId(testId)));
 
       // 従来の接頭辞ベースクリーンアップも実行
       const prefixes = [...new Set(this.testIds.map(id => {
@@ -165,12 +161,11 @@ export class TestCleanupHelper {
         return parts.length >= 3 ? `${parts[0]}-${parts[1]}` : parts[0];
       }))];
 
-      for (const prefix of prefixes) {
-        await cleanupTestNodes(this.session, prefix);
-      }
+      await Promise.all(prefixes.map(prefix => cleanupTestNodes(this.session, prefix)));
 
       this.testIds = [];
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.warn('クリーンアップ中にエラーが発生:', error);
       // エラーが発生してもテストは続行
     }
