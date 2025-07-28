@@ -193,6 +193,28 @@ This project uses GitHub Copilot with specific context annotations. When working
 - **Authentication**: Firebase Auth with JWT token verification
 - **Database**: Drizzle schema in `packages/database`
 
+### テスト実行コマンド
+
+各パッケージでのテスト実行は以下の通り：
+
+```bash
+# graph-database パッケージ
+cd packages/graph-database
+bun run test                    # 全テスト実行
+bun run test choice.test.ts     # 特定ファイル実行
+
+# domain パッケージ  
+cd packages/domain
+bun run test                    # 全テスト実行
+bun run test scenario.test.ts   # 特定ファイル実行
+
+# その他のパッケージでも同様
+cd packages/[パッケージ名]
+bun run test [ファイル名]
+```
+
+**重要**: `bun test` ではなく `bun run test` を使用すること
+
 ### Testing Strategy
 
 - **Unit Tests**: Vitest across all packages

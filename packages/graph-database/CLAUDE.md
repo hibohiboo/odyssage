@@ -18,6 +18,35 @@ src/
 ## 技術スタック
 - **Neo4j**: グラフデータベース
 - **neo4j-driver**: Neo4j公式JavaScriptドライバー
+- **Vitest**: テストフレームワーク
+
+## テスト実行
+
+### 基本コマンド
+```bash
+# 全テスト実行
+bun run test
+
+# 特定ファイルのテスト実行
+bun run test [ファイル名]
+
+# 例：Choice ノードのテスト実行
+bun run test choice.test.ts
+
+# ウォッチモード（ファイル変更時に自動実行）
+bun run test --watch
+```
+
+### 注意事項
+- **間違ったコマンド**: `bun test [ファイル名]` ← これは使わない
+- **正しいコマンド**: `bun run test [ファイル名]` ← package.jsonのscriptを使用
+
+### 前提条件
+テスト実行前にNeo4jデータベースを起動してください：
+```bash
+# プロジェクトルートから
+npm run local:graphdb
+```
 
 ## 用途
 - **シナリオフロー**: Scene間の複雑な分岐・合流関係
