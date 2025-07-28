@@ -1,7 +1,7 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship } from './choice';
+import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship, getEventFromChoice } from './choice';
 import { createEventNode } from './event';
 
 describe('Choice Node', () => {
@@ -180,5 +180,94 @@ describe('Choice Node', () => {
     // 削除されたことを確認
     const afterDelete = await getChoiceNode(session, choiceData.id);
     expect(afterDelete.records).toHaveLength(0);
+  });
+
+  it('Choice-[:LEADS_TO]->Eventリレーションシップが作成できる', async () => {
+    // Arrange
+    const choiceData = {
+      id: 'choice7',
+      text: 'リレーション用選択肢',
+      order: 1,
+      messageId: 'message7',
+      targetEventId: 'event7',
+      conditions: undefined,
+    };
+
+    const eventData = {
+      id: 'event7',
+      title: 'リレーション先イベント',
+      description: 'この選択肢の遷移先イベント',
+      order: 1,
+      sceneId: 'scene7',
+    };
+
+    // ChoiceとEventノードを事前に作成
+    await createChoiceNode(session, choiceData);
+    await createEventNode(session, eventData);
+
+    // Act
+    const result = await createChoiceToEventRelationship(session, choiceData.id, eventData.id);
+
+    // Assert
+    expect(result.records).toHaveLength(1);
+    const record = result.records[0];
+    const choice = record.get('c').properties;
+    const event = record.get('e').properties;
+
+    expect(choice.id).toBe(choiceData.id);
+    expect(event.id).toBe(eventData.id);
+
+    // リレーションシップが実際に作成されているか確認
+    const verifyQuery = `
+      MATCH (c:Choice {id: $choiceId})-[r:LEADS_TO]->(e:Event {id: $eventId})
+      RETURN c, r, e
+    `;
+    const verifyResult = await session.run(verifyQuery, { 
+      choiceId: choiceData.id, 
+      eventId: eventData.id 
+    });
+    
+    expect(verifyResult.records).toHaveLength(1);
+    const relationship = verifyResult.records[0].get('r');
+    expect(relationship.type).toBe('LEADS_TO');
+  });
+
+  it('選択肢から遷移先イベントが取得できる', async () => {
+    // Arrange
+    const choiceData = {
+      id: 'choice8',
+      text: '取得テスト用選択肢',
+      order: 1,
+      messageId: 'message8',
+      targetEventId: 'event8',
+      conditions: undefined,
+    };
+
+    const eventData = {
+      id: 'event8',
+      title: '取得テスト用イベント',
+      description: 'この選択肢の遷移先イベント',
+      order: 1,
+      sceneId: 'scene8',
+    };
+
+    // ChoiceとEventノードを作成し、リレーションシップを設定
+    await createChoiceNode(session, choiceData);
+    await createEventNode(session, eventData);
+    await createChoiceToEventRelationship(session, choiceData.id, eventData.id);
+
+    // Act
+    const result = await getEventFromChoice(session, choiceData.id);
+
+    // Assert
+    expect(result.records).toHaveLength(1);
+    const record = result.records[0];
+    const choice = record.get('c').properties;
+    const event = record.get('e').properties;
+
+    expect(choice.id).toBe(choiceData.id);
+    expect(event.id).toBe(eventData.id);
+    expect(event.title).toBe(eventData.title);
+    expect(event.description).toBe(eventData.description);
   });
 });

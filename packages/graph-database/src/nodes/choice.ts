@@ -109,3 +109,15 @@ export async function createChoiceToEventRelationship(
 
   return await session.run(query, { choiceId, eventId });
 }
+
+export async function getEventFromChoice(
+  session: Session,
+  choiceId: string,
+): Promise<Result> {
+  const query = `
+    MATCH (c:Choice {id: $choiceId})-[:LEADS_TO]->(e:Event)
+    RETURN c, e
+  `;
+
+  return await session.run(query, { choiceId });
+}
