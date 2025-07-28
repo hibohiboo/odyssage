@@ -20,6 +20,8 @@
 - [x] **UUIDライブラリ導入とID生成ユーティリティ作成** (ID: 16)
 - [x] **型安全性の向上（any型の排除、no-param-reassign対応）** (ID: 17)
 - [x] **シナリオ作成用データベーススキーマ設計書の作成** (ID: 23)
+  - ファイル配置: `docs/design/database/scenario-creation-schema.md`
+  - ハイブリッドDB設計: `docs/design/database/hybrid-schema.md`
 
 ### 中優先度
 - [x] **class-methods-use-this lint警告の抑制とTODOコメント追加** (ID: 18)
