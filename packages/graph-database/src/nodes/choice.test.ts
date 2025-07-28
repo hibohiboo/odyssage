@@ -5,7 +5,6 @@ import { createChoiceNode } from './choice';
 
 describe('Choice Node', () => {
   let session: Session;
-  let session: Session;
 
   beforeEach(async () => {
     session = driver.session();
