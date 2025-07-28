@@ -8,13 +8,11 @@ describe('Event Node Operations', () => {
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
+    // テスト用データをクリーンアップ
+    await session.run('MATCH (n) DETACH DELETE n');
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
     await session.close();
   });
 

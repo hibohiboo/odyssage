@@ -1,7 +1,8 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode } from './choice';
+import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship } from './choice';
+import { createEventNode } from './event';
 
 describe('Choice Node', () => {
   let session: Session;

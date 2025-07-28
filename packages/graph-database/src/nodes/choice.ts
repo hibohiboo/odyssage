@@ -94,3 +94,18 @@ export async function deleteChoiceNode(
 
   return await session.run(query, { id: choiceId });
 }
+
+export async function createChoiceToEventRelationship(
+  session: Session,
+  choiceId: string,
+  eventId: string,
+): Promise<Result> {
+  const query = `
+    MATCH (c:Choice {id: $choiceId})
+    MATCH (e:Event {id: $eventId})
+    CREATE (c)-[:LEADS_TO]->(e)
+    RETURN c, e
+  `;
+
+  return await session.run(query, { choiceId, eventId });
+}
