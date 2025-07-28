@@ -9,8 +9,6 @@ describe('Choice Node', () => {
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト用データをクリーンアップ
-    await session.run('MATCH (n) DETACH DELETE n');
   });
 
   afterEach(async () => {
@@ -19,12 +17,13 @@ describe('Choice Node', () => {
 
   it('正常なデータでChoiceノードが作成できる', async () => {
     // Arrange
+    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const choiceData = {
-      id: 'choice1',
+      id: `choice1-${uniqueId}`,
       text: '選択肢1',
       order: 1,
-      messageId: 'message1',
-      targetEventId: 'event1',
+      messageId: `message1-${uniqueId}`,
+      targetEventId: `event1-${uniqueId}`,
       conditions: undefined,
     };
     // Act

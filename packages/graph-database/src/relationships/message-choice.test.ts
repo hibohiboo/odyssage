@@ -4,57 +4,51 @@ import { driver } from '../driver';
 import { createEventNode } from '../nodes/event';
 import { createMessageNode } from '../nodes/message';
 import { createMessageChoiceRelation, getMessageChoices } from './message-choice';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Message-Choice Relationship Operations', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (m1:Message {id: $messageId1})-[r:CHOICE]->(e:Event {id: $eventId}) 
-      DELETE r
-    `, { messageId1: 'test-message-1', eventId: 'test-event-2' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-2' });
-    await session.run('MATCH (m:Message {id: $id}) DELETE m', { id: 'test-message-1' });
+    cleanup = new TestCleanupHelper(session);
+    
+    // テスト開始前にクリーンアップを実行
+    await cleanup.cleanup();
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (m1:Message {id: $messageId1})-[r:CHOICE]->(e:Event {id: $eventId}) 
-      DELETE r
-    `, { messageId1: 'test-message-1', eventId: 'test-event-2' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-1' });
-    await session.run('MATCH (e:Event {id: $id}) DELETE e', { id: 'test-event-2' });
-    await session.run('MATCH (m:Message {id: $id}) DELETE m', { id: 'test-message-1' });
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('should create a CHOICE relationship between message and target event', async () => {
     // Arrange
+    const testIds = generateTestIdSet(`msg-choice-create-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+    cleanup.addTestIdSet(testIds);
+
     const eventData1 = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '最初のイベント',
       description: '最初のイベントです。',
       order: 1,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const eventData2 = {
-      id: 'test-event-2',
+      id: testIds.eventId2!,
       title: '選択先のイベント',
       description: '選択肢で移動する先のイベントです。',
       order: 2,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const messageData = {
-      id: 'test-message-1',
+      id: testIds.messageId,
       text: 'どちらに進みますか？',
       order: 1,
-      eventId: 'test-event-1',
+      eventId: testIds.eventId,
     };
 
     await createEventNode(session, eventData1);
@@ -64,8 +58,8 @@ describe('Message-Choice Relationship Operations', () => {
     // Act
     const result = await createMessageChoiceRelation(
       session, 
-      'test-message-1', 
-      'test-event-2',
+      testIds.messageId, 
+      testIds.eventId2!,
       '森の奥へ進む'
     );
 
@@ -78,41 +72,44 @@ describe('Message-Choice Relationship Operations', () => {
 
   it('should retrieve all choice targets for a message', async () => {
     // Arrange
+    const testIds = generateTestIdSet(`msg-choice-get-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+    cleanup.addTestIdSet(testIds);
+
     const eventData1 = {
-      id: 'test-event-1',
+      id: testIds.eventId,
       title: '最初のイベント',
       description: '最初のイベントです。',
       order: 1,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const eventData2 = {
-      id: 'test-event-2',
+      id: testIds.eventId2!,
       title: '選択先のイベント',
       description: '選択肢で移動する先のイベントです。',
       order: 2,
-      sceneId: 'scene-1',
+      sceneId: testIds.sceneId,
     };
 
     const messageData = {
-      id: 'test-message-1',
+      id: testIds.messageId,
       text: 'どちらに進みますか？',
       order: 1,
-      eventId: 'test-event-1',
+      eventId: testIds.eventId,
     };
 
     await createEventNode(session, eventData1);
     await createEventNode(session, eventData2);
     await createMessageNode(session, messageData);
-    await createMessageChoiceRelation(session, 'test-message-1', 'test-event-2', '森の奥へ進む');
+    await createMessageChoiceRelation(session, testIds.messageId, testIds.eventId2!, '森の奥へ進む');
 
     // Act
-    const result = await getMessageChoices(session, 'test-message-1');
+    const result = await getMessageChoices(session, testIds.messageId);
 
     // Assert
     expect(result.records).toHaveLength(1);
     const choice = result.records[0];
     expect(choice.get('choice').properties.text).toBe('森の奥へ進む');
-    expect(choice.get('event').properties.id).toBe('test-event-2');
+    expect(choice.get('event').properties.id).toBe(testIds.eventId2!);
   });
 });
