@@ -4,6 +4,7 @@ import { Message, MessageProps } from '../entities/message';
 import { Scenario, ScenarioProps, Visibility } from '../entities/scenario';
 import { Scene, SceneProps } from '../entities/scene';
 import { ScenarioRepository } from '../repositories/scenario-repository';
+import { IdGenerator } from '../utils/id-generator';
 
 /**
  * シナリオ作成サービス
@@ -303,6 +304,17 @@ export class ScenarioCreationService {
   }
 
   private static generateId(prefix: string): string {
-    return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    switch (prefix) {
+      case 'scenario':
+        return IdGenerator.generateScenarioId();
+      case 'scene':
+        return IdGenerator.generateSceneId();
+      case 'event':
+        return IdGenerator.generateEventId();
+      case 'message':
+        return IdGenerator.generateMessageId();
+      default:
+        return IdGenerator.generateUuid();
+    }
   }
 }

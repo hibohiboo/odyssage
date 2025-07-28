@@ -1,5 +1,6 @@
 // @copilot-context naming
 
+import { IdGenerator } from '../utils/id-generator';
 import type { DomainEvent } from './domain-event';
 
 /**
@@ -26,6 +27,6 @@ export class GameCompletedEvent implements DomainEvent {
   }
 
   private static generateEventId(): string {
-    return `event_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    return IdGenerator.generateEventId();
   }
 }

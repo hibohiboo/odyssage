@@ -21,3 +21,6 @@ export * from './services/gameplay-service';
 
 // ドメインイベント
 export * from './events/domain-events';
+
+// ユーティリティ
+export * from './utils/id-generator';

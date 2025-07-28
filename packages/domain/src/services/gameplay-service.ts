@@ -4,6 +4,7 @@ import {
   PlayerProgress,
 } from '../repositories/player-repository';
 import { ScenarioRepository } from '../repositories/scenario-repository';
+import { IdGenerator } from '../utils/id-generator';
 
 /**
  * ゲームプレイの進行状況
@@ -353,6 +354,6 @@ export class GameplayService {
   }
 
   private static generateProgressId(): string {
-    return `progress_${Date.now()}_${Math.random().toString(36).substring(2)}`;
+    return IdGenerator.generateProgressId();
   }
 }

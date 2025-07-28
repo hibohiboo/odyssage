@@ -26,6 +26,20 @@ t_wadaのテスト駆動の手法で開発してください。
 3. **新発見の追加**: 実装過程で気づいた新しいテストケースを追加
 4. **完了の確認**: 全てのテストが完了するまで継続
 
+## ファイル作成・編集ルール
+
+### 改行コード
+
+- ファイルの終端は必ずLF（\n）にする
+- 既に終端がLFの場合は追加しない（重複を避ける）
+- これはすべてのテキストファイル（.md、.js、.ts、.py等）に適用する
+
+### フォーマット
+
+- 空白だけの行は改行文字のみにする（空白文字を含めない）
+- 文章の末尾の空白は削除する
+- 行末に不要な空白文字を残さない
+
 ## Project Overview
 
 Odyssage is an asynchronous, gamebook-style TRPG (tabletop RPG) platform built as a Bun monorepo. The project enables users to create scenarios, manage game sessions, and engage in role-playing experiences through a web interface.

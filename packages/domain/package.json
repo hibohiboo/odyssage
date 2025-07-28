@@ -9,7 +9,10 @@
     "ncu": "ncu -u"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "vitest": "^3.2.4"
   },
-  "dependencies": {}
+  "dependencies": {
+    "uuid": "^11.1.0"
+  }
 }

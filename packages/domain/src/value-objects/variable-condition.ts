@@ -12,6 +12,7 @@ export class VariableCondition implements ChoiceCondition {
     private value: number,
   ) {}
 
+  // eslint-disable-next-line complexity
   evaluate(playerState: PlayerState): boolean {
     const currentValue = playerState.variables[this.variableName] ?? 0;
 
