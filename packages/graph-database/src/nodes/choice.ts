@@ -121,3 +121,34 @@ export async function getEventFromChoice(
 
   return await session.run(query, { choiceId });
 }
+
+export async function getChoicesLeadingToEvent(
+  session: Session,
+  eventId: string,
+): Promise<Result> {
+  const query = `
+    MATCH (c:Choice)-[:LEADS_TO]->(e:Event {id: $eventId})
+    RETURN c, e
+    ORDER BY c.order
+  `;
+
+  return await session.run(query, { eventId });
+}
+
+export async function updateChoiceEventRelationship(
+  session: Session,
+  choiceId: string,
+  newEventId: string,
+): Promise<Result> {
+  const query = `
+    MATCH (c:Choice {id: $choiceId})
+    MATCH (newEvent:Event {id: $newEventId})
+    OPTIONAL MATCH (c)-[oldRel:LEADS_TO]->()
+    DELETE oldRel
+    CREATE (c)-[:LEADS_TO]->(newEvent)
+    SET c.targetEventId = $newEventId, c.updatedAt = datetime()
+    RETURN c, newEvent
+  `;
+
+  return await session.run(query, { choiceId, newEventId });
+}

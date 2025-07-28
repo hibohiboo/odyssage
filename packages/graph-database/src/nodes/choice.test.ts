@@ -1,7 +1,7 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship, getEventFromChoice } from './choice';
+import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship, getEventFromChoice, getChoicesLeadingToEvent, updateChoiceEventRelationship } from './choice';
 import { createEventNode } from './event';
 
 describe('Choice Node', () => {
@@ -269,5 +269,121 @@ describe('Choice Node', () => {
     expect(event.id).toBe(eventData.id);
     expect(event.title).toBe(eventData.title);
     expect(event.description).toBe(eventData.description);
+  });
+
+  it('イベントに向かう選択肢一覧が取得できる', async () => {
+    // Arrange
+    const eventData = {
+      id: 'event9',
+      title: '共通遷移先イベント',
+      description: '複数の選択肢からアクセス可能なイベント',
+      order: 1,
+      sceneId: 'scene9',
+    };
+
+    const choice1Data = {
+      id: 'choice9a',
+      text: '左の道を選ぶ',
+      order: 1,
+      messageId: 'message9a',
+      targetEventId: 'event9',
+      conditions: undefined,
+    };
+
+    const choice2Data = {
+      id: 'choice9b',
+      text: '右の道を選ぶ',
+      order: 2,
+      messageId: 'message9b',
+      targetEventId: 'event9',
+      conditions: undefined,
+    };
+
+    // ノードとリレーションシップを作成
+    await createEventNode(session, eventData);
+    await createChoiceNode(session, choice1Data);
+    await createChoiceNode(session, choice2Data);
+    await createChoiceToEventRelationship(session, choice1Data.id, eventData.id);
+    await createChoiceToEventRelationship(session, choice2Data.id, eventData.id);
+
+    // Act
+    const result = await getChoicesLeadingToEvent(session, eventData.id);
+
+    // Assert
+    expect(result.records).toHaveLength(2);
+    
+    // orderでソートされているか確認
+    const choices = result.records.map(record => record.get('c').properties);
+    expect(choices[0].order).toBe(1);
+    expect(choices[1].order).toBe(2);
+    
+    // 各選択肢の内容確認
+    expect(choices[0].id).toBe(choice1Data.id);
+    expect(choices[0].text).toBe(choice1Data.text);
+    expect(choices[1].id).toBe(choice2Data.id);
+    expect(choices[1].text).toBe(choice2Data.text);
+    
+    // 共通のイベントが返されることを確認
+    const events = result.records.map(record => record.get('e').properties);
+    expect(events[0].id).toBe(eventData.id);
+    expect(events[1].id).toBe(eventData.id);
+  });
+
+  it('選択肢の遷移先を変更できる', async () => {
+    // Arrange
+    const choiceData = {
+      id: 'choice10',
+      text: '遷移先変更テスト選択肢',
+      order: 1,
+      messageId: 'message10',
+      targetEventId: 'event10a',
+      conditions: undefined,
+    };
+
+    const originalEventData = {
+      id: 'event10a',
+      title: '元の遷移先イベント',
+      description: '最初の遷移先',
+      order: 1,
+      sceneId: 'scene10',
+    };
+
+    const newEventData = {
+      id: 'event10b',
+      title: '新しい遷移先イベント',
+      description: '変更後の遷移先',
+      order: 2,
+      sceneId: 'scene10',
+    };
+
+    // ノードとリレーションシップを作成
+    await createChoiceNode(session, choiceData);
+    await createEventNode(session, originalEventData);
+    await createEventNode(session, newEventData);
+    await createChoiceToEventRelationship(session, choiceData.id, originalEventData.id);
+
+    // 初期状態の確認
+    const beforeUpdate = await getEventFromChoice(session, choiceData.id);
+    expect(beforeUpdate.records).toHaveLength(1);
+    expect(beforeUpdate.records[0].get('e').properties.id).toBe(originalEventData.id);
+
+    // Act
+    const result = await updateChoiceEventRelationship(session, choiceData.id, newEventData.id);
+
+    // Assert
+    expect(result.records).toHaveLength(1);
+    const record = result.records[0];
+    const updatedChoice = record.get('c').properties;
+    const newEvent = record.get('newEvent').properties;
+
+    expect(updatedChoice.id).toBe(choiceData.id);
+    expect(updatedChoice.targetEventId).toBe(newEventData.id);
+    expect(updatedChoice.updatedAt).toBeDefined();
+    expect(newEvent.id).toBe(newEventData.id);
+
+    // 変更後の遷移先が正しいことを確認
+    const afterUpdate = await getEventFromChoice(session, choiceData.id);
+    expect(afterUpdate.records).toHaveLength(1);
+    expect(afterUpdate.records[0].get('e').properties.id).toBe(newEventData.id);
   });
 });
