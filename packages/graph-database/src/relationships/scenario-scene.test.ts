@@ -25,8 +25,7 @@ describe('Scenario-Scene Relationship Operations', () => {
 
   it('should create a HAS_SCENE relationship between scenario and scene', async () => {
     // Arrange
-    const testIds = generateTestIdSet(`rel-create-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('rel-create');
     
     const scenarioData = {
       id: testIds.scenarioId,
@@ -58,8 +57,7 @@ describe('Scenario-Scene Relationship Operations', () => {
 
   it('should retrieve all scenes for a scenario', async () => {
     // Arrange
-    const testIds = generateTestIdSet(`rel-get-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('rel-get');
     
     const scenarioData = {
       id: testIds.scenarioId,

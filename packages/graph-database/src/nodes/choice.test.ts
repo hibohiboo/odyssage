@@ -3,27 +3,36 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship, getEventFromChoice, getChoicesLeadingToEvent, updateChoiceEventRelationship } from './choice';
 import { createEventNode } from './event';
+import { TestCleanupHelper } from '../test-utils/test-helpers';
 
 describe('Choice Node', () => {
   let session: Session;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
+    cleanup = new TestCleanupHelper(session);
+    
+    // テスト開始前にクリーンアップを実行
+    await cleanup.cleanup();
   });
 
   afterEach(async () => {
+    await cleanup.cleanup();
     await session.close();
   });
 
   it('正常なデータでChoiceノードが作成できる', async () => {
     // Arrange
-    const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const choiceId = cleanup.generateSuiteSpecificId('choice1');
+    cleanup.addTestId(choiceId);
+    
     const choiceData = {
-      id: `choice1-${uniqueId}`,
+      id: choiceId,
       text: '選択肢1',
       order: 1,
-      messageId: `message1-${uniqueId}`,
-      targetEventId: `event1-${uniqueId}`,
+      messageId: cleanup.generateSuiteSpecificId('message1'),
+      targetEventId: cleanup.generateSuiteSpecificId('event1'),
       conditions: undefined,
     };
     // Act

@@ -125,6 +125,27 @@ export class TestCleanupHelper {
   }
 
   /**
+   * テストケース固有のIDセットを生成
+   */
+  generateTestSpecificIdSet(testName: string): TestIdSet {
+    const uniqueId = generateTimestampedTestId(`${testName}-${this.testSuiteId}`);
+    
+    const idSet: TestIdSet = {
+      scenarioId: `scenario-${uniqueId}`,
+      sceneId: `scene-${uniqueId}`,
+      eventId: `event-${uniqueId}`,
+      messageId: `message-${uniqueId}`,
+      eventId2: `event2-${uniqueId}`,
+      messageId2: `message2-${uniqueId}`,
+    };
+
+    // 自動的に追跡リストに追加
+    this.addTestIdSet(idSet);
+    
+    return idSet;
+  }
+
+  /**
    * すべての追跡されたテストデータをクリーンアップ
    */
   async cleanup(): Promise<void> {

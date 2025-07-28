@@ -31,8 +31,7 @@ describe('Scenario Structure Queries', () => {
 
   it('should retrieve complete scenario structure with all nested elements', async () => {
     // Arrange
-    const testIds = generateTestIdSet(`scenario-structure-complete-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('scenario-structure-complete');
 
     const scenarioData = {
       id: testIds.scenarioId,
@@ -94,8 +93,7 @@ describe('Scenario Structure Queries', () => {
 
   it('should retrieve all possible flow paths in a scenario', async () => {
     // Arrange - 分岐のあるシナリオ構造を作成
-    const testIds = generateTestIdSet(`scenario-structure-paths-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('scenario-structure-paths');
 
     const scenarioData = {
       id: testIds.scenarioId,

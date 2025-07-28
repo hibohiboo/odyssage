@@ -25,8 +25,7 @@ describe('Message-Choice Relationship Operations', () => {
 
   it('should create a CHOICE relationship between message and target event', async () => {
     // Arrange
-    const testIds = generateTestIdSet(`msg-choice-create-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('msg-choice-create');
 
     const eventData1 = {
       id: testIds.eventId,
@@ -72,8 +71,7 @@ describe('Message-Choice Relationship Operations', () => {
 
   it('should retrieve all choice targets for a message', async () => {
     // Arrange
-    const testIds = generateTestIdSet(`msg-choice-get-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
-    cleanup.addTestIdSet(testIds);
+    const testIds = cleanup.generateTestSpecificIdSet('msg-choice-get');
 
     const eventData1 = {
       id: testIds.eventId,
