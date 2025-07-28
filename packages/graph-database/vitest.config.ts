@@ -12,5 +12,12 @@ export default defineConfig({
     environment: 'node',
     include: ['**/*.test.{ts,mts}'],
     exclude: ['**/node_modules/**', '**/dist/**'],
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true,
+      },
+    },
+    fileParallelism: false,
   },
 });
