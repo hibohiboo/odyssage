@@ -10,44 +10,24 @@ import { createSceneEventRelation } from '../relationships/scene-event';
 import { createEventMessageRelation } from '../relationships/event-message';
 import { createMessageChoiceRelation } from '../relationships/message-choice';
 import { getCompleteScenarioStructure, getScenarioFlowPaths } from './scenario-structure';
+import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scenario Structure Queries', () => {
   let session: any;
+  let cleanup: TestCleanupHelper;
 
   beforeEach(async () => {
     session = driver.session();
-    // テスト前にテストデータをクリーンアップ
-    await session.run(`
-      MATCH (s:Scenario {id: 'test-scenario-1'})
-      DETACH DELETE s
-    `);
-    await session.run(`
-      MATCH (sc:Scene {id: 'test-scene-1'})
-      DETACH DELETE sc
-    `);
-    await session.run(`
-      MATCH (e:Event {id: 'test-event-1'})
-      DETACH DELETE e
-    `);
-    await session.run(`
-      MATCH (e:Event {id: 'test-event-2'})
-      DETACH DELETE e
-    `);
-    await session.run(`
-      MATCH (m:Message {id: 'test-message-1'})
-      DETACH DELETE m
-    `);
+    cleanup = new TestCleanupHelper(session);
+    
+    // テスト開始前にクリーンアップを実行
+    await cleanup.cleanup();
   });
 
   afterEach(async () => {
-    // テスト後のクリーンアップ
-    await session.run(`
-      MATCH (s:Scenario {id: 'test-scenario-1'})
-      DETACH DELETE s
-    `);
-    await session.run(`
-      MATCH (sc:Scene {id: 'test-scene-1'})
-      DETACH DELETE sc
+    await cleanup.cleanup();
+    await session.close();
+  });
     `);
     await session.run(`
       MATCH (e:Event {id: 'test-event-1'})
