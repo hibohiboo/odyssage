@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createEventNode } from '../nodes/event';
 import { createMessageNode } from '../nodes/message';
-import { createEventMessageRelation, getEventMessages } from './event-message';
 import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
+import { createEventMessageRelation, getEventMessages } from './event-message';
 
 describe('Event-Message Relationship Operations', () => {
   let session: any;

@@ -1,8 +1,8 @@
 // @copilot-context testing
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createScenarioNode, getScenarioNode } from './scenario';
 import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
+import { createScenarioNode, getScenarioNode } from './scenario';
 
 describe('Scenario Node Operations', () => {
   let session: any;

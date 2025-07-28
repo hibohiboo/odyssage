@@ -1,9 +1,9 @@
 import { Session } from 'neo4j-driver';
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
+import { TestCleanupHelper } from '../test-utils/test-helpers';
 import { createChoiceNode, getChoiceNode, getChoicesByMessage, updateChoiceNode, deleteChoiceNode, createChoiceToEventRelationship, getEventFromChoice, getChoicesLeadingToEvent, updateChoiceEventRelationship } from './choice';
 import { createEventNode } from './event';
-import { TestCleanupHelper } from '../test-utils/test-helpers';
 
 describe('Choice Node', () => {
   let session: Session;

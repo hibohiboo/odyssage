@@ -1,16 +1,16 @@
 // @copilot-context testing
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createScenarioNode } from '../nodes/scenario';
-import { createSceneNode } from '../nodes/scene';
 import { createEventNode } from '../nodes/event';
 import { createMessageNode } from '../nodes/message';
-import { createScenarioSceneRelation } from '../relationships/scenario-scene';
-import { createSceneEventRelation } from '../relationships/scene-event';
+import { createScenarioNode } from '../nodes/scenario';
+import { createSceneNode } from '../nodes/scene';
 import { createEventMessageRelation } from '../relationships/event-message';
 import { createMessageChoiceRelation } from '../relationships/message-choice';
+import { createScenarioSceneRelation } from '../relationships/scenario-scene';
+import { createSceneEventRelation } from '../relationships/scene-event';
+import { TestCleanupHelper } from '../test-utils/test-helpers';
 import { getCompleteScenarioStructure, getScenarioFlowPaths } from './scenario-structure';
-import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scenario Structure Queries', () => {
   let session: any;

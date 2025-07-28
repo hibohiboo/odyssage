@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createScenarioNode } from '../nodes/scenario';
 import { createSceneNode } from '../nodes/scene';
+import { TestCleanupHelper } from '../test-utils/test-helpers';
 import { createScenarioSceneRelation, getScenarioScenes } from './scenario-scene';
-import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Scenario-Scene Relationship Operations', () => {
   let session: any;

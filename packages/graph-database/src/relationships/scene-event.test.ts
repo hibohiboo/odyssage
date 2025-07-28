@@ -1,10 +1,10 @@
 // @copilot-context testing
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
-import { createSceneNode } from '../nodes/scene';
 import { createEventNode } from '../nodes/event';
-import { createSceneEventRelation, getSceneEvents } from './scene-event';
+import { createSceneNode } from '../nodes/scene';
 import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
+import { createSceneEventRelation, getSceneEvents } from './scene-event';
 
 describe('Scene-Event Relationship Operations', () => {
   let session: any;

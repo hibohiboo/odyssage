@@ -1,6 +1,6 @@
 // @copilot-context testing
-import { Session } from 'neo4j-driver';
 import { randomUUID } from 'crypto';
+import { Session } from 'neo4j-driver';
 
 /**
  * テスト用のユニークIDを生成
@@ -93,7 +93,9 @@ export function generateMultiTestIdSet(basePrefix: string = 'test', count: numbe
  */
 export class TestCleanupHelper {
   private testIds: string[] = [];
+
   private session: Session;
+
   private testSuiteId: string;
 
   constructor(session: Session) {

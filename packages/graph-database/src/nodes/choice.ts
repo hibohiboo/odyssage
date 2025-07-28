@@ -30,7 +30,7 @@ export async function createChoiceNode(
     RETURN c
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     id: data.id,
     text: data.text,
     order: data.order,

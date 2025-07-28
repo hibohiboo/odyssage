@@ -3,8 +3,8 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { createEventNode } from '../nodes/event';
 import { createMessageNode } from '../nodes/message';
+import { TestCleanupHelper } from '../test-utils/test-helpers';
 import { createMessageChoiceRelation, getMessageChoices } from './message-choice';
-import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 
 describe('Message-Choice Relationship Operations', () => {
   let session: any;
