@@ -48,6 +48,53 @@ bun run test --watch
 npm run local:graphdb
 ```
 
+## テスト作成ルール
+
+### 必須：TestCleanupHelperの使用
+**重要**: Neo4jを使用するすべてのテストファイルでTestCleanupHelperを必ず使用してください。
+
+```typescript
+import { TestCleanupHelper } from '../test-utils/test-helpers';
+
+describe('テスト名', () => {
+  let session: Session;
+  let cleanup: TestCleanupHelper;
+
+  beforeEach(async () => {
+    session = driver.session();
+    cleanup = new TestCleanupHelper(session);
+    
+    // テスト開始前にクリーンアップを実行
+    await cleanup.cleanup();
+  });
+
+  afterEach(async () => {
+    await cleanup.cleanup();
+    await session.close();
+  });
+
+  it('テストケース', async () => {
+    // IDセットを生成（自動的にクリーンアップ対象に登録される）
+    const testIds = cleanup.generateTestSpecificIdSet('test-name');
+    
+    // または単一IDを生成する場合
+    const singleId = cleanup.generateSuiteSpecificId('unique-id');
+    cleanup.addTestId(singleId);
+  });
+});
+```
+
+### TestCleanupHelper使用の理由
+1. **並列実行対応**: 各テストが独立したID範囲を使用
+2. **データ競合防止**: テスト間でのデータ干渉を防止
+3. **自動クリーンアップ**: 手動でのクリーンアップコードが不要
+4. **一貫性**: すべてのテストで統一されたID管理
+
+### 禁止事項
+- **固定IDの使用**: `'test-scenario-1'`のような固定IDは使用禁止
+- **手動クリーンアップ**: `MATCH (n) DETACH DELETE n`のような手動クリーンアップは禁止
+- **TestCleanupHelperなしのテスト**: Neo4jを使用するテストではTestCleanupHelperを必ず使用
+
 ## 用途
 - **シナリオフロー**: Scene間の複雑な分岐・合流関係
 - **選択肢ナビゲーション**: プレイヤーの選択による経路追跡
