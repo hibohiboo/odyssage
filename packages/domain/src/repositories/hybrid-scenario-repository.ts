@@ -1,9 +1,9 @@
 // @copilot-context backend
+import { createScenarioNode, getScenarioNode } from '@odyssage/graph-database/src/nodes/scenario';
+import { getCompleteScenarioStructure } from '@odyssage/graph-database/src/queries/scenario-structure';
 import { Session } from 'neo4j-driver';
 import { Scenario, type Visibility } from '../entities/scenario';
 import type { ScenarioRepository } from './scenario-repository';
-import { createScenarioNode, getScenarioNode } from '@odyssage/graph-database/src/nodes/scenario';
-import { getCompleteScenarioStructure } from '@odyssage/graph-database/src/queries/scenario-structure';
 
 /**
  * ハイブリッドシナリオリポジトリ
@@ -36,7 +36,6 @@ export class HybridScenarioRepository implements ScenarioRepository {
     await this.saveScenarioStructure(scenario);
 
     // 将来のPostgreSQL連携はここに追加
-    // await this.postgresRepository.save(scenario);
   }
 
   private async saveScenarioStructure(scenario: Scenario): Promise<void> {
@@ -146,7 +145,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
        RETURN s 
        ORDER BY s.createdAt DESC 
        SKIP $skip LIMIT $limit`,
-      { skip: parseInt(skip.toString()), limit: parseInt(limit.toString()) },
+      { skip: parseInt(skip.toString(), 10), limit: parseInt(limit.toString(), 10) },
     );
 
     // 総数を取得
@@ -178,8 +177,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
       { id },
     );
 
-    // 将来のPostgreSQL連携
-    // await this.postgresRepository.delete(id);
+    // 将来のPostgreSQL連携を予定
   }
 
   async exists(id: string): Promise<boolean> {
@@ -206,7 +204,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
        WHERE toLower(s.title) CONTAINS toLower($title)
        RETURN s 
        LIMIT $limit`,
-      { title, limit: parseInt(limit.toString()) },
+      { title, limit: parseInt(limit.toString(), 10) },
     );
 
     return result.records.map(record => {
@@ -240,10 +238,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
       visibility: scenarioData.visibility as Visibility,
     });
 
-    // 将来的にScene, Event, Messageの復元ロジックを追加
-    // const scenes = record.get('scenes');
-    // const events = record.get('events');
-    // const messages = record.get('messages');
+    // 将来的にScene, Event, Messageの復元ロジックを追加予定
 
     return scenario;
   }

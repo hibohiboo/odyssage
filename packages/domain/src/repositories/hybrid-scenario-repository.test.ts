@@ -1,13 +1,13 @@
 // @copilot-context testing
-import { Session } from 'neo4j-driver';
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '@odyssage/graph-database/src/driver';
 import { TestCleanupHelper } from '@odyssage/graph-database/src/test-utils/test-helpers';
-import { HybridScenarioRepository } from './hybrid-scenario-repository';
-import { Scenario, ScenarioProps, Visibility } from '../entities/scenario';
-import { Scene, SceneProps } from '../entities/scene';
+import { Session } from 'neo4j-driver';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Event, EventProps } from '../entities/event';
 import { Message, MessageProps } from '../entities/message';
+import { Scenario, ScenarioProps, Visibility } from '../entities/scenario';
+import { Scene, SceneProps } from '../entities/scene';
+import { HybridScenarioRepository } from './hybrid-scenario-repository';
 
 describe('HybridScenarioRepository', () => {
   let session: Session;
