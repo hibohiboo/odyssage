@@ -242,4 +242,73 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
     return scenario;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async saveScenarioDetails(scenarioId: string, scenes: any[]): Promise<void> {
+    // 動的インポートでgraph-databaseパッケージの機能を使用
+    const { createSceneNode } = await import('@odyssage/graph-database/src/nodes/scene');
+    const { createEventNode } = await import('@odyssage/graph-database/src/nodes/event');
+    const { createMessageNode } = await import('@odyssage/graph-database/src/nodes/message');
+    const { createScenarioSceneRelation } = await import('@odyssage/graph-database/src/relationships/scenario-scene');
+    const { createSceneEventRelation } = await import('@odyssage/graph-database/src/relationships/scene-event');
+    const { createEventMessageRelation } = await import('@odyssage/graph-database/src/relationships/event-message');
+
+    // 既存のシーン・イベント・メッセージを削除（再作成のため）
+    await this.#session.run(
+      `MATCH (s:Scenario {id: $scenarioId})
+       OPTIONAL MATCH (s)-[:HAS_SCENE]->(scene)
+       OPTIONAL MATCH (scene)-[:HAS_EVENT]->(event)  
+       OPTIONAL MATCH (event)-[:HAS_MESSAGE]->(message)
+       DETACH DELETE scene, event, message`,
+      { scenarioId },
+    );
+
+    // シーンを並列処理で保存
+    await Promise.all(scenes.map(async (sceneData) => {
+      // シーンノード作成
+      await createSceneNode(this.#session, {
+        id: sceneData.id,
+        title: sceneData.title,
+        description: sceneData.description || '',
+        sceneType: sceneData.sceneType,
+        order: sceneData.order,
+      });
+
+      // シナリオとシーンのリレーション作成
+      await createScenarioSceneRelation(this.#session, scenarioId, sceneData.id);
+
+      // イベント処理
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await Promise.all(sceneData.events.map(async (eventData: any) => {
+        // イベントノード作成
+        await createEventNode(this.#session, {
+          id: eventData.id,
+          title: eventData.title,
+          description: eventData.description || '',
+          eventType: eventData.eventType,
+          order: eventData.order,
+          trigger: eventData.trigger || '',
+        });
+
+        // シーンとイベントのリレーション作成
+        await createSceneEventRelation(this.#session, sceneData.id, eventData.id);
+
+        // メッセージ処理
+        await Promise.all(eventData.messages.map(async (messageData: any) => {
+          // メッセージノード作成
+          await createMessageNode(this.#session, {
+            id: messageData.id,
+            content: messageData.content,
+            messageType: messageData.messageType,
+            order: messageData.order,
+            speaker: messageData.speaker || '',
+            metadata: messageData.metadata || {},
+          });
+
+          // イベントとメッセージのリレーション作成
+          await createEventMessageRelation(this.#session, eventData.id, messageData.id);
+        }));
+      }));
+    }));
+  }
 }

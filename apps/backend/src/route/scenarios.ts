@@ -6,6 +6,7 @@ import { Hono } from 'hono';
 import { Session, driver } from 'neo4j-driver';
 import * as v from 'valibot';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
+import { saveScenarioDetailsSchema } from '../schemas/scenario-details';
 
 // リクエスト/レスポンススキーマ
 const createScenarioSchema = v.object({
@@ -306,6 +307,41 @@ export const scenarioRoute = new Hono<Env>()
     } catch (error) {
       console.error('Scenario deletion error:', error);
       return c.json({ error: 'Failed to delete scenario' }, 500);
+    } finally {
+      await session.close();
+    }
+  })
+
+  // シナリオ詳細をGraphDBに保存
+  .post('/:id/details', vValidator('param', paramSchema), vValidator('json', saveScenarioDetailsSchema), async (c) => {
+    const { id } = c.req.valid('param');
+    const { scenes } = c.req.valid('json');
+    const userId = c.get('userId');
+    const session = getNeo4jSession(c.env);
+    
+    try {
+      // シナリオの存在と所有権確認
+      const repository = new HybridScenarioRepository(session);
+      const scenario = await repository.findById(id);
+      
+      if (!scenario) {
+        return c.json({ error: 'Scenario not found' }, 404);
+      }
+      
+      if (scenario.userId !== userId) {
+        return c.json({ error: 'Access denied' }, 403);
+      }
+      
+      // シナリオ詳細をGraphDBに保存
+      await repository.saveScenarioDetails(id, scenes);
+      
+      return c.json({
+        message: 'Scenario details saved to GraphDB successfully',
+        scenarioId: id,
+      }, 201);
+    } catch (error) {
+      console.error('Scenario details save error:', error);
+      return c.json({ error: 'Failed to save scenario details' }, 500);
     } finally {
       await session.close();
     }
