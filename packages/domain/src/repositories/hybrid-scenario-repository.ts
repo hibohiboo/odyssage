@@ -47,8 +47,8 @@ export class HybridScenarioRepository implements ScenarioRepository {
     const { createSceneEventRelation } = await import('@odyssage/graph-database/src/relationships/scene-event');
     const { createEventMessageRelation } = await import('@odyssage/graph-database/src/relationships/event-message');
 
-    // シーンを保存
-    for (const scene of scenario.scenes) {
+    // シーンを並列保存
+    await Promise.all(scenario.scenes.map(async (scene) => {
       const sceneData = {
         id: scene.id,
         title: scene.title,
@@ -60,8 +60,8 @@ export class HybridScenarioRepository implements ScenarioRepository {
       await createSceneNode(this.#session, sceneData);
       await createScenarioSceneRelation(this.#session, scenario.id, scene.id);
 
-      // イベントを保存
-      for (const event of scene.events) {
+      // イベントを並列保存
+      await Promise.all(scene.events.map(async (event) => {
         const eventData = {
           id: event.id,
           title: event.title,
@@ -73,8 +73,8 @@ export class HybridScenarioRepository implements ScenarioRepository {
         await createEventNode(this.#session, eventData);
         await createSceneEventRelation(this.#session, scene.id, event.id);
 
-        // メッセージを保存
-        for (const message of event.messages) {
+        // メッセージを並列保存
+        await Promise.all(event.messages.map(async (message) => {
           const messageData = {
             id: message.id,
             text: message.text,
@@ -84,9 +84,9 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
           await createMessageNode(this.#session, messageData);
           await createEventMessageRelation(this.#session, event.id, message.id);
-        }
-      }
-    }
+        }));
+      }));
+    }));
   }
 
   async findById(id: string): Promise<Scenario | null> {
