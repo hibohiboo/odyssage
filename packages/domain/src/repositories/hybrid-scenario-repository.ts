@@ -5,6 +5,7 @@ import {
 } from '@odyssage/graph-database/src/nodes/scenario';
 import { getCompleteScenarioStructure } from '@odyssage/graph-database/src/queries/scenario-structure';
 import { Session } from 'neo4j-driver';
+import * as neo4j from 'neo4j-driver';
 import { Scenario, type Visibility } from '../entities/scenario';
 import type { ScenarioRepository } from './scenario-repository';
 import type { 
@@ -176,8 +177,8 @@ export class HybridScenarioRepository implements ScenarioRepository {
        ORDER BY s.createdAt DESC 
        SKIP $skip LIMIT $limit`,
       {
-        skip: Math.floor(skip),
-        limit: Math.floor(limit),
+        skip: neo4j.int(Math.floor(skip)),
+        limit: neo4j.int(Math.floor(limit)),
       },
     );
 
@@ -188,13 +189,13 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
     const scenarios = result.records.map((record) => {
       const nodeData = record.get('s').properties;
-      return new Scenario(
-        nodeData.id,
-        nodeData.title,
-        nodeData.overview,
-        nodeData.userId,
-        nodeData.visibility as Visibility,
-      );
+      return new Scenario({
+        id: nodeData.id,
+        title: nodeData.title,
+        overview: nodeData.overview,
+        userId: nodeData.userId,
+        visibility: nodeData.visibility as Visibility,
+      });
     });
 
     const total = countResult.records[0].get('total').toNumber();
@@ -236,7 +237,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
        WHERE toLower(s.title) CONTAINS toLower($title)
        RETURN s 
        LIMIT $limit`,
-      { title, limit: Math.floor(limit) },
+      { title, limit: neo4j.int(Math.floor(limit)) },
     );
 
     return result.records.map((record) => {
