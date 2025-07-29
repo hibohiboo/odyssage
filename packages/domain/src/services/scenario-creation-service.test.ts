@@ -37,30 +37,30 @@ describe('ScenarioCreationService with HybridRepository', () => {
     const createdScenario = await service.createBasicScenario(userId, title, overview);
 
     // Assert - エンティティの確認
-    expect(createdScenario.getTitle()).toBe(title);
-    expect(createdScenario.getOverview()).toBe(overview);
-    expect(createdScenario.getUserId()).toBe(userId);
-    expect(createdScenario.getVisibility()).toBe('draft');
+    expect(createdScenario.title).toBe(title);
+    expect(createdScenario.overview).toBe(overview);
+    expect(createdScenario.userId).toBe(userId);
+    expect(createdScenario.visibility).toBe('draft');
 
     // シーン構造の確認
-    const scenes = createdScenario.getScenes();
+    const scenes = createdScenario.scenes;
     expect(scenes).toHaveLength(1);
-    expect(scenes[0].getTitle()).toBe('始まりのシーン');
+    expect(scenes[0].title).toBe('始まりのシーン');
 
     // イベント構造の確認
-    const events = scenes[0].getEvents();
+    const events = scenes[0].events;
     expect(events).toHaveLength(1);
-    expect(events[0].getTitle()).toBe('物語の開始');
+    expect(events[0].title).toBe('物語の開始');
 
     // メッセージ構造の確認
-    const messages = events[0].getMessages();
+    const messages = events[0].messages;
     expect(messages).toHaveLength(1);
-    expect(messages[0].getText()).toBe('ここから物語が始まります。どのような冒険が待っているでしょうか？');
+    expect(messages[0].text).toBe('ここから物語が始まります。どのような冒険が待っているでしょうか？');
 
     // Neo4jからの取得確認
-    const retrievedScenario = await repository.findById(createdScenario.getId());
+    const retrievedScenario = await repository.findById(createdScenario.id);
     expect(retrievedScenario).not.toBeNull();
-    expect(retrievedScenario!.getTitle()).toBe(title);
+    expect(retrievedScenario!.title).toBe(title);
   });
 
   it('should create scenario from simple-choice template', async () => {
@@ -78,30 +78,30 @@ describe('ScenarioCreationService with HybridRepository', () => {
     );
 
     // Assert
-    expect(createdScenario.getTitle()).toBe(title);
-    expect(createdScenario.getVisibility()).toBe('draft');
+    expect(createdScenario.title).toBe(title);
+    expect(createdScenario.visibility).toBe('draft');
 
     // テンプレート構造の確認
-    const scenes = createdScenario.getScenes();
+    const scenes = createdScenario.scenes;
     expect(scenes).toHaveLength(1);
-    expect(scenes[0].getTitle()).toBe('分かれ道');
+    expect(scenes[0].title).toBe('分かれ道');
 
     // 選択イベント＋結果イベント（左・右）= 3つのイベント
-    const events = scenes[0].getEvents();
+    const events = scenes[0].events;
     expect(events).toHaveLength(3);
 
     // 選択イベントの確認
-    const choiceEvent = events.find(e => e.getTitle() === '道の選択');
+    const choiceEvent = events.find(e => e.title === '道の選択');
     expect(choiceEvent).toBeDefined();
 
     // 結果イベントの確認
-    const leftEvent = events.find(e => e.getTitle() === '明るい道');
-    const rightEvent = events.find(e => e.getTitle() === '暗い森');
+    const leftEvent = events.find(e => e.title === '明るい道');
+    const rightEvent = events.find(e => e.title === '暗い森');
     expect(leftEvent).toBeDefined();
     expect(rightEvent).toBeDefined();
 
     // Neo4jからの取得確認
-    const retrievedScenario = await repository.findById(createdScenario.getId());
+    const retrievedScenario = await repository.findById(createdScenario.id);
     expect(retrievedScenario).not.toBeNull();
   });
 
@@ -120,11 +120,11 @@ describe('ScenarioCreationService with HybridRepository', () => {
     );
 
     // Assert
-    expect(createdScenario.getTitle()).toBe(title);
-    expect(createdScenario.getVisibility()).toBe('draft');
+    expect(createdScenario.title).toBe(title);
+    expect(createdScenario.visibility).toBe('draft');
 
     // Neo4jに保存されていることを確認
-    const retrievedScenario = await repository.findById(createdScenario.getId());
+    const retrievedScenario = await repository.findById(createdScenario.id);
     expect(retrievedScenario).not.toBeNull();
   });
 
@@ -143,11 +143,11 @@ describe('ScenarioCreationService with HybridRepository', () => {
     );
 
     // Assert
-    expect(createdScenario.getTitle()).toBe(title);
-    expect(createdScenario.getVisibility()).toBe('draft');
+    expect(createdScenario.title).toBe(title);
+    expect(createdScenario.visibility).toBe('draft');
 
     // Neo4jに保存されていることを確認
-    const retrievedScenario = await repository.findById(createdScenario.getId());
+    const retrievedScenario = await repository.findById(createdScenario.id);
     expect(retrievedScenario).not.toBeNull();
   });
 
@@ -185,32 +185,32 @@ describe('ScenarioCreationService with HybridRepository', () => {
     const newTitle = '複製されたシナリオ';
 
     const duplicatedScenario = await service.duplicateScenario(
-      originalScenario.getId(),
+      originalScenario.id,
       newUserId,
       newTitle,
     );
 
     // Assert
-    expect(duplicatedScenario.getId()).not.toBe(originalScenario.getId());
-    expect(duplicatedScenario.getTitle()).toBe(newTitle);
-    expect(duplicatedScenario.getOverview()).toBe(originalOverview);
-    expect(duplicatedScenario.getUserId()).toBe(newUserId);
-    expect(duplicatedScenario.getVisibility()).toBe('draft');
+    expect(duplicatedScenario.id).not.toBe(originalScenario.id);
+    expect(duplicatedScenario.title).toBe(newTitle);
+    expect(duplicatedScenario.overview).toBe(originalOverview);
+    expect(duplicatedScenario.userId).toBe(newUserId);
+    expect(duplicatedScenario.visibility).toBe('draft');
 
     // 構造の確認
-    expect(duplicatedScenario.getScenes()).toHaveLength(1);
-    expect(duplicatedScenario.getScenes()[0].getEvents()).toHaveLength(1);
-    expect(duplicatedScenario.getScenes()[0].getEvents()[0].getMessages()).toHaveLength(1);
+    expect(duplicatedScenario.scenes).toHaveLength(1);
+    expect(duplicatedScenario.scenes[0].events).toHaveLength(1);
+    expect(duplicatedScenario.scenes[0].events[0].messages).toHaveLength(1);
 
     // Neo4jに保存されていることを確認
-    const retrievedDuplicated = await repository.findById(duplicatedScenario.getId());
+    const retrievedDuplicated = await repository.findById(duplicatedScenario.id);
     expect(retrievedDuplicated).not.toBeNull();
-    expect(retrievedDuplicated!.getTitle()).toBe(newTitle);
+    expect(retrievedDuplicated!.title).toBe(newTitle);
 
     // 元のシナリオが残っていることを確認
-    const retrievedOriginal = await repository.findById(originalScenario.getId());
+    const retrievedOriginal = await repository.findById(originalScenario.id);
     expect(retrievedOriginal).not.toBeNull();
-    expect(retrievedOriginal!.getTitle()).toBe(originalTitle);
+    expect(retrievedOriginal!.title).toBe(originalTitle);
   });
 
   it('should throw error when trying to duplicate non-existent scenario', async () => {

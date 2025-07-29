@@ -176,8 +176,8 @@ export class HybridScenarioRepository implements ScenarioRepository {
        ORDER BY s.createdAt DESC 
        SKIP $skip LIMIT $limit`,
       {
-        skip: parseInt(skip.toString(), 10),
-        limit: parseInt(limit.toString(), 10),
+        skip: Math.floor(skip),
+        limit: Math.floor(limit),
       },
     );
 
@@ -236,7 +236,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
        WHERE toLower(s.title) CONTAINS toLower($title)
        RETURN s 
        LIMIT $limit`,
-      { title, limit: parseInt(limit.toString(), 10) },
+      { title, limit: Math.floor(limit) },
     );
 
     return result.records.map((record) => {

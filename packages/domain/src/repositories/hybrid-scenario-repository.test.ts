@@ -81,11 +81,11 @@ describe('HybridScenarioRepository', () => {
     const retrievedScenario = await repository.findById(testIds.scenarioId);
     
     expect(retrievedScenario).not.toBeNull();
-    expect(retrievedScenario!.getId()).toBe(testIds.scenarioId);
-    expect(retrievedScenario!.getTitle()).toBe('テストシナリオ');
-    expect(retrievedScenario!.getOverview()).toBe('これはテスト用のシナリオです。');
-    expect(retrievedScenario!.getUserId()).toBe('test-user-1');
-    expect(retrievedScenario!.getVisibility()).toBe('private');
+    expect(retrievedScenario!.id).toBe(testIds.scenarioId);
+    expect(retrievedScenario!.title).toBe('テストシナリオ');
+    expect(retrievedScenario!.overview).toBe('これはテスト用のシナリオです。');
+    expect(retrievedScenario!.userId).toBe('test-user-1');
+    expect(retrievedScenario!.visibility).toBe('private');
   });
 
   it('should find scenarios by user ID', async () => {
@@ -119,7 +119,7 @@ describe('HybridScenarioRepository', () => {
 
     // Assert
     expect(userScenarios).toHaveLength(2);
-    expect(userScenarios.map(s => s.getId()).sort()).toEqual([
+    expect(userScenarios.map(s => s.id).sort()).toEqual([
       testIds1.scenarioId,
       testIds2.scenarioId
     ].sort());
@@ -238,9 +238,9 @@ describe('HybridScenarioRepository', () => {
 
     // Assert
     expect(searchResults.length).toBeGreaterThanOrEqual(1);
-    const foundScenario = searchResults.find(s => s.getId() === testIds.scenarioId);
+    const foundScenario = searchResults.find(s => s.id === testIds.scenarioId);
     expect(foundScenario).toBeDefined();
-    expect(foundScenario!.getTitle()).toBe('冒険の始まり');
+    expect(foundScenario!.title).toBe('冒険の始まり');
   });
 
   it('should delete scenario', async () => {
