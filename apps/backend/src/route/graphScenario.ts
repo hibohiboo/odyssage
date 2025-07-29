@@ -2,7 +2,6 @@ import { vValidator } from '@hono/valibot-validator';
 import { idSchema, graphScenarioRequestSchema, graphScenarioResponseSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import type { Neo4jError } from 'neo4j-driver-core';
-import { generateUUID } from '../utils/generateUUID';
 
 export const graphScenarioRoute = new Hono<Env>()
   .put('/:id', vValidator('param', idSchema), vValidator('json', graphScenarioRequestSchema), async (c) => {
