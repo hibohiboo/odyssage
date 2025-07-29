@@ -7,6 +7,7 @@ import { Session, driver } from 'neo4j-driver';
 import * as v from 'valibot';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { saveScenarioDetailsSchema } from '../schemas/scenario-details';
+import type { SceneDetailData } from '@odyssage/domain/src/types/scenario-details';
 
 // リクエスト/レスポンススキーマ
 const createScenarioSchema = v.object({
@@ -333,7 +334,7 @@ export const scenarioRoute = new Hono<Env>()
       }
       
       // シナリオ詳細をGraphDBに保存
-      await repository.saveScenarioDetails(id, scenes);
+      await repository.saveScenarioDetails(id, scenes as SceneDetailData[]);
       
       return c.json({
         message: 'Scenario details saved to GraphDB successfully',

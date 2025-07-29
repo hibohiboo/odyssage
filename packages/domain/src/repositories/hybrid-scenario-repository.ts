@@ -1,14 +1,22 @@
 // @copilot-context backend
-import { createScenarioNode, getScenarioNode } from '@odyssage/graph-database/src/nodes/scenario';
+import {
+  createScenarioNode,
+  getScenarioNode,
+} from '@odyssage/graph-database/src/nodes/scenario';
 import { getCompleteScenarioStructure } from '@odyssage/graph-database/src/queries/scenario-structure';
 import { Session } from 'neo4j-driver';
 import { Scenario, type Visibility } from '../entities/scenario';
 import type { ScenarioRepository } from './scenario-repository';
+import type { 
+  SceneDetailData, 
+  EventDetailData, 
+  MessageDetailData 
+} from '../types/scenario-details';
 
 /**
  * ハイブリッドシナリオリポジトリ
  * PostgreSQLとNeo4jの両方を使用してシナリオデータを管理
- * 
+ *
  * データ連携方針：レベル1（最小連携）
  * - 基本データ：PostgreSQL（将来実装）
  * - 構造データ：Neo4j（現在実装）
@@ -40,64 +48,86 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
   private async saveScenarioStructure(scenario: Scenario): Promise<void> {
     // 動的インポートでgraph-databaseパッケージの機能を使用
-    const { createSceneNode } = await import('@odyssage/graph-database/src/nodes/scene');
-    const { createEventNode } = await import('@odyssage/graph-database/src/nodes/event');
-    const { createMessageNode } = await import('@odyssage/graph-database/src/nodes/message');
-    const { createScenarioSceneRelation } = await import('@odyssage/graph-database/src/relationships/scenario-scene');
-    const { createSceneEventRelation } = await import('@odyssage/graph-database/src/relationships/scene-event');
-    const { createEventMessageRelation } = await import('@odyssage/graph-database/src/relationships/event-message');
+    const { createSceneNode } = await import(
+      '@odyssage/graph-database/src/nodes/scene'
+    );
+    const { createEventNode } = await import(
+      '@odyssage/graph-database/src/nodes/event'
+    );
+    const { createMessageNode } = await import(
+      '@odyssage/graph-database/src/nodes/message'
+    );
+    const { createScenarioSceneRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scenario-scene'
+    );
+    const { createSceneEventRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scene-event'
+    );
+    const { createEventMessageRelation } = await import(
+      '@odyssage/graph-database/src/relationships/event-message'
+    );
 
     // シーンを並列保存
-    await Promise.all(scenario.scenes.map(async (scene) => {
-      const sceneData = {
-        id: scene.id,
-        title: scene.title,
-        description: scene.description,
-        order: scene.order,
-        scenarioId: scenario.id,
-      };
-
-      await createSceneNode(this.#session, sceneData);
-      await createScenarioSceneRelation(this.#session, scenario.id, scene.id);
-
-      // イベントを並列保存
-      await Promise.all(scene.events.map(async (event) => {
-        const eventData = {
-          id: event.id,
-          title: event.title,
-          description: event.description,
-          order: event.order,
-          sceneId: scene.id,
+    await Promise.all(
+      scenario.scenes.map(async (scene) => {
+        const sceneData = {
+          id: scene.id,
+          title: scene.title,
+          description: scene.description,
+          order: scene.order,
+          scenarioId: scenario.id,
         };
 
-        await createEventNode(this.#session, eventData);
-        await createSceneEventRelation(this.#session, scene.id, event.id);
+        await createSceneNode(this.#session, sceneData);
+        await createScenarioSceneRelation(this.#session, scenario.id, scene.id);
 
-        // メッセージを並列保存
-        await Promise.all(event.messages.map(async (message) => {
-          const messageData = {
-            id: message.id,
-            text: message.text,
-            order: message.order,
-            eventId: event.id,
-          };
+        // イベントを並列保存
+        await Promise.all(
+          scene.events.map(async (event) => {
+            const eventData = {
+              id: event.id,
+              title: event.title,
+              description: event.description,
+              order: event.order,
+              sceneId: scene.id,
+            };
 
-          await createMessageNode(this.#session, messageData);
-          await createEventMessageRelation(this.#session, event.id, message.id);
-        }));
-      }));
-    }));
+            await createEventNode(this.#session, eventData);
+            await createSceneEventRelation(this.#session, scene.id, event.id);
+
+            // メッセージを並列保存
+            await Promise.all(
+              event.messages.map(async (message) => {
+                const messageData = {
+                  id: message.id,
+                  text: message.text,
+                  order: message.order,
+                  eventId: event.id,
+                };
+
+                await createMessageNode(this.#session, messageData);
+                await createEventMessageRelation(
+                  this.#session,
+                  event.id,
+                  message.id,
+                );
+              }),
+            );
+          }),
+        );
+      }),
+    );
   }
 
   async findById(id: string): Promise<Scenario | null> {
     const result = await getScenarioNode(this.#session, id);
-    
+
     if (result.records.length === 0) {
       return null;
     }
 
     const nodeData = result.records[0].get('s').properties;
-    
+
     // Neo4jデータからScenarioエンティティを再構築
     const scenario = new Scenario({
       id: nodeData.id,
@@ -117,7 +147,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
       { userId },
     );
 
-    return result.records.map(record => {
+    return result.records.map((record) => {
       const nodeData = record.get('s').properties;
       return new Scenario({
         id: nodeData.id,
@@ -138,14 +168,17 @@ export class HybridScenarioRepository implements ScenarioRepository {
     hasNext: boolean;
   }> {
     const skip = (page - 1) * limit;
-    
+
     // 公開シナリオを取得
     const result = await this.#session.run(
       `MATCH (s:Scenario {visibility: 'public'}) 
        RETURN s 
        ORDER BY s.createdAt DESC 
        SKIP $skip LIMIT $limit`,
-      { skip: parseInt(skip.toString(), 10), limit: parseInt(limit.toString(), 10) },
+      {
+        skip: parseInt(skip.toString(), 10),
+        limit: parseInt(limit.toString(), 10),
+      },
     );
 
     // 総数を取得
@@ -153,7 +186,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
       "MATCH (s:Scenario {visibility: 'public'}) RETURN count(s) as total",
     );
 
-    const scenarios = result.records.map(record => {
+    const scenarios = result.records.map((record) => {
       const nodeData = record.get('s').properties;
       return new Scenario(
         nodeData.id,
@@ -172,10 +205,9 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
   async delete(id: string): Promise<void> {
     // Neo4jからシナリオとその関連データを削除
-    await this.#session.run(
-      'MATCH (s:Scenario {id: $id}) DETACH DELETE s',
-      { id },
-    );
+    await this.#session.run('MATCH (s:Scenario {id: $id}) DETACH DELETE s', {
+      id,
+    });
 
     // 将来のPostgreSQL連携を予定
   }
@@ -207,7 +239,7 @@ export class HybridScenarioRepository implements ScenarioRepository {
       { title, limit: parseInt(limit.toString(), 10) },
     );
 
-    return result.records.map(record => {
+    return result.records.map((record) => {
       const nodeData = record.get('s').properties;
       return new Scenario({
         id: nodeData.id,
@@ -221,14 +253,14 @@ export class HybridScenarioRepository implements ScenarioRepository {
 
   async findByIdWithFullStructure(id: string): Promise<Scenario | null> {
     const result = await getCompleteScenarioStructure(this.#session, id);
-    
+
     if (result.records.length === 0) {
       return null;
     }
 
     const record = result.records[0];
     const scenarioData = record.get('scenario').properties;
-    
+
     // 完全なScenarioエンティティを構築（Scene, Event, Message含む）
     const scenario = new Scenario({
       id: scenarioData.id,
@@ -243,15 +275,26 @@ export class HybridScenarioRepository implements ScenarioRepository {
     return scenario;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async saveScenarioDetails(scenarioId: string, scenes: any[]): Promise<void> {
+  async saveScenarioDetails(scenarioId: string, scenes: SceneDetailData[]): Promise<void> {
     // 動的インポートでgraph-databaseパッケージの機能を使用
-    const { createSceneNode } = await import('@odyssage/graph-database/src/nodes/scene');
-    const { createEventNode } = await import('@odyssage/graph-database/src/nodes/event');
-    const { createMessageNode } = await import('@odyssage/graph-database/src/nodes/message');
-    const { createScenarioSceneRelation } = await import('@odyssage/graph-database/src/relationships/scenario-scene');
-    const { createSceneEventRelation } = await import('@odyssage/graph-database/src/relationships/scene-event');
-    const { createEventMessageRelation } = await import('@odyssage/graph-database/src/relationships/event-message');
+    const { createSceneNode } = await import(
+      '@odyssage/graph-database/src/nodes/scene'
+    );
+    const { createEventNode } = await import(
+      '@odyssage/graph-database/src/nodes/event'
+    );
+    const { createMessageNode } = await import(
+      '@odyssage/graph-database/src/nodes/message'
+    );
+    const { createScenarioSceneRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scenario-scene'
+    );
+    const { createSceneEventRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scene-event'
+    );
+    const { createEventMessageRelation } = await import(
+      '@odyssage/graph-database/src/relationships/event-message'
+    );
 
     // 既存のシーン・イベント・メッセージを削除（再作成のため）
     await this.#session.run(
@@ -264,51 +307,68 @@ export class HybridScenarioRepository implements ScenarioRepository {
     );
 
     // シーンを並列処理で保存
-    await Promise.all(scenes.map(async (sceneData) => {
-      // シーンノード作成
-      await createSceneNode(this.#session, {
-        id: sceneData.id,
-        title: sceneData.title,
-        description: sceneData.description || '',
-        sceneType: sceneData.sceneType,
-        order: sceneData.order,
-      });
-
-      // シナリオとシーンのリレーション作成
-      await createScenarioSceneRelation(this.#session, scenarioId, sceneData.id);
-
-      // イベント処理
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await Promise.all(sceneData.events.map(async (eventData: any) => {
-        // イベントノード作成
-        await createEventNode(this.#session, {
-          id: eventData.id,
-          title: eventData.title,
-          description: eventData.description || '',
-          eventType: eventData.eventType,
-          order: eventData.order,
-          trigger: eventData.trigger || '',
+    await Promise.all(
+      scenes.map(async (sceneData) => {
+        // シーンノード作成
+        await createSceneNode(this.#session, {
+          id: sceneData.id,
+          title: sceneData.title,
+          description: sceneData.description || '',
+          sceneType: sceneData.sceneType,
+          order: sceneData.order,
         });
 
-        // シーンとイベントのリレーション作成
-        await createSceneEventRelation(this.#session, sceneData.id, eventData.id);
+        // シナリオとシーンのリレーション作成
+        await createScenarioSceneRelation(
+          this.#session,
+          scenarioId,
+          sceneData.id,
+        );
 
-        // メッセージ処理
-        await Promise.all(eventData.messages.map(async (messageData: any) => {
-          // メッセージノード作成
-          await createMessageNode(this.#session, {
-            id: messageData.id,
-            content: messageData.content,
-            messageType: messageData.messageType,
-            order: messageData.order,
-            speaker: messageData.speaker || '',
-            metadata: messageData.metadata || {},
-          });
+        // イベント処理
+        await Promise.all(
+          sceneData.events.map(async (eventData: EventDetailData) => {
+            // イベントノード作成
+            await createEventNode(this.#session, {
+              id: eventData.id,
+              title: eventData.title,
+              description: eventData.description || '',
+              eventType: eventData.eventType,
+              order: eventData.order,
+              trigger: eventData.trigger || '',
+            });
 
-          // イベントとメッセージのリレーション作成
-          await createEventMessageRelation(this.#session, eventData.id, messageData.id);
-        }));
-      }));
-    }));
+            // シーンとイベントのリレーション作成
+            await createSceneEventRelation(
+              this.#session,
+              sceneData.id,
+              eventData.id,
+            );
+
+            // メッセージ処理
+            await Promise.all(
+              eventData.messages.map(async (messageData: MessageDetailData) => {
+                // メッセージノード作成
+                await createMessageNode(this.#session, {
+                  id: messageData.id,
+                  content: messageData.content,
+                  messageType: messageData.messageType,
+                  order: messageData.order,
+                  speaker: messageData.speaker || '',
+                  metadata: messageData.metadata || {},
+                });
+
+                // イベントとメッセージのリレーション作成
+                await createEventMessageRelation(
+                  this.#session,
+                  eventData.id,
+                  messageData.id,
+                );
+              }),
+            );
+          }),
+        );
+      }),
+    );
   }
 }
