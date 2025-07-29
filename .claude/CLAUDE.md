@@ -13,6 +13,26 @@ t_wadaのテスト駆動の手法で開発してください。
 
 各開発ステップを完了する前に、以下の手順を必ず実行してください：
 
+### 0. API実装時の事前手順（必須）
+**重要**: APIエンドポイントを実装する場合は、実装前に必ずOpenAPI仕様を更新してください。
+
+```bash
+# OpenAPI仕様ファイルを更新
+# docs/redocly/openapi/api.yaml を編集
+
+# 仕様を確認・検証
+cd docs/redocly
+npm run lint    # OpenAPI仕様の検証
+npm run build   # ドキュメント生成確認
+```
+
+**手順**:
+1. `docs/redocly/openapi/api.yaml` でAPI仕様を定義
+2. エンドポイント、リクエスト/レスポンススキーマを記述
+3. 仕様の妥当性を検証
+4. 仕様について確認を取る
+5. 仕様に基づいてAPIを実装
+
 ### 1. Lintチェックの実行
 ```bash
 # 該当パッケージでlintチェックを実行
