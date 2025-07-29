@@ -1,13 +1,9 @@
-import { vValidator } from '@hono/valibot-validator';
-import {
-  getScenarios,
-  getScenariosByid,
-  getPublicScenarios,
-} from '@odyssage/database/src/queries/select';
-import { idSchema } from '@odyssage/schema/src/schema';
+
+
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { gmRoute } from './gm';
+import { scenarioRoute } from './scenarios';
 import { sessionRoute } from './session';
 import { user } from './user';
 import type { Neo4jError } from 'neo4j-driver-core';
@@ -18,14 +14,15 @@ const route = new Hono<Env>()
   .route('/users', user)
   .route('/sessions', sessionRoute) // セッションルーターを統合
   .route('/gm', gmRoute) // GM管理ルーターを統合
+  .route('/scenarios', scenarioRoute) // 新しいシナリオAPIルート
+  // 古いシナリオAPIエンドポイント（一時的にコメントアウト）
+  /* 
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
-
     return c.json(data);
   })
   .get('/scenarios/public', async (c) => {
     const data = await getPublicScenarios(c.env.NEON_CONNECTION_STRING);
-
     return c.json(data);
   })
   .get('/scenario/:id', vValidator('param', idSchema), async (c) => {
@@ -36,6 +33,7 @@ const route = new Hono<Env>()
     );
     return c.json(data);
   })
+  */
   .get('/graph-scenarios', async (c) => {
     // vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
     const neo4j = await import('neo4j-driver');
