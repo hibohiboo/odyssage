@@ -95,6 +95,8 @@
       "name": "@odyssage/domain",
       "version": "0.0.0",
       "dependencies": {
+        "@odyssage/graph-database": "workspace:*",
+        "neo4j-driver": "^5.28.1",
         "uuid": "^11.1.0",
       },
       "devDependencies": {
@@ -127,6 +129,7 @@
       "version": "0.0.0",
       "dependencies": {
         "neo4j-driver": "^5.28.1",
+        "vitest": "^3.2.4",
       },
     },
     "packages/lib": {
