@@ -353,7 +353,67 @@ export class HybridScenarioRepository implements ScenarioRepository {
       visibility: scenarioData.visibility as Visibility,
     });
 
-    // 将来的にScene, Event, Messageの復元ロジックを追加予定
+    // Neo4jからシーン、イベント、メッセージデータを取得してScenarioに追加
+    const scenesQuery = `
+      MATCH (s:Scenario {id: $scenarioId})-[:HAS_SCENE]->(scene:Scene)
+      OPTIONAL MATCH (scene)-[:HAS_EVENT]->(event:Event)
+      OPTIONAL MATCH (event)-[:HAS_MESSAGE]->(message:Message)
+      RETURN scene, event, message
+      ORDER BY scene.order ASC, event.order ASC, message.order ASC
+    `;
+    
+    const scenesResult = await this.#session.run(scenesQuery, { scenarioId: id });
+    
+    // シーンデータを整理
+    const sceneMap = new Map();
+    const eventMap = new Map();
+    
+    for (const record of scenesResult.records) {
+      const sceneNode = record.get('scene');
+      const eventNode = record.get('event');
+      const messageNode = record.get('message');
+      
+      if (sceneNode) {
+        const sceneId = sceneNode.properties.id;
+        if (!sceneMap.has(sceneId)) {
+          // Scene エンティティのコンストラクタ構造に合わせて作成
+          const { Scene } = await import('../entities/scene');
+          const scene = new Scene({
+            id: sceneNode.properties.id,
+            title: sceneNode.properties.title,
+            description: sceneNode.properties.description || '',
+            order: sceneNode.properties.order || 0,
+          });
+          sceneMap.set(sceneId, scene);
+          scenario.addScene(scene);
+        }
+        
+        if (eventNode) {
+          const eventId = eventNode.properties.id;
+          if (!eventMap.has(eventId)) {
+            const { Event } = await import('../entities/event');
+            const event = new Event({
+              id: eventNode.properties.id,
+              title: eventNode.properties.title,
+              description: eventNode.properties.description || '',
+              order: eventNode.properties.order || 0,
+            });
+            eventMap.set(eventId, event);
+            sceneMap.get(sceneId).addEvent(event);
+          }
+          
+          if (messageNode) {
+            const { Message } = await import('../entities/message');
+            const message = new Message({
+              id: messageNode.properties.id,
+              text: messageNode.properties.text || messageNode.properties.content,
+              order: messageNode.properties.order || 0,
+            });
+            eventMap.get(eventId).addMessage(message);
+          }
+        }
+      }
+    }
 
     return scenario;
   }
