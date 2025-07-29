@@ -1,0 +1,121 @@
+SaveScenarioDetailsRequest:
+  type: object
+  properties:
+    scenes:
+      type: array
+      items:
+        $ref: '#/SceneDetail'
+      description: "シナリオに含まれるシーン一覧"
+  required:
+    - scenes
+  additionalProperties: false
+
+SceneDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      description: "シーンID"
+    title:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: "シーンタイトル"
+    description:
+      type: string
+      maxLength: 1000
+      description: "シーン説明"
+    sceneType:
+      type: string
+      enum: [opening, investigation, climax, ending, choice, combat]
+      description: "シーンタイプ"
+    order:
+      type: integer
+      minimum: 0
+      description: "シーン順序"
+    events:
+      type: array
+      items:
+        $ref: '#/EventDetail'
+      description: "シーンに含まれるイベント一覧"
+  required:
+    - id
+    - title
+    - sceneType
+    - order
+    - events
+  additionalProperties: false
+
+EventDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      description: "イベントID"
+    title:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: "イベントタイトル"
+    description:
+      type: string
+      maxLength: 1000
+      description: "イベント説明"
+    eventType:
+      type: string
+      enum: [narration, choice, dice_roll, condition_check, character_interaction]
+      description: "イベントタイプ"
+    order:
+      type: integer
+      minimum: 0
+      description: "イベント順序"
+    trigger:
+      type: string
+      maxLength: 500
+      description: "イベント発生条件"
+    messages:
+      type: array
+      items:
+        $ref: '#/MessageDetail'
+      description: "イベントに含まれるメッセージ一覧"
+  required:
+    - id
+    - title
+    - eventType
+    - order
+    - messages
+  additionalProperties: false
+
+MessageDetail:
+  type: object
+  properties:
+    id:
+      type: string
+      description: "メッセージID"
+    content:
+      type: string
+      minLength: 1
+      maxLength: 2000
+      description: "メッセージ内容"
+    messageType:
+      type: string
+      enum: [system, gm, player, npc]
+      description: "メッセージタイプ"
+    order:
+      type: integer
+      minimum: 0
+      description: "メッセージ順序"
+    speaker:
+      type: string
+      maxLength: 100
+      description: "発言者名"
+    metadata:
+      type: object
+      additionalProperties: true
+      description: "メッセージメタデータ"
+  required:
+    - id
+    - content
+    - messageType
+    - order
+  additionalProperties: false

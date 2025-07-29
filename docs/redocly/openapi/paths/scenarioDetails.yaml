@@ -1,0 +1,44 @@
+post:
+  summary: シナリオ詳細をGraphDBに保存
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: "path"
+      name: "id"
+      schema:
+        type: "string"
+      required: true
+      description: "シナリオID"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/scenarioDetails.yaml#/SaveScenarioDetailsRequest'
+  responses:
+    201:
+      description: "シナリオ詳細が正常にGraphDBに保存されました"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              message:
+                type: "string"
+                example: "Scenario details saved to GraphDB successfully"
+              scenarioId:
+                type: "string"
+                description: "保存されたシナリオID"
+            required:
+              - "message"
+              - "scenarioId"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    401:
+      $ref: '../components/schemas/response.yaml#/UnauthorizedResponse'
+    403:
+      $ref: '../components/schemas/response.yaml#/ForbiddenResponse'
+    404:
+      $ref: '../components/schemas/response.yaml#/NotFoundResponse'
+  operationId: "saveScenarioDetailsToGraphDB"
+  description: "シナリオの詳細情報（シーン、イベント、メッセージ等）をGraphDBに保存"

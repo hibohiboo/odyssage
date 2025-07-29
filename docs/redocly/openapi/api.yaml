@@ -16,6 +16,8 @@ paths:
     $ref: './paths/scenariosPublic.yaml'
   /api/scenario/{id}:
     $ref: './paths/scenario.yaml'
+  /api/scenario/{id}/details:
+    $ref: './paths/scenarioDetails.yaml'
   /api/users/{uid}: 
     $ref: './paths/user.yaml'
   /api/users/{uid}/scenario:
