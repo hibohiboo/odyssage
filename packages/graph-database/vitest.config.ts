@@ -1,5 +1,5 @@
-import { defineConfig } from 'vitest/config';
 import path from 'path';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   resolve: {
@@ -12,5 +12,14 @@ export default defineConfig({
     environment: 'node',
     include: ['**/*.test.{ts,mts}'],
     exclude: ['**/node_modules/**', '**/dist/**'],
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        minForks: 1,
+        maxForks: 4,
+      },
+    },
+    testTimeout: 30000,
+    maxConcurrency: 4,
   },
 });
