@@ -18,7 +18,7 @@ export async function createChoiceToEventRelationship(
     RETURN c, e
   `;
 
-  return await session.run(query, { choiceId, targetEventId });
+  return session.run(query, { choiceId, targetEventId });
 }
 
 export async function getTargetEventByChoice(
@@ -30,7 +30,7 @@ export async function getTargetEventByChoice(
     RETURN e
   `;
 
-  return await session.run(query, { choiceId });
+  return session.run(query, { choiceId });
 }
 
 export async function getChoicesLeadingToEvent(
@@ -43,7 +43,7 @@ export async function getChoicesLeadingToEvent(
     ORDER BY c.order
   `;
 
-  return await session.run(query, { eventId });
+  return session.run(query, { eventId });
 }
 
 export async function updateChoiceTarget(
@@ -60,7 +60,7 @@ export async function updateChoiceTarget(
     RETURN c, e
   `;
 
-  return await session.run(query, { choiceId, newTargetEventId });
+  return session.run(query, { choiceId, newTargetEventId });
 }
 
 export async function deleteChoiceToEventRelationships(
@@ -73,5 +73,5 @@ export async function deleteChoiceToEventRelationships(
     RETURN count(r) as deletedCount
   `;
 
-  return await session.run(query, { choiceId });
+  return session.run(query, { choiceId });
 }

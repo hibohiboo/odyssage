@@ -15,7 +15,7 @@ export async function detectCyclicReferences(
     ORDER BY cycleLength
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function validateBranchingStructure(
@@ -41,7 +41,7 @@ export async function validateBranchingStructure(
     ORDER BY event.order
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function findOrphanedNodes(
@@ -81,7 +81,7 @@ export async function findOrphanedNodes(
       collect(DISTINCT orphanMessage) as orphanedMessages
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function validateScenarioIsolation(
@@ -106,7 +106,7 @@ export async function validateScenarioIsolation(
       scenario.id IN scenarioIds AND targetScenario.id IN scenarioIds as bothInScope
   `;
 
-  return await session.run(query, { scenarioIds });
+  return session.run(query, { scenarioIds });
 }
 
 export async function getScenarioComplexityMetrics(
@@ -137,7 +137,7 @@ export async function getScenarioComplexityMetrics(
       CASE WHEN eventCount > 0 THEN toFloat(choiceCount) / eventCount ELSE 0.0 END as branchingRatio
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function cleanupOrphanedRelationships(
@@ -164,5 +164,5 @@ export async function cleanupOrphanedRelationships(
       0 as cleanedRelationships
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }

@@ -27,7 +27,7 @@ export async function createEventFlowRelationship(
     RETURN from, to
   `;
 
-  return await session.run(query, {
+  return session.run(query, {
     fromEventId,
     toEventId,
     conditions: data.conditions || null,
@@ -44,7 +44,7 @@ export async function getNextEvents(
     ORDER BY next.order
   `;
 
-  return await session.run(query, { currentEventId });
+  return session.run(query, { currentEventId });
 }
 
 export async function getPreviousEvents(
@@ -57,7 +57,7 @@ export async function getPreviousEvents(
     ORDER BY prev.order
   `;
 
-  return await session.run(query, { currentEventId });
+  return session.run(query, { currentEventId });
 }
 
 export async function getEventPath(
@@ -72,7 +72,7 @@ export async function getEventPath(
     RETURN path, length(path) as pathLength
   `;
 
-  return await session.run(query, { startEventId, endEventId });
+  return session.run(query, { startEventId, endEventId });
 }
 
 export async function getAllPathsFromEvent(
@@ -87,7 +87,7 @@ export async function getAllPathsFromEvent(
     ORDER BY pathLength
   `;
 
-  return await session.run(query, { startEventId });
+  return session.run(query, { startEventId });
 }
 
 export async function getEventsByReachability(
@@ -102,7 +102,7 @@ export async function getEventsByReachability(
     ORDER BY length(shortestPath)
   `;
 
-  return await session.run(query, { startEventId });
+  return session.run(query, { startEventId });
 }
 
 export async function deleteEventFlowRelationships(
@@ -115,7 +115,7 @@ export async function deleteEventFlowRelationships(
     RETURN count(r) as deletedCount
   `;
 
-  return await session.run(query, { eventId });
+  return session.run(query, { eventId });
 }
 
 export async function updateFlowRelationshipConditions(
@@ -130,5 +130,5 @@ export async function updateFlowRelationshipConditions(
     RETURN from, to, r
   `;
 
-  return await session.run(query, { fromEventId, toEventId, newConditions });
+  return session.run(query, { fromEventId, toEventId, newConditions });
 }

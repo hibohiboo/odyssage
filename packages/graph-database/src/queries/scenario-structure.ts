@@ -17,7 +17,7 @@ export async function getCompleteScenarioStructure(
       collect(DISTINCT message) as messages
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function getScenarioFlowPaths(
@@ -31,7 +31,7 @@ export async function getScenarioFlowPaths(
     RETURN path, choicePath
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function getScenarioHierarchy(
@@ -54,7 +54,7 @@ export async function getScenarioHierarchy(
     ORDER BY scene.order, event.order, message.order
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function getScenarioStats(
@@ -75,7 +75,7 @@ export async function getScenarioStats(
       count(DISTINCT nextEvent) as choiceCount
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }
 
 export async function findShortestPath(
@@ -90,7 +90,7 @@ export async function findShortestPath(
     RETURN path, length(path) as pathLength
   `;
 
-  return await session.run(query, { startEventId, endEventId });
+  return session.run(query, { startEventId, endEventId });
 }
 
 export async function getAllPossiblePaths(
@@ -106,5 +106,5 @@ export async function getAllPossiblePaths(
     ORDER BY pathLength
   `;
 
-  return await session.run(query, { scenarioId });
+  return session.run(query, { scenarioId });
 }

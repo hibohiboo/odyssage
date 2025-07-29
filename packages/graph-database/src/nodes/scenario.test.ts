@@ -1,6 +1,6 @@
 // @copilot-context testing
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { Session } from 'neo4j-driver';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { driver } from '../driver';
 import { TestCleanupHelper, generateTestIdSet } from '../test-utils/test-helpers';
 import { createScenarioNode, getScenarioNode } from './scenario';

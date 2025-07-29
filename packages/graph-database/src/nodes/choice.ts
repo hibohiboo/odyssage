@@ -119,7 +119,7 @@ export async function getEventFromChoice(
     RETURN c, e
   `;
 
-  return await session.run(query, { choiceId });
+  return session.run(query, { choiceId });
 }
 
 export async function getChoicesLeadingToEvent(

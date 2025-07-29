@@ -19,7 +19,7 @@ export async function navigateToEvent(
     RETURN visit, event
   `;
 
-  return await session.run(query, { playerId, eventId });
+  return session.run(query, { playerId, eventId });
 }
 
 export async function getPlayerPath(
@@ -32,7 +32,7 @@ export async function getPlayerPath(
     ORDER BY visit.order
   `;
 
-  return await session.run(query, { playerId });
+  return session.run(query, { playerId });
 }
 
 export async function getAvailableChoices(
@@ -47,7 +47,7 @@ export async function getAvailableChoices(
     ORDER BY choice.text
   `;
 
-  return await session.run(query, { playerId });
+  return session.run(query, { playerId });
 }
 
 export async function getCurrentPlayerPosition(
@@ -62,7 +62,7 @@ export async function getCurrentPlayerPosition(
     RETURN event as currentEvent, visit
   `;
 
-  return await session.run(query, { playerId });
+  return session.run(query, { playerId });
 }
 
 export async function validateStoryPath(
@@ -70,7 +70,7 @@ export async function validateStoryPath(
   eventIds: string[],
 ): Promise<Result> {
   if (eventIds.length === 0) {
-    return await session.run('RETURN false as isValid');
+    return session.run('RETURN false as isValid');
   }
 
   if (eventIds.length === 1) {
@@ -78,7 +78,7 @@ export async function validateStoryPath(
       OPTIONAL MATCH (event:Event {id: $eventId})
       RETURN event IS NOT NULL as isValid
     `;
-    return await session.run(query, { eventId: eventIds[0] });
+    return session.run(query, { eventId: eventIds[0] });
   }
 
   // 全イベントが存在するかチェック
@@ -92,7 +92,7 @@ export async function validateStoryPath(
   
   const eventsResult = await session.run(checkEventsQuery, { eventIds });
   if (!eventsResult.records[0].get('allEventsExist')) {
-    return await session.run('RETURN false as isValid');
+    return session.run('RETURN false as isValid');
   }
 
   // パスの接続性をチェック
@@ -106,7 +106,7 @@ export async function validateStoryPath(
     RETURN size([p IN pathExists WHERE p = true]) = expectedConnections as isValid
   `;
 
-  return await session.run(query, { eventIds });
+  return session.run(query, { eventIds });
 }
 
 export async function getReachableEvents(
@@ -121,7 +121,7 @@ export async function getReachableEvents(
     ORDER BY distance, reachable.title
   `;
 
-  return await session.run(query, { startEventId });
+  return session.run(query, { startEventId });
 }
 
 export async function findPlayerChoiceHistory(
@@ -136,5 +136,5 @@ export async function findPlayerChoiceHistory(
     ORDER BY visit.order
   `;
 
-  return await session.run(query, { playerId });
+  return session.run(query, { playerId });
 }
