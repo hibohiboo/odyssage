@@ -4,7 +4,7 @@ import {
   getScenarioNode,
 } from '@odyssage/graph-database/src/nodes/scenario';
 import { getCompleteScenarioStructure } from '@odyssage/graph-database/src/queries/scenario-structure';
-import { Session } from 'neo4j-driver';
+import { Session, Transaction } from 'neo4j-driver';
 import * as neo4j from 'neo4j-driver';
 import { Scenario, type Visibility } from '../entities/scenario';
 import type { ScenarioRepository } from './scenario-repository';
@@ -39,12 +39,94 @@ export class HybridScenarioRepository implements ScenarioRepository {
       visibility: scenario.visibility,
     };
 
-    await createScenarioNode(this.#session, scenarioData);
-
-    // Scene、Event、Messageも保存（完全な階層構造）
-    await this.saveScenarioStructure(scenario);
+    // トランザクション内で全ての保存操作を実行
+    const tx = this.#session.beginTransaction();
+    try {
+      await createScenarioNode(tx, scenarioData);
+      
+      // Scene、Event、Messageも保存（完全な階層構造）
+      await this.saveScenarioStructureWithTransaction(scenario, tx);
+      
+      await tx.commit();
+    } catch (error) {
+      await tx.rollback();
+      throw error;
+    }
 
     // 将来のPostgreSQL連携はここに追加
+  }
+
+  private async saveScenarioStructureWithTransaction(scenario: Scenario, tx: Transaction): Promise<void> {
+    // 動的インポートでgraph-databaseパッケージの機能を使用
+    const { createSceneNode } = await import(
+      '@odyssage/graph-database/src/nodes/scene'
+    );
+    const { createEventNode } = await import(
+      '@odyssage/graph-database/src/nodes/event'
+    );
+    const { createMessageNode } = await import(
+      '@odyssage/graph-database/src/nodes/message'
+    );
+    const { createScenarioSceneRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scenario-scene'
+    );
+    const { createSceneEventRelation } = await import(
+      '@odyssage/graph-database/src/relationships/scene-event'
+    );
+    const { createEventMessageRelation } = await import(
+      '@odyssage/graph-database/src/relationships/event-message'
+    );
+
+    // シーンを並列保存
+    await Promise.all(
+      scenario.scenes.map(async (scene) => {
+        const sceneData = {
+          id: scene.id,
+          title: scene.title,
+          description: scene.description,
+          order: scene.order,
+          scenarioId: scenario.id,
+        };
+
+        await createSceneNode(tx, sceneData);
+        await createScenarioSceneRelation(tx, scenario.id, scene.id);
+
+        // イベントを並列保存
+        await Promise.all(
+          scene.events.map(async (event) => {
+            const eventData = {
+              id: event.id,
+              title: event.title,
+              description: event.description,
+              order: event.order,
+              sceneId: scene.id,
+            };
+
+            await createEventNode(tx, eventData);
+            await createSceneEventRelation(tx, scene.id, event.id);
+
+            // メッセージを並列保存
+            await Promise.all(
+              event.messages.map(async (message) => {
+                const messageData = {
+                  id: message.id,
+                  text: message.text,
+                  order: message.order,
+                  eventId: event.id,
+                };
+
+                await createMessageNode(tx, messageData);
+                await createEventMessageRelation(
+                  tx,
+                  event.id,
+                  message.id,
+                );
+              }),
+            );
+          }),
+        );
+      }),
+    );
   }
 
   private async saveScenarioStructure(scenario: Scenario): Promise<void> {
