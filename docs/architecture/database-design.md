@@ -105,8 +105,18 @@ CREATE TABLE scenarios (
 ## API設計への影響
 
 ### エンドポイント分離
-- `/api/scenarios`: RDB管理（メタデータ、権限）
-- `/api/graph-scenarios`: GraphDB管理（構造データ）
+- `/api/scenarios`: RDB管理（メタデータ、権限、一覧取得）
+- `/api/graph-scenarios/{id}`: GraphDB管理（構造データ作成・更新）
+
+### データフロー
+1. **シナリオ一覧取得**: `/api/scenarios` (RDBのみ)
+2. **シナリオ作成**: 
+   - `/api/scenarios` でRDBに作成
+   - `/api/graph-scenarios/{id}` でGraphDBに構造データ作成
+3. **シナリオ更新**:
+   - `/api/scenarios/{id}` でRDBを更新
+   - `/api/graph-scenarios/{id}` でGraphDBの冗長データを同期更新
+4. **シナリオ詳細取得**: RDBとGraphDBを組み合わせて使用
 
 ### レスポンス設計
 ```typescript

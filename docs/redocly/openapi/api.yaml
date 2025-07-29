@@ -32,6 +32,8 @@ paths:
     $ref: './paths/session.yaml'
   /api/sessions/gm/{gm_id}:
     $ref: './paths/sessionsByGm.yaml'
+  /api/graph-scenarios/{id}:
+    $ref: './paths/graphScenarios.yaml'
 
 components:
   schemas: {}
