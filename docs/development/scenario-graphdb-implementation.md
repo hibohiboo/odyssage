@@ -270,7 +270,14 @@
 - [x] GraphDB関連ステップ定義を一旦削除
 
 **実行中**:
-- [ ] 基本的なシナリオ作成テストの実行・確認
+- [x] 基本的なシナリオ作成テストの実行・確認
+
+**Phase 2 完了**:
+- [x] 既存API維持+GraphDB保存機能追加
+- [x] `CreateScenario.tsx`で既存の`useCreateScenario`を維持
+- [x] RDB保存成功後にGraphDB保存を追加実装
+- [x] GraphDB保存失敗時のユーザー体験保護（ログ出力のみ）
+- [x] BDDテスト成功確認（グリーン）
 
 #### 技術的修正点
 1. **フロントエンド**: `CreateScenario.tsx`が従来の`useCreateScenario`に戻っている
