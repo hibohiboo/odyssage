@@ -82,6 +82,12 @@
 - APIエンドポイントの動作検証
 - フロントエンドのユーザーフロー確認
 
+### 5. 品質保証手順
+1. **テスト実行**: `bun run test [ファイル名]`
+2. **Lintチェック**: `bun run lint`
+3. **型チェック**: `bunx tsc --noEmit`
+4. **リファクタリング**: 重複コード削除、定数統一
+
 ## 進捗記録
 
 ### 2025-07-29
@@ -145,6 +151,9 @@
 - [x] GraphDBシナリオルート作成（`apps/backend/src/route/graphScenario.ts`）
 - [x] 統合テスト作成（`test/integrations/graph-scenario.spec.ts`）
 - [x] 既存graph-scenariosエンドポイント削除・置換
+- [x] 統合テスト実行・デバッグ完了
+- [x] Lintエラー修正・Typecheck完了
+- [x] test-utilsリファクタリング（重複定数統一）
 
 ### 次回作業予定
 1. 統合テストの実行・デバッグ
