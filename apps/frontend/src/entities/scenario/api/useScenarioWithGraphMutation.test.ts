@@ -7,8 +7,16 @@ vi.mock('./useScenarioCreateMutation', () => ({
   useScenarioCreateMutation: vi.fn(),
 }));
 
-vi.mock('./useGraphScenarioMutation', () => ({
-  useGraphScenarioMutation: vi.fn(),
+vi.mock('@odyssage/frontend/shared/api/client', () => ({
+  apiClient: {
+    api: {
+      'graph-scenarios': {
+        ':id': {
+          $put: vi.fn(),
+        },
+      },
+    },
+  },
 }));
 
 describe('useScenarioWithGraphMutation', () => {
@@ -24,20 +32,11 @@ describe('useScenarioWithGraphMutation', () => {
     error: undefined,
   };
 
-  const mockGraphScenarioMutation = {
-    trigger: vi.fn(),
-    isMutating: false,
-    error: undefined,
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
     
     const { useScenarioCreateMutation } = require('./useScenarioCreateMutation');
-    const { useGraphScenarioMutation } = require('./useGraphScenarioMutation');
-    
     useScenarioCreateMutation.mockReturnValue(mockScenarioCreateMutation);
-    useGraphScenarioMutation.mockReturnValue(mockGraphScenarioMutation);
   });
 
   it('RDBとGraphDB両方にシナリオが正常に作成されること', async () => {
@@ -50,12 +49,15 @@ describe('useScenarioWithGraphMutation', () => {
     mockScenarioCreateMutation.trigger.mockResolvedValue(rdbResponse);
 
     // GraphDB作成成功のモック
-    const graphResponse = {
-      id: 'created-scenario-id',
-      title: mockScenarioData.title,
-      overview: mockScenarioData.overview,
-    };
-    mockGraphScenarioMutation.trigger.mockResolvedValue(graphResponse);
+    const { apiClient } = await import('@odyssage/frontend/shared/api/client');
+    (apiClient.api['graph-scenarios'][':id'].$put as any).mockResolvedValue({
+      ok: true,
+      json: vi.fn().mockResolvedValue({
+        id: 'created-scenario-id',
+        title: mockScenarioData.title,
+        overview: mockScenarioData.overview,
+      }),
+    });
 
     const { result } = renderHook(() =>
       useScenarioWithGraphMutation({ uid: mockUid })
@@ -68,9 +70,12 @@ describe('useScenarioWithGraphMutation', () => {
 
     // RDBとGraphDB両方が呼び出されることを確認
     expect(mockScenarioCreateMutation.trigger).toHaveBeenCalledWith(mockScenarioData);
-    expect(mockGraphScenarioMutation.trigger).toHaveBeenCalledWith({
-      title: mockScenarioData.title,
-      overview: mockScenarioData.overview,
+    expect(apiClient.api['graph-scenarios'][':id'].$put).toHaveBeenCalledWith({
+      param: { id: 'created-scenario-id' },
+      json: {
+        title: mockScenarioData.title,
+        overview: mockScenarioData.overview,
+      },
     });
 
     // レスポンスの確認
@@ -100,7 +105,9 @@ describe('useScenarioWithGraphMutation', () => {
 
     // RDBのみ呼び出され、GraphDBは呼び出されないことを確認
     expect(mockScenarioCreateMutation.trigger).toHaveBeenCalled();
-    expect(mockGraphScenarioMutation.trigger).not.toHaveBeenCalled();
+    
+    const { apiClient } = await import('@odyssage/frontend/shared/api/client');
+    expect(apiClient.api['graph-scenarios'][':id'].$put).not.toHaveBeenCalled();
   });
 
   it('RDB成功・GraphDB失敗時でもユーザーには成功として返すこと', async () => {
@@ -113,8 +120,11 @@ describe('useScenarioWithGraphMutation', () => {
     mockScenarioCreateMutation.trigger.mockResolvedValue(rdbResponse);
 
     // GraphDB作成失敗のモック
-    const graphError = new Error('GraphDB creation failed');
-    mockGraphScenarioMutation.trigger.mockRejectedValue(graphError);
+    const { apiClient } = await import('@odyssage/frontend/shared/api/client');
+    (apiClient.api['graph-scenarios'][':id'].$put as any).mockResolvedValue({
+      ok: false,
+      status: 500,
+    });
 
     const { result } = renderHook(() =>
       useScenarioWithGraphMutation({ uid: mockUid })
@@ -127,7 +137,7 @@ describe('useScenarioWithGraphMutation', () => {
 
     // 両方とも呼び出されることを確認
     expect(mockScenarioCreateMutation.trigger).toHaveBeenCalled();
-    expect(mockGraphScenarioMutation.trigger).toHaveBeenCalled();
+    expect(apiClient.api['graph-scenarios'][':id'].$put).toHaveBeenCalled();
 
     // RDB成功、GraphDB失敗として返されることを確認
     expect(response).toEqual({
@@ -139,18 +149,16 @@ describe('useScenarioWithGraphMutation', () => {
   it('ローディング状態が正しく管理されること', () => {
     // ローディング中の状態をモック
     mockScenarioCreateMutation.isMutating = true;
-    mockGraphScenarioMutation.isMutating = false;
 
     const { result } = renderHook(() =>
       useScenarioWithGraphMutation({ uid: mockUid })
     );
 
-    // いずれかがローディング中の場合、全体がローディング中
+    // RDBのローディング状態が反映される
     expect(result.current.isLoading).toBe(true);
 
-    // 両方ともローディング中でない場合
+    // ローディング完了時
     mockScenarioCreateMutation.isMutating = false;
-    mockGraphScenarioMutation.isMutating = false;
 
     const { result: result2 } = renderHook(() =>
       useScenarioWithGraphMutation({ uid: mockUid })
@@ -162,13 +170,12 @@ describe('useScenarioWithGraphMutation', () => {
   it('エラー状態が正しく管理されること', () => {
     const rdbError = new Error('RDB error');
     mockScenarioCreateMutation.error = rdbError;
-    mockGraphScenarioMutation.error = undefined;
 
     const { result } = renderHook(() =>
       useScenarioWithGraphMutation({ uid: mockUid })
     );
 
-    // RDBエラーが優先されることを確認
+    // RDBエラーが反映されることを確認
     expect(result.current.error).toBe(rdbError);
   });
 });
