@@ -32,10 +32,10 @@ describe('useScenarioWithGraphMutation', () => {
     error: undefined,
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     
-    const { useScenarioCreateMutation } = require('./useScenarioCreateMutation');
+    const { useScenarioCreateMutation } = await import('./useScenarioCreateMutation');
     useScenarioCreateMutation.mockReturnValue(mockScenarioCreateMutation);
   });
 
