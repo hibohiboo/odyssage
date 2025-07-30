@@ -5,11 +5,10 @@ import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { useCreateScenario } from '../hooks/useCreateScenario';
-import { useGraphScenarioMutation } from '../api/useGraphScenarioMutation';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 const CreateScenario = () => {
   const { createScenario, loading, success } = useCreateScenario();
-  const { saveToGraph } = useGraphScenarioMutation();
   const uid = useAppSelector(uidSelector);
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
   const navigate = useNavigate();
@@ -46,8 +45,16 @@ const CreateScenario = () => {
 
     // 2. GraphDBに同じデータを保存（追加処理）
     try {
-      await saveToGraph(id, { title, overview });
-      console.log('シナリオがGraphDBにも保存されました');
+      const response = await apiClient.api['graph-scenarios'][':id'].$put({
+        param: { id },
+        json: { title, overview },
+      });
+      
+      if (response.ok) {
+        console.log('シナリオがGraphDBにも保存されました');
+      } else {
+        console.warn('GraphDB保存が失敗しました（status:', response.status, ')');
+      }
     } catch (graphError) {
       // GraphDBエラーはユーザーには影響させない
       console.warn('GraphDBへの保存に失敗しましたが、シナリオは正常に作成されました', graphError);
