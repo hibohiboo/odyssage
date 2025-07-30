@@ -166,6 +166,7 @@
 - [x] Lintエラー修正・Typecheck完了
 - [x] test-utilsリファクタリング（重複定数統一）
 - [x] graph-databaseパッケージ統合（既存driverの活用）
+- [x] 環境変数統一・仕様書作成（`docs/architecture/environment-variables.md`）
 
 ### 次回作業予定
 1. 統合テストの実行・デバッグ
