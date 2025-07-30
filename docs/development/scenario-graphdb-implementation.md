@@ -168,10 +168,36 @@
 - [x] graph-databaseパッケージ統合（既存driverの活用）
 - [x] 環境変数統一・仕様書作成（`docs/architecture/environment-variables.md`）
 
+### 2025-07-30 追記（フロントエンド実装）
+
+#### フロントエンド機能設計
+**要件**:
+- シナリオ作成時にRDBとGraphDB両方にデータ保存
+- GraphDB失敗時でもユーザーには成功表示（RDBが主、GraphDBは補助）
+- 適切なローディング・エラーハンドリング
+
+**技術設計**:
+- `useGraphScenarioMutation`: GraphDB保存専用hook
+- `useScenarioWithGraphMutation`: RDB→GraphDBの統合処理hook
+- 既存の`useScenarioCreateMutation`を活用
+
+#### テスト駆動開発の実践
+**テストファイル作成**:
+- `useGraphScenarioMutation.test.ts`: GraphDB API単体テスト
+- `useScenarioWithGraphMutation.test.ts`: 統合処理テスト
+
+**テストケース設計**:
+1. **GraphDB単体**: 成功・失敗・バリデーションエラー・独立性
+2. **統合処理**: RDB→GraphDB順次処理・部分成功許容・状態管理
+
+**設計判断**:
+- GraphDB障害時のユーザー体験保護
+- RDBを信頼できる情報源とする設計
+- テストファーストによる期待動作の明確化
+
 ### 次回作業予定
-1. 統合テストの実行・デバッグ
-2. Neo4jテストコンテナ環境整備
-3. フロントエンド機能実装
+1. テストに基づく実装コード作成
+2. エンドツーエンド動作確認
 
 ## 参考情報
 
