@@ -1,5 +1,6 @@
 import { vValidator } from '@hono/valibot-validator';
 import { idSchema, graphScenarioRequestSchema } from '@odyssage/schema/src/schema';
+import { driver } from '@odyssage/graph-database/src/driver';
 import { Hono } from 'hono';
 import type { Neo4jError } from 'neo4j-driver-core';
 
@@ -8,16 +9,7 @@ export const graphScenarioRoute = new Hono<Env>()
     const { id } = c.req.valid('param');
     const { title, overview } = c.req.valid('json');
 
-    // vitestが Error: No such module "node:os". というエラーを出すので、いったん動的importで逃げる
-    const neo4j = await import('neo4j-driver');
-    let driver;
-    
     try {
-      driver = neo4j.driver(
-        c.env.NEO4J_URL,
-        neo4j.auth.basic(c.env.NEO4J_USER, c.env.NEO4J_PASSWORD),
-      );
-
       const session = driver.session();
       
       // MERGE文でupsert操作を実行
@@ -59,9 +51,5 @@ export const graphScenarioRoute = new Hono<Env>()
       // eslint-disable-next-line no-console
       console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
       return c.json({ error: 'Database error' }, 500);
-    } finally {
-      if (driver) {
-        await driver.close();
-      }
     }
   });
