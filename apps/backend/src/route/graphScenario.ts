@@ -26,8 +26,8 @@ export const graphScenarioRoute = new Hono<Env>()
         MERGE (s:Scenario {id: $id})
         SET s.title = $title,
             s.overview = $overview,
-            s.updatedAt = datetime()
-        ON CREATE SET s.createdAt = datetime()
+            s.updatedAt = datetime(),
+            s.createdAt = CASE WHEN s.createdAt IS NULL THEN datetime() ELSE s.createdAt END
         RETURN s.id as id, s.title as title, s.overview as overview
         `,
         {

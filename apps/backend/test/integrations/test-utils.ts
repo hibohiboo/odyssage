@@ -49,6 +49,11 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
 
     // 環境変数を設定（Honoアプリがデータベース接続できるように）
     process.env.NEON_CONNECTION_STRING = connectionString;
+    
+    // Neo4j環境変数を設定（テスト用）
+    process.env.NEO4J_URL = 'bolt://localhost:7687';
+    process.env.NEO4J_USER = 'neo4j';
+    process.env.NEO4J_PASSWORD = 'password';
   }, 60000); // 60秒のタイムアウトを設定（コンテナ起動に時間がかかるため）
 
   // テスト終了後にPostgreSQLコンテナを停止
@@ -64,6 +69,9 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
     getEnv: () => ({
       CLOUDFLARE_ENV: 'test',
       NEON_CONNECTION_STRING: connectionString,
+      NEO4J_URL: 'bolt://localhost:7687',
+      NEO4J_USER: 'neo4j',
+      NEO4J_PASSWORD: 'password',
     }),
   };
 };
