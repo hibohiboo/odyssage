@@ -1,11 +1,11 @@
 import { ScenarioEditPage } from '@odyssage/ui/page-ui';
 import { FormEventHandler, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { useCreateScenario } from '../hooks/useCreateScenario';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 const CreateScenario = () => {
   const { createScenario, loading, success } = useCreateScenario();
