@@ -7,7 +7,8 @@ const user = process.env.NEO4J_USER || 'neo4j';
 const password = process.env.NEO4J_PASSWORD || 'password';
 
 export const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
-
+export const getDriver = (ur = uri, us = user, p = password) =>
+  neo4j.driver(ur, neo4j.auth.basic(us, p));
 // アプリケーション終了時にドライバーを閉じる
 process.on('exit', async () => {
   if (!driver) return;

@@ -1,11 +1,11 @@
 import { vValidator } from '@hono/valibot-validator';
-import { driver } from '@odyssage/graph-database/src/driver';
+import { getDriver } from '@odyssage/graph-database/src/driver';
 import {
   idSchema,
   graphScenarioRequestSchema,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
-import type { Neo4jError } from 'neo4j-driver-core';
+import { type Neo4jError } from 'neo4j-driver-core';
 
 export const graphScenarioRoute = new Hono<Env>().put(
   '/:id',
@@ -21,6 +21,7 @@ export const graphScenarioRoute = new Hono<Env>().put(
     );
 
     try {
+      const driver = getDriver();
       const session = driver.session();
 
       // MERGE文でupsert操作を実行
@@ -60,6 +61,7 @@ export const graphScenarioRoute = new Hono<Env>().put(
       const neo4jError = err as Neo4jError;
       // eslint-disable-next-line no-console
       console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
+      console.log(process.env.NEO4J_URL);
       return c.json({ error: 'Database error' }, 500);
     }
   },
