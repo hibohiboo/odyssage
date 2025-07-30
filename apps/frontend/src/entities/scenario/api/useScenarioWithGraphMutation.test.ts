@@ -32,7 +32,7 @@ describe('useScenarioWithGraphMutation', () => {
   const mockScenarioCreateMutation = {
     trigger: vi.fn(),
     isMutating: false,
-    error: undefined,
+    error: undefined as Error | undefined,
     reset: vi.fn(),
     data: undefined,
   };
