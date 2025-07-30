@@ -195,6 +195,20 @@
 - RDBを信頼できる情報源とする設計
 - テストファーストによる期待動作の明確化
 
+#### 8. テストでの動的import使用
+**判断**: テストファイル内でのモック処理に動的import（`await import()`）を使用
+- **問題**: 
+  - `require()`を使用したモックが「Cannot find module」エラーで失敗
+  - vitestのモジュール解決がESモジュール形式を期待
+- **解決**:
+  - `beforeEach`を非同期関数に変更
+  - `require('./useScenarioCreateMutation')` → `await import('./useScenarioCreateMutation')`
+- **理由**:
+  - Vitestのモジュール解決システムとの互換性確保
+  - TypeScriptのESモジュール環境での正しいモック処理
+  - テスト実行時の動的モジュール読み込みの安定性向上
+- **効果**: 全テストケース正常実行、モック機能の確実な動作
+
 #### フロントエンド実装完了
 **実装結果**:
 - `useGraphScenarioMutation.ts`: GraphDB専用hook実装完了
