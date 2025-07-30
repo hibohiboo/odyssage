@@ -74,6 +74,7 @@
         "@cucumber/cucumber": "^12.1.0",
         "@odyssage/tsconfig": "workspace:*",
         "@playwright/test": "^1.54.1",
+        "neo4j-driver": "^5.27.0",
         "ts-node": "^10.9.2",
       },
     },
@@ -114,6 +115,10 @@
     "packages/graph-database": {
       "name": "@odyssage/graph-database",
       "version": "0.0.0",
+      "dependencies": {
+        "neo4j-driver": "^5.28.1",
+        "vitest": "^3.2.4",
+      },
     },
     "packages/lib": {
       "name": "@odyssage/lib",

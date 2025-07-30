@@ -1,13 +1,14 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
-import neo4j from 'neo4j-driver';
+import neo4j, { Driver } from 'neo4j-driver';
+import { Route } from '@playwright/test';
 
 // Neo4j接続設定
 const NEO4J_URL = process.env.NEO4J_URL || 'bolt://localhost:7687';
 const NEO4J_USER = process.env.NEO4J_USER || 'neo4j';
 const NEO4J_PASSWORD = process.env.NEO4J_PASSWORD || 'password';
 
-let driver: neo4j.Driver;
+let driver: Driver;
 let neo4jAvailable = true;
 
 // テスト開始前にNeo4j接続を確認
@@ -31,7 +32,7 @@ Given('GraphDBサービスが停止している', async function (this) {
   
   // ブラウザでGraphDB APIを無効化するためのネットワークモック
   const { page } = this;
-  await page.route('**/api/graph-scenarios/**', route => {
+  await page.route('**/api/graph-scenarios/**', (route: Route) => {
     route.fulfill({
       status: 500,
       contentType: 'application/json',
