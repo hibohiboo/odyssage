@@ -8,26 +8,15 @@ import { useCreateScenario } from '../hooks/useCreateScenario';
 import { useGraphScenarioMutation } from '../api/useGraphScenarioMutation';
 
 const CreateScenario = () => {
+  const { createScenario, loading, success } = useCreateScenario();
+  const { saveToGraph } = useGraphScenarioMutation();
   const uid = useAppSelector(uidSelector);
-  const { createScenario, isLoading, error } = useScenarioWithGraphMutation({ uid: uid || '' });
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
   const navigate = useNavigate();
-  const handleCreateScenario = async (title: string, overview: string) => {
-    const result = await createScenario({ title, overview });
-    
-    // GraphDB保存結果をログに記録（ユーザーには影響しない）
-    if (result.graphSaved) {
-      console.log('シナリオがGraphDBにも保存されました');
-    } else {
-      console.warn('GraphDBへの保存に失敗しましたが、シナリオは正常に作成されました');
-    }
-
-    navigate('/creator/scenario/list');
-  };
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    if (isLoading) return;
+    if (loading) return;
     
     const form = new FormData(e.currentTarget);
     const title = form.get('title') as string;
@@ -38,12 +27,33 @@ const CreateScenario = () => {
       return;
     }
 
-    try {
-      await handleCreateScenario(title, overview);
-    } catch (createError) {
+    const id = generateUuid();
+    
+    // 1. RDBにシナリオを作成（既存処理）
+    const { error } = await createScenario({
+      id,
+      uid,
+      title,
+      overview,
+      visibility,
+    });
+    
+    if (error) {
       alert('シナリオの作成に失敗しました。');
-      console.error('Error creating scenario:', createError);
+      console.error('Error creating scenario:', error);
+      return;
     }
+
+    // 2. GraphDBに同じデータを保存（追加処理）
+    try {
+      await saveToGraph(id, { title, overview });
+      console.log('シナリオがGraphDBにも保存されました');
+    } catch (graphError) {
+      // GraphDBエラーはユーザーには影響させない
+      console.warn('GraphDBへの保存に失敗しましたが、シナリオは正常に作成されました', graphError);
+    }
+
+    navigate('/creator/scenario/list');
   };
 
   const handleVisibilityChange = (value: 'private' | 'public') => {
@@ -53,11 +63,11 @@ const CreateScenario = () => {
   return (
     <form onSubmit={handleSubmit}>
       <ScenarioEditPage
-        loading={isLoading}
+        loading={loading}
         visibility={visibility}
         onVisibilityChange={handleVisibilityChange}
       />
-      {error && <p>Error: {error.message}</p>}
+      {success && <p>Scenario created successfully!</p>}
     </form>
   );
 };
