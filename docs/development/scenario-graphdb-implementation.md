@@ -146,6 +146,17 @@
   - テストファースト開発への修正
 - **学習**: 設計書・開発指針の事前確認の重要性
 
+#### 7. 既存パッケージの活用不足と環境変数統一
+**判断**: 動的import重複 → 既存`@odyssage/graph-database`活用 → 環境変数統一
+- **問題**: 
+  - 各ルートで動的import・driver作成を重複実装
+  - 環境変数の命名不統一（`NEO4J_URI` vs `NEO4J_URL`）
+- **解決**:
+  - 共有driverの活用でコード簡素化
+  - 環境変数を`NEO4J_URL`、`NEO4J_USER`、`NEO4J_PASSWORD`に統一
+  - 環境変数仕様書の作成（`docs/architecture/environment-variables.md`）
+- **効果**: コード重複削除、命名一貫性確保、保守性向上
+
 ### 実装完了項目
 - [x] スキーマ定義追加（`@odyssage/schema`）
 - [x] GraphDBシナリオルート作成（`apps/backend/src/route/graphScenario.ts`）
