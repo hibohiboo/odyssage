@@ -13,3 +13,4 @@ Feature: シナリオGraphDB連携
     And 概要を "GraphDBとRDBの両方に保存されるテストシナリオ" と設定する
     And 「保存する」ボタンをクリックする
     Then 作成したシナリオ"GraphDB連携テスト"がシナリオ一覧に表示される
+    And GraphDBにシナリオデータが保存されている

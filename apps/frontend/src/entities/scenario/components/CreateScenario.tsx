@@ -45,19 +45,22 @@ const CreateScenario = () => {
 
     // 2. GraphDBに同じデータを保存（追加処理）
     try {
+      console.log(`GraphDB保存開始: id=${id}, title="${title}"`);
       const response = await apiClient.api['graph-scenarios'][':id'].$put({
         param: { id },
         json: { title, overview },
       });
       
       if (response.ok) {
-        console.log('シナリオがGraphDBにも保存されました');
+        const responseData = await response.json();
+        console.log('シナリオがGraphDBにも保存されました:', responseData);
       } else {
-        console.warn('GraphDB保存が失敗しました（status:', response.status, ')');
+        const errorData = await response.text();
+        console.warn(`GraphDB保存が失敗しました（status: ${response.status}）:`, errorData);
       }
     } catch (graphError) {
       // GraphDBエラーはユーザーには影響させない
-      console.warn('GraphDBへの保存に失敗しましたが、シナリオは正常に作成されました', graphError);
+      console.error('GraphDBへの保存でエラーが発生:', graphError);
     }
 
     navigate('/creator/scenario/list');

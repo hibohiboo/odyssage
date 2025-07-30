@@ -1,17 +1,28 @@
 import { vValidator } from '@hono/valibot-validator';
-import { idSchema, graphScenarioRequestSchema } from '@odyssage/schema/src/schema';
 import { driver } from '@odyssage/graph-database/src/driver';
+import {
+  idSchema,
+  graphScenarioRequestSchema,
+} from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import type { Neo4jError } from 'neo4j-driver-core';
 
-export const graphScenarioRoute = new Hono<Env>()
-  .put('/:id', vValidator('param', idSchema), vValidator('json', graphScenarioRequestSchema), async (c) => {
+export const graphScenarioRoute = new Hono<Env>().put(
+  '/:id',
+  vValidator('param', idSchema),
+  vValidator('json', graphScenarioRequestSchema),
+  async (c) => {
     const { id } = c.req.valid('param');
     const { title, overview } = c.req.valid('json');
 
+    // eslint-disable-next-line no-console
+    console.log(
+      `GraphDB scenario save request: id=${id}, title="${title}", overview="${overview}"`,
+    );
+
     try {
       const session = driver.session();
-      
+
       // MERGE文でupsert操作を実行
       const result = await session.run(
         `
@@ -26,7 +37,7 @@ export const graphScenarioRoute = new Hono<Env>()
           id,
           title,
           overview,
-        }
+        },
       );
 
       await session.close();
@@ -45,11 +56,11 @@ export const graphScenarioRoute = new Hono<Env>()
       // 作成か更新かを判定するために、レコードの作成時刻をチェック
       // 簡単のため、常に200を返す（実際のupsert結果の判定は複雑になるため）
       return c.json(response, 200);
-
     } catch (err) {
       const neo4jError = err as Neo4jError;
       // eslint-disable-next-line no-console
       console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
       return c.json({ error: 'Database error' }, 500);
     }
-  });
+  },
+);
