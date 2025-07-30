@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useScenarioWithGraphMutation } from './useScenarioWithGraphMutation';
+import { useScenarioCreateMutation } from './useScenarioCreateMutation';
 
 // 依存関係をモック
 vi.mock('./useScenarioCreateMutation', () => ({
@@ -32,11 +33,10 @@ describe('useScenarioWithGraphMutation', () => {
     error: undefined,
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
     
-    const { useScenarioCreateMutation } = await import('./useScenarioCreateMutation');
-    useScenarioCreateMutation.mockReturnValue(mockScenarioCreateMutation);
+    vi.mocked(useScenarioCreateMutation).mockReturnValue(mockScenarioCreateMutation);
   });
 
   it('RDBとGraphDB両方にシナリオが正常に作成されること', async () => {
