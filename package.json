@@ -8,6 +8,7 @@
     "local:graphdb": "bash ./infra/local/neo4j/bin/up.sh",
     "local:firebase": "bash ./infra/local/firebase/bin/up.sh",
     "local:all": "bunx concurrently \"npm:local:rdb\" \"npm:local:graphdb\" \"npm:local:firebase\"",
+    "local:clean": "bash ./infra/local/neo4j/bin/remove_all_container.sh",
     "dev:backend": "cd apps/backend && bun run dev",
     "dev:frontend": "cd apps/frontend && bun run dev",
     "dev:ui": "cd packages/ui && bun run dev",
