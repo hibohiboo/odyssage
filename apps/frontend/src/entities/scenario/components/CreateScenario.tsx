@@ -13,37 +13,7 @@ const CreateScenario = () => {
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
   const navigate = useNavigate();
 
-  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
-    if (loading) return;
-    
-    const form = new FormData(e.currentTarget);
-    const title = form.get('title') as string;
-    const overview = (form.get('overview') as string) || '';
-    
-    if (!uid || !title || !overview) {
-      console.error('Invalid form data', { uid, title, overview });
-      return;
-    }
-
-    const id = generateUuid();
-    
-    // 1. RDBにシナリオを作成（既存処理）
-    const { error } = await createScenario({
-      id,
-      uid,
-      title,
-      overview,
-      visibility,
-    });
-    
-    if (error) {
-      alert('シナリオの作成に失敗しました。');
-      console.error('Error creating scenario:', error);
-      return;
-    }
-
-    // 2. GraphDBに同じデータを保存（追加処理）
+  const saveToGraphDB = async (id: string, title: string, overview: string) => {
     try {
       console.log(`GraphDB保存開始: id=${id}, title="${title}"`);
       const response = await apiClient.api['graph-scenarios'][':id'].$put({
@@ -59,10 +29,40 @@ const CreateScenario = () => {
         console.warn(`GraphDB保存が失敗しました（status: ${response.status}）:`, errorData);
       }
     } catch (graphError) {
-      // GraphDBエラーはユーザーには影響させない
       console.error('GraphDBへの保存でエラーが発生:', graphError);
     }
+  };
 
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (loading) return;
+    
+    const form = new FormData(e.currentTarget);
+    const title = form.get('title') as string;
+    const overview = (form.get('overview') as string) || '';
+    
+    if (!uid || !title || !overview) {
+      console.error('Invalid form data', { uid, title, overview });
+      return;
+    }
+
+    const id = generateUuid();
+    
+    const { error } = await createScenario({
+      id,
+      uid,
+      title,
+      overview,
+      visibility,
+    });
+    
+    if (error) {
+      alert('シナリオの作成に失敗しました。');
+      console.error('Error creating scenario:', error);
+      return;
+    }
+
+    await saveToGraphDB(id, title, overview);
     navigate('/creator/scenario/list');
   };
 

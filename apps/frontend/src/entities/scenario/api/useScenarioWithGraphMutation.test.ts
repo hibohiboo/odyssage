@@ -23,14 +23,18 @@ vi.mock('@odyssage/frontend/shared/api/client', () => ({
 describe('useScenarioWithGraphMutation', () => {
   const mockUid = 'test-user-id';
   const mockScenarioData = {
+    id: 'test-scenario-id',
     title: 'テストシナリオ',
     overview: 'テスト用の概要',
+    visibility: 'private',
   };
 
   const mockScenarioCreateMutation = {
     trigger: vi.fn(),
     isMutating: false,
     error: undefined,
+    reset: vi.fn(),
+    data: undefined,
   };
 
   beforeEach(() => {
@@ -42,9 +46,7 @@ describe('useScenarioWithGraphMutation', () => {
   it('RDBとGraphDB両方にシナリオが正常に作成されること', async () => {
     // RDB作成成功のモック
     const rdbResponse = {
-      id: 'created-scenario-id',
-      title: mockScenarioData.title,
-      overview: mockScenarioData.overview,
+      message: 'Scenario created successfully',
     };
     mockScenarioCreateMutation.trigger.mockResolvedValue(rdbResponse);
 
@@ -71,7 +73,7 @@ describe('useScenarioWithGraphMutation', () => {
     // RDBとGraphDB両方が呼び出されることを確認
     expect(mockScenarioCreateMutation.trigger).toHaveBeenCalledWith(mockScenarioData);
     expect(apiClient.api['graph-scenarios'][':id'].$put).toHaveBeenCalledWith({
-      param: { id: 'created-scenario-id' },
+      param: { id: mockScenarioData.id },
       json: {
         title: mockScenarioData.title,
         overview: mockScenarioData.overview,
@@ -80,7 +82,10 @@ describe('useScenarioWithGraphMutation', () => {
 
     // レスポンスの確認
     expect(response).toEqual({
-      scenario: rdbResponse,
+      message: rdbResponse.message,
+      id: mockScenarioData.id,
+      title: mockScenarioData.title,
+      overview: mockScenarioData.overview,
       graphSaved: true,
     });
   });
@@ -113,9 +118,7 @@ describe('useScenarioWithGraphMutation', () => {
   it('RDB成功・GraphDB失敗時でもユーザーには成功として返すこと', async () => {
     // RDB作成成功のモック
     const rdbResponse = {
-      id: 'created-scenario-id',
-      title: mockScenarioData.title,
-      overview: mockScenarioData.overview,
+      message: 'Scenario created successfully',
     };
     mockScenarioCreateMutation.trigger.mockResolvedValue(rdbResponse);
 
@@ -141,7 +144,10 @@ describe('useScenarioWithGraphMutation', () => {
 
     // RDB成功、GraphDB失敗として返されることを確認
     expect(response).toEqual({
-      scenario: rdbResponse,
+      message: rdbResponse.message,
+      id: mockScenarioData.id,
+      title: mockScenarioData.title,
+      overview: mockScenarioData.overview,
       graphSaved: false,
     });
   });
