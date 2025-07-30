@@ -220,8 +220,24 @@
 - React hooks rulesに準拠した設計でESLint違反回避
 - GraphDB失敗時の適切なログ出力・ユーザー体験保護を実装
 
+#### E2Eテスト追加完了
+**実装内容**:
+- `scenario-graphdb.feature`: GraphDB連携のBDDテストシナリオ追加
+- `graphdb.steps.ts`: GraphDB検証ステップ定義実装
+- Neo4jドライバー依存関係をbdd-e2e-testパッケージに追加
+
+**テストケース**:
+1. **正常系**: GraphDB連携でシナリオが両方のDBに保存される
+2. **障害系**: GraphDB障害時でもRDBにシナリオが作成される
+3. **更新系**: 既存シナリオをGraphDBに同期更新する
+
+**技術実装**:
+- Neo4jドライバーでの直接DB検証
+- Playwrightネットワークモックでのサービス障害シミュレーション
+- 環境変数での接続設定（NEO4J_URL, NEO4J_USER, NEO4J_PASSWORD）
+
 ### 次回作業予定
-1. エンドツーエンド動作確認
+1. E2Eテスト実行・動作確認
 2. 実装完了の証跡最終確認
 
 ## 参考情報
