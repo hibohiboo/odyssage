@@ -53,6 +53,7 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
     // Neo4j環境変数を設定（テスト用）
     process.env.NEO4J_URL = 'bolt://localhost:7687';
     process.env.NEO4J_USER = 'neo4j';
+    // eslint-disable-next-line sonarjs/no-hardcoded-passwords
     process.env.NEO4J_PASSWORD = 'password';
   }, 60000); // 60秒のタイムアウトを設定（コンテナ起動に時間がかかるため）
 
@@ -71,6 +72,7 @@ export const setupTestEnv = (options?: SetupTestEnvOptions) => {
       NEON_CONNECTION_STRING: connectionString,
       NEO4J_URL: 'bolt://localhost:7687',
       NEO4J_USER: 'neo4j',
+      // eslint-disable-next-line sonarjs/no-hardcoded-passwords
       NEO4J_PASSWORD: 'password',
     }),
   };

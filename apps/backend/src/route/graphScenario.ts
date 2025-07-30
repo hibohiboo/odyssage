@@ -1,5 +1,5 @@
 import { vValidator } from '@hono/valibot-validator';
-import { idSchema, graphScenarioRequestSchema, graphScenarioResponseSchema } from '@odyssage/schema/src/schema';
+import { idSchema, graphScenarioRequestSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import type { Neo4jError } from 'neo4j-driver-core';
 
@@ -56,6 +56,7 @@ export const graphScenarioRoute = new Hono<Env>()
 
     } catch (err) {
       const neo4jError = err as Neo4jError;
+      // eslint-disable-next-line no-console
       console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
       return c.json({ error: 'Database error' }, 500);
     } finally {
