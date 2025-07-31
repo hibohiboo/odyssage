@@ -84,21 +84,59 @@ docs/development/user-authentication-implementation.md
 
 ### Phase 2: 実装段階
 
-#### 1. テストファースト開発
+#### 1. 設計・仕様書作成
+バックエンド機能実装時は以下の順序で設計書を作成：
+
 ```bash
-# 実装順序
-1. テストファイル作成 (*.test.ts, *.spec.ts)
-2. 型定義・スキーマ定義
-3. 実装コード作成
-4. 統合テスト実行
+# 設計順序
+1. データモデル設計（証跡ファイル内）
+2. OpenAPI仕様書作成（docs/redocly/openapi/paths/）
+3. スキーマ定義（packages/schema/src/schema.ts）
+4. テストファイル作成（*.test.ts, *.spec.ts）
 ```
 
-#### 2. 実装時の原則
+**OpenAPI仕様書の場所**:
+```bash
+docs/redocly/openapi/
+├── api.yaml                    # メインAPI定義
+├── paths/                      # エンドポイント定義
+│   ├── [新機能].yaml          # 新規エンドポイント
+│   └── existing-endpoints.yaml
+└── components/
+    └── schemas/                # 共通スキーマ定義
+```
+
+**データベース設計ドキュメント**:
+```bash
+docs/architecture/
+├── database-design.md          # 全体DB設計
+└── [機能名]-db-schema.md      # 機能別スキーマ詳細
+```
+
+#### 2. テストファースト開発
+```bash
+# 実装順序
+1. OpenAPI仕様書作成 (docs/redocly/openapi/paths/)
+2. スキーマ定義 (packages/schema/)
+3. テストファイル作成 (*.test.ts, *.spec.ts)
+4. 実装コード作成
+5. 統合テスト実行
+```
+
+#### 3. 実装時の原則
+- **OpenAPI First**: バックエンドAPIは必ずOpenAPI仕様書を先に定義
+- **スキーマ駆動開発**: Valibotスキーマでリクエスト/レスポンス検証を実装
 - **既存パターンの踏襲**: 既存のコード規約・パターンに従う
 - **段階的実装**: 小さい単位で実装し、都度動作確認
 - **証跡の継続更新**: 設計判断・課題・解決策を随時記録
 
-#### 3. 進捗の可視化
+#### 4. データベース設計の原則
+- **既存テーブルとの整合性**: 命名規則、型定義、関係性を既存DBに合わせる
+- **マイグレーション考慮**: スキーマ変更時の影響範囲を事前評価
+- **インデックス設計**: パフォーマンス要件に応じた適切なインデックス設定
+- **制約定義**: データ整合性確保のためのPRIMARY KEY、FOREIGN KEY、CHECK制約
+
+#### 5. 進捗の可視化
 証跡ファイルのTODO LISTを継続更新：
 ```markdown
 ### 実装完了項目
