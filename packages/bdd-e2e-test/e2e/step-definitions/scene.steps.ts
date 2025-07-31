@@ -22,47 +22,38 @@ When('既存のシナリオ「テスト用シナリオ」を選択する', async
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextVisible('テスト用シナリオ');
   await this.page.click('text=テスト用シナリオ');
-  console.log('シナリオ「テスト用シナリオ」を選択');
 });
 
 When('「シーン管理」セクションを開く', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextVisible('シーン管理');
   await this.page.click('text=シーン管理');
-  console.log('シーン管理セクションを開きました');
 });
 
 When('「新しいシーンを追加」ボタンをクリックする', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.clickButton('新しいシーンを追加');
-  console.log('新しいシーン追加ボタンをクリック');
 });
 
 When('シーンタイトルを「森の奥の小屋」と入力する', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.fillByTestId('scene-title-input', '森の奥の小屋');
-  console.log('シーンタイトルを「森の奥の小屋」と入力');
 });
 
 When('シーン概要を「プレイヤーたちが森の奥で発見する古い小屋。重要な手がかりが隠されている。」と入力する', async function (this) {
   const pageActions = new PageActions(this.page);
   const overview = 'プレイヤーたちが森の奥で発見する古い小屋。重要な手がかりが隠されている。';
   await pageActions.fillByTestId('scene-overview-input', overview);
-  console.log('シーン概要を入力');
 });
 
 When('シーン順序を「1」と設定する', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.fillByTestId('scene-order-input', '1');
-  console.log('シーン順序を「1」と設定');
 });
 
 When('「シーンを保存」ボタンをクリックする', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.clickButton('シーンを保存');
-  console.log('シーンを保存ボタンをクリック');
-  
-  // 保存完了を待機
   await pageActions.waitForSuccessMessage('シーンが保存されました');
 });
 
@@ -70,40 +61,32 @@ When('ユーザーがシーン「村の酒場」を選択する', async function
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextVisible('村の酒場');
   await this.page.click('text=村の酒場');
-  console.log('シーン「村の酒場」を選択');
 });
 
 When('シーン順序を「3」に変更する', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.fillByTestId('scene-order-input', '3');
-  console.log('シーン順序を「3」に変更');
 });
 
 When('「シーンを更新」ボタンをクリックする', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.clickButton('シーンを更新');
-  console.log('シーンを更新ボタンをクリック');
-  
-  // 更新完了を待機
   await pageActions.waitForSuccessMessage('シーンが更新されました');
 });
 
 When('ユーザーが新しいシーン「最終決戦の場」を作成する', async function (this) {
   const pageActions = new PageActions(this.page);
   
-  // GraphDB障害時のシーン作成
   await pageActions.clickButton('新しいシーンを追加');
   await pageActions.fillByTestId('scene-title-input', '最終決戦の場');
   await pageActions.fillByTestId('scene-overview-input', 'シナリオのクライマックスとなる戦闘シーン');
   await pageActions.fillByTestId('scene-order-input', '5');
   await pageActions.clickButton('シーンを保存');
-  console.log('GraphDB障害時にシーン「最終決戦の場」を作成');
 });
 
 Then('作成したシーン「森の奥の小屋」がシーン一覧に表示される', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextVisible('森の奥の小屋');
-  console.log('シーン「森の奥の小屋」がシーン一覧に表示されていることを確認');
 });
 
 Then('GraphDBにシーンデータが保存されている', async function (this) {

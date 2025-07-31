@@ -30,18 +30,6 @@ Then(
   '作成したシナリオ{string}がシナリオ一覧に表示される',
   async function (this, scenarioName) {
     const pageActions = new PageActions(this.page);
-    
-    // デバッグ用: 現在のURLとページタイトルを確認
-    console.log(`Current URL: ${this.page.url()}`);
-    console.log(`Page title: ${await this.page.title()}`);
-    
-    // シナリオ一覧ページに明示的に移動する場合
-    try {
-      await pageActions.navigateToScenarioManagement();
-    } catch (error) {
-      console.log('Already on scenario management page or navigation failed');
-    }
-    
     await pageActions.expectTextContaining(scenarioName);
   },
 );
@@ -84,7 +72,6 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
       const isPublic = (await scenarioRow.locator('text=公開中').count()) > 0;
 
       if (isPublic) {
-        console.log(`シナリオ "${scenarioName}" はすでに公開済み。スキップします。`);
         return;
       }
 
@@ -100,16 +87,11 @@ Given('公開シナリオ{string}が存在する', async function (this, scenari
     }
 
     // シナリオを新規作成
-    console.log('新規シナリオ作成を開始します');
-    
     await pageActions.navigateToNewScenario();
     await pageActions.waitForElement('input[name="シナリオタイトル"], [role="textbox"][name="シナリオタイトル"]');
-    
-    // シナリオ情報を入力して公開で作成
     await pageActions.createScenario(scenarioName, 'テスト用のシナリオ', true);
     
   } catch (error) {
-    console.error(`シナリオ作成中にエラーが発生しました: ${error}`);
     throw error;
   }
 });
