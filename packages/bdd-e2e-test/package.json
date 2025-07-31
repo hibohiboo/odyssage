@@ -14,7 +14,7 @@
     "@cucumber/cucumber": "^12.1.0",
     "@odyssage/tsconfig": "workspace:*",
     "@playwright/test": "^1.54.1",
-    "neo4j-driver": "^5.27.0",
+    "neo4j-driver": "^5.28.1",
     "ts-node": "^10.9.2"
   }
 }
