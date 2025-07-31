@@ -157,14 +157,20 @@ docs/architecture/
 実装完了前に必ず実施：
 
 ```bash
-# テスト実行
-npm run test              # 単体テスト
-npm run test:integration  # 統合テスト (該当する場合)
+# バックエンド品質チェック
+cd apps/backend
+bun run test             # 統合テスト
+bun run lint             # ESLint
+bunx tsc --noEmit        # TypeScript型チェック
 
-# 品質チェック
+# フロントエンド品質チェック  
+cd apps/frontend
+npm run test             # 単体テスト
 npm run lint             # ESLint
 npm run build            # ビルド + 型チェック
 ```
+
+**重要**: バックエンド実装完了時点で必ずlintを実行し、エラーを解消してからフロントエンド実装に進むこと
 
 #### 2. 証跡ファイルの完了記録
 ```markdown
