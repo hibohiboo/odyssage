@@ -100,7 +100,19 @@
 - [x] プロジェクト要件分析完了
 - [x] データモデル設計完了
 - [x] 実装計画策定完了
-- [ ] OpenAPI仕様書作成開始
+- [x] OpenAPI仕様書作成完了
+
+### Phase 1: 設計・仕様書作成完了
+- [x] OpenAPI仕様書作成 (`docs/redocly/openapi/paths/graphScenes.yaml`)
+- [x] スキーマ定義追加 (`packages/schema/src/schema.ts`)
+- [x] バックエンド統合テスト作成 (`apps/backend/test/integrations/graph-scene.spec.ts`)
+
+### Phase 2: バックエンド実装完了 ✅
+- [x] GraphDBシーンルート実装 (`apps/backend/src/route/graphScene.ts`)
+- [x] Neo4jクエリ実装（シーン作成・関係性構築）
+- [x] バックエンドルート統合 (`apps/backend/src/route/index.ts`)
+- [x] 統合テスト実行・成功確認（4/4テスト通過）
+- [x] Lintチェック・エラー解消（改行コード問題修正）
 
 ### 設計判断の記録
 
