@@ -55,7 +55,7 @@ Given('アプリが起動している', async function (this) {
 When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
-    const { PageActions } = await import('../utils/page-actions');
+    const { PageActions } = await import('../utils/page-actions.js');
     const pageActions = new PageActions(this.page);
     await pageActions.clickLink(text);
   },

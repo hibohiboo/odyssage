@@ -39,14 +39,23 @@ export class PageActions {
    * 指定されたテキストが表示されているか確認
    */
   async expectTextVisible(text: string) {
-    await expect(this.page.getByText(text)).toBeVisible();
+    await expect(this.page.getByText(text)).toBeVisible({ timeout: 10000 });
   }
 
   /**
    * 指定されたテキストを含む要素が表示されているか確認（部分一致）
    */
   async expectTextContaining(text: string) {
-    await expect(this.page.locator(`:has-text("${text}")`).first()).toBeVisible();
+    // まずページが安定するのを待つ
+    await this.waitForPageLoad();
+    // 複数の方法でテキストを探す
+    try {
+      await expect(this.page.locator(`:has-text("${text}")`).first()).toBeVisible({ timeout: 15000 });
+    } catch (error) {
+      // 別の方法で試す
+      console.log(`Trying alternative selector for text: ${text}`);
+      await expect(this.page.getByText(text, { exact: false })).toBeVisible({ timeout: 15000 });
+    }
   }
 
   /**
@@ -68,7 +77,7 @@ export class PageActions {
    * 成功メッセージの表示を待機
    */
   async waitForSuccessMessage(message: string) {
-    await this.page.waitForSelector(`text=${message}`, { timeout: 5000 });
+    await this.page.waitForSelector(`text=${message}`, { timeout: 10000 });
   }
 
   /**

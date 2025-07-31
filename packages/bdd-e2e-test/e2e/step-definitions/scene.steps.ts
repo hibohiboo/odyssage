@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@cucumber/cucumber';
-import { PageActions } from '../utils/page-actions';
-import { neo4jHelper } from '../utils/neo4j-helper';
+import { PageActions } from '../utils/page-actions.js';
+import { neo4jHelper } from '../utils/neo4j-helper.js';
 
 Given('シナリオ「テスト用シナリオ」が作成済みである', async function (this) {
   // シナリオ作成の前提条件

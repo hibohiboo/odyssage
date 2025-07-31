@@ -1,5 +1,5 @@
 import { Then } from '@cucumber/cucumber';
-import { neo4jHelper } from '../utils/neo4j-helper';
+import { neo4jHelper } from '../utils/neo4j-helper.js';
 
 Then('GraphDBにシナリオデータが保存されている', async function (this) {
   // テストシナリオ名を使用（featureファイルの値と一致）

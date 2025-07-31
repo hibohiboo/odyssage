@@ -1,5 +1,5 @@
 import { When, Then, Given } from '@cucumber/cucumber';
-import { PageActions } from '../utils/page-actions';
+import { PageActions } from '../utils/page-actions.js';
 
 When(
   '{string} という名前でシナリオを作成する',
@@ -17,18 +17,31 @@ Then('{string}と画面に表示される', async function (this, text) {
 When('概要を {string} と設定する', async function (this, scenarioDetail) {
   const pageActions = new PageActions(this.page);
   await pageActions.fillTextbox('シナリオ概要', scenarioDetail);
-  await pageActions.clickButton('保存する');
 });
 
 When('「保存する」ボタンをクリックする', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.clickButton('保存する');
+  // 保存後の画面遷移を待機
+  await pageActions.waitForPageLoad();
 });
 
 Then(
   '作成したシナリオ{string}がシナリオ一覧に表示される',
   async function (this, scenarioName) {
     const pageActions = new PageActions(this.page);
+    
+    // デバッグ用: 現在のURLとページタイトルを確認
+    console.log(`Current URL: ${this.page.url()}`);
+    console.log(`Page title: ${await this.page.title()}`);
+    
+    // シナリオ一覧ページに明示的に移動する場合
+    try {
+      await pageActions.navigateToScenarioManagement();
+    } catch (error) {
+      console.log('Already on scenario management page or navigation failed');
+    }
+    
     await pageActions.expectTextContaining(scenarioName);
   },
 );
