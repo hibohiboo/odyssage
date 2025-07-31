@@ -113,7 +113,7 @@ export const graphSceneResponseSchema = v.object({
   title: v.string(),
   overview: v.string(),
   scenarioId: v.string(),
-  order: v.number(),
+  order: v.pipe(v.number(), v.integer()),
 });
 
 export type GraphSceneRequest = v.InferInput<typeof graphSceneRequestSchema>;

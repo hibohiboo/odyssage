@@ -42,36 +42,7 @@ put:
           additionalProperties: false
   responses:
     200:
-      description: "シーンが正常に更新されました"
-      content:
-        application/json:
-          schema:
-            type: "object"
-            properties:
-              id:
-                type: "string"
-                description: "シーンID (UUID)"
-              title:
-                type: "string"
-                description: "シーンタイトル"
-              overview:
-                type: "string"
-                description: "シーン概要"
-              scenarioId:
-                type: "string"
-                description: "親シナリオID (UUID)"
-              order:
-                type: "integer"
-                description: "シーン順序"
-            required:
-              - "id"
-              - "title"
-              - "overview"
-              - "scenarioId"
-              - "order"
-            additionalProperties: false
-    201:
-      description: "シーンが正常に作成されました"
+      description: "シーンが正常に作成または更新されました"
       content:
         application/json:
           schema:
