@@ -24,8 +24,7 @@ export const SceneForm = ({
   isLoading = false,
   submitButtonText,
   title,
-}: SceneFormProps) => {
-  return (
+}: SceneFormProps) => (
     <form onSubmit={onSubmit} className="p-4 border border-stone-200 rounded-lg bg-stone-50">
       <h3 className="font-medium text-lg text-amber-800 mb-3">{title}</h3>
       
@@ -65,7 +64,7 @@ export const SceneForm = ({
           <input
             type="number"
             value={formData.order}
-            onChange={(e) => onFormChange({ ...formData, order: parseInt(e.target.value) || 1 })}
+            onChange={(e) => onFormChange({ ...formData, order: parseInt(e.target.value, 10) || 1 })}
             className="w-24 px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
             min="1"
             required
@@ -93,4 +92,3 @@ export const SceneForm = ({
       </div>
     </form>
   );
-};

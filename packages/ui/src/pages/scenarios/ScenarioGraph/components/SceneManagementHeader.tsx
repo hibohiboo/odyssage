@@ -8,8 +8,7 @@ interface SceneManagementHeaderProps {
 export const SceneManagementHeader = ({
   onAddScene,
   isLoading = false,
-}: SceneManagementHeaderProps) => {
-  return (
+}: SceneManagementHeaderProps) => (
     <div className="flex items-center justify-between mb-4">
       <h2 className="text-xl font-serif font-bold text-amber-800">
         シーン管理
@@ -24,4 +23,3 @@ export const SceneManagementHeader = ({
       </button>
     </div>
   );
-};
