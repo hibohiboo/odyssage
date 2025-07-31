@@ -56,14 +56,17 @@
 - [ ] Neo4jクエリ実装 (シーン作成・関係性構築)
 - [ ] バックエンド統合テスト実行・成功確認
 
-#### Phase 3: フロントエンド実装
-- [ ] GraphDBシーンAPI Hook作成 (`useGraphSceneMutation.ts`)
-- [ ] フロントエンドテスト作成
-- [ ] シーン作成画面への統合
+#### Phase 3: E2Eテスト・BDD作成 ✅
+- [x] BDDテスト設計・作成 (`packages/bdd-e2e-test/e2e/features/scene-graphdb.feature`)
+- [x] Step definitions作成 (`packages/bdd-e2e-test/e2e/step-definitions/scene.steps.ts`)
+- [x] GraphDB連携・障害時のユーザーシナリオテスト設計
 
-#### Phase 4: 品質保証・完了
-- [ ] Lint・ビルドエラー解消
-- [ ] E2Eテスト作成（BDD）
+#### Phase 4: フロントエンド実装
+- [ ] GraphDBシーンAPI Hook作成 (`useGraphSceneMutation.ts`)
+- [ ] フロントエンドlint・ビルドエラー解消
+- [ ] シーン作成画面への統合（将来タスク）
+
+#### Phase 5: 品質保証・完了
 - [ ] 動作確認・完了記録
 
 ## 実装ガイドライン
@@ -115,6 +118,11 @@
 - [x] Lintチェック・エラー解消（改行コード問題修正）
 - [x] OpenAPI仕様書とテストコード整合性チェック・修正完了
 
+### Phase 3: E2Eテスト・BDD作成完了 ✅
+- [x] BDDテスト設計・作成 (`packages/bdd-e2e-test/e2e/features/scene-graphdb.feature`)
+- [x] Step definitions作成 (`packages/bdd-e2e-test/e2e/step-definitions/scene.steps.ts`)
+- [x] GraphDB連携・障害時のユーザーシナリオテスト設計
+
 ### 設計判断の記録
 
 #### 1. シーンのデータモデル設計
@@ -147,6 +155,20 @@
   - パフォーマンス・複雑性と厳密なRESTfulness のトレードオフ
   - 既存システムとの整合性を優先
 - **影響**: シンプルな実装、既存パターンとの一貫性確保
+
+#### 4. テスト戦略の見直し
+**判断**: Unit testより先にBDD E2Eテストを作成
+- **当初計画**: フロントエンドHookのUnit testを先に作成
+- **ユーザーフィードバック**: "hookの詳細テストをしてもうまみが少ない。BDDのほうを先に記載してください"
+- **変更判断**:
+  - Unit testはAPIクライアントのモックテストで価値が限定的
+  - BDD E2Eテストはユーザーシナリオの観点で実際のビジネス価値を検証
+  - Neo4jとの統合確認もBDDで実現可能
+- **実装結果**:
+  - `packages/bdd-e2e-test/e2e/features/scene-graphdb.feature`: 3つのユーザーシナリオ
+  - `packages/bdd-e2e-test/e2e/step-definitions/scene.steps.ts`: Playwright + Cucumber実装
+  - 既存パッケージ構造に従った実装
+- **学習**: ユーザー視点でのテスト価値を優先する重要性
 
 ## 参考情報
 
