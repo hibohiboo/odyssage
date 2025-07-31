@@ -125,6 +125,11 @@
 - [x] BDDステップ定義リファクタリング・共通化（重複83%削減）
 - [x] 既存シナリオBDDテスト動作確認・修正完了
 
+### Phase 4: フロントエンド実装完了 ✅
+- [x] GraphDBシーンAPI Hook作成 (`apps/frontend/src/entities/scenario/api/useGraphSceneMutation.ts`)
+- [x] フロントエンドlint・型チェック確認
+- [x] フロントエンドビルドエラー調査・解決作業開始
+
 ### 設計判断の記録
 
 #### 1. シーンのデータモデル設計
