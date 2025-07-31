@@ -247,6 +247,7 @@ bunx tsc --noEmit # TypeScript型チェック
 ### 2. エラー修正の基本方針
 
 #### ESLintエラー対応
+- **改行コードエラー**: `npm run lint --fix`で自動修正（CRLF → LF変換）
 - **import順序エラー**: ESLintの`import/order`ルールに従って修正
 - **関数複雑度エラー**: 関数を小さな関数に分割（複雑度7以下を目標）
 - **any型エラー**: テストファイルでは許容（`.test.ts`、`.test.tsx`）、本体コードでは具体的な型を定義
