@@ -308,12 +308,23 @@ npm run build
 - 修正方法と技術的判断
 - 修正結果（lint/build成功の確認）
 
-## 関連ファイル
+## 関連ファイル・ドキュメント
 
+### 設計・仕様書
+- `docs/development/`: 開発証跡ファイル保存場所
+- `docs/redocly/openapi/`: OpenAPI仕様書
+- `docs/architecture/database-design.md`: データベース設計ドキュメント
+- `packages/schema/src/schema.ts`: APIスキーマ定義
+
+### 設定ファイル
 - `apps/frontend/eslint.config.js`: フロントエンドESLint設定
 - `apps/backend/eslint.config.js`: バックエンドESLint設定  
 - `tsconfig.json`: TypeScript設定
-- `docs/development/`: 開発証跡ファイル保存場所
+
+### 実装場所
+- `apps/backend/src/route/`: バックエンドAPIルート実装
+- `apps/frontend/src/`: フロントエンド実装
+- `packages/database/src/queries/`: データベースクエリ実装
 
 ## 参考情報
 
