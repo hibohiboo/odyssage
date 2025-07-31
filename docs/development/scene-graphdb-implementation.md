@@ -122,6 +122,8 @@
 - [x] BDDテスト設計・作成 (`packages/bdd-e2e-test/e2e/features/scene-graphdb.feature`)
 - [x] Step definitions作成 (`packages/bdd-e2e-test/e2e/step-definitions/scene.steps.ts`)
 - [x] GraphDB連携・障害時のユーザーシナリオテスト設計
+- [x] BDDステップ定義リファクタリング・共通化（重複83%削減）
+- [x] 既存シナリオBDDテスト動作確認・修正完了
 
 ### 設計判断の記録
 
