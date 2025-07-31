@@ -1,0 +1,109 @@
+put:
+  summary: GraphDBシーン作成・更新
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: "path"
+      name: "id"
+      schema:
+        type: "string"
+      required: true
+      description: "シーンID (UUID)"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            title:
+              type: "string"
+              description: "シーンタイトル"
+              minLength: 1
+              maxLength: 100
+            overview:
+              type: "string"
+              description: "シーン概要"
+              minLength: 1
+              maxLength: 1000
+            scenarioId:
+              type: "string"
+              description: "親シナリオID (UUID)"
+              pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            order:
+              type: "integer"
+              description: "シーン順序 (0以上)"
+              minimum: 0
+          required:
+            - "title"
+            - "overview"
+            - "scenarioId"
+            - "order"
+          additionalProperties: false
+  responses:
+    200:
+      description: "シーンが正常に更新されました"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                description: "シーンID (UUID)"
+              title:
+                type: "string"
+                description: "シーンタイトル"
+              overview:
+                type: "string"
+                description: "シーン概要"
+              scenarioId:
+                type: "string"
+                description: "親シナリオID (UUID)"
+              order:
+                type: "integer"
+                description: "シーン順序"
+            required:
+              - "id"
+              - "title"
+              - "overview"
+              - "scenarioId"
+              - "order"
+            additionalProperties: false
+    201:
+      description: "シーンが正常に作成されました"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                description: "シーンID (UUID)"
+              title:
+                type: "string"
+                description: "シーンタイトル"
+              overview:
+                type: "string"
+                description: "シーン概要"
+              scenarioId:
+                type: "string"
+                description: "親シナリオID (UUID)"
+              order:
+                type: "integer"
+                description: "シーン順序"
+            required:
+              - "id"
+              - "title"
+              - "overview"
+              - "scenarioId"
+              - "order"
+            additionalProperties: false
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    401:
+      $ref: '../components/schemas/response.yaml#/UnauthorizedResponse'
+    500:
+      $ref: '../components/schemas/response.yaml#/InternalServerErrorResponse'
+  operationId: "upsertGraphScene"
+  description: "Neo4jにシーンノードを作成または更新し、親シナリオとの関係性を構築"
