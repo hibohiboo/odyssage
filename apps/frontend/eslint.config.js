@@ -7,7 +7,7 @@ export default tseslint.config(
     extends: [
       ...customConfig,
       {
-        files: ['**/tests/**','**/*.test.tsx','vitest.config.ts'],
+        files: ['**/tests/**','**/*.test.tsx','**/*.test.ts','vitest.config.ts'],
         rules: {
           'import/extensions': ['off'],
           'import/no-extraneous-dependencies': ['off'],

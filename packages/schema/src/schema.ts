@@ -84,3 +84,18 @@ export const sessionResponseSchema = v.object({
 
 export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;
 export type SessionResponse = v.InferOutput<typeof sessionResponseSchema>;
+
+// GraphDB Scenario schemas
+export const graphScenarioRequestSchema = v.object({
+  title: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+  overview: v.pipe(v.string(), v.minLength(1), v.maxLength(1000)),
+});
+
+export const graphScenarioResponseSchema = v.object({
+  id: v.string(),
+  title: v.string(),
+  overview: v.string(),
+});
+
+export type GraphScenarioRequest = v.InferInput<typeof graphScenarioRequestSchema>;
+export type GraphScenarioResponse = v.InferOutput<typeof graphScenarioResponseSchema>;

@@ -1,0 +1,7 @@
+{
+  "extends": "@odyssage/tsconfig/tsconfig.base",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler"
+  }
+}
