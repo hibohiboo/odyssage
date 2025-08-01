@@ -303,6 +303,11 @@
 - `packages/schema/src/schema.ts`: バリデーションスキーマ
 
 ### 開発環境
-- Neo4j起動: `npm run local:graphdb`
-- バックエンド開発: `npm run dev:backend`
-- フロントエンド開発: `npm run dev:frontend`
+**重要**: 本プロジェクトはbunで管理されています。npmではなくbunコマンドを使用すること。
+
+- Neo4j起動: `bun run local:graphdb`
+- バックエンド開発: `bun run dev:backend`
+- フロントエンド開発: `bun run dev:frontend`
+- テスト実行: `bun run test`、`bun run test:cucumber`
+- lint実行: `bun run lint`
+- ビルド実行: `bun run build`
