@@ -6,8 +6,60 @@ import {
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { type Neo4jError } from 'neo4j-driver-core';
+import * as v from 'valibot';
 
-export const graphSceneRoute = new Hono<Env>().put(
+export const graphSceneRoute = new Hono<Env>()
+  .get(
+    '/scenario/:scenarioId',
+    vValidator('param', v.object({ scenarioId: v.pipe(v.string(), v.uuid()) })),
+    async (c) => {
+      const { scenarioId } = c.req.valid('param');
+
+      // eslint-disable-next-line no-console
+      console.log(`GraphDB scenes list request for scenario: ${scenarioId}`);
+
+      try {
+        const driver = getDriver();
+        const session = driver.session();
+
+        // シナリオに関連するシーンを順序順で取得
+        const result = await session.run(
+          `
+          MATCH (scenario:Scenario {id: $scenarioId})-[:HAS_SCENE]->(scene:Scene)
+          RETURN scene.id as id,
+                 scene.title as title,
+                 scene.overview as overview,
+                 scene.scenarioId as scenarioId,
+                 scene.order as order,
+                 scene.createdAt as createdAt,
+                 scene.updatedAt as updatedAt
+          ORDER BY scene.order ASC
+          `,
+          { scenarioId }
+        );
+
+        await session.close();
+
+        const scenes = result.records.map(record => ({
+          id: record.get('id'),
+          title: record.get('title'),
+          overview: record.get('overview'),
+          scenarioId: record.get('scenarioId'),
+          order: record.get('order'),
+          createdAt: record.get('createdAt')?.toString(),
+          updatedAt: record.get('updatedAt')?.toString(),
+        }));
+
+        return c.json(scenes, 200);
+      } catch (err) {
+        const neo4jError = err as Neo4jError;
+        // eslint-disable-next-line no-console
+        console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
+        return c.json({ error: 'Database error' }, 500);
+      }
+    },
+  )
+  .put(
   '/:id',
   vValidator('param', idSchema),
   vValidator('json', graphSceneRequestSchema),
