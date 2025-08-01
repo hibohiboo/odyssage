@@ -30,6 +30,11 @@ Given('シーン「村の酒場」が順序2で作成済みである', async fun
   }
 });
 
+When('ユーザーが「シナリオ管理」リンクをクリックする', async function (this) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.clickLink('シナリオ管理');
+});
+
 Given('GraphDBサービスが一時的に利用できない状態である', async function (this) {
   // GraphDB障害のシミュレーション設定
   console.log('GraphDB障害状態をシミュレート');
