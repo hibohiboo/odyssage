@@ -38,6 +38,40 @@ export class Neo4jHelper {
   }
 
   /**
+   * GraphDBにシナリオを作成する
+   */
+  async createScenario(id: string, title: string, overview: string, userId: string) {
+    if (!this.isAvailable()) {
+      console.log('Neo4j not available, skipping scenario creation');
+      return;
+    }
+
+    const session = this.driver!.session();
+    try {
+      // シナリオノードを作成
+      await session.run(
+        `CREATE (scenario:Scenario {
+          id: $id,
+          title: $title,
+          overview: $overview,
+          userId: $userId,
+          visibility: 'private',
+          createdAt: datetime(),
+          updatedAt: datetime()
+        })`,
+        { id, title, overview, userId }
+      );
+
+      console.log(`GraphDBにシナリオ「${title}」を作成しました`);
+    } catch (error) {
+      console.error('Scenario creation failed:', error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
    * シナリオがGraphDBに保存されているか確認
    */
   async verifyScenarioExists(title: string, overview: string) {

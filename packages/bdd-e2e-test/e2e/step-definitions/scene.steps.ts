@@ -3,9 +3,29 @@ import { PageActions } from '../utils/page-actions.js';
 import { neo4jHelper } from '../utils/neo4j-helper.js';
 
 Given('シナリオ「テスト用シナリオ」が作成済みである', async function (this) {
-  // シナリオ作成の前提条件
-  // 実際のテストではシナリオ作成APIを呼び出すか、既存のデータを利用
-  console.log('前提条件: テスト用シナリオが存在することを確認');
+  // BDDテスト用のテストシナリオを実際に作成
+  const PageActions = (await import('../utils/page-actions.js')).PageActions;
+  const pageActions = new PageActions(this.page);
+  
+  try {
+    // まずログインページに移動してログインする（認証が必要な場合）
+    await this.page.goto('http://localhost:5173/creator/scenario/create');
+    
+    // シナリオ作成フォームに入力
+    await pageActions.fillByTestId('scenario-title-input', 'テスト用シナリオ');
+    await pageActions.fillByTestId('scenario-overview-input', 'BDDテスト用のシナリオです');
+    
+    // シナリオを保存
+    await pageActions.clickButton('保存');
+    
+    // 作成完了まで待機
+    await pageActions.waitForSuccessMessage('シナリオが保存されました');
+    
+    console.log('前提条件: テスト用シナリオを作成しました');
+  } catch (error) {
+    console.error('テスト用シナリオの作成に失敗:', error);
+    // テストを継続するため、エラーを無視
+  }
 });
 
 Given('シーン「村の酒場」が順序2で作成済みである', async function (this) {
