@@ -68,6 +68,48 @@ export class Neo4jHelper {
   }
 
   /**
+   * GraphDBにシーンを作成する
+   */
+  async createScene(id: string, title: string, overview: string, scenarioId: string, order: number) {
+    if (!this.isAvailable()) {
+      console.log('Neo4j not available, skipping scene creation');
+      return;
+    }
+
+    const session = this.driver!.session();
+    try {
+      // シーンノードを作成
+      await session.run(
+        `CREATE (scene:Scene {
+          id: $id,
+          title: $title,
+          overview: $overview,
+          scenarioId: $scenarioId,
+          order: $order,
+          createdAt: datetime(),
+          updatedAt: datetime()
+        })`,
+        { id, title, overview, scenarioId, order }
+      );
+
+      // シナリオとの関係性を構築
+      await session.run(
+        `MATCH (scenario:Scenario {id: $scenarioId})
+         MATCH (scene:Scene {id: $id})
+         CREATE (scenario)-[:HAS_SCENE]->(scene)`,
+        { scenarioId, id }
+      );
+
+      console.log(`GraphDBにシーン「${title}」を作成しました`);
+    } catch (error) {
+      console.error('Scene creation failed:', error);
+      throw error;
+    } finally {
+      await session.close();
+    }
+  }
+
+  /**
    * シーンがGraphDBに保存されているか確認
    */
   async verifySceneExists(title: string, overview: string, order: number) {

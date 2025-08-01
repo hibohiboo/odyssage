@@ -9,8 +9,25 @@ Given('シナリオ「テスト用シナリオ」が作成済みである', asyn
 });
 
 Given('シーン「村の酒場」が順序2で作成済みである', async function (this) {
-  // シーン作成の前提条件
-  console.log('前提条件: シーン「村の酒場」が順序2で存在することを確認');
+  const neo4jHelper = (await import('../utils/neo4j-helper.js')).neo4jHelper;
+  
+  // テスト用シナリオのIDを取得（Background で作成されたシナリオ）
+  const scenarioTitle = 'テスト用シナリオ';
+  const sceneTitle = '村の酒場';
+  const sceneOverview = '村の中心にある賑やかな酒場。冒険者たちが情報交換をする場所。';
+  const sceneOrder = 2;
+  
+  // シナリオIDを取得
+  const scenarioId = await this.getScenarioIdByTitle(scenarioTitle);
+  if (!scenarioId) {
+    throw new Error(`シナリオ「${scenarioTitle}」が見つかりません`);
+  }
+  
+  // シーンをGraphDBに作成
+  const sceneId = this.generateTestId();
+  await neo4jHelper.createScene(sceneId, sceneTitle, sceneOverview, scenarioId, sceneOrder);
+  
+  console.log('前提条件: シーン「村の酒場」が順序2で作成されました');
 });
 
 Given('GraphDBサービスが一時的に利用できない状態である', async function (this) {
