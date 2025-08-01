@@ -36,6 +36,8 @@ paths:
     $ref: './paths/graphScenarios.yaml'
   /api/graph-scenes/{id}:
     $ref: './paths/graphScenes.yaml'
+  /api/graph-scenes/scenario/{scenarioId}:
+    $ref: './paths/graphScenesByScenario.yaml'
 
 components:
   schemas: {}
