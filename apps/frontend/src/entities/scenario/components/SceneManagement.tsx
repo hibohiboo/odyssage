@@ -40,7 +40,7 @@ export function SceneManagement({
     order: scenes.length + 1,
   });
 
-  const newSceneId = useState(() => generateUuid())[0];
+  const [newSceneId, setNewSceneId] = useState(() => generateUuid());
   const createMutation = useGraphSceneMutation({ sceneId: newSceneId });
   const updateMutation = useGraphSceneMutation({ 
     sceneId: editingSceneId || '' 
@@ -54,9 +54,13 @@ export function SceneManagement({
     });
     setIsAddingScene(false);
     setEditingSceneId(null);
+    // 新しいシーン作成のために新しいUUIDを生成
+    setNewSceneId(generateUuid());
   };
 
   const handleStartAdding = () => {
+    // 新しいシーン作成のために新しいUUIDを生成
+    setNewSceneId(generateUuid());
     setIsAddingScene(true);
     setFormData({
       title: '',
@@ -86,6 +90,7 @@ export function SceneManagement({
         order: formData.order,
       };
 
+      console.log('Creating scene with ID:', newSceneId, 'Data:', requestData);
       await createMutation.trigger(requestData);
       resetForm();
       onSceneUpdated?.();
