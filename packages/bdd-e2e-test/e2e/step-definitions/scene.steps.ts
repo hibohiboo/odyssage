@@ -12,14 +12,14 @@ Given('シナリオ「テスト用シナリオ」が作成済みである', asyn
     await this.page.goto('http://localhost:5173/creator/scenario/create');
     
     // シナリオ作成フォームに入力
-    await pageActions.fillByTestId('scenario-title-input', 'テスト用シナリオ');
-    await pageActions.fillByTestId('scenario-overview-input', 'BDDテスト用のシナリオです');
+    await this.page.fill('#title', 'テスト用シナリオ');
+    await this.page.fill('#overview', 'BDDテスト用のシナリオです');
     
     // シナリオを保存
-    await pageActions.clickButton('保存');
+    await this.page.click('button[type="submit"]');
     
-    // 作成完了まで待機
-    await pageActions.waitForSuccessMessage('シナリオが保存されました');
+    // 作成完了後、シナリオ一覧ページに遷移するまで待機
+    await this.page.waitForURL(/\/creator\/scenario\/list/);
     
     console.log('前提条件: テスト用シナリオを作成しました');
   } catch (error) {

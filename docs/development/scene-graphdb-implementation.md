@@ -336,6 +336,34 @@
 
 **次の作業**: 必要なパッケージ追加とBDDテスト実行確認
 
+#### 12. 画面操作によるBDDテスト前提条件の実装（2025-08-01）
+**ユーザーフィードバック**: "直接BDDでデータベースを触るのはやめましょう。データが必要なら、先に画面からデータを作ってください"
+
+**対応内容**:
+1. **アプローチ変更**: DB直接操作から画面操作による前提条件作成へ
+2. **シナリオ作成フォーム調査**: `ScenarioEdit.tsx`の構造を確認
+   - タイトル入力: `id="title"`, `name="title"`
+   - 概要入力: `id="overview"`, `name="overview"`
+   - 保存: `button[type="submit"]`で送信
+   - 成功時: `/creator/scenario/list`へリダイレクト
+3. **BDDステップ修正**: 
+   - test-idベースから実際のセレクターへ変更
+   - `page.fill('#title', 'テスト用シナリオ')`
+   - `page.fill('#overview', 'BDDテスト用のシナリオです')`
+   - `page.waitForURL(/\/creator\/scenario\/list/)`で遷移待機
+
+**現在の課題**: 
+- シナリオ作成後のURL遷移でタイムアウト（30秒）
+- 認証が必要な可能性（Firebase Authentication）
+- フォーム送信がエラーになっている可能性
+
+**技術的調査結果**:
+- `CreateScenario.tsx`は`useCreateScenario`フックを使用
+- 成功時に`navigate('/creator/scenario/list')`を実行
+- GraphDB保存も並行実行（`saveToGraphDB`）
+
+**次のステップ**: 認証状態の確認またはログイン処理の追加が必要
+
 ### BDDテスト修正TODOリスト
 
 #### Phase A: BDDテスト前提条件の実装
