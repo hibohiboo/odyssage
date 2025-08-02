@@ -132,13 +132,21 @@
 - [x] フロントエンドlint・型チェック確認
 - [x] フロントエンドビルドエラー調査・環境固有問題として解決
 
-### Phase 5: 品質保証・完了 ⚠️  
+### Phase 5: テスト戦略策定・Unit Test実装 🔄
+- [x] **BDD中心開発の方針転換**: 認証・環境依存の問題によりBDD先行開発を中止
+- [x] **テスト戦略策定**: Unit Tests → Integration Tests → E2E Tests の順序で実装
+- [x] **テスト戦略ドキュメント作成** (`docs/development/testing-strategy.md`)
+- [x] **バックエンドUnit Test完了**: GraphDBシーン関数の単体テスト実装・全通過 (10/10)
+- [ ] **フロントエンドUnit Test進行中**: useGraphScenesQuery Hook テスト項目洗い出し完了
+  - **2025-08-02**: test.todo でテスト項目を事前整理し、ビジネス観点でのテスト記述を実現
+  - **重要な知見**: テスト実装前の項目洗い出しでモック複雑化を回避
+- [ ] **フロントエンドUnit Test実装**: モック設計とテスト実装
+- [ ] **Integration Test実装**: API統合テストの実装
+
+### Phase 6: 品質保証・完了 ⚠️  
 - [x] 動作確認・完了記録  
 - [x] 全機能実装完了（GraphDBシーン追加機能）
-- [ ] **TODO: シーンGraphDB BDDテストの実行確認** (packages/bdd-e2e-test/e2e/features/scene-graphdb.feature)
-  - **依存関係**: シーン作成UIの実装が必要（現在Hook のみ実装済み）
-  - **制約**: フロントエンドのシーン管理画面が未実装のためBDDテスト実行不可
-  - **対応方針**: UI実装後にBDDテスト実行、または修正したBDDテストでAPI単体テスト
+- [ ] **BDD E2Eテスト**: 重要ユーザーシナリオのみ実装（最小限・必要に応じて）
 
 ### 設計判断の記録
 
