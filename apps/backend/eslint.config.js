@@ -15,6 +15,7 @@ export default tseslint.config(
       'import/no-unresolved': ['off'],
       'sonarjs/slow-regex': ['off'],
       '@typescript-eslint/no-explicit-any': ['off'],
+      'sonarjs/no-nested-functions': ['off'],
     },
   },
   {
