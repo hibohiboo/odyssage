@@ -462,6 +462,26 @@
   5. 「シーンを保存」で作成完了
 - **結果**: 画面からのシーン追加機能が完全に動作することを確認
 
+#### 9. シーン一覧表示バグ修正（2025-08-02）
+**問題**: "シーン一覧に何も表示されません。バグでしょうか"
+- **原因調査**: シーン管理UIの二重実装による混乱
+  - ScenarioDetailPageに「シーン一覧」（従来のscenario.nodesベース）
+  - SceneManagementに「シーン管理」（新しいGraphDBベース）
+- **ユーザー指摘**: "ScenarioDetailPage のほうに「シーン一覧」と SceneManagement のほうに「シーン管理」があるようです。二重管理になっている"
+- **修正内容**:
+  - `packages/ui/src/pages/scenarios/ScenarioDetail/ScenarioDetail.tsx`から`<SceneList>`コンポーネントを削除
+  - 不要なSceneListのimport文も削除
+  - SceneManagementでのシーン管理に一元化
+- **修正結果**:
+  - 従来の「シーン一覧」（scenario.nodesベース）を削除
+  - GraphDBベースの「シーン管理」のみでシーン機能を統合管理
+  - UI重複の解消とシーン表示の明確化
+- **技術的判断**:
+  - 新しいGraphDBベースのシーン管理を採用
+  - 従来のscenario.nodesベースのシーン表示は廃止
+  - データソースをGraphDBに統一してシーン関係性管理を強化
+- **影響**: シーン一覧表示の混乱解消、ユーザー体験の向上
+
 ## 最終完成状況
 
 ### 🎉 プロジェクト完成度: 100%
