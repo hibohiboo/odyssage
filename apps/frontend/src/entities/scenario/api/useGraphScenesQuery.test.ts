@@ -1,36 +1,239 @@
-import { describe, test } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import useSWR from 'swr';
+import { describe, test, vi, expect, beforeEach } from 'vitest';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
+import { useGraphScenesQuery } from './useGraphScenesQuery';
+
+// APIクライアントのモック
+vi.mock('@odyssage/frontend/shared/api/client', () => ({
+  apiClient: {
+    api: {
+      'graph-scenes': {
+        scenario: {
+          ':scenarioId': {
+            $get: vi.fn(),
+          },
+        },
+      },
+    },
+  },
+}));
+
+// SWRのモック
+vi.mock('swr', () => ({
+  default: vi.fn(),
+}));
+
+const mockUseSWR = vi.mocked(useSWR);
+const mockApiGet = vi.mocked(
+  apiClient.api['graph-scenes'].scenario[':scenarioId'].$get,
+);
 
 describe('useGraphScenesQuery Hook Unit Tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('Hook初期化・設定', () => {
-    test.todo('scenarioIdが存在する場合、適切なキーでデータ取得を開始する');
-    test.todo('scenarioIdが存在しない場合、データ取得を実行しない');
-    test.todo('SWRオプションが適切に設定される（フォーカス時再取得無効、再接続時再取得有効）');
+    test('scenarioIdが存在する場合、適切なキーでデータ取得を開始する', () => {
+      const scenarioId = 'test-scenario-123';
+      mockUseSWR.mockReturnValue({
+        data: undefined,
+        error: undefined,
+        isLoading: true,
+        mutate: vi.fn(),
+      } as any);
+
+      renderHook(() => useGraphScenesQuery({ scenarioId }));
+
+      expect(mockUseSWR).toHaveBeenCalledWith(
+        `api/graph-scenes/scenario/${scenarioId}`,
+        expect.any(Function),
+        {
+          revalidateOnFocus: false,
+          revalidateOnReconnect: true,
+        },
+      );
+    });
+
+    test('scenarioIdが存在しない場合、データ取得を実行しない', () => {
+      mockUseSWR.mockReturnValue({
+        data: undefined,
+        error: undefined,
+        isLoading: false,
+        mutate: vi.fn(),
+      } as any);
+
+      renderHook(() => useGraphScenesQuery({ scenarioId: '' }));
+
+      expect(mockUseSWR).toHaveBeenCalledWith(null, expect.any(Function), {
+        revalidateOnFocus: false,
+        revalidateOnReconnect: true,
+      });
+    });
   });
 
   describe('APIデータ取得処理', () => {
-    test.todo('正常な場合：APIからシーンデータを取得し、JSONとして返す');
-    test.todo('API応答がok=falseの場合：エラーメッセージをthrowする');
-    test.todo('ネットワークエラーの場合：元のエラーをそのままthrowする');
-    test.todo('APIクライアントが正しいパラメータで呼び出される');
+    test('正常な場合：APIからシーンデータを取得し、JSONとして返す', async () => {
+      const mockScenes = [
+        {
+          id: 'scene-1',
+          title: 'テストシーン1',
+          overview: 'テスト概要1',
+          scenarioId: 'scenario-123',
+          order: 1,
+        },
+      ];
+
+      mockApiGet.mockResolvedValue({
+        ok: true,
+        json: async () => mockScenes,
+      } as any);
+
+      let fetcherFunction: any;
+      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+        fetcherFunction = fetcher;
+        return {
+          data: undefined,
+          error: undefined,
+          isLoading: true,
+          mutate: vi.fn(),
+        } as any;
+      });
+
+      renderHook(() => useGraphScenesQuery({ scenarioId: 'scenario-123' }));
+
+      const result = await fetcherFunction();
+      expect(result).toEqual(mockScenes);
+      expect(mockApiGet).toHaveBeenCalledWith({
+        param: { scenarioId: 'scenario-123' },
+      });
+    });
+
+    test('API応答がok=falseの場合：エラーメッセージをthrowする', async () => {
+      mockApiGet.mockResolvedValue({
+        ok: false,
+        status: 500,
+      } as any);
+
+      let fetcherFunction: any;
+      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+        fetcherFunction = fetcher;
+        return {
+          data: undefined,
+          error: undefined,
+          isLoading: true,
+          mutate: vi.fn(),
+        } as any;
+      });
+
+      renderHook(() => useGraphScenesQuery({ scenarioId: 'scenario-123' }));
+
+      await expect(fetcherFunction()).rejects.toThrow('Failed to fetch scenes');
+    });
+
+    test('ネットワークエラーの場合：元のエラーをそのままthrowする', async () => {
+      const networkError = new Error('Network connection failed');
+      mockApiGet.mockRejectedValue(networkError);
+
+      let fetcherFunction: any;
+      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+        fetcherFunction = fetcher;
+        return {
+          data: undefined,
+          error: undefined,
+          isLoading: true,
+          mutate: vi.fn(),
+        } as any;
+      });
+
+      renderHook(() => useGraphScenesQuery({ scenarioId: 'scenario-123' }));
+
+      await expect(fetcherFunction()).rejects.toThrow(
+        'Network connection failed',
+      );
+    });
   });
 
   describe('Hook戻り値・状態管理', () => {
-    test.todo('データ取得中：isLoadingがtrueを返す');
-    test.todo('データ取得成功：dataにシーンリストが格納される');
-    test.todo('データ取得失敗：errorにエラー情報が格納される');
-    test.todo('SWRのmutate関数が適切に公開される');
-  });
+    test('データ取得中：isLoadingがtrueを返す', () => {
+      mockUseSWR.mockReturnValue({
+        data: undefined,
+        error: undefined,
+        isLoading: true,
+        mutate: vi.fn(),
+      } as any);
 
-  describe('Props・引数バリデーション', () => {
-    test.todo('有効なscenarioId（UUID形式）で正常動作する');
-    test.todo('空文字のscenarioIdでデータ取得を停止する');
-    test.todo('scenarioIdの変更時に新しいキーでデータを再取得する');
-  });
+      const { result } = renderHook(() =>
+        useGraphScenesQuery({ scenarioId: 'scenario-123' }),
+      );
 
-  describe('キャッシュ・再取得制御', () => {
-    test.todo('同じscenarioIdでの複数呼び出し時、キャッシュが使用される');
-    test.todo('異なるscenarioIdでは独立したキャッシュが作られる');
-    test.todo('再接続時にデータが自動再取得される');
-    test.todo('フォーカス時の再取得が無効化されている');
+      expect(result.current.isLoading).toBe(true);
+      expect(result.current.data).toBeUndefined();
+      expect(result.current.error).toBeUndefined();
+    });
+
+    test('データ取得成功：dataにシーンリストが格納される', () => {
+      const mockScenes = [
+        {
+          id: 'scene-1',
+          title: 'テストシーン1',
+          overview: 'テスト概要1',
+          scenarioId: 'scenario-123',
+          order: 1,
+        },
+      ];
+
+      mockUseSWR.mockReturnValue({
+        data: mockScenes,
+        error: undefined,
+        isLoading: false,
+        mutate: vi.fn(),
+      } as any);
+
+      const { result } = renderHook(() =>
+        useGraphScenesQuery({ scenarioId: 'scenario-123' }),
+      );
+
+      expect(result.current.data).toEqual(mockScenes);
+      expect(result.current.isLoading).toBe(false);
+      expect(result.current.error).toBeUndefined();
+    });
+
+    test('データ取得失敗：errorにエラー情報が格納される', () => {
+      const mockError = new Error('Fetch failed');
+
+      mockUseSWR.mockReturnValue({
+        data: undefined,
+        error: mockError,
+        isLoading: false,
+        mutate: vi.fn(),
+      } as any);
+
+      const { result } = renderHook(() =>
+        useGraphScenesQuery({ scenarioId: 'scenario-123' }),
+      );
+
+      expect(result.current.error).toBe(mockError);
+      expect(result.current.data).toBeUndefined();
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    test('SWRのmutate関数が適切に公開される', () => {
+      const mockMutate = vi.fn();
+
+      mockUseSWR.mockReturnValue({
+        data: undefined,
+        error: undefined,
+        isLoading: false,
+        mutate: mockMutate,
+      } as any);
+
+      const { result } = renderHook(() =>
+        useGraphScenesQuery({ scenarioId: 'scenario-123' }),
+      );
+
+      expect(result.current.mutate).toBe(mockMutate);
+    });
   });
 });

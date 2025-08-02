@@ -6,12 +6,12 @@ import {
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { type Neo4jError } from 'neo4j-driver-core';
-import * as v from 'valibot';
+import { object, pipe, string, uuid } from 'valibot';
 
 export const graphSceneRoute = new Hono<Env>()
   .get(
     '/scenario/:scenarioId',
-    vValidator('param', v.object({ scenarioId: v.pipe(v.string(), v.uuid()) })),
+    vValidator('param', object({ scenarioId: pipe(string(), uuid()) })),
     async (c) => {
       const { scenarioId } = c.req.valid('param');
 
