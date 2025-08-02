@@ -3,8 +3,9 @@
   "tasks": {
     "dev": {},
     "ncu": {},
+    "lint": {},
     "build": {
       "outputs": ["dist"]
-     }
+    }
   }
 }

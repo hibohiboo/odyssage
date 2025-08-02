@@ -15,6 +15,7 @@
     "dev": "bunx concurrently \"npm:dev:backend\" \"npm:dev:frontend\" \"npm:dev:ui\"",
     "prebuild": "bun install",
     "build": "bunx --bun turbo build",
+    "lint": "turbo lint",
     "ncu": "turbo ncu --force && ncu -u",
     "test": "vitest"
   },
