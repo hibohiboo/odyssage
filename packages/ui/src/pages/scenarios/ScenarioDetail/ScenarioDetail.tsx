@@ -2,7 +2,6 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router';
 import { FlowchartViewer } from './components/FlowchartViewer';
 import { ScenarioHeader } from './components/ScenarioHeader';
-import { SceneList } from './components/SceneList';
 import { Sidebar } from './components/Sidebar';
 import { Scenario } from './types';
 
@@ -40,7 +39,6 @@ export function ScenarioDetailPage({
             nodes={scenario.nodes}
             connections={scenario.connections}
           />
-          <SceneList nodes={scenario.nodes} />
         </div>
 
         {/* サイドバー */}

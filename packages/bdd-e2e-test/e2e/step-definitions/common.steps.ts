@@ -55,9 +55,8 @@ Given('アプリが起動している', async function (this) {
 When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
-    const { page } = this;
-
-    await page.waitForSelector(`a:has-text("${text}")`);
-    await page.getByRole('link', { name: text }).nth(0).click();
+    const { PageActions } = await import('../utils/page-actions.js');
+    const pageActions = new PageActions(this.page);
+    await pageActions.clickLink(text);
   },
 );

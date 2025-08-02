@@ -9,6 +9,7 @@ import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { gmRoute } from './gm';
 import { graphScenarioRoute } from './graphScenario';
+import { graphSceneRoute } from './graphScene';
 import { sessionRoute } from './session';
 import { user } from './user';
 
@@ -19,6 +20,7 @@ const route = new Hono<Env>()
   .route('/sessions', sessionRoute) // セッションルーターを統合
   .route('/gm', gmRoute) // GM管理ルーターを統合
   .route('/graph-scenarios', graphScenarioRoute) // GraphDBシナリオルーターを統合
+  .route('/graph-scenes', graphSceneRoute) // GraphDBシーンルーターを統合
   .get('/scenarios', async (c) => {
     const data = await getScenarios(c.env.NEON_CONNECTION_STRING);
 

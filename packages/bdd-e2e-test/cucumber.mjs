@@ -2,7 +2,7 @@ export default {
   paths: [
     process.env.CI === 'true'
       ? '**/features/*.feature'
-      : '**/features/scenario-graphdb.feature',
+      : '**/features/scene-graphdb.feature',
   ],
   import: ['**/step-definitions/*.steps.ts'],
   loader: ['ts-node/esm'],

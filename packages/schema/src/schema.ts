@@ -1,6 +1,6 @@
 import * as v from 'valibot';
 
-export const { parse } = v;
+export const { parse, object, pipe, string, uuid } = v;
 export const scenarioResponseSchema = v.object({
   id: v.string(),
   title: v.string(),
@@ -99,3 +99,22 @@ export const graphScenarioResponseSchema = v.object({
 
 export type GraphScenarioRequest = v.InferInput<typeof graphScenarioRequestSchema>;
 export type GraphScenarioResponse = v.InferOutput<typeof graphScenarioResponseSchema>;
+
+// GraphDB Scene schemas
+export const graphSceneRequestSchema = v.object({
+  title: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+  overview: v.pipe(v.string(), v.minLength(1), v.maxLength(1000)),
+  scenarioId: v.pipe(v.string(), v.uuid()),
+  order: v.pipe(v.number(), v.minValue(0), v.integer()),
+});
+
+export const graphSceneResponseSchema = v.object({
+  id: v.string(),
+  title: v.string(),
+  overview: v.string(),
+  scenarioId: v.string(),
+  order: v.pipe(v.number(), v.integer()),
+});
+
+export type GraphSceneRequest = v.InferInput<typeof graphSceneRequestSchema>;
+export type GraphSceneResponse = v.InferOutput<typeof graphSceneResponseSchema>;

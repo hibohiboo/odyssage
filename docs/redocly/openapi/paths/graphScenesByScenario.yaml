@@ -1,0 +1,60 @@
+get:
+  summary: シナリオに関連するGraphDBシーン一覧取得
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: "path"
+      name: "scenarioId"
+      schema:
+        type: "string"
+        pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      required: true
+      description: "シナリオID (UUID)"
+  responses:
+    200:
+      description: "シーン一覧を正常に取得しました"
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id:
+                  type: "string"
+                  description: "シーンID (UUID)"
+                title:
+                  type: "string"
+                  description: "シーンタイトル"
+                overview:
+                  type: "string"
+                  description: "シーン概要"
+                scenarioId:
+                  type: "string"
+                  description: "親シナリオID (UUID)"
+                order:
+                  type: "integer"
+                  description: "シーン順序"
+                createdAt:
+                  type: "string"
+                  format: "date-time"
+                  description: "作成日時"
+                updatedAt:
+                  type: "string"
+                  format: "date-time"
+                  description: "更新日時"
+              required:
+                - "id"
+                - "title"
+                - "overview"
+                - "scenarioId"
+                - "order"
+              additionalProperties: false
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    401:
+      $ref: '../components/schemas/response.yaml#/UnauthorizedResponse'
+    500:
+      $ref: '../components/schemas/response.yaml#/InternalServerErrorResponse'
+  operationId: "getGraphScenesByScenario"
+  description: "指定されたシナリオに関連するGraphDBシーン一覧を順序順で取得"
