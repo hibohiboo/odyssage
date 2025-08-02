@@ -1,5 +1,9 @@
-import type { GraphSceneRequest } from '@odyssage/schema';
-import { SceneForm, SceneManagementHeader, SceneGraphList } from '@odyssage/ui/page-ui';
+import { GraphSceneRequest } from '@odyssage/schema/src/schema';
+import {
+  SceneForm,
+  SceneManagementHeader,
+  SceneGraphList,
+} from '@odyssage/ui/page-ui';
 import { useState } from 'react';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { useGraphSceneMutation } from '../api/useGraphSceneMutation';
@@ -42,8 +46,8 @@ export function SceneManagement({
 
   const [newSceneId, setNewSceneId] = useState(() => generateUuid());
   const createMutation = useGraphSceneMutation({ sceneId: newSceneId });
-  const updateMutation = useGraphSceneMutation({ 
-    sceneId: editingSceneId || '' 
+  const updateMutation = useGraphSceneMutation({
+    sceneId: editingSceneId || '',
   });
 
   const resetForm = () => {

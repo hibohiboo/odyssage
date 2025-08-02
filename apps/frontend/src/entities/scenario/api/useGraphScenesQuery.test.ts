@@ -91,7 +91,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       } as any);
 
       let fetcherFunction: any;
-      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+      mockUseSWR.mockImplementation((_key, fetcher, _options) => {
         fetcherFunction = fetcher;
         return {
           data: undefined,
@@ -117,7 +117,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       } as any);
 
       let fetcherFunction: any;
-      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+      mockUseSWR.mockImplementation((_key, fetcher, _options) => {
         fetcherFunction = fetcher;
         return {
           data: undefined,
@@ -137,7 +137,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       mockApiGet.mockRejectedValue(networkError);
 
       let fetcherFunction: any;
-      mockUseSWR.mockImplementation((key, fetcher, _options) => {
+      mockUseSWR.mockImplementation((_key, fetcher, _options) => {
         fetcherFunction = fetcher;
         return {
           data: undefined,
