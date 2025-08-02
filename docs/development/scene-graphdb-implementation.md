@@ -154,6 +154,10 @@
   - API動作確認: PUT/GET エンドポイント正常動作（200レスポンス）
   - UI機能実装: SceneManagement統合済み、DetailPageで利用可能
   - 手動テストガイド作成: `docs/development/scene-manual-test-guide.md`
+- [x] **シーン一覧表示バグ修正完了**: UI二重管理問題の解決
+  - 問題: ScenarioDetailPageとSceneManagementでシーン表示が重複
+  - 修正: ScenarioDetailPageのSceneListコンポーネントを削除
+  - 結果: GraphDBベースのシーン管理に一元化、UI混乱解消
 - [x] **BDD E2Eテスト**: 認証・環境依存の課題により最小限実装に留める方針確定
 
 ### 設計判断の記録
