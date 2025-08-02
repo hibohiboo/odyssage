@@ -3,10 +3,13 @@ import { getDriver } from '@odyssage/graph-database/src/driver';
 import {
   idSchema,
   graphSceneRequestSchema,
+  object,
+  pipe,
+  string,
+  uuid,
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { type Neo4jError } from 'neo4j-driver-core';
-import { object, pipe, string, uuid } from 'valibot';
 
 export const graphSceneRoute = new Hono<Env>()
   .get(

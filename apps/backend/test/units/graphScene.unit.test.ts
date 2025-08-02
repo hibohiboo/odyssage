@@ -50,9 +50,9 @@ class GraphSceneService {
       }));
 
       return scenes;
-    } catch (_error) {
+    } catch (error) {
       await session.close();
-      throw new Error('Database error');
+      throw error;
     }
   }
 
