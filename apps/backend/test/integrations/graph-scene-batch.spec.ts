@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
 import { setupTestEnv } from './test-utils';
 
 /**
@@ -32,6 +32,9 @@ describe('GraphDBシーン一括更新統合テスト', () => {
       // GraphDBのクリーンアップは各テストケース内で実行
     },
   });
+
+  // beforeEachでのクリーンアップは他のテストに影響するため削除
+  // 各テスト内で必要に応じてクリーンアップを実行
 
   // テストケース：GraphDBシーン一括更新が正常に動作することを確認
   it('GraphDBシーンを一括更新できること', async () => {

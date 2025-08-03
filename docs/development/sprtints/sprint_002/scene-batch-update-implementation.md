@@ -439,6 +439,8 @@ const rollbackChanges = () => {
 - [x] フロントエンド楽観的更新アーキテクチャ設計完了
 - [x] 一括更新API設計・OpenAPI仕様書作成完了
 - [x] Valibotスキーマ定義追加完了
+- [x] バックエンドAPI実装完了（一括更新）
+- [x] 統合テスト作成・実行完了（7テスト全通過）
 
 ### 完了した設計成果物
 #### 1. OpenAPI仕様書（graphScenesBatch.yaml）
@@ -460,10 +462,62 @@ const rollbackChanges = () => {
 - **api.yaml**: 新エンドポイント追加（/api/graph-scenes/scenario/{scenarioId}/batch）
 - **既存APIとの並行運用**: 既存の個別操作API（PUT, DELETE）も維持
 
+#### 4. バックエンドAPI実装（graphScene.ts）
+- **エンドポイント**: PUT `/api/graph-scenes/scenario/{scenarioId}/batch`
+- **Neo4jクエリ**: 2段階実行（存在確認→削除→作成）
+- **エラーハンドリング**: 404 Scenario not found, 400 Validation error, 500 Database error
+- **レスポンス**: 更新されたシーン配列 + 操作サマリー
+
+#### 5. 統合テスト（graph-scene-batch.spec.ts）
+**テストカバレッジ**:
+- ✅ 正常な一括更新（3シーン作成）
+- ✅ 空配列による全削除
+- ✅ バリデーションエラー処理（必須フィールド不足、不正UUID）
+- ✅ 存在しないシナリオでの404エラー
+- ✅ 一括更新後の個別取得との整合性確認
+- ✅ 大量データ（50シーン）でのパフォーマンステスト
+
+**テスト結果**: 7テスト全通過 ✅
+
 ### 設計の技術的特徴
 - **簡略化戦略採用**: 差分計算ではなく全削除→再構築で実装の単純化
 - **ID再生成**: サーバー側で全IDを新規生成してUUID重複を回避
 - **OpenAPI First**: 実装前に詳細な仕様策定・Valibotスキーマ統合
+- **トランザクション保証**: Neo4jセッション内での原子性確保
+- **包括的テスト**: 正常系・異常系・境界値・パフォーマンスの全カバー
+
+### バックエンド実装の技術的ハイライト
+#### Neo4jクエリ戦略
+```cypher
+-- 1. シナリオ存在確認（事前チェック）
+MATCH (scenario:Scenario {id: $scenarioId}) RETURN scenario
+
+-- 2. 既存シーン全削除
+MATCH (scenario:Scenario {id: $scenarioId})
+OPTIONAL MATCH (scenario)-[:HAS_SCENE]->(scene:Scene)
+DETACH DELETE scene
+
+-- 3. 新シーン一括作成（空配列対応）
+MATCH (scenario:Scenario {id: $scenarioId})
+UNWIND $scenes as sceneData
+CREATE (newScene:Scene {
+  id: randomUUID(),
+  title: sceneData.title,
+  overview: sceneData.overview,
+  order: sceneData.order,
+  scenarioId: $scenarioId,
+  createdAt: datetime(),
+  updatedAt: datetime()
+})
+CREATE (scenario)-[:HAS_SCENE]->(newScene)
+RETURN newScene.* ORDER BY newScene.order ASC
+```
+
+#### 実装上の技術判断
+- **事前存在確認**: シナリオ不存在時の早期404返却
+- **2段階実行**: 削除と作成を分離して空配列ケースに対応
+- **randomUUID()**: Neo4j組み込み関数による確実なID生成
+- **エラー分岐**: Neo4jエラーコードによる適切なHTTPステータス返却
 
 ## 参考情報
 - 関連ファイル:

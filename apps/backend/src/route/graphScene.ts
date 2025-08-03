@@ -258,16 +258,7 @@ export const graphSceneRoute = new Hono<Env>()
 
         await session.close();
 
-        // レスポンス構築
-        const updatedScenes = result.records.map(record => ({
-          id: record.get('id'),
-          title: record.get('title'),
-          overview: record.get('overview'),
-          order: record.get('order'),
-          scenarioId: record.get('scenarioId'),
-          createdAt: record.get('createdAt')?.toString(),
-          updatedAt: record.get('updatedAt')?.toString(),
-        }));
+        // レスポンス構築（既に上で処理済み）
 
         const response = {
           scenes: updatedScenes,
