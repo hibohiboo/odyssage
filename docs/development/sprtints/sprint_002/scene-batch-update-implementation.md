@@ -170,23 +170,68 @@ interface BatchUpdateResponse {
 - **一時停止**: 全削除→再作成間の瞬間的データ不整合（トランザクションで解決）
 
 ### Neo4jクエリ戦略
+
+#### 一括更新クエリ設計（トランザクション統合版）
 ```cypher
-// 一括更新のクエリ設計案
-// 1. 既存シーン全削除
-MATCH (scenario:Scenario {id: $scenarioId})-[:HAS_SCENE]->(scene:Scene)
+// 統合トランザクションクエリ（1回のセッション実行）
+// 1. シナリオ存在確認
+MATCH (scenario:Scenario {id: $scenarioId})
+
+// 2. 既存シーン全削除
+OPTIONAL MATCH (scenario)-[:HAS_SCENE]->(scene:Scene)
 DETACH DELETE scene
 
-// 2. 新しいシーン一括作成
+// 3. 新しいシーン一括作成（UUIDサーバー生成）
+WITH scenario
 UNWIND $scenes as sceneData
-MATCH (scenario:Scenario {id: $scenarioId})
-CREATE (scene:Scene {
-  id: sceneData.id,
+CREATE (newScene:Scene {
+  id: randomUUID(),
   title: sceneData.title,
   overview: sceneData.overview,
-  order: sceneData.order
+  order: sceneData.order,
+  scenarioId: $scenarioId,
+  createdAt: datetime(),
+  updatedAt: datetime()
 })
-CREATE (scenario)-[:HAS_SCENE]->(scene)
-RETURN scene
+CREATE (scenario)-[:HAS_SCENE]->(newScene)
+
+// 4. 作成されたシーンを順序で返却
+WITH scenario
+MATCH (scenario)-[:HAS_SCENE]->(resultScene:Scene)
+RETURN resultScene.id as id,
+       resultScene.title as title,
+       resultScene.overview as overview,
+       resultScene.order as order,
+       resultScene.scenarioId as scenarioId,
+       resultScene.createdAt as createdAt,
+       resultScene.updatedAt as updatedAt
+ORDER BY resultScene.order ASC
+```
+
+#### クエリ設計の技術的考慮事項
+
+**トランザクション処理**:
+- **原子性保証**: 全操作が1つのNeo4jセッション内で実行
+- **シナリオ存在確認**: MATCH文で存在しない場合は自動的に失敗
+- **全削除→再作成**: OPTIONAL MATCHで既存シーンがない場合も正常処理
+
+**ID生成戦略**:
+- **randomUUID()使用**: Neo4j組み込み関数でサーバー側UUID生成
+- **一時ID無視**: フロントエンドの一時IDは使用せず、全て新規生成
+- **重複回避**: サーバー生成UUIDで確実な一意性保証
+
+**パフォーマンス考慮**:
+- **UNWIND使用**: 配列を効率的に展開して一括処理
+- **WITH句活用**: 中間結果を適切に受け渡し
+- **ORDER BY**: 結果を順序で並び替えてフロントエンド表示順を保証
+
+#### エラーケース対応
+```cypher
+// シナリオ不存在時の動作確認クエリ
+OPTIONAL MATCH (scenario:Scenario {id: $scenarioId})
+WITH scenario
+WHERE scenario IS NOT NULL
+// 上記でscenario=NULLの場合、後続処理は実行されずクエリ終了
 ```
 
 ## フロントエンド楽観的更新設計

@@ -3,6 +3,7 @@ import { getDriver } from '@odyssage/graph-database/src/driver';
 import {
   idSchema,
   graphSceneRequestSchema,
+  graphSceneBatchRequestSchema,
   object,
   pipe,
   string,
@@ -173,6 +174,120 @@ export const graphSceneRoute = new Hono<Env>()
         const neo4jError = err as Neo4jError;
         // eslint-disable-next-line no-console
         console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
+        return c.json({ error: 'Database error' }, 500);
+      }
+    },
+  )
+  .put(
+    '/scenario/:scenarioId/batch',
+    vValidator('param', object({ scenarioId: pipe(string(), uuid()) })),
+    vValidator('json', graphSceneBatchRequestSchema),
+    async (c) => {
+      const { scenarioId } = c.req.valid('param');
+      const { scenes } = c.req.valid('json');
+
+      // eslint-disable-next-line no-console
+      console.log(
+        `GraphDB scene batch update request: scenarioId=${scenarioId}, sceneCount=${scenes.length}`,
+      );
+
+      try {
+        const driver = getDriver();
+        const session = driver.session();
+
+        // シナリオ存在確認クエリ
+        const scenarioCheckResult = await session.run(
+          `MATCH (scenario:Scenario {id: $scenarioId}) RETURN scenario`,
+          { scenarioId }
+        );
+
+        if (scenarioCheckResult.records.length === 0) {
+          await session.close();
+          return c.json({ error: 'Scenario not found' }, 404);
+        }
+
+        // 既存シーン全削除
+        await session.run(
+          `
+          MATCH (scenario:Scenario {id: $scenarioId})
+          OPTIONAL MATCH (scenario)-[:HAS_SCENE]->(scene:Scene)
+          DETACH DELETE scene
+          `,
+          { scenarioId }
+        );
+
+        // 新しいシーンがある場合のみ作成
+        let updatedScenes = [];
+        if (scenes.length > 0) {
+          const result = await session.run(
+            `
+            MATCH (scenario:Scenario {id: $scenarioId})
+            UNWIND $scenes as sceneData
+            CREATE (newScene:Scene {
+              id: randomUUID(),
+              title: sceneData.title,
+              overview: sceneData.overview,
+              order: sceneData.order,
+              scenarioId: $scenarioId,
+              createdAt: datetime(),
+              updatedAt: datetime()
+            })
+            CREATE (scenario)-[:HAS_SCENE]->(newScene)
+            RETURN newScene.id as id,
+                   newScene.title as title,
+                   newScene.overview as overview,
+                   newScene.order as order,
+                   newScene.scenarioId as scenarioId,
+                   newScene.createdAt as createdAt,
+                   newScene.updatedAt as updatedAt
+            ORDER BY newScene.order ASC
+            `,
+            { scenarioId, scenes }
+          );
+
+          updatedScenes = result.records.map(record => ({
+            id: record.get('id'),
+            title: record.get('title'),
+            overview: record.get('overview'),
+            order: record.get('order'),
+            scenarioId: record.get('scenarioId'),
+            createdAt: record.get('createdAt')?.toString(),
+            updatedAt: record.get('updatedAt')?.toString(),
+          }));
+        }
+
+        await session.close();
+
+        // レスポンス構築
+        const updatedScenes = result.records.map(record => ({
+          id: record.get('id'),
+          title: record.get('title'),
+          overview: record.get('overview'),
+          order: record.get('order'),
+          scenarioId: record.get('scenarioId'),
+          createdAt: record.get('createdAt')?.toString(),
+          updatedAt: record.get('updatedAt')?.toString(),
+        }));
+
+        const response = {
+          scenes: updatedScenes,
+          summary: {
+            totalScenes: updatedScenes.length,
+            message: `${updatedScenes.length}個のシーンが正常に一括更新されました`,
+          },
+        };
+
+        return c.json(response, 200);
+      } catch (err) {
+        const neo4jError = err as Neo4jError;
+        // eslint-disable-next-line no-console
+        console.log(`Neo4j batch update error: ${err}\nCause: ${neo4jError.cause}`);
+        
+        // シナリオが存在しない場合の特別処理
+        if (neo4jError.code === 'Neo.ClientError.Statement.EntityNotFound') {
+          return c.json({ error: 'Scenario not found' }, 404);
+        }
+        
         return c.json({ error: 'Database error' }, 500);
       }
     },
