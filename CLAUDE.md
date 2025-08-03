@@ -5,6 +5,10 @@
 Odyssage は、TRPGセッション管理のためのWebアプリケーションです。
 React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バックエンド) で構成されています。
 
+## 現在のスプリント情報
+- **現在のスプリント**: Sprint 001
+- **証跡ファイル保存場所**: `docs/development/sprtints/sprint_001/`
+
 ## 開発手順
 
 ### Phase 1: 計画・設計段階
@@ -13,12 +17,12 @@ React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バ
 新機能開発時は必ず以下の場所に証跡ファイルを作成：
 
 ```bash
-# 証跡ファイル作成場所
-docs/development/[機能名]-implementation.md
+# 証跡ファイル作成場所（現在のスプリント: Sprint 001）
+docs/development/sprtints/sprint_001/[機能名]-implementation.md
 
 # 例
-docs/development/scenario-graphdb-implementation.md
-docs/development/user-authentication-implementation.md
+docs/development/sprtints/sprint_001/scenario-graphdb-implementation.md
+docs/development/sprtints/sprint_001/delete-scene-graphdb-implementation.md
 ```
 
 #### 2. 証跡ファイルの基本構成
