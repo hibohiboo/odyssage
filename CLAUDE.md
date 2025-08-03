@@ -203,9 +203,9 @@ bunx tsc --noEmit        # TypeScript型チェック
 
 # フロントエンド品質チェック  
 cd apps/frontend
-npm run test             # 単体テスト
-npm run lint             # ESLint
-npm run build            # ビルド + 型チェック
+bun run test             # 単体テスト
+bun run lint             # ESLint
+bun run build            # ビルド + 型チェック
 ```
 
 **重要**: 
@@ -383,8 +383,8 @@ test.todo('正常な場合：APIからシーンデータを取得し、JSONと�
 ```bash
 # フロントエンド
 cd apps/frontend
-npm run lint      # ESLintチェック
-npm run build     # ビルドエラーチェック + TypeScript型チェック
+bun run lint      # ESLintチェック
+bun run build     # ビルドエラーチェック + TypeScript型チェック
 
 # バックエンド  
 cd apps/backend
@@ -395,7 +395,7 @@ bunx tsc --noEmit # TypeScript型チェック
 ### 2. エラー修正の基本方針
 
 #### ESLintエラー対応
-- **改行コードエラー**: `npm run lint --fix`で自動修正（CRLF → LF変換）
+- **改行コードエラー**: `bun run lint --fix`で自動修正（CRLF → LF変換）
 - **import順序エラー**: ESLintの`import/order`ルールに従って修正
 - **関数複雑度エラー**: 関数を小さな関数に分割（複雑度7以下を目標）
 - **any型エラー**: テストファイルでは許容（`.test.ts`、`.test.tsx`）、本体コードでは具体的な型を定義
@@ -467,10 +467,10 @@ const mockFunction = {
 
 ```bash
 # 成功例
-npm run lint
+bun run lint
 # → エラー0件で正常完了
 
-npm run build  
+bun run build  
 # → "✓ built in X.XXs" で正常完了
 ```
 
@@ -515,7 +515,7 @@ npm run build
 bun install
 
 # ローカル環境起動
-npm run local:all    # 全サービス起動
-npm run dev:frontend # フロントエンド開発サーバー
-npm run dev:backend  # バックエンド開発サーバー
+bun run local:all    # 全サービス起動
+bun run dev:frontend # フロントエンド開発サーバー
+bun run dev:backend  # バックエンド開発サーバー
 ```
