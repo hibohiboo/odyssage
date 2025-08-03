@@ -164,7 +164,15 @@ const res = await $delete({ param: { id: scene.id } });
 - **第一段階**: `"build": "tsc -b && vite build"` → `"build": "vite build"`に変更
   - 結果: ビルド成功 `✓ built in 1.74s`、全2163モジュール正常変換
 - **第二段階**: `prebuild`フックに`tsc -b`を追加して型チェック復活を試行
-  - 結果: 再び`/c:`エラーが発生、根本原因は`tsc`コマンドのWindows bash実行時の問題
+  - 結果: 再び`/c:`エラーが発生
+- **第三段階**: `bunx tsc -b`による修正を試行
+  - 結果: 同様の`/c:`エラーが継続発生
+- **根本原因判明**: Claude CodeのMINGW64_NT環境とTypeScriptコンパイラの非互換性
+
+#### Claude Code環境制約の発見
+- **実行環境**: MINGW64_NT-10.0-26100（Git Bashとは微妙に異なる）
+- **制約**: bash実行環境の変更不可、TypeScript個別実行は可能だがprebuild統合は不可
+- **最終解決策**: `"build": "vite build"`単体 + `"tsc": "bunx tsc -b"`個別スクリプト分離
 
 **品質保証プロセスの改善点**:
 - **「グリーンを保つ」原則の徹底**: 完了前の必須ビルド確認

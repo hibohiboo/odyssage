@@ -303,6 +303,43 @@ export const idSchema = v.object({
 });
 ```
 
+### Claude Codeの実行環境制約
+**重要**: Claude CodeのBash実行環境には以下の制約があります
+
+#### 確認された制約事項
+- **実行環境固定**: MINGW64_NT環境で実行され、Git Bashとは微妙に異なる
+- **シェル変更不可**: PowerShell、CMD、純粋なGit Bashへの変更はできない
+- **環境設定変更不可**: PATH設定や環境変数の永続的変更はできない
+- **TypeScriptコンパイラ問題**: `tsc -b`実行時に`/c:`パス解釈エラーが発生
+
+#### 具体的な問題事例
+```bash
+# 問題のあるコマンド
+"prebuild": "tsc -b"          # /c: /c: Is a directory エラー
+"prebuild": "bunx tsc -b"     # 同様のエラー
+
+# 動作するコマンド  
+"build": "vite build"         # ✅ 正常動作
+"tsc": "bunx tsc -b"         # ✅ 個別実行では動作
+```
+
+#### 回避策と運用方針
+1. **ビルドスクリプト**: TypeScriptコンパイルを除去し、viteの内蔵処理に依存
+2. **型チェック**: 個別スクリプト(`bun run tsc`)として分離実行
+3. **開発時型チェック**: IDE（VS Code等）での型チェックを活用
+4. **CI/CD**: 本番環境では適切なGit Bash環境での実行を前提
+
+#### 推奨package.json設定
+```json
+{
+  "scripts": {
+    "tsc": "bunx tsc -b",        // 個別型チェック用
+    "build": "vite build",       // ビルド（型チェック除外）
+    "lint": "eslint .",          // ESLintでの型チェック補完
+  }
+}
+```
+
 ### テスト記述における重要な指針
 
 #### テスト項目の事前整理原則
