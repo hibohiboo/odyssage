@@ -3,6 +3,29 @@ import { PageActions } from '../utils/page-actions.js';
 import { neo4jHelper } from '../utils/neo4j-helper.js';
 import { expect } from '@playwright/test';
 
+Given('既存のシナリオを使用してシナリオ詳細ページにいる', async function (this) {
+  try {
+    // シナリオ一覧ページに移動
+    await this.page.goto('http://localhost:5173/creator/scenario/list');
+    await this.page.waitForLoadState('networkidle');
+    
+    // 最初のシナリオを選択（既存のシナリオを使用）
+    const scenarioLink = this.page.locator('a[href*="/creator/scenario/"]').first();
+    await scenarioLink.click();
+    
+    // シナリオ詳細ページに移動したことを確認
+    await this.page.waitForURL(/\/creator\/scenario\/[\w-]+/);
+    
+    // シーン管理セクションが表示されるまで待機
+    const pageActions = new PageActions(this.page);
+    await pageActions.expectTextVisible('シーン管理');
+    
+    console.log('前提条件: 既存のシナリオ詳細ページに移動しました');
+  } catch (error) {
+    console.error('シナリオ詳細ページへの移動に失敗:', error);
+  }
+});
+
 Given('シナリオ「楽観的更新テスト用シナリオ」が作成済みである', async function (this) {
   const PageActions = (await import('../utils/page-actions.js')).PageActions;
   const pageActions = new PageActions(this.page);
@@ -102,6 +125,46 @@ Given('サーバーが一時的にエラーを返す状態にある', async func
   // サーバーエラーのシミュレーション設定
   // 実際の実装では、Network条件やMockServiceWorkerでエラーレスポンスを設定
   console.log('サーバーエラー状態をシミュレート（実装時は適切なエラー条件を設定）');
+});
+
+When('ユーザーが「シーン管理」セクションを開く', async function (this) {
+  // シーン管理セクションは既にシナリオ詳細ページで表示されている想定
+  const pageActions = new PageActions(this.page);
+  await pageActions.expectTextVisible('シーン管理');
+});
+
+When('シーンタイトルを「{string}」と入力する', async function (this, title: string) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.fillByTestId('scene-title-input', title);
+});
+
+When('シーン概要を「{string}」と入力する', async function (this, overview: string) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.fillByTestId('scene-overview-input', overview);
+});
+
+When('シーン順序を「{int}」と設定する', async function (this, order: number) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.fillByTestId('scene-order-input', order.toString());
+});
+
+When('「シーンを追加」ボタンをクリックする', async function (this) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.clickButton('シーンを追加');
+});
+
+When('さらに「新しいシーンを追加」ボタンをクリックする', async function (this) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.clickButton('新しいシーンを追加');
+});
+
+Then('シーン「{string}」も即座にシーン一覧に表示される', async function (this, sceneTitle: string) {
+  const pageActions = new PageActions(this.page);
+  await pageActions.expectTextVisible(sceneTitle);
+  
+  // 即座に表示されることを検証
+  const sceneElement = this.page.locator(`text=${sceneTitle}`);
+  await expect(sceneElement).toBeVisible({ timeout: 1000 });
 });
 
 When('シーンタイトルを「{string}」と入力してシーンを追加する', async function (this, title: string) {

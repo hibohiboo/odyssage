@@ -2,7 +2,7 @@ export default {
   paths: [
     process.env.CI === 'true'
       ? '**/features/*.feature'
-      : '**/features/scene-optimistic-updates.feature',
+      : '**/features/scene-optimistic-create-test.feature',
   ],
   import: ['**/step-definitions/*.steps.ts'],
   loader: ['ts-node/esm'],
