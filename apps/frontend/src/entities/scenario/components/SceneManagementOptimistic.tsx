@@ -223,7 +223,7 @@ export function SceneManagementOptimistic({
       {editingSceneId ? (
         <div className="space-y-4">
           {optimisticScenes.map((scene) => (
-            <div key={scene.id}>
+            <div key={scene.id} data-testid="scene-item">
               {editingSceneId === scene.id ? (
                 <SceneForm
                   formData={formData}
@@ -245,6 +245,22 @@ export function SceneManagementOptimistic({
                         </span>
                       )}
                     </h3>
+                    <div className="flex gap-2">
+                      <button
+                        data-testid="edit-scene-button"
+                        onClick={() => handleStartEditing(scene)}
+                        className="text-sm text-blue-600 hover:text-blue-800"
+                      >
+                        編集
+                      </button>
+                      <button
+                        data-testid="delete-scene-button"
+                        onClick={() => handleDeleteScene(scene)}
+                        className="text-sm text-red-600 hover:text-red-800"
+                      >
+                        削除
+                      </button>
+                    </div>
                   </div>
                   <p className="text-stone-600 text-sm">{scene.overview}</p>
                 </div>
