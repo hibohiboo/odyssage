@@ -35,11 +35,84 @@
 - データベース: Neo4j GraphDB
 
 ### 既存実装の詳細調査
-**要調査項目**:
-1. **現在のシーン状態管理**: SceneManagement.tsxでの状態管理方法
-2. **既存API構造**: graphScene.tsのルート設計・Neo4jクエリパターン
-3. **SWR使用状況**: useGraphScenesQueryでのデータフェッチ・キャッシュ戦略
-4. **バリデーション**: スキーマ定義・エラーハンドリングパターン
+**調査完了項目**:
+
+#### 1. 現在のシーン状態管理（SceneManagement.tsx）
+**現在の実装方式**:
+- **状態管理**: 基本的なReact useState（フォーム状態のみ）
+- **データソース**: propsとして受け取るscenes配列（親コンポーネントから取得）
+- **個別操作**: 作成・更新・削除すべて即座にAPI呼び出し実行
+- **更新通知**: `onSceneUpdated?.()`で親に再フェッチ依頼
+
+**問題点**:
+```typescript
+// 現在の問題フロー
+handleCreateSubmit -> createMutation.trigger() -> API呼び出し -> onSceneUpdated() -> 親で再フェッチ
+handleUpdateSubmit -> updateMutation.trigger() -> API呼び出し -> onSceneUpdated() -> 親で再フェッチ  
+handleDeleteScene -> apiClient.$delete() -> API呼び出し -> onSceneUpdated() -> 親で再フェッチ
+```
+
+#### 2. 既存API構造（graphScene.ts）
+**バックエンドルート設計**:
+- `GET /api/graph-scenes/scenario/{scenarioId}`: シーン一覧取得
+- `PUT /api/graph-scenes/{id}`: シーン作成・更新（MERGE使用）
+- `DELETE /api/graph-scenes/{id}`: シーン削除
+
+**Neo4jクエリパターン**:
+```cypher
+-- 個別作成・更新（既存）
+MERGE (scene:Scene {id: $id})
+SET scene.title = $title, scene.overview = $overview, scene.scenarioId = $scenarioId, scene.order = $order
+WITH scene
+MATCH (scenario:Scenario {id: $scenarioId})
+MERGE (scenario)-[:HAS_SCENE]->(scene)
+
+-- 個別削除（既存）
+MATCH (scene:Scene {id: $id})
+OPTIONAL MATCH (scene)-[r]-()
+DELETE r, scene
+```
+
+#### 3. SWR使用状況
+**データフェッチ戦略**:
+- `useGraphScenesQuery`: データ取得（SWR）
+  - キー: `api/graph-scenes/scenario/${scenarioId}`
+  - 設定: `revalidateOnFocus: false, revalidateOnReconnect: true`
+- `useGraphSceneMutation`: 作成・更新（SWRMutation）
+  - 各操作後に親コンポーネントでSWRキャッシュの再フェッチが必要
+
+**キャッシュ更新の課題**:
+```typescript
+// 現在：操作後に毎回サーバーから全データ再取得
+onSceneUpdated?.() -> useGraphScenesQuery再実行 -> 全シーン再フェッチ
+```
+
+#### 4. バリデーション・スキーマ定義
+**既存スキーマ（schema.ts）**:
+```typescript
+export const graphSceneRequestSchema = v.object({
+  title: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+  overview: v.pipe(v.string(), v.minLength(1), v.maxLength(1000)),
+  scenarioId: v.pipe(v.string(), v.uuid()),
+  order: v.pipe(v.number(), v.minValue(0), v.integer()),
+});
+```
+
+**エラーハンドリング**:
+- 400: バリデーションエラー
+- 404: シーン未発見（削除時）
+- 500: データベースエラー
+
+#### 5. UIコンポーネント構造
+**コンポーネント分離**:
+- `SceneManagement.tsx`: 状態管理・API呼び出し（Container）
+- `SceneGraphList.tsx`: 表示・基本イベント（Presentational）
+- `SceneForm.tsx`: フォーム入力（Presentational）
+
+**現在の課題**:
+- **即座の操作感なし**: 各操作でローディング状態発生
+- **ネットワーク依存**: オフライン時の操作不可
+- **無駄なAPI呼び出し**: 連続操作時の個別API実行
 
 ## データモデル設計
 ### 一括更新API設計
