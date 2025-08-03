@@ -1,0 +1,158 @@
+put:
+  summary: GraphDBシーン一括更新
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: "path"
+      name: "scenarioId"
+      schema:
+        type: "string"
+        format: "uuid"
+      required: true
+      description: "シナリオID (UUID)"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: "object"
+          properties:
+            scenes:
+              type: "array"
+              description: "更新するシーン配列（全て再構築）"
+              items:
+                type: "object"
+                properties:
+                  id:
+                    type: "string"
+                    description: "シーンID（一時IDまたは既存ID、サーバーで新IDに置換）"
+                  title:
+                    type: "string"
+                    description: "シーンタイトル"
+                    minLength: 1
+                    maxLength: 100
+                  overview:
+                    type: "string"
+                    description: "シーン概要"
+                    minLength: 1
+                    maxLength: 1000
+                  order:
+                    type: "integer"
+                    description: "シーン順序 (0以上)"
+                    minimum: 0
+                required:
+                  - "title"
+                  - "overview"
+                  - "order"
+                additionalProperties: false
+          required:
+            - "scenes"
+          additionalProperties: false
+        example:
+          scenes:
+            - id: "temp_123e4567-e89b-12d3-a456-426614174000"
+              title: "オープニング"
+              overview: "冒険の始まり"
+              order: 0
+            - title: "戦闘シーン"
+              overview: "モンスターとの戦い"
+              order: 1
+  responses:
+    200:
+      description: "シーンが正常に一括更新されました"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              scenes:
+                type: "array"
+                description: "更新されたシーン配列"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      format: "uuid"
+                      description: "サーバーで生成された正式シーンID"
+                    title:
+                      type: "string"
+                      description: "シーンタイトル"
+                    overview:
+                      type: "string"
+                      description: "シーン概要"
+                    order:
+                      type: "integer"
+                      description: "シーン順序"
+                    scenarioId:
+                      type: "string"
+                      format: "uuid"
+                      description: "親シナリオID"
+                    createdAt:
+                      type: "string"
+                      format: "date-time"
+                      description: "作成日時"
+                    updatedAt:
+                      type: "string"
+                      format: "date-time"
+                      description: "更新日時"
+                  required:
+                    - "id"
+                    - "title"
+                    - "overview"
+                    - "order"
+                    - "scenarioId"
+                  additionalProperties: false
+              summary:
+                type: "object"
+                properties:
+                  totalScenes:
+                    type: "integer"
+                    description: "保存されたシーン数"
+                  message:
+                    type: "string"
+                    description: "操作結果メッセージ"
+                required:
+                  - "totalScenes"
+                  - "message"
+                additionalProperties: false
+          example:
+            scenes:
+              - id: "123e4567-e89b-12d3-a456-426614174001"
+                title: "オープニング"
+                overview: "冒険の始まり"
+                order: 0
+                scenarioId: "550e8400-e29b-41d4-a716-446655440000"
+                createdAt: "2025-08-03T10:00:00Z"
+                updatedAt: "2025-08-03T10:00:00Z"
+              - id: "123e4567-e89b-12d3-a456-426614174002"
+                title: "戦闘シーン"
+                overview: "モンスターとの戦い"
+                order: 1
+                scenarioId: "550e8400-e29b-41d4-a716-446655440000"
+                createdAt: "2025-08-03T10:00:00Z"
+                updatedAt: "2025-08-03T10:00:00Z"
+            summary:
+              totalScenes: 2
+              message: "シーンが正常に一括更新されました"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    401:
+      $ref: '../components/schemas/response.yaml#/UnauthorizedResponse'
+    404:
+      description: "指定されたシナリオが見つかりません"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              error:
+                type: "string"
+                example: "Scenario not found"
+            required:
+              - "error"
+            additionalProperties: false
+    500:
+      $ref: '../components/schemas/response.yaml#/InternalServerErrorResponse'
+  operationId: "batchUpdateGraphScenes"
+  description: "Neo4jで指定シナリオの全シーンを削除後、新しいシーン配列で一括再構築します。楽観的更新との組み合わせでUX向上を図ります。"

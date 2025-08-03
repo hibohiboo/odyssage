@@ -115,39 +115,59 @@ export const graphSceneRequestSchema = v.object({
 - **無駄なAPI呼び出し**: 連続操作時の個別API実行
 
 ## データモデル設計
-### 一括更新API設計
-- エンドポイント: PUT `/api/graph-scenes/scenario/{scenarioId}/batch`
-- 認証: Firebase Authentication必須（bearerAuth）
-- リクエストボディ: シーン配列全体（作成・更新・削除を統合）
 
+### 一括更新API設計
+#### エンドポイント仕様
+- **エンドポイント**: PUT `/api/graph-scenes/scenario/{scenarioId}/batch`
+- **認証**: Firebase Authentication必須（bearerAuth）
+- **戦略**: 既存シーン全削除 → 新規シーン配列で一括再構築
+
+#### リクエスト・レスポンス設計
 ```typescript
-// 一括更新リクエストの設計案
+// 一括更新リクエスト（簡略化戦略）
 interface BatchUpdateRequest {
   scenes: Array<{
-    id?: string;           // 新規作成時はundefined、既存更新時は既存ID
+    id?: string;           // 一時IDまたは既存ID（サーバーで新IDに置換）
     title: string;
     overview: string;
     order: number;
-    operation?: 'create' | 'update' | 'delete'; // 明示的な操作種別
+    // operationフィールドは不要（全て再構築のため）
   }>;
 }
 
-// レスポンス設計案  
+// レスポンス設計
 interface BatchUpdateResponse {
-  updatedScenes: Array<{
-    id: string;
+  scenes: Array<{
+    id: string;            // サーバーで生成された正式ID
     title: string;
     overview: string;
     order: number;
     scenarioId: string;
+    createdAt?: string;
+    updatedAt?: string;
   }>;
   summary: {
-    created: number;
-    updated: number;
-    deleted: number;
+    totalScenes: number;   // 保存されたシーン数
+    message: string;       // 操作結果メッセージ
   };
 }
 ```
+
+#### 設計判断の理由
+**簡略化戦略を採用**:
+- **全削除→再構築**: 差分計算ではなく、全削除後に新規作成で一括処理
+- **操作種別なし**: create/update/deleteの区別をしない（簡単な実装）
+- **ID再生成**: 一時IDを含む全IDをサーバーで新規生成（UUID重複回避）
+
+**メリット**:
+- **実装の単純化**: 差分計算・MERGE文の複雑なロジック不要
+- **データ整合性**: トランザクション内での全操作により状態の一貫性保証
+- **ID重複回避**: サーバーで全ID再生成によりUUID衝突リスク排除
+
+**デメリット**:
+- **パフォーマンス**: 大量シーン時の全削除・再作成コスト
+- **タイムスタンプ**: 既存シーンのcreatedAtが失われる
+- **一時停止**: 全削除→再作成間の瞬間的データ不整合（トランザクションで解決）
 
 ### Neo4jクエリ戦略
 ```cypher
