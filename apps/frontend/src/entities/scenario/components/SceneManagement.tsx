@@ -5,9 +5,8 @@ import {
   SceneGraphList,
 } from '@odyssage/ui/page-ui';
 import { useState } from 'react';
-import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
-import { useGraphSceneDeleteMutation } from '../api/useGraphSceneDeleteMutation';
+import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { useGraphSceneMutation } from '../api/useGraphSceneMutation';
 
 // シーン管理用の型定義（UIライブラリから独立）
@@ -35,9 +34,9 @@ interface SceneManagementProps {
 
 // ヘルパー関数：シーン操作ハンドラー
 function useSceneHandlers(
-  scenarioId: string,
+  _: string,
   scenes: Scene[],
-  onSceneUpdated?: () => void
+  _onSceneUpdated?: () => void,
 ) {
   const [isAddingScene, setIsAddingScene] = useState(false);
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null);
@@ -47,8 +46,7 @@ function useSceneHandlers(
     order: scenes.length + 1,
   });
   const [newSceneId, setNewSceneId] = useState(() => generateUuid());
-  const [deletingSceneId, setDeletingSceneId] = useState<string | null>(null);
-  
+
   const createMutation = useGraphSceneMutation({ sceneId: newSceneId });
   const updateMutation = useGraphSceneMutation({
     sceneId: editingSceneId || '',
@@ -160,8 +158,12 @@ export function SceneManagement({
 
   const handleDeleteScene = async (scene: Scene) => {
     console.log('Deleting scene:', scene.id, scene.title);
-    
-    if (!window.confirm(`シーン「${scene.title}」を削除しますか？この操作は元に戻せません。`)) {
+
+    if (
+      !window.confirm(
+        `シーン「${scene.title}」を削除しますか？この操作は元に戻せません。`,
+      )
+    ) {
       return;
     }
 
@@ -169,11 +171,11 @@ export function SceneManagement({
       // 直接APIクライアントを使用して削除
       console.log('Scene ID for deletion:', scene.id);
       const { $delete } = apiClient.api['graph-scenes'][':id'];
-      
+
       if (typeof $delete === 'function') {
         const res = await $delete({ param: { id: scene.id } });
         console.log('Delete response:', res.status, res.ok);
-        
+
         if (res.ok) {
           onSceneUpdated?.();
         } else if (res.status === 404) {
