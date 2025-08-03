@@ -34,16 +34,23 @@ export const SceneGraphList = ({ scenes, onEditScene, onDeleteScene, isEditable 
       {sortedScenes.map((scene) => (
         <div
           key={scene.id}
+          data-testid="scene-item"
           className="border border-stone-200 rounded-lg p-4 bg-white"
         >
           <div className="flex items-start justify-between mb-2">
             <h3 className="font-medium text-lg text-amber-800">
               {scene.order}. {scene.title}
+              {scene.id.startsWith('temp_') && (
+                <span className="ml-2 text-xs text-amber-600 bg-amber-100 px-2 py-1 rounded">
+                  新規
+                </span>
+              )}
             </h3>
             {isEditable && (
               <div className="flex gap-2">
                 {onEditScene && (
                   <button
+                    data-testid="edit-scene-button"
                     onClick={() => onEditScene(scene)}
                     className="text-stone-600 hover:text-stone-800 text-sm"
                   >
@@ -52,6 +59,7 @@ export const SceneGraphList = ({ scenes, onEditScene, onDeleteScene, isEditable 
                 )}
                 {onDeleteScene && (
                   <button
+                    data-testid="delete-scene-button"
                     onClick={() => onDeleteScene(scene)}
                     className="text-red-600 hover:text-red-800 text-sm"
                   >

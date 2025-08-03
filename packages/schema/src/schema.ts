@@ -118,3 +118,38 @@ export const graphSceneResponseSchema = v.object({
 
 export type GraphSceneRequest = v.InferInput<typeof graphSceneRequestSchema>;
 export type GraphSceneResponse = v.InferOutput<typeof graphSceneResponseSchema>;
+
+// GraphDB Scene Batch Update schemas
+export const graphSceneBatchItemSchema = v.object({
+  id: v.optional(v.string()), // 一時IDまたは既存ID（サーバーで新IDに置換）
+  title: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+  overview: v.pipe(v.string(), v.minLength(1), v.maxLength(1000)),
+  order: v.pipe(v.number(), v.minValue(0), v.integer()),
+});
+
+export const graphSceneBatchRequestSchema = v.object({
+  scenes: v.array(graphSceneBatchItemSchema),
+});
+
+export const graphSceneBatchSummarySchema = v.object({
+  totalScenes: v.pipe(v.number(), v.integer(), v.minValue(0)),
+  message: v.string(),
+});
+
+export const graphSceneBatchResponseSchema = v.object({
+  scenes: v.array(v.object({
+    id: v.string(),
+    title: v.string(),
+    overview: v.string(),
+    order: v.pipe(v.number(), v.integer()),
+    scenarioId: v.string(),
+    createdAt: v.optional(v.string()),
+    updatedAt: v.optional(v.string()),
+  })),
+  summary: graphSceneBatchSummarySchema,
+});
+
+export type GraphSceneBatchItem = v.InferInput<typeof graphSceneBatchItemSchema>;
+export type GraphSceneBatchRequest = v.InferInput<typeof graphSceneBatchRequestSchema>;
+export type GraphSceneBatchSummary = v.InferOutput<typeof graphSceneBatchSummarySchema>;
+export type GraphSceneBatchResponse = v.InferOutput<typeof graphSceneBatchResponseSchema>;

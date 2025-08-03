@@ -1,5 +1,5 @@
 import { ScenarioDetailPage } from '@odyssage/ui/page-ui';
-import { useGraphScenesQuery, SceneManagement } from '@odyssage/frontend/entities/scenario';
+import { useGraphScenesQuery, SceneManagementOptimistic } from '@odyssage/frontend/entities/scenario';
 import { useDetailPage } from '../model/useDetailPage';
 
 const DetailPage = ({ backLink }: { backLink: string }) => {
@@ -26,7 +26,7 @@ const DetailPage = ({ backLink }: { backLink: string }) => {
             シーンデータの取得に失敗しました: {scenesError.message}
           </div>
         )}
-        <SceneManagement
+        <SceneManagementOptimistic
           scenarioId={scenario.id}
           scenes={scenes}
           onSceneUpdated={() => {

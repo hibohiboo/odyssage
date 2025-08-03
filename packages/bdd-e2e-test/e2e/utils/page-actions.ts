@@ -146,4 +146,103 @@ export class PageActions {
     const scenarioRow = this.getRowContaining(scenarioName);
     await expect(scenarioRow.locator(`:has-text("${status}")`).first()).toBeVisible();
   }
+
+  /**
+   * フィールドをクリアしてから値を入力
+   */
+  async clearAndFill(selector: string, value: string) {
+    await this.page.locator(selector).clear();
+    await this.page.locator(selector).fill(value);
+  }
+
+  /**
+   * 楽観的更新の未保存変更警告が表示されているか確認
+   */
+  async expectUnsavedChangesWarning() {
+    await expect(this.page.locator('.bg-amber-50:has-text("未保存の変更があります")')).toBeVisible();
+  }
+
+  /**
+   * 楽観的更新の未保存変更警告が消えているか確認
+   */
+  async expectNoUnsavedChangesWarning() {
+    await expect(this.page.locator('.bg-amber-50:has-text("未保存の変更があります")')).not.toBeVisible();
+  }
+
+  /**
+   * 新規バッジが表示されているか確認
+   */
+  async expectNewBadge() {
+    await expect(this.page.locator('.bg-amber-100:has-text("新規")')).toBeVisible();
+  }
+
+  /**
+   * 新規バッジが指定された数だけ表示されているか確認
+   */
+  async expectNewBadgeCount(count: number) {
+    await expect(this.page.locator('.bg-amber-100:has-text("新規")')).toHaveCount(count);
+  }
+
+  /**
+   * 保存ボタンがローディング中かどうか確認
+   */
+  async expectSaveButtonLoading() {
+    await expect(this.page.locator('button:has-text("保存中...")')).toBeVisible();
+  }
+
+  /**
+   * 楽観的更新で即座にUI変更が反映されることを確認（ローディングなし）
+   */
+  async expectImmediateUIUpdate(elementSelector: string, timeout: number = 1000) {
+    await expect(this.page.locator(elementSelector)).toBeVisible({ timeout });
+  }
+
+  /**
+   * 楽観的更新のバッチ保存ボタンをクリック
+   */
+  async clickBatchSaveButton() {
+    await this.page.locator('button:has-text("変更を保存")').click();
+  }
+
+  /**
+   * 楽観的更新のバッチ破棄ボタンをクリック
+   */
+  async clickBatchDiscardButton() {
+    await this.page.locator('button:has-text("変更を破棄")').click();
+  }
+
+  /**
+   * シーン項目の順序を確認
+   */
+  async expectSceneOrder(sceneOrders: string[]) {
+    for (let i = 0; i < sceneOrders.length; i++) {
+      const expectedText = `${i + 1}. ${sceneOrders[i]}`;
+      await this.expectTextVisible(expectedText);
+    }
+  }
+
+  /**
+   * 特定のシーンが削除されて表示されないことを確認
+   */
+  async expectSceneNotVisible(sceneTitle: string, timeout: number = 1000) {
+    await expect(this.page.locator(`text=${sceneTitle}`)).not.toBeVisible({ timeout });
+  }
+
+  /**
+   * エラーメッセージ表示の確認
+   */
+  async expectErrorMessage(message: string) {
+    await expect(this.page.locator(`:has-text("${message}")`)).toBeVisible({ timeout: 5000 });
+  }
+
+  /**
+   * 楽観的更新のロールバック完了を確認
+   */
+  async expectOptimisticRollback() {
+    // 新規バッジが消えることを確認
+    await expect(this.page.locator('.bg-amber-100:has-text("新規")')).toHaveCount(0);
+    
+    // 未保存変更警告が消えることを確認
+    await this.expectNoUnsavedChangesWarning();
+  }
 }

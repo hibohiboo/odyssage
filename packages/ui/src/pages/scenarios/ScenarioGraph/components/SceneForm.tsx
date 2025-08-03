@@ -35,6 +35,7 @@ export const SceneForm = ({
           </label>
           <input
             type="text"
+            data-testid="scene-title-input"
             value={formData.title}
             onChange={(e) => onFormChange({ ...formData, title: e.target.value })}
             className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -48,6 +49,7 @@ export const SceneForm = ({
             シーン概要
           </label>
           <textarea
+            data-testid="scene-overview-input"
             value={formData.overview}
             onChange={(e) => onFormChange({ ...formData, overview: e.target.value })}
             className="w-full px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -63,6 +65,7 @@ export const SceneForm = ({
           </label>
           <input
             type="number"
+            data-testid="scene-order-input"
             value={formData.order}
             onChange={(e) => onFormChange({ ...formData, order: parseInt(e.target.value, 10) || 1 })}
             className="w-24 px-3 py-2 border border-stone-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
