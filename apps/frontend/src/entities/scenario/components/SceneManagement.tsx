@@ -6,6 +6,7 @@ import {
 } from '@odyssage/ui/page-ui';
 import { useState } from 'react';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
+import { useGraphSceneDeleteMutation } from '../api/useGraphSceneDeleteMutation';
 import { useGraphSceneMutation } from '../api/useGraphSceneMutation';
 
 // シーン管理用の型定義（UIライブラリから独立）
@@ -31,11 +32,12 @@ interface SceneManagementProps {
   onSceneUpdated?: () => void;
 }
 
-export function SceneManagement({
-  scenarioId,
-  scenes,
-  onSceneUpdated,
-}: SceneManagementProps) {
+// ヘルパー関数：シーン操作ハンドラー
+function useSceneHandlers(
+  scenarioId: string,
+  scenes: Scene[],
+  onSceneUpdated?: () => void
+) {
   const [isAddingScene, setIsAddingScene] = useState(false);
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null);
   const [formData, setFormData] = useState<SceneFormData>({
@@ -43,11 +45,15 @@ export function SceneManagement({
     overview: '',
     order: scenes.length + 1,
   });
-
   const [newSceneId, setNewSceneId] = useState(() => generateUuid());
+  const [deletingSceneId, setDeletingSceneId] = useState<string | null>(null);
+  
   const createMutation = useGraphSceneMutation({ sceneId: newSceneId });
   const updateMutation = useGraphSceneMutation({
     sceneId: editingSceneId || '',
+  });
+  const deleteMutation = useGraphSceneDeleteMutation({
+    sceneId: deletingSceneId || '',
   });
 
   const resetForm = () => {
@@ -58,12 +64,10 @@ export function SceneManagement({
     });
     setIsAddingScene(false);
     setEditingSceneId(null);
-    // 新しいシーン作成のために新しいUUIDを生成
     setNewSceneId(generateUuid());
   };
 
   const handleStartAdding = () => {
-    // 新しいシーン作成のために新しいUUIDを生成
     setNewSceneId(generateUuid());
     setIsAddingScene(true);
     setFormData({
@@ -82,6 +86,40 @@ export function SceneManagement({
     });
   };
 
+  return {
+    isAddingScene,
+    editingSceneId,
+    formData,
+    setFormData,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+    setDeletingSceneId,
+    resetForm,
+    handleStartAdding,
+    handleStartEditing,
+  };
+}
+
+export function SceneManagement({
+  scenarioId,
+  scenes,
+  onSceneUpdated,
+}: SceneManagementProps) {
+  const {
+    isAddingScene,
+    editingSceneId,
+    formData,
+    setFormData,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+    setDeletingSceneId,
+    resetForm,
+    handleStartAdding,
+    handleStartEditing,
+  } = useSceneHandlers(scenarioId, scenes, onSceneUpdated);
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.overview) return;
@@ -94,7 +132,7 @@ export function SceneManagement({
         order: formData.order,
       };
 
-      console.log('Creating scene with ID:', newSceneId, 'Data:', requestData);
+      console.log('Creating scene with ID:', 'Data:', requestData);
       await createMutation.trigger(requestData);
       resetForm();
       onSceneUpdated?.();
@@ -125,7 +163,24 @@ export function SceneManagement({
     }
   };
 
-  const isLoading = createMutation.isMutating || updateMutation.isMutating;
+  const handleDeleteScene = async (scene: Scene) => {
+    if (!window.confirm(`シーン「${scene.title}」を削除しますか？この操作は元に戻せません。`)) {
+      return;
+    }
+
+    try {
+      setDeletingSceneId(scene.id);
+      await deleteMutation.trigger();
+      setDeletingSceneId(null);
+      onSceneUpdated?.();
+    } catch (error) {
+      console.error('Failed to delete scene:', error);
+      setDeletingSceneId(null);
+      alert('シーンの削除に失敗しました。');
+    }
+  };
+
+  const isLoading = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
 
   return (
     <div className="card p-6">
@@ -181,6 +236,7 @@ export function SceneManagement({
         <SceneGraphList
           scenes={scenes}
           onEditScene={handleStartEditing}
+          onDeleteScene={handleDeleteScene}
           isEditable={true}
         />
       )}

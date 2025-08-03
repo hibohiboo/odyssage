@@ -12,10 +12,11 @@ export type Scene = {
 interface SceneGraphListProps {
   scenes: Scene[];
   onEditScene?: (scene: Scene) => void;
+  onDeleteScene?: (scene: Scene) => void;
   isEditable?: boolean;
 }
 
-export const SceneGraphList = ({ scenes, onEditScene, isEditable = false }: SceneGraphListProps) => {
+export const SceneGraphList = ({ scenes, onEditScene, onDeleteScene, isEditable = false }: SceneGraphListProps) => {
   const sortedScenes = [...scenes].sort((a, b) => a.order - b.order);
 
   if (sortedScenes.length === 0) {
@@ -39,13 +40,25 @@ export const SceneGraphList = ({ scenes, onEditScene, isEditable = false }: Scen
             <h3 className="font-medium text-lg text-amber-800">
               {scene.order}. {scene.title}
             </h3>
-            {isEditable && onEditScene && (
-              <button
-                onClick={() => onEditScene(scene)}
-                className="text-stone-600 hover:text-stone-800 text-sm"
-              >
-                編集
-              </button>
+            {isEditable && (
+              <div className="flex gap-2">
+                {onEditScene && (
+                  <button
+                    onClick={() => onEditScene(scene)}
+                    className="text-stone-600 hover:text-stone-800 text-sm"
+                  >
+                    編集
+                  </button>
+                )}
+                {onDeleteScene && (
+                  <button
+                    onClick={() => onDeleteScene(scene)}
+                    className="text-red-600 hover:text-red-800 text-sm"
+                  >
+                    削除
+                  </button>
+                )}
+              </div>
             )}
           </div>
           <p className="text-stone-600 text-sm">{scene.overview}</p>

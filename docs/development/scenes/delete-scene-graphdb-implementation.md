@@ -78,7 +78,30 @@
 - [x] 証跡ファイル作成
 - [x] 既存シーン機能の調査完了
 - [x] OpenAPI仕様書のDELETEエンドポイント追加完了
-- [ ] Neo4jクエリ設計（進行中）
+- [x] Neo4jクエリ設計完了
+- [x] バックエンドAPI実装完了
+- [x] フロントエンドHook実装完了（useGraphSceneDeleteMutation）
+- [x] UIコンポーネント実装完了（削除ボタン・確認ダイアログ）
+- [x] 統合テスト実行完了（ESLint・TypeScript型チェック通過）
+- [ ] E2Eテスト（BDD）実行予定
+
+## 実装完了内容
+### バックエンド実装
+- **ファイル**: `apps/backend/src/route/graphScene.ts`
+- **エンドポイント**: DELETE `/api/graph-scenes/{id}`
+- **Neo4jクエリ**: 物理削除（ノードと関係性削除）
+- **エラーハンドリング**: 404 Not Found, 500 Internal Server Error
+
+### フロントエンド実装
+- **Hook**: `apps/frontend/src/entities/scenario/api/useGraphSceneDeleteMutation.ts`
+- **UIコンポーネント**: `packages/ui/src/pages/scenarios/ScenarioGraph/components/SceneGraphList.tsx`
+- **統合**: `apps/frontend/src/entities/scenario/components/SceneManagement.tsx`
+- **削除確認**: window.confirm による確認ダイアログ
+
+### 品質保証完了
+- **ESLint**: バックエンド・フロントエンド共に警告のみ（エラー0件）
+- **TypeScript**: 型チェック通過
+- **複雑度**: 関数分割により複雑度エラー解消
 
 ## 参考情報
 - 関連ファイル: 
