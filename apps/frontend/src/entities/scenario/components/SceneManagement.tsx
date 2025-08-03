@@ -6,6 +6,7 @@ import {
 } from '@odyssage/ui/page-ui';
 import { useState } from 'react';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { useGraphSceneDeleteMutation } from '../api/useGraphSceneDeleteMutation';
 import { useGraphSceneMutation } from '../api/useGraphSceneMutation';
 
@@ -52,9 +53,7 @@ function useSceneHandlers(
   const updateMutation = useGraphSceneMutation({
     sceneId: editingSceneId || '',
   });
-  const deleteMutation = useGraphSceneDeleteMutation({
-    sceneId: deletingSceneId || '',
-  });
+  // 削除用のmutationは削除時に動的に作成
 
   const resetForm = () => {
     setFormData({
@@ -93,8 +92,6 @@ function useSceneHandlers(
     setFormData,
     createMutation,
     updateMutation,
-    deleteMutation,
-    setDeletingSceneId,
     resetForm,
     handleStartAdding,
     handleStartEditing,
@@ -113,8 +110,6 @@ export function SceneManagement({
     setFormData,
     createMutation,
     updateMutation,
-    deleteMutation,
-    setDeletingSceneId,
     resetForm,
     handleStartAdding,
     handleStartEditing,
@@ -164,23 +159,38 @@ export function SceneManagement({
   };
 
   const handleDeleteScene = async (scene: Scene) => {
+    console.log('Deleting scene:', scene.id, scene.title);
+    
     if (!window.confirm(`シーン「${scene.title}」を削除しますか？この操作は元に戻せません。`)) {
       return;
     }
 
     try {
-      setDeletingSceneId(scene.id);
-      await deleteMutation.trigger();
-      setDeletingSceneId(null);
-      onSceneUpdated?.();
+      // 直接APIクライアントを使用して削除
+      console.log('Scene ID for deletion:', scene.id);
+      const { $delete } = apiClient.api['graph-scenes'][':id'];
+      
+      if (typeof $delete === 'function') {
+        const res = await $delete({ param: { id: scene.id } });
+        console.log('Delete response:', res.status, res.ok);
+        
+        if (res.ok) {
+          onSceneUpdated?.();
+        } else if (res.status === 404) {
+          throw new Error('Scene not found');
+        } else {
+          throw new Error('Failed to delete graph scene');
+        }
+      } else {
+        throw new Error('Delete method not available in API client');
+      }
     } catch (error) {
       console.error('Failed to delete scene:', error);
-      setDeletingSceneId(null);
       alert('シーンの削除に失敗しました。');
     }
   };
 
-  const isLoading = createMutation.isMutating || updateMutation.isMutating || deleteMutation.isMutating;
+  const isLoading = createMutation.isMutating || updateMutation.isMutating;
 
   return (
     <div className="card p-6">
