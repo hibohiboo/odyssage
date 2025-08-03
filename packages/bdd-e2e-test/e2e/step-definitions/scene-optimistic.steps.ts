@@ -56,6 +56,16 @@ class SceneTestHelpers {
     await expect(badges).toHaveCount(0);
   }
 
+  async expectWarningBannerHidden() {
+    const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
+    await expect(warningBanner).not.toBeVisible({ timeout: 5000 });
+  }
+
+  async expectNewBadgeCount(count: number) {
+    const badges = this.page.locator('.bg-amber-100:has-text("新規")');
+    await expect(badges).toHaveCount(count);
+  }
+
   async navigateToScenarioDetail() {
     await this.page.goto('http://localhost:5173/creator/scenario/list');
     await this.page.waitForLoadState('networkidle');
@@ -69,21 +79,8 @@ class SceneTestHelpers {
 
 Given('既存のシナリオを使用してシナリオ詳細ページにいる', async function (this) {
   try {
-    // シナリオ一覧ページに移動
-    await this.page.goto('http://localhost:5173/creator/scenario/list');
-    await this.page.waitForLoadState('networkidle');
-    
-    // 最初のシナリオを選択（既存のシナリオを使用）
-    const scenarioLink = this.page.locator('a[href*="/creator/scenario/"]').first();
-    await scenarioLink.click();
-    
-    // シナリオ詳細ページに移動したことを確認
-    await this.page.waitForURL(/\/creator\/scenario\/[\w-]+/);
-    
-    // シーン管理セクションが表示されるまで待機
-    const pageActions = new PageActions(this.page);
-    await pageActions.expectTextVisible('シーン管理');
-    
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.navigateToScenarioDetail();
     console.log('前提条件: 既存のシナリオ詳細ページに移動しました');
   } catch (error) {
     console.error('シナリオ詳細ページへの移動に失敗:', error);
@@ -127,40 +124,21 @@ Given('ユーザーがシナリオ詳細ページにいる', async function (thi
 });
 
 Given('シーン「テスト用シーン」が作成済みである', async function (this) {
-  const pageActions = new PageActions(this.page);
-  
-  // 直前のシナリオにシーンを作成（通常の方法で）
-  await pageActions.clickButton('新しいシーンを追加');
-  await pageActions.fillByTestId('scene-title-input', 'テスト用シーン');
-  await pageActions.fillByTestId('scene-overview-input', '楽観的更新テスト用の既存シーン');
-  await pageActions.fillByTestId('scene-order-input', '1');
-  await pageActions.clickButton('シーンを保存');
-  
-  // 保存完了を待機
-  await pageActions.waitForSuccessMessage('シーンが保存されました');
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.createSceneNormal('テスト用シーン', '楽観的更新テスト用の既存シーン');
 });
 
 Given('シーン「削除対象シーン」が作成済みである', async function (this) {
-  const pageActions = new PageActions(this.page);
-  
-  await pageActions.clickButton('新しいシーンを追加');
-  await pageActions.fillByTestId('scene-title-input', '削除対象シーン');
-  await pageActions.fillByTestId('scene-overview-input', '削除テスト用のシーン');
-  await pageActions.fillByTestId('scene-order-input', '1');
-  await pageActions.clickButton('シーンを保存');
-  
-  await pageActions.waitForSuccessMessage('シーンが保存されました');
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.createSceneNormal('削除対象シーン', '削除テスト用のシーン');
 });
 
 Given('シーンが楽観的に作成・編集・削除されている状態である', async function (this) {
+  const helpers = new SceneTestHelpers(this.page);
   const pageActions = new PageActions(this.page);
   
   // 1. 楽観的にシーンを作成
-  await pageActions.clickButton('新しいシーンを追加');
-  await pageActions.fillByTestId('scene-title-input', '楽観的作成シーン');
-  await pageActions.fillByTestId('scene-overview-input', '楽観的に作成されたシーン');
-  await pageActions.fillByTestId('scene-order-input', '1');
-  await pageActions.clickButton('シーンを追加'); // 楽観的更新では「追加」ボタン
+  await helpers.createSceneOptimistic('楽観的作成シーン', '楽観的に作成されたシーン');
   
   // 2. 既存シーンを楽観的に編集（事前に作成済みと仮定）
   if (await this.page.locator('text=テスト用シーン').isVisible()) {
@@ -170,19 +148,13 @@ Given('シーンが楽観的に作成・編集・削除されている状態で�
   }
   
   // 未保存変更の警告が表示されることを確認
-  await pageActions.expectTextVisible('未保存の変更があります');
+  await helpers.expectUnsavedChangesWarning();
 });
 
 Given('シーンが楽観的に作成されている状態である', async function (this) {
-  const pageActions = new PageActions(this.page);
-  
-  await pageActions.clickButton('新しいシーンを追加');
-  await pageActions.fillByTestId('scene-title-input', '楽観的作成テストシーン');
-  await pageActions.fillByTestId('scene-overview-input', 'サーバーエラーテスト用');
-  await pageActions.fillByTestId('scene-order-input', '1');
-  await pageActions.clickButton('シーンを追加');
-  
-  await pageActions.expectTextVisible('未保存の変更があります');
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.createSceneOptimistic('楽観的作成テストシーン', 'サーバーエラーテスト用');
+  await helpers.expectUnsavedChangesWarning();
 });
 
 Given('サーバーが一時的にエラーを返す状態にある', async function (this) {
@@ -223,20 +195,13 @@ When('さらに「新しいシーンを追加」ボタンをクリックする',
 });
 
 Then('シーン「{string}」も即座にシーン一覧に表示される', async function (this, sceneTitle: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.expectTextVisible(sceneTitle);
-  
-  // 即座に表示されることを検証
-  const sceneElement = this.page.locator(`text=${sceneTitle}`);
-  await expect(sceneElement).toBeVisible({ timeout: 1000 });
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectSceneVisibleImmediately(sceneTitle);
 });
 
 When('シーンタイトルを「{string}」と入力してシーンを追加する', async function (this, title: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.fillByTestId('scene-title-input', title);
-  await pageActions.fillByTestId('scene-overview-input', `${title}の概要`);
-  await pageActions.fillByTestId('scene-order-input', '1');
-  await pageActions.clickButton('シーンを追加');
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.createSceneOptimistic(title, `${title}の概要`);
 });
 
 When('さらに別のシーンを編集してタイトルを変更する', async function (this) {
@@ -282,37 +247,23 @@ When('破棄確認ダイアログで「OK」をクリックする', async functi
 });
 
 Then('シーン「{string}」が即座にシーン一覧に表示される', async function (this, sceneTitle: string) {
-  const pageActions = new PageActions(this.page);
-  
-  // シーンがすぐに表示されることを確認（ローディングなし）
-  await pageActions.expectTextVisible(sceneTitle);
-  
-  // ネットワーク待機なしで即座に表示されることを検証
-  const sceneElement = this.page.locator(`text=${sceneTitle}`);
-  await expect(sceneElement).toBeVisible({ timeout: 1000 }); // 1秒以内で表示
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectSceneVisibleImmediately(sceneTitle);
 });
 
 Then('シーンに「新規」バッジが表示されている', async function (this) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.expectTextVisible('新規');
-  
-  // 新規バッジのスタイルも確認
-  const badgeElement = this.page.locator('.bg-amber-100:has-text("新規")');
-  await expect(badgeElement).toBeVisible();
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectNewBadgeVisible();
 });
 
 Then('「未保存の変更があります」という警告が表示される', async function (this) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.expectTextVisible('未保存の変更があります');
-  
-  // 警告バナーの色も確認
-  const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
-  await expect(warningBanner).toBeVisible();
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectUnsavedChangesWarning();
 });
 
 Then('両方のシーンに「新規」バッジが表示されている', async function (this) {
-  const badges = this.page.locator('.bg-amber-100:has-text("新規")');
-  await expect(badges).toHaveCount(2);
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectNewBadgeCount(2);
 });
 
 Then('シーン一覧には2つのシーンが順序通りに表示される', async function (this) {
@@ -329,12 +280,8 @@ Then('シーン一覧には2つのシーンが順序通りに表示される', a
 });
 
 Then('シーン一覧でタイトルが即座に「{string}」に更新される', async function (this, newTitle: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.expectTextVisible(newTitle);
-  
-  // 即座に更新されることを確認（1秒以内）
-  const updatedElement = this.page.locator(`text=${newTitle}`);
-  await expect(updatedElement).toBeVisible({ timeout: 1000 });
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectSceneVisibleImmediately(newTitle);
 });
 
 Then('シーン「{string}」が即座にシーン一覧から消える', async function (this, sceneTitle: string) {
@@ -349,15 +296,13 @@ Then('保存中の表示が現れる', async function (this) {
 });
 
 Then('保存が完了すると「未保存の変更があります」警告が消える', async function (this) {
-  // 警告が消えることを確認
-  const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
-  await expect(warningBanner).not.toBeVisible({ timeout: 5000 });
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectWarningBannerHidden();
 });
 
 Then('すべての「新規」バッジが消える', async function (this) {
-  // 新規バッジが消えることを確認
-  const badges = this.page.locator('.bg-amber-100:has-text("新規")');
-  await expect(badges).toHaveCount(0);
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectNoNewBadges();
 });
 
 Then('GraphDBにすべての変更が正しく反映されている', async function (this) {
@@ -386,9 +331,8 @@ Then('シーン一覧が元の状態に戻る', async function (this) {
 });
 
 Then('すべての楽観的変更が取り消される', async function (this) {
-  // 楽観的更新による変更がすべて取り消されることを確認
-  const badges = this.page.locator('.bg-amber-100:has-text("新規")');
-  await expect(badges).toHaveCount(0);
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectNoNewBadges();
 });
 
 Then('エラーメッセージが表示される', async function (this) {
@@ -403,9 +347,8 @@ Then('シーン一覧が元の状態に自動的に巻き戻される', async fu
   // エラー時の自動巻き戻しを確認
   await this.page.waitForTimeout(1000); // 巻き戻し処理完了を待機
   
-  // 楽観的変更が取り消されることを確認
-  const badges = this.page.locator('.bg-amber-100:has-text("新規")');
-  await expect(badges).toHaveCount(0);
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectNoNewBadges();
 });
 
 Then('すべての操作が即座にUI反映される', async function (this) {
@@ -452,9 +395,8 @@ Then('最終的なシーン状態が正しく画面に反映される', async fu
   // 最終状態の確認
   await this.page.waitForTimeout(2000); // 保存完了とUI更新を待機
   
-  // 未保存変更警告が消えることを確認
-  const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
-  await expect(warningBanner).not.toBeVisible();
+  const helpers = new SceneTestHelpers(this.page);
+  await helpers.expectWarningBannerHidden();
   
   console.log('最終的なシーン状態が正しく反映されました');
 });
