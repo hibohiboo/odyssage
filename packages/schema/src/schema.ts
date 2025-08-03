@@ -12,7 +12,7 @@ export const userSchema = v.object({
   id: v.string(),
 });
 export const idSchema = v.object({
-  id: v.string(),
+  id: v.pipe(v.string(), v.uuid()),
 });
 export const idUidSchema = v.object({
   id: v.string(),

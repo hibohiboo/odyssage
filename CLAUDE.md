@@ -277,6 +277,32 @@ cd /d/projects/odyssage/apps/frontend && bun run lint
 cd /d/projects/odyssage/apps/frontend && bun run build
 ```
 
+### OpenAPI仕様書との整合性確認手順
+**重要**: APIテストを修正した場合は必ずOpenAPI仕様書との整合性を確認すること
+
+#### 確認が必要なケース
+- テストでAPIレスポンスの期待値を変更した場合
+- エラーステータスコードの期待値を変更した場合
+- APIパラメータのバリデーション結果を変更した場合
+
+#### 確認手順
+1. **OpenAPI仕様書確認**: `docs/redocly/openapi/paths/`の該当ファイルを確認
+2. **実装との比較**: 実際のAPIレスポンスとOpenAPI定義の一致確認
+3. **修正方針決定**:
+   - 仕様書に実装を合わせる（バリデーション強化など）
+   - 実装に仕様書を合わせる（仕様変更の場合）
+4. **修正実施**: 決定した方針に基づいて修正
+5. **再テスト実行**: 修正後の整合性確認
+
+#### 修正例
+```typescript
+// 問題: テストで404期待だが、OpenAPIでは400定義
+// 解決: スキーマにUUIDバリデーション追加
+export const idSchema = v.object({
+  id: v.pipe(v.string(), v.uuid()), // UUID検証追加
+});
+```
+
 ### テスト記述における重要な指針
 
 #### テスト項目の事前整理原則

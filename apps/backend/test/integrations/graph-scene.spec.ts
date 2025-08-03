@@ -296,7 +296,7 @@ describe('GraphDBシーン統合テスト', () => {
     });
 
     // テストケース：不正なUUID形式での削除
-    it('不正なUUID形式の場合404エラーを返すこと', async () => {
+    it('不正なUUID形式の場合400エラーを返すこと', async () => {
       const app = getApp();
 
       // 不正なUUID形式のシーンID
@@ -313,13 +313,8 @@ describe('GraphDBシーン統合テスト', () => {
         getEnv(),
       );
 
-      // 現在の実装では不正なUUIDでもGraphDBでの検索を実行するため404が返される
-      expect(response.status).toBe(404);
-      
-      // エラーレスポンスの確認
-      const responseData = await response.json();
-      expect(responseData).toHaveProperty('error');
-      expect(responseData.error).toBe('Scene not found');
+      // UUIDバリデーションエラーで400が返される
+      expect(response.status).toBe(400);
     });
 
     // テストケース：削除後のシーン一覧確認
