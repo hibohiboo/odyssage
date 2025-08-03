@@ -247,6 +247,32 @@ npm run build            # ビルド + 型チェック
 
 **注意**: Windows環境でも必ずLF改行コードを使用。エディタ設定でLFを強制するか、ファイル作成後に変換すること。
 
+### Windows環境での開発コマンド実行
+**重要**: 以下の記法を必ず使用すること
+
+#### パス記法
+- **Windows環境でのbashコマンド実行時は `/d/projects/odyssage` 形式を使用**
+  - ❌ `D:\projects\odyssage` (Windows形式はbashで使用不可)
+  - ✅ `/d/projects/odyssage` (bash用Unix形式)
+
+#### パッケージマネージャー
+- **このプロジェクトでは bun を使用、npmは使わない**
+  - ❌ `npm run lint`
+  - ❌ `npm run build`
+  - ✅ `bun run lint`
+  - ✅ `bun run build`
+
+#### 正しいコマンド実行例
+```bash
+# バックエンド
+cd /d/projects/odyssage/apps/backend && bun run lint
+cd /d/projects/odyssage/apps/backend && bunx tsc --noEmit
+
+# フロントエンド  
+cd /d/projects/odyssage/apps/frontend && bun run lint
+cd /d/projects/odyssage/apps/frontend && bun run build
+```
+
 ### テスト記述における重要な指針
 
 #### テスト項目の事前整理原則

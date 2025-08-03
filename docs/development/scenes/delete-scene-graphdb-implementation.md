@@ -103,6 +103,20 @@
 - **TypeScript**: 型チェック通過
 - **複雑度**: 関数分割により複雑度エラー解消
 
+### 開発中の重要な学習事項
+#### Windows環境でのパス記法とパッケージマネージャー
+- **パス記法**: Windows環境でbashコマンド実行時は `/d/projects/odyssage` 形式を使用
+  - ❌ `D:\projects\odyssage` (Windows形式はbashで使用不可)
+  - ✅ `/d/projects/odyssage` (bash用Unix形式)
+- **パッケージマネージャー**: このプロジェクトでは **bun** を使用、npmは使わない
+  - ❌ `npm run lint`
+  - ✅ `bun run lint`
+- **適用例**: 
+  ```bash
+  cd /d/projects/odyssage/apps/backend && bun run lint
+  cd /d/projects/odyssage/apps/frontend && bun run build
+  ```
+
 ## 参考情報
 - 関連ファイル: 
   - シーンAPI: `apps/backend/src/route/graphScene.ts`
