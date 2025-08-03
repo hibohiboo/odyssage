@@ -48,11 +48,11 @@
 ### TODO LIST
 - [x] 既存シーン機能の調査・理解
 - [x] OpenAPI仕様書作成（DELETE /api/graph-scenes/{id}）
-- [ ] Neo4jクエリ設計（DELETE文）
-- [ ] バックエンドAPI実装
-- [ ] フロントエンドHook実装（useGraphSceneDeleteMutation）
-- [ ] UIコンポーネント実装（削除ボタン・確認ダイアログ）
-- [ ] 統合テスト実行
+- [x] Neo4jクエリ設計（DELETE文）
+- [x] バックエンドAPI実装
+- [x] フロントエンドHook実装（useGraphSceneDeleteMutation）
+- [x] UIコンポーネント実装（削除ボタン・確認ダイアログ）
+- [x] 統合テスト実行
 - [ ] E2Eテスト（BDD）
 
 ## 実装ガイドライン
