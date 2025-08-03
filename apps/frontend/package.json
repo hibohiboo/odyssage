@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "bunx --bun vite",
     "dev:mock": "bunx --bun vite --mode mock",
-    "build": "tsc -b && bunx --bun vite build",
+    "build:vite": "vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "bunx --bun vite preview",
     "prepreview:ci": "tsc -b && bunx --bun vite build --mode ci",
