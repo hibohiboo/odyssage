@@ -161,9 +161,10 @@ const res = await $delete({ param: { id: scene.id } });
 - package.jsonのbuildスクリプト内でのコマンド混在
 
 **解決方法**:
-- `"build": "tsc -b && vite build"` → `"build": "vite build"`に変更
-- TypeScriptコンパイル段階を除去し、viteの内蔵TypeScript処理に統一
-- 結果: ビルド成功 `✓ built in 1.74s`、全2163モジュール正常変換
+- **第一段階**: `"build": "tsc -b && vite build"` → `"build": "vite build"`に変更
+  - 結果: ビルド成功 `✓ built in 1.74s`、全2163モジュール正常変換
+- **第二段階**: `prebuild`フックに`tsc -b`を追加して型チェック復活を試行
+  - 結果: 再び`/c:`エラーが発生、根本原因は`tsc`コマンドのWindows bash実行時の問題
 
 **品質保証プロセスの改善点**:
 - **「グリーンを保つ」原則の徹底**: 完了前の必須ビルド確認
