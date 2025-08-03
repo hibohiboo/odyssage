@@ -83,6 +83,7 @@
 - [x] フロントエンドHook実装完了（useGraphSceneDeleteMutation）
 - [x] UIコンポーネント実装完了（削除ボタン・確認ダイアログ）
 - [x] 統合テスト実行完了（ESLint・TypeScript型チェック通過）
+- [x] 削除機能のデバッグ・修正完了
 - [ ] E2Eテスト（BDD）実行予定
 
 ## 実装完了内容
@@ -102,6 +103,36 @@
 - **ESLint**: バックエンド・フロントエンド共に警告のみ（エラー0件）
 - **TypeScript**: 型チェック通過
 - **複雑度**: 関数分割により複雑度エラー解消
+
+### 発生した技術課題と解決方法
+#### 削除機能の実装・デバッグ
+**問題**: 削除ボタン押下時に「削除に失敗しました」エラーが発生
+
+**原因調査プロセス**:
+1. API実行確認: APIが実行されていない状況を確認
+2. ログ追加: useGraphSceneDeleteMutationにデバッグログ追加
+3. Hook制約問題: ReactのHook呼び出し制約によりuseGraphSceneDeleteMutationが正しく動作しない
+
+**解決方法**:
+- **直接APIクライアント使用**: Hookの代わりに`apiClient.api['graph-scenes'][':id'].$delete`を直接呼び出し
+- **正しいID渡し**: `scene.id`を直接パラメータとして渡すよう修正
+- **エラーハンドリング強化**: レスポンスステータス確認とエラー種別の詳細化
+
+**修正ファイル**: `apps/frontend/src/entities/scenario/components/SceneManagement.tsx`
+```typescript
+// 修正前: Hook経由（動作しない）
+const deleteMutation = useGraphSceneDeleteMutation({ sceneId: scene.id });
+await deleteMutation.trigger();
+
+// 修正後: 直接APIクライアント使用（動作する）
+const { $delete } = apiClient.api['graph-scenes'][':id'];
+const res = await $delete({ param: { id: scene.id } });
+```
+
+**学習事項**:
+- ReactのHookは条件分岐やループ内では呼び出せない
+- 動的なパラメータでのAPI呼び出しは直接APIクライアントを使用する
+- SWRMutationは事前にsceneIdが確定している場合に有効
 
 ### 開発中の重要な学習事項
 #### Windows環境でのパス記法とパッケージマネージャー
