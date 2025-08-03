@@ -79,3 +79,39 @@ put:
       $ref: '../components/schemas/response.yaml#/InternalServerErrorResponse'
   operationId: "upsertGraphScene"
   description: "Neo4jにシーンノードを作成または更新し、親シナリオとの関係性を構築"
+
+delete:
+  summary: GraphDBシーン削除
+  security:
+    - bearerAuth: []
+  parameters:
+    - in: "path"
+      name: "id"
+      schema:
+        type: "string"
+      required: true
+      description: "シーンID (UUID)"
+  responses:
+    204:
+      description: "シーンが正常に削除されました"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    401:
+      $ref: '../components/schemas/response.yaml#/UnauthorizedResponse'
+    404:
+      description: "削除対象のシーンが見つかりません"
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              error:
+                type: "string"
+                example: "Scene not found"
+            required:
+              - "error"
+            additionalProperties: false
+    500:
+      $ref: '../components/schemas/response.yaml#/InternalServerErrorResponse'
+  operationId: "deleteGraphScene"
+  description: "Neo4jから指定されたシーンノードとその関係性を削除"

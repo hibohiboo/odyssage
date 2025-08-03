@@ -1,0 +1,89 @@
+# シーン削除機能の実装（GraphDB）
+
+## プロジェクト概要
+- 機能の目的: TRPGセッション管理でのシーン削除機能
+- 実装する機能の範囲: 既存シーンの削除API・フロントエンド実装
+- GitHub Issue: #104
+- データ保存先: Neo4j GraphDB
+
+## アーキテクチャ分析
+### 現在のシステム構成
+- 関連する既存コンポーネント: シーン作成機能、シーン一覧表示
+- 技術スタック: Hono.js + Cloudflare Workers (Backend), React + TypeScript (Frontend)
+- 既存のAPIパターン: RESTful API, スキーマ駆動開発
+- データベース: Neo4j GraphDB
+
+### 既存実装の調査結果
+- **バックエンド**: `apps/backend/src/route/graphScene.ts`
+  - PUT `/api/graph-scenes/{id}`: シーン作成・更新（MERGE文使用）
+  - GET `/api/graph-scenes/scenario/{scenarioId}`: シーン一覧取得
+- **フロントエンド**: 
+  - `useGraphScenesQuery`: シーン一覧取得Hook
+  - `useGraphSceneMutation`: シーン作成・更新Hook
+- **OpenAPI**: `docs/redocly/openapi/paths/graphScenes.yaml`で管理
+
+## データモデル設計
+### GraphDB削除方式
+- 物理削除（ノードとリレーションシップを削除）
+- 対象ノード: Scene ノード
+- 関連リレーションシップ: SCENARIO-[:HAS_SCENE]->SCENE の削除
+- Neo4jクエリパターン:
+  ```cypher
+  MATCH (scene:Scene {id: $id})
+  OPTIONAL MATCH (scene)-[r]-()
+  DELETE r, scene
+  RETURN COUNT(scene) as deletedCount
+  ```
+
+### API設計
+- エンドポイント: DELETE `/api/graph-scenes/{id}`
+- 認証: Firebase Authentication必須（bearerAuth）
+- パラメータ: path parameter `id` (UUID)
+- レスポンス: 
+  - 204 No Content: 削除成功
+  - 404 Not Found: シーンが存在しない
+  - 500 Internal Server Error: データベースエラー
+
+## 実装計画
+### TODO LIST
+- [x] 既存シーン機能の調査・理解
+- [x] OpenAPI仕様書作成（DELETE /api/graph-scenes/{id}）
+- [ ] Neo4jクエリ設計（DELETE文）
+- [ ] バックエンドAPI実装
+- [ ] フロントエンドHook実装（useGraphSceneDeleteMutation）
+- [ ] UIコンポーネント実装（削除ボタン・確認ダイアログ）
+- [ ] 統合テスト実行
+- [ ] E2Eテスト（BDD）
+
+## 実装ガイドライン
+- 既存のAPIパターンに従う（graphScene.tsのルート構造）
+- Neo4jクエリパターンの統一（既存のMERGE文パターンを参考）
+- エラーハンドリングの統一（Neo4jErrorの処理）
+- 削除確認ダイアログの実装（誤削除防止）
+- 楽観的ロック機能は今回は実装しない（将来拡張予定）
+
+## 技術的設計判断
+### 削除方式の選択
+- **物理削除を採用**: 論理削除（deleted_atフラグ）ではなく、実際にノードを削除
+- **理由**: シーン数が膨大になることは想定されず、履歴管理の要件もない
+- **制約**: 削除後の復旧は不可能
+
+### エラーハンドリング戦略
+- **404 Not Found**: 削除対象シーンが存在しない場合
+- **500 Internal Server Error**: Neo4jデータベースエラー
+- **削除カウント確認**: DELETE文の実行結果でシーンの存在を判定
+
+## 進捗記録
+### 2025-08-03
+- [x] 証跡ファイル作成
+- [x] 既存シーン機能の調査完了
+- [x] OpenAPI仕様書のDELETEエンドポイント追加完了
+- [ ] Neo4jクエリ設計（進行中）
+
+## 参考情報
+- 関連ファイル: 
+  - シーンAPI: `apps/backend/src/route/graphScene.ts`
+  - フロントエンドHook: `apps/frontend/src/entities/scenario/api/useGraphScene*.ts`
+  - OpenAPI: `docs/redocly/openapi/paths/graphScenes.yaml`
+- 開発環境: PostgreSQL + Neo4j
+- 認証: Firebase Authentication
