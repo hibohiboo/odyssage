@@ -7,7 +7,7 @@ type Props = {
 
 export const useGraphSceneDeleteMutation = (props: Props) => {
   const graphSceneEndpoint = apiClient.api['graph-scenes'][':id'];
-  const $delete = (graphSceneEndpoint as any).$delete;
+  const { $delete } = graphSceneEndpoint as { $delete: (params: { param: { id: string } }) => Promise<Response> };
 
   const fetcher = async (_: string) => {
     console.log('Attempting to delete scene:', props.sceneId);

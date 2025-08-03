@@ -217,7 +217,15 @@ export const graphSceneRoute = new Hono<Env>()
         );
 
         // 新しいシーンがある場合のみ作成
-        let updatedScenes = [];
+        let updatedScenes: Array<{
+          id: string;
+          title: string;
+          overview: string;
+          order: number;
+          scenarioId: string;
+          createdAt?: string;
+          updatedAt?: string;
+        }> = [];
         if (scenes.length > 0) {
           const result = await session.run(
             `
