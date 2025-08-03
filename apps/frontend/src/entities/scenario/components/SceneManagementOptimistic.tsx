@@ -13,9 +13,9 @@ interface SceneFormData {
 }
 
 interface SceneManagementOptimisticProps {
-  scenarioId: string;
-  scenes: Scene[];
-  onSceneUpdated?: () => void;
+  readonly scenarioId: string;
+  readonly scenes: readonly Scene[];
+  readonly onSceneUpdated?: () => void;
 }
 
 // 楽観的更新対応のシーン管理コンポーネント
@@ -35,12 +35,12 @@ export function SceneManagementOptimistic({
     saveAllChanges,
     discardAllChanges,
     refreshFromServer,
-  } = useOptimisticScenes(scenarioId, scenes);
+  } = useOptimisticScenes(scenarioId, [...scenes]);
 
   // サーバーデータ変更時に楽観的更新状態をリフレッシュ
   useEffect(() => {
     if (!hasUnsavedChanges) {
-      refreshFromServer(scenes);
+      refreshFromServer([...scenes]);
     }
   }, [scenes, hasUnsavedChanges, refreshFromServer]);
 

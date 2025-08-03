@@ -1,11 +1,10 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import { PageActions } from '../utils/page-actions.js';
-import { neo4jHelper } from '../utils/neo4j-helper.js';
 import { expect } from '@playwright/test';
 
 // 共通ヘルパー関数
 class SceneTestHelpers {
-  constructor(private page: any) {}
+  constructor(private readonly page: any) {}
 
   private getPageActions() {
     return new PageActions(this.page);
@@ -88,9 +87,6 @@ Given('既存のシナリオを使用してシナリオ詳細ページにいる'
 });
 
 Given('シナリオ「楽観的更新テスト用シナリオ」が作成済みである', async function (this) {
-  const PageActions = (await import('../utils/page-actions.js')).PageActions;
-  const pageActions = new PageActions(this.page);
-  
   try {
     // シナリオ作成ページに移動
     await this.page.goto('http://localhost:5173/creator/scenario/create');
