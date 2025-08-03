@@ -168,7 +168,7 @@ export const graphSceneRoute = new Hono<Env>()
           return c.json({ error: 'Scene not found' }, 404);
         }
 
-        return new Response('', { status: 204 });
+        return c.body(null, 204);
       } catch (err) {
         const neo4jError = err as Neo4jError;
         // eslint-disable-next-line no-console

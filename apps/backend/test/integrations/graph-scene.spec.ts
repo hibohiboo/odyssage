@@ -225,4 +225,164 @@ describe('GraphDBシーン統合テスト', () => {
     expect(Array.isArray(responseBody)).toBe(true);
     expect(responseBody.length).toBe(0);
   });
+
+  // テストケース：GraphDBシーンの削除機能
+  describe('GraphDBシーン削除機能', () => {
+    // テストケース：存在するシーンの削除
+    it('存在するシーンを正常に削除できること', async () => {
+      const app = getApp();
+
+      // 事前にシーンを作成
+      const createResponse = await app.request(
+        `/api/graph-scenes/${testSceneId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(testSceneData),
+        },
+        getEnv(),
+      );
+      
+      // 作成が成功していることを確認
+      expect(createResponse.status).toBe(200);
+
+      // DELETEリクエストでシーンを削除
+      const deleteResponse = await app.request(
+        `/api/graph-scenes/${testSceneId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+
+      // 削除成功のステータスを確認
+      expect(deleteResponse.status).toBe(204);
+
+      // レスポンスボディが空であることを確認
+      const responseText = await deleteResponse.text();
+      expect(responseText).toBe('');
+    });
+
+    // テストケース：存在しないシーンの削除
+    it('存在しないシーンの削除で404エラーを返すこと', async () => {
+      const app = getApp();
+
+      // 存在しないシーンIDで削除を試行
+      const nonExistentSceneId = '880e8400-e29b-41d4-a716-446655440002';
+      
+      const response = await app.request(
+        `/api/graph-scenes/${nonExistentSceneId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+
+      // 404エラーのステータスを確認
+      expect(response.status).toBe(404);
+
+      // エラーレスポンスの確認
+      const responseData = await response.json();
+      expect(responseData).toHaveProperty('error');
+      expect(responseData.error).toBe('Scene not found');
+    });
+
+    // テストケース：不正なUUID形式での削除
+    it('不正なUUID形式の場合400エラーを返すこと', async () => {
+      const app = getApp();
+
+      // 不正なUUID形式のシーンID
+      const invalidSceneId = 'invalid-uuid';
+      
+      const response = await app.request(
+        `/api/graph-scenes/${invalidSceneId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+
+      // バリデーションエラーのステータスを確認
+      expect(response.status).toBe(400);
+    });
+
+    // テストケース：削除後のシーン一覧確認
+    it('シーン削除後にシーン一覧から除外されることを確認', async () => {
+      const app = getApp();
+
+      // 事前にシーンを作成
+      await app.request(
+        `/api/graph-scenes/${testSceneId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(testSceneData),
+        },
+        getEnv(),
+      );
+
+      // 作成後のシーン一覧を取得
+      const listBeforeDelete = await app.request(
+        `/api/graph-scenes/scenario/${testScenarioId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+      
+      const scenesBeforeDelete = await listBeforeDelete.json();
+      const sceneCountBefore = scenesBeforeDelete.length;
+
+      // シーンを削除
+      await app.request(
+        `/api/graph-scenes/${testSceneId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+
+      // 削除後のシーン一覧を取得
+      const listAfterDelete = await app.request(
+        `/api/graph-scenes/scenario/${testScenarioId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        getEnv(),
+      );
+      
+      const scenesAfterDelete = await listAfterDelete.json();
+
+      // シーン数が減っていることを確認
+      expect(scenesAfterDelete.length).toBe(sceneCountBefore - 1);
+
+      // 削除したシーンが一覧に含まれていないことを確認
+      const deletedSceneExists = scenesAfterDelete.some(
+        (scene: any) => scene.id === testSceneId
+      );
+      expect(deletedSceneExists).toBe(false);
+    });
+  });
 });
