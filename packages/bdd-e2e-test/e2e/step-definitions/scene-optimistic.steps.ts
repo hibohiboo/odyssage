@@ -3,6 +3,70 @@ import { PageActions } from '../utils/page-actions.js';
 import { neo4jHelper } from '../utils/neo4j-helper.js';
 import { expect } from '@playwright/test';
 
+// 共通ヘルパー関数
+class SceneTestHelpers {
+  constructor(private page: any) {}
+
+  private getPageActions() {
+    return new PageActions(this.page);
+  }
+
+  async createSceneOptimistic(title: string, overview: string, order: string = '1') {
+    const pageActions = this.getPageActions();
+    await pageActions.clickButton('新しいシーンを追加');
+    await pageActions.fillByTestId('scene-title-input', title);
+    await pageActions.fillByTestId('scene-overview-input', overview);
+    await pageActions.fillByTestId('scene-order-input', order);
+    await pageActions.clickButton('シーンを追加');
+  }
+
+  async createSceneNormal(title: string, overview: string, order: string = '1') {
+    const pageActions = this.getPageActions();
+    await pageActions.clickButton('新しいシーンを追加');
+    await pageActions.fillByTestId('scene-title-input', title);
+    await pageActions.fillByTestId('scene-overview-input', overview);
+    await pageActions.fillByTestId('scene-order-input', order);
+    await pageActions.clickButton('シーンを保存');
+    await pageActions.waitForSuccessMessage('シーンが保存されました');
+  }
+
+  async expectSceneVisibleImmediately(sceneTitle: string) {
+    const pageActions = this.getPageActions();
+    await pageActions.expectTextVisible(sceneTitle);
+    const sceneElement = this.page.locator(`text=${sceneTitle}`);
+    await expect(sceneElement).toBeVisible({ timeout: 1000 });
+  }
+
+  async expectNewBadgeVisible() {
+    const pageActions = this.getPageActions();
+    await pageActions.expectTextVisible('新規');
+    const badgeElement = this.page.locator('.bg-amber-100:has-text("新規")');
+    await expect(badgeElement).toBeVisible();
+  }
+
+  async expectUnsavedChangesWarning() {
+    const pageActions = this.getPageActions();
+    await pageActions.expectTextVisible('未保存の変更があります');
+    const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
+    await expect(warningBanner).toBeVisible();
+  }
+
+  async expectNoNewBadges() {
+    const badges = this.page.locator('.bg-amber-100:has-text("新規")');
+    await expect(badges).toHaveCount(0);
+  }
+
+  async navigateToScenarioDetail() {
+    await this.page.goto('http://localhost:5173/creator/scenario/list');
+    await this.page.waitForLoadState('networkidle');
+    const scenarioLink = this.page.locator('a[href*="/creator/scenario/"]').first();
+    await scenarioLink.click();
+    await this.page.waitForURL(/\/creator\/scenario\/[\w-]+/);
+    const pageActions = this.getPageActions();
+    await pageActions.expectTextVisible('シーン管理');
+  }
+}
+
 Given('既存のシナリオを使用してシナリオ詳細ページにいる', async function (this) {
   try {
     // シナリオ一覧ページに移動
