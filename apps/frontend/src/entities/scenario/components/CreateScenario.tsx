@@ -20,13 +20,16 @@ const CreateScenario = () => {
         param: { id },
         json: { title, overview },
       });
-      
+
       if (response.ok) {
         const responseData = await response.json();
         console.log('シナリオがGraphDBにも保存されました:', responseData);
       } else {
         const errorData = await response.text();
-        console.warn(`GraphDB保存が失敗しました（status: ${response.status}）:`, errorData);
+        console.warn(
+          `GraphDB保存が失敗しました（status: ${response.status}）:`,
+          errorData,
+        );
       }
     } catch (graphError) {
       console.error('GraphDBへの保存でエラーが発生:', graphError);
@@ -36,18 +39,18 @@ const CreateScenario = () => {
   const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     if (loading) return;
-    
+
     const form = new FormData(e.currentTarget);
     const title = form.get('title') as string;
     const overview = (form.get('overview') as string) || '';
-    
+
     if (!uid || !title || !overview) {
       console.error('Invalid form data', { uid, title, overview });
       return;
     }
 
     const id = generateUuid();
-    
+
     const { error } = await createScenario({
       id,
       uid,
@@ -55,7 +58,7 @@ const CreateScenario = () => {
       overview,
       visibility,
     });
-    
+
     if (error) {
       alert('シナリオの作成に失敗しました。');
       console.error('Error creating scenario:', error);
