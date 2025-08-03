@@ -170,31 +170,151 @@ RETURN scene
 ```
 
 ## フロントエンド楽観的更新設計
-### 状態管理アーキテクチャ
+
+### 状態管理アーキテクチャ設計
 ```typescript
 // 楽観的更新の状態設計
-interface SceneState {
-  original: Scene[];        // サーバーから取得した元データ
-  current: Scene[];         // 現在の表示データ（楽観的更新後）
-  hasUnsavedChanges: boolean; // 未保存変更の有無
-  pendingOperations: Array<{ // 保留中の操作ログ
+interface OptimisticSceneState {
+  // データ状態
+  original: Scene[];              // サーバーから取得した元データ（変更なし）
+  current: Scene[];               // 現在の表示データ（楽観的更新後）
+  
+  // 状態フラグ
+  hasUnsavedChanges: boolean;     // 未保存変更の有無
+  isLoadingBatch: boolean;        // 一括更新実行中フラグ
+  
+  // 操作履歴（デバッグ・巻き戻し用）
+  pendingOperations: Array<{
+    id: string;                   // 操作ID（UUID）
     type: 'create' | 'update' | 'delete';
     sceneId: string;
-    data?: Partial<Scene>;
+    previousData?: Scene;         // 巻き戻し用の元データ
+    newData?: Partial<Scene>;     // 更新データ
+    timestamp: number;            // 操作時刻
   }>;
 }
+
+// 楽観的更新Hook設計
+interface UseOptimisticScenesResult {
+  // データ
+  scenes: Scene[];              // 表示用シーン配列
+  hasUnsavedChanges: boolean;   // 未保存変更フラグ
+  isLoadingBatch: boolean;      // 一括保存中フラグ
+  
+  // 操作メソッド
+  optimisticCreate: (scene: Omit<Scene, 'id'>) => void;
+  optimisticUpdate: (id: string, updates: Partial<Scene>) => void;
+  optimisticDelete: (id: string) => void;
+  
+  // 保存・破棄
+  saveAllChanges: () => Promise<void>;
+  discardAllChanges: () => void;
+  
+  // 状態リセット
+  refreshFromServer: () => Promise<void>;
+}
+```
+
+### 楽観的更新フロー設計
+```typescript
+// 理想的な操作フロー
+// 1. ユーザーがシーン作成
+optimisticCreate({ title: '新シーン', overview: '概要', scenarioId, order: 1 })
+  → current配列に即座に追加（UI即座反映）
+  → hasUnsavedChanges = true
+
+// 2. ユーザーがシーン編集  
+optimisticUpdate(sceneId, { title: '更新タイトル' })
+  → current配列の該当要素更新（UI即座反映）
+  → hasUnsavedChanges = true
+
+// 3. ユーザーがシーン削除
+optimisticDelete(sceneId)
+  → current配列から即座に除去（UI即座反映）
+  → hasUnsavedChanges = true
+
+// 4. ユーザーが「変更を保存」ボタンクリック
+saveAllChanges()
+  → isLoadingBatch = true
+  → API呼び出し: PUT /api/graph-scenes/scenario/{scenarioId}/batch
+  → 成功時: original = current, hasUnsavedChanges = false
+  → 失敗時: current = original（巻き戻し）
+```
+
+### 一括更新API統合戦略
+```typescript
+// 一括更新実行時の処理
+const saveAllChanges = async () => {
+  try {
+    setIsLoadingBatch(true);
+    
+    // 現在のシーン配列を一括更新APIに送信
+    const response = await apiClient.api['graph-scenes'].scenario[':scenarioId'].batch.$put({
+      param: { scenarioId },
+      json: { scenes: current }
+    });
+    
+    if (response.ok) {
+      const updatedScenes = await response.json();
+      // 成功：サーバーデータで状態を更新
+      setOriginal(updatedScenes.scenes);
+      setCurrent(updatedScenes.scenes);
+      setHasUnsavedChanges(false);
+      clearPendingOperations();
+      
+      // SWRキャッシュも更新
+      mutate(`api/graph-scenes/scenario/${scenarioId}`, updatedScenes.scenes);
+    }
+  } catch (error) {
+    // エラー時：楽観的更新を巻き戻し
+    setCurrent([...original]);
+    setHasUnsavedChanges(false);
+    alert('保存に失敗しました。変更を元に戻します。');
+  } finally {
+    setIsLoadingBatch(false);
+  }
+};
 ```
 
 ### 楽観的更新のメリット・デメリット
 **メリット**:
 - **即座のUI反映**: ネットワーク待機なしの快適なUX
-- **API呼び出し削減**: 複数操作を1回のバッチ更新に集約
+- **API呼び出し削減**: 複数操作を1回のバッチ更新に集約  
+- **オフライン対応**: ネットワークなしでも一時的な操作可能
 - **データ整合性向上**: トランザクション的な一括更新
 
 **デメリット・リスク**:
-- **サーバーエラー時の巻き戻し**: 楽観的更新の取り消し処理が必要
-- **複雑な状態管理**: original/current状態の適切な管理
+- **複雑な状態管理**: original/current/pending状態の適切な管理が必要
+- **サーバーエラー時の巻き戻し**: 楽観的更新の取り消し処理実装が必要
+- **ID生成戦略**: 楽観的作成時の一意ID生成（サーバーで再生成される可能性）
 - **競合状態**: 他ユーザーとの同時編集時の課題（今回は対象外）
+
+### Hook実装における技術的考慮事項
+#### ID生成戦略
+```typescript
+// 楽観的作成時のID戦略
+const optimisticCreate = (sceneData: Omit<Scene, 'id'>) => {
+  const tempId = `temp_${generateUuid()}`; // 一時ID（temp_プレフィックス）
+  const newScene: Scene = {
+    ...sceneData,
+    id: tempId,
+  };
+  
+  // 一括保存時にサーバーで正式IDに置換される
+  setCurrent(prev => [...prev, newScene]);
+  setHasUnsavedChanges(true);
+};
+```
+
+#### エラー回復戦略
+```typescript
+// サーバーエラー時の巻き戻し
+const rollbackChanges = () => {
+  setCurrent([...original]);
+  setPendingOperations([]);
+  setHasUnsavedChanges(false);
+};
+```
 
 ## 実装計画
 ### TODO LIST
