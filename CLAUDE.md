@@ -5,6 +5,10 @@
 Odyssage は、TRPGセッション管理のためのWebアプリケーションです。
 React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バックエンド) で構成されています。
 
+## 現在のスプリント情報
+- **現在のスプリント**: Sprint 001
+- **証跡ファイル保存場所**: `docs/development/sprtints/sprint_001/`
+
 ## 開発手順
 
 ### Phase 1: 計画・設計段階
@@ -13,12 +17,12 @@ React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バ
 新機能開発時は必ず以下の場所に証跡ファイルを作成：
 
 ```bash
-# 証跡ファイル作成場所
-docs/development/[機能名]-implementation.md
+# 証跡ファイル作成場所（現在のスプリント: Sprint 001）
+docs/development/sprtints/sprint_001/[機能名]-implementation.md
 
 # 例
-docs/development/scenario-graphdb-implementation.md
-docs/development/user-authentication-implementation.md
+docs/development/sprtints/sprint_001/scenario-graphdb-implementation.md
+docs/development/sprtints/sprint_001/delete-scene-graphdb-implementation.md
 ```
 
 #### 2. 証跡ファイルの基本構成
@@ -203,9 +207,9 @@ bunx tsc --noEmit        # TypeScript型チェック
 
 # フロントエンド品質チェック  
 cd apps/frontend
-npm run test             # 単体テスト
-npm run lint             # ESLint
-npm run build            # ビルド + 型チェック
+bun run test             # 単体テスト
+bun run lint             # ESLint
+bun run build            # ビルド + 型チェック
 ```
 
 **重要**: 
@@ -246,6 +250,95 @@ npm run build            # ビルド + 型チェック
 ```
 
 **注意**: Windows環境でも必ずLF改行コードを使用。エディタ設定でLFを強制するか、ファイル作成後に変換すること。
+
+### Windows環境での開発コマンド実行
+**重要**: 以下の記法を必ず使用すること
+
+#### パス記法
+- **Windows環境でのbashコマンド実行時は `/d/projects/odyssage` 形式を使用**
+  - ❌ `D:\projects\odyssage` (Windows形式はbashで使用不可)
+  - ✅ `/d/projects/odyssage` (bash用Unix形式)
+
+#### パッケージマネージャー
+- **このプロジェクトでは bun を使用、npmは使わない**
+  - ❌ `npm run lint`
+  - ❌ `npm run build`
+  - ✅ `bun run lint`
+  - ✅ `bun run build`
+
+#### 正しいコマンド実行例
+```bash
+# バックエンド
+cd /d/projects/odyssage/apps/backend && bun run lint
+cd /d/projects/odyssage/apps/backend && bunx tsc --noEmit
+
+# フロントエンド  
+cd /d/projects/odyssage/apps/frontend && bun run lint
+cd /d/projects/odyssage/apps/frontend && bun run build
+```
+
+### OpenAPI仕様書との整合性確認手順
+**重要**: APIテストを修正した場合は必ずOpenAPI仕様書との整合性を確認すること
+
+#### 確認が必要なケース
+- テストでAPIレスポンスの期待値を変更した場合
+- エラーステータスコードの期待値を変更した場合
+- APIパラメータのバリデーション結果を変更した場合
+
+#### 確認手順
+1. **OpenAPI仕様書確認**: `docs/redocly/openapi/paths/`の該当ファイルを確認
+2. **実装との比較**: 実際のAPIレスポンスとOpenAPI定義の一致確認
+3. **修正方針決定**:
+   - 仕様書に実装を合わせる（バリデーション強化など）
+   - 実装に仕様書を合わせる（仕様変更の場合）
+4. **修正実施**: 決定した方針に基づいて修正
+5. **再テスト実行**: 修正後の整合性確認
+
+#### 修正例
+```typescript
+// 問題: テストで404期待だが、OpenAPIでは400定義
+// 解決: スキーマにUUIDバリデーション追加
+export const idSchema = v.object({
+  id: v.pipe(v.string(), v.uuid()), // UUID検証追加
+});
+```
+
+### Claude Codeの実行環境制約
+**重要**: Claude CodeのBash実行環境には以下の制約があります
+
+#### 確認された制約事項
+- **実行環境固定**: MINGW64_NT環境で実行され、Git Bashとは微妙に異なる
+- **シェル変更不可**: PowerShell、CMD、純粋なGit Bashへの変更はできない
+- **環境設定変更不可**: PATH設定や環境変数の永続的変更はできない
+- **TypeScriptコンパイラ問題**: `tsc -b`実行時に`/c:`パス解釈エラーが発生
+
+#### 具体的な問題事例
+```bash
+# 問題のあるコマンド
+"prebuild": "tsc -b"          # /c: /c: Is a directory エラー
+"prebuild": "bunx tsc -b"     # 同様のエラー
+
+# 動作するコマンド  
+"build": "vite build"         # ✅ 正常動作
+"tsc": "bunx tsc -b"         # ✅ 個別実行では動作
+```
+
+#### 回避策と運用方針
+1. **ビルドスクリプト**: TypeScriptコンパイルを除去し、viteの内蔵処理に依存
+2. **型チェック**: 個別スクリプト(`bun run tsc`)として分離実行
+3. **開発時型チェック**: IDE（VS Code等）での型チェックを活用
+4. **CI/CD**: 本番環境では適切なGit Bash環境での実行を前提
+
+#### 推奨package.json設定
+```json
+{
+  "scripts": {
+    "tsc": "bunx tsc -b",        // 個別型チェック用
+    "build": "vite build",       // ビルド（型チェック除外）
+    "lint": "eslint .",          // ESLintでの型チェック補完
+  }
+}
+```
 
 ### テスト記述における重要な指針
 
@@ -357,8 +450,8 @@ test.todo('正常な場合：APIからシーンデータを取得し、JSONと�
 ```bash
 # フロントエンド
 cd apps/frontend
-npm run lint      # ESLintチェック
-npm run build     # ビルドエラーチェック + TypeScript型チェック
+bun run lint      # ESLintチェック
+bun run build     # ビルドエラーチェック + TypeScript型チェック
 
 # バックエンド  
 cd apps/backend
@@ -369,7 +462,7 @@ bunx tsc --noEmit # TypeScript型チェック
 ### 2. エラー修正の基本方針
 
 #### ESLintエラー対応
-- **改行コードエラー**: `npm run lint --fix`で自動修正（CRLF → LF変換）
+- **改行コードエラー**: `bun run lint --fix`で自動修正（CRLF → LF変換）
 - **import順序エラー**: ESLintの`import/order`ルールに従って修正
 - **関数複雑度エラー**: 関数を小さな関数に分割（複雑度7以下を目標）
 - **any型エラー**: テストファイルでは許容（`.test.ts`、`.test.tsx`）、本体コードでは具体的な型を定義
@@ -441,10 +534,10 @@ const mockFunction = {
 
 ```bash
 # 成功例
-npm run lint
+bun run lint
 # → エラー0件で正常完了
 
-npm run build  
+bun run build  
 # → "✓ built in X.XXs" で正常完了
 ```
 
@@ -489,7 +582,7 @@ npm run build
 bun install
 
 # ローカル環境起動
-npm run local:all    # 全サービス起動
-npm run dev:frontend # フロントエンド開発サーバー
-npm run dev:backend  # バックエンド開発サーバー
+bun run local:all    # 全サービス起動
+bun run dev:frontend # フロントエンド開発サーバー
+bun run dev:backend  # バックエンド開発サーバー
 ```

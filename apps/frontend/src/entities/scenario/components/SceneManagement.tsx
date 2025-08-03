@@ -5,6 +5,7 @@ import {
   SceneGraphList,
 } from '@odyssage/ui/page-ui';
 import { useState } from 'react';
+import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { generateUuid } from '@odyssage/frontend/shared/lib/uuid/createUUID';
 import { useGraphSceneMutation } from '../api/useGraphSceneMutation';
 
@@ -31,11 +32,12 @@ interface SceneManagementProps {
   onSceneUpdated?: () => void;
 }
 
-export function SceneManagement({
-  scenarioId,
-  scenes,
-  onSceneUpdated,
-}: SceneManagementProps) {
+// ヘルパー関数：シーン操作ハンドラー
+function useSceneHandlers(
+  _: string,
+  scenes: Scene[],
+  _onSceneUpdated?: () => void,
+) {
   const [isAddingScene, setIsAddingScene] = useState(false);
   const [editingSceneId, setEditingSceneId] = useState<string | null>(null);
   const [formData, setFormData] = useState<SceneFormData>({
@@ -43,12 +45,13 @@ export function SceneManagement({
     overview: '',
     order: scenes.length + 1,
   });
-
   const [newSceneId, setNewSceneId] = useState(() => generateUuid());
+
   const createMutation = useGraphSceneMutation({ sceneId: newSceneId });
   const updateMutation = useGraphSceneMutation({
     sceneId: editingSceneId || '',
   });
+  // 削除用のmutationは削除時に動的に作成
 
   const resetForm = () => {
     setFormData({
@@ -58,12 +61,10 @@ export function SceneManagement({
     });
     setIsAddingScene(false);
     setEditingSceneId(null);
-    // 新しいシーン作成のために新しいUUIDを生成
     setNewSceneId(generateUuid());
   };
 
   const handleStartAdding = () => {
-    // 新しいシーン作成のために新しいUUIDを生成
     setNewSceneId(generateUuid());
     setIsAddingScene(true);
     setFormData({
@@ -82,6 +83,36 @@ export function SceneManagement({
     });
   };
 
+  return {
+    isAddingScene,
+    editingSceneId,
+    formData,
+    setFormData,
+    createMutation,
+    updateMutation,
+    resetForm,
+    handleStartAdding,
+    handleStartEditing,
+  };
+}
+
+export function SceneManagement({
+  scenarioId,
+  scenes,
+  onSceneUpdated,
+}: SceneManagementProps) {
+  const {
+    isAddingScene,
+    editingSceneId,
+    formData,
+    setFormData,
+    createMutation,
+    updateMutation,
+    resetForm,
+    handleStartAdding,
+    handleStartEditing,
+  } = useSceneHandlers(scenarioId, scenes, onSceneUpdated);
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.overview) return;
@@ -94,7 +125,7 @@ export function SceneManagement({
         order: formData.order,
       };
 
-      console.log('Creating scene with ID:', newSceneId, 'Data:', requestData);
+      console.log('Creating scene with ID:', 'Data:', requestData);
       await createMutation.trigger(requestData);
       resetForm();
       onSceneUpdated?.();
@@ -122,6 +153,42 @@ export function SceneManagement({
     } catch (error) {
       console.error('Failed to update scene:', error);
       alert('シーンの更新に失敗しました。');
+    }
+  };
+
+  const handleDeleteScene = async (scene: Scene) => {
+    console.log('Deleting scene:', scene.id, scene.title);
+
+    if (
+      !window.confirm(
+        `シーン「${scene.title}」を削除しますか？この操作は元に戻せません。`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      // 直接APIクライアントを使用して削除
+      console.log('Scene ID for deletion:', scene.id);
+      const { $delete } = apiClient.api['graph-scenes'][':id'];
+
+      if (typeof $delete === 'function') {
+        const res = await $delete({ param: { id: scene.id } });
+        console.log('Delete response:', res.status, res.ok);
+
+        if (res.ok) {
+          onSceneUpdated?.();
+        } else if (res.status === 404) {
+          throw new Error('Scene not found');
+        } else {
+          throw new Error('Failed to delete graph scene');
+        }
+      } else {
+        throw new Error('Delete method not available in API client');
+      }
+    } catch (error) {
+      console.error('Failed to delete scene:', error);
+      alert('シーンの削除に失敗しました。');
     }
   };
 
@@ -181,6 +248,7 @@ export function SceneManagement({
         <SceneGraphList
           scenes={scenes}
           onEditScene={handleStartEditing}
+          onDeleteScene={handleDeleteScene}
           isEditable={true}
         />
       )}

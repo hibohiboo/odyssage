@@ -135,4 +135,45 @@ export const graphSceneRoute = new Hono<Env>()
       return c.json({ error: 'Database error' }, 500);
     }
   },
-);
+)
+  .delete(
+    '/:id',
+    vValidator('param', idSchema),
+    async (c) => {
+      const { id } = c.req.valid('param');
+
+      // eslint-disable-next-line no-console
+      console.log(`GraphDB scene delete request: id=${id}`);
+
+      try {
+        const driver = getDriver();
+        const session = driver.session();
+
+        // シーンとその関係性を削除
+        const result = await session.run(
+          `
+          MATCH (scene:Scene {id: $id})
+          OPTIONAL MATCH (scene)-[r]-()
+          DELETE r, scene
+          RETURN COUNT(scene) as deletedCount
+          `,
+          { id }
+        );
+
+        await session.close();
+
+        const deletedCount = result.records[0]?.get('deletedCount')?.toNumber() ?? 0;
+        
+        if (deletedCount === 0) {
+          return c.json({ error: 'Scene not found' }, 404);
+        }
+
+        return c.body(null, 204);
+      } catch (err) {
+        const neo4jError = err as Neo4jError;
+        // eslint-disable-next-line no-console
+        console.log(`Neo4j error: ${err}\nCause: ${neo4jError.cause}`);
+        return c.json({ error: 'Database error' }, 500);
+      }
+    },
+  );
