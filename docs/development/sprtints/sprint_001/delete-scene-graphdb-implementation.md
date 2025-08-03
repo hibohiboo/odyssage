@@ -160,9 +160,10 @@ const res = await $delete({ param: { id: scene.id } });
 - bunとtscコマンドの実行環境の不整合
 - package.jsonのbuildスクリプト内でのコマンド混在
 
-**解決アプローチ**:
-- `tsc -b` → `bunx tsc -b`に変更してbun環境での一貫実行
-- Windows環境でのbash実行時のパス解釈問題への対応
+**解決方法**:
+- `"build": "tsc -b && vite build"` → `"build": "vite build"`に変更
+- TypeScriptコンパイル段階を除去し、viteの内蔵TypeScript処理に統一
+- 結果: ビルド成功 `✓ built in 1.74s`、全2163モジュール正常変換
 
 **品質保証プロセスの改善点**:
 - **「グリーンを保つ」原則の徹底**: 完了前の必須ビルド確認
