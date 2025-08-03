@@ -390,7 +390,35 @@ const rollbackChanges = () => {
 ## 進捗記録
 ### 2025-08-03
 - [x] 証跡ファイル作成・実装計画策定
-- [ ] 既存システム詳細調査開始
+- [x] 既存システム詳細調査完了
+- [x] フロントエンド楽観的更新アーキテクチャ設計完了
+- [x] 一括更新API設計・OpenAPI仕様書作成完了
+- [x] Valibotスキーマ定義追加完了
+
+### 完了した設計成果物
+#### 1. OpenAPI仕様書（graphScenesBatch.yaml）
+- **エンドポイント**: PUT `/api/graph-scenes/scenario/{scenarioId}/batch`
+- **リクエスト**: シーン配列（id optional、title/overview/order required）
+- **レスポンス**: 更新されたシーン配列 + 操作サマリー
+- **エラーハンドリング**: 400/401/404/500の適切なレスポンス
+
+#### 2. Valibotスキーマ定義（schema.ts）
+```typescript
+// 追加されたスキーマ
+- graphSceneBatchItemSchema: 個別シーンバリデーション
+- graphSceneBatchRequestSchema: 一括更新リクエスト
+- graphSceneBatchResponseSchema: 一括更新レスポンス  
+- 対応する型定義: GraphSceneBatchItem, GraphSceneBatchRequest, GraphSceneBatchResponse
+```
+
+#### 3. API統合
+- **api.yaml**: 新エンドポイント追加（/api/graph-scenes/scenario/{scenarioId}/batch）
+- **既存APIとの並行運用**: 既存の個別操作API（PUT, DELETE）も維持
+
+### 設計の技術的特徴
+- **簡略化戦略採用**: 差分計算ではなく全削除→再構築で実装の単純化
+- **ID再生成**: サーバー側で全IDを新規生成してUUID重複を回避
+- **OpenAPI First**: 実装前に詳細な仕様策定・Valibotスキーマ統合
 
 ## 参考情報
 - 関連ファイル:
