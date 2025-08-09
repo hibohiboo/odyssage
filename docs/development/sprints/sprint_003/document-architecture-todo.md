@@ -150,6 +150,33 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
   - [x] `readme-ja.md` ドキュメント体系セクション追加・新構造への導線強化
   - [x] 両言語版でのタグ・構造一貫性確保
 
+### 追加発見問題・設計判断記録
+- [x] **Development ディレクトリ重複問題の発見**
+  - [x] `docs/development/` vs `docs/03-development/` 重複状況分析
+  - [x] 混乱要因・影響範囲調査完了
+  - [x] 解決方針検討・技術選択理由記録（[[development-directory-consolidation-plan]]）
+
+## 📋 **Phase 5: Development ディレクトリ統合** (計画策定完了: 2025-08-09)
+
+### 統合実装計画
+- [ ] **Phase 1: 移行準備**
+  - [ ] 移行対象ファイルの依存関係分析
+  - [ ] リンク切れ影響範囲の調査  
+  - [ ] バックアップ計画の策定
+- [ ] **Phase 2: ファイル移行**
+  - [ ] `docs/development/architecture-design-framework.md` → `docs/03-development/`
+  - [ ] `docs/development/testing-strategy.md` → `docs/03-development/`
+  - [ ] `docs/development/sprints/` ディレクトリ全体 → `docs/03-development/sprints/`
+  - [ ] `docs/03-development/README.md` 包括的内容更新
+- [ ] **Phase 3: リンク更新**
+  - [ ] 全ドキュメントの内部リンク修正
+  - [ ] Foamリンクネットワーク再構築
+  - [ ] メインインデックス (`docs/00-index.md`) 更新
+- [ ] **Phase 4: クリーンアップ**
+  - [ ] 旧 `docs/development/` ディレクトリ削除
+  - [ ] リンク動作確認・最終テスト
+  - [ ] Sprint 003完了記録更新
+
 ## 🔜 **Future Enhancement Tasks** (次Sprint以降)
 
 ### ナビゲーション最適化 (優先度: 中)
