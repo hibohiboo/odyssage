@@ -32,8 +32,9 @@ TRPGセッション管理システムの概要、技術選定、ブランチ戦�
 
 ### [[04-deployment]] - 運用・デプロイ
 - **ローカル環境**: 開発環境構築・Docker活用・トラブルシューティング
-- **本番運用**: Cloudflare Pages・GitHub Actions・監視・セキュリティ
-- **インフラ管理**: 各種サービス設定・災害復旧・緊急対応
+- **現在のデプロイ**: 実装済み手動デプロイ手順・基本設定
+- **改善ロードマップ**: 段階的自動化・監視・セキュリティ強化計画
+- **理想的運用**: 将来の完全自動化・高可用性・エンタープライズ運用
 
 ### [[05-archive]] - 過去記録
 - **廃止予定**: 使用しなくなった技術・ドキュメント
@@ -75,7 +76,7 @@ docs/astro/ - GitHub Pages公開・Storybook・技術文書
 → [[02-architecture/overview]] → [[02-architecture/database-design]]
 
 **デプロイしたい**
-→ [[04-deployment/local-environment]] → [[04-deployment/production]]
+→ [[04-deployment/local-environment]] → [[04-deployment/current-deployment]] → [[04-deployment/production-roadmap]]
 
 ### タグ検索
 

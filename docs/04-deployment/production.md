@@ -1,17 +1,21 @@
-# 本番環境運用
+# 本番環境運用 (将来計画)
 
-Odyssage の本番環境デプロイ・運用・監視・トラブルシューティング
+Odyssage の本番環境における**将来的な理想的運用体制**の設計
 
-## 📋 概要
+## ⚠️ 重要な注意
 
-本ドキュメントでは、Odyssage の本番環境における運用手順・監視・問題解決について説明します。
+**このドキュメントは将来の理想的な運用状態を記載しています。**
+- **現在実装済み**: [[current-deployment]] を参照
+- **段階的改善計画**: [[production-roadmap]] を参照
 
-### 本番環境構成
-- **CDN + フロントエンド**: Cloudflare Pages
-- **バックエンドAPI**: Cloudflare Workers
-- **データベース**: Neon PostgreSQL + Neo4j Aura
-- **認証基盤**: Firebase Authentication
-- **監視**: Cloudflare Analytics + Firebase Console
+## 📋 理想的な本番環境構成
+
+### 完全自動化後の環境構成
+- **CDN + フロントエンド**: Cloudflare Pages (自動デプロイ)
+- **バックエンドAPI**: Cloudflare Workers (自動デプロイ)
+- **データベース**: Neon PostgreSQL + Neo4j Aura (高セキュリティ設定)
+- **認証基盤**: Firebase Authentication (強化セキュリティ)
+- **監視**: 包括的監視・アラート・可観測性
 
 ## 🚀 デプロイ手順
 
