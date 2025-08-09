@@ -5,6 +5,7 @@
 Odyssage は「**未知を辿る、非同期型ゲームブック風TRPG**」をコンセプトとしたWebアプリケーションです。
 
 ### コンセプト
+
 - **選択肢を広げられるゲームブック**: 従来の固定分岐ではなく、動的に展開する物語
 - **非同期TRPG**: リアルタイム参加が困難な人も楽しめる時間自由なゲーム体験
 - **協調創作**: プレイヤー同士が物語を共創していく仕組み
@@ -12,6 +13,7 @@ Odyssage は「**未知を辿る、非同期型ゲームブック風TRPG**」を
 ## 技術構成
 
 ### アーキテクチャ概要
+
 ```
 フロントエンド (React + TypeScript + Vite)
     ↕ API通信
@@ -23,39 +25,44 @@ Odyssage は「**未知を辿る、非同期型ゲームブック風TRPG**」を
 ### 主要技術選定理由
 
 #### **ハイブリッドDB構成**
+
 - **PostgreSQL**: 確実性が必要なユーザー情報・セッション管理
 - **Neo4j**: 複雑な物語分岐・キャラクター関係性の表現
 
 #### **モノレポ構成**
+
 - **Feature-Sliced Design**: フロントエンドの保守性向上
 - **DDD**: ドメイン中心設計によるビジネスロジック整理
 
 ## ブランチ戦略
 
 ### Git Flow ベース
+
 ```
 main ← release/X.X.X ← develop ← id/{issue番号}/feature
 ```
 
 - **main**: 本番環境デプロイ用
-- **develop**: 開発統合ブランチ  
+- **develop**: 開発統合ブランチ
 - **feature**: `id/{issue番号}/機能名` で機能開発
 - **release**: ステージング環境デプロイ・本番準備
 
 ### デプロイフロー
+
 1. `develop` → `release/X.X.X` 作成時: **ステージング環境**デプロイ
 2. `release/X.X.X` → `main` マージ時: **本番環境**デプロイ + タグ付け
 
 ## プロジェクト構成
 
 ### ディレクトリ概要
+
 ```
 odyssage/
 ├── apps/
 │   ├── frontend/     # React アプリケーション
 │   └── backend/      # Hono.js API サーバー
 ├── packages/
-│   ├── database/     # DB接続・マイグレーション  
+│   ├── database/     # DB接続・マイグレーション
 │   ├── schema/       # 共通スキーマ定義
 │   └── bdd-e2e-test/ # E2Eテスト
 ├── docs/             # ドキュメント（本ディレクトリ）
@@ -63,6 +70,7 @@ odyssage/
 ```
 
 ### Feature-Sliced Design (フロントエンド)
+
 ```
 apps/frontend/src/
 ├── app/          # グローバルなアプリケーション設定（ルート、状態管理など）
@@ -74,6 +82,7 @@ apps/frontend/src/
 ```
 
 ### バックエンドAPI構造
+
 ```
 apps/backend/src/
 ├── index.ts           # エントリーポイント
@@ -90,6 +99,7 @@ apps/backend/src/
 ```
 
 ### 共有パッケージ
+
 ```
 packages/
 ├── core/              # 共通のコアロジック（DDDのドメイン層）
@@ -111,12 +121,14 @@ packages/
 ## 開発環境
 
 ### 前提条件
+
 - **Node.js**: 18.x以上
 - **Bun**: パッケージマネージャー（npmの代替）
 - **Docker**: ローカルデータベース環境
 - **VS Code**: 推奨エディタ（Foam拡張対応）
 
 ### クイック スタート
+
 ```bash
 # リポジトリクローン
 git clone https://github.com/hibohiboo/odyssage.git
@@ -134,16 +146,20 @@ bun run local:all
 ## 学習リソース
 
 ### プロジェクト理解
-1. [[setup]] - 環境構築手順
-2. [[quick-start]] - 開発開始手順
-3. [[../02-architecture/overview]] - システム全体設計
+
+1. [[./domain]]
+2. [[setup]] - 環境構築手順
+3. [[quick-start]] - 開発開始手順
+4. [[../02-architecture/overview]] - システム全体設計
 
 ### 開発者向け
+
 1. [[../03-development/process]] - 開発プロセス
 2. [[../03-development/sprints/README]] - スプリント運用
 3. [[../02-architecture/database-design]] - DB設計思想
 
 ### 参考リンク
+
 - [GitHub Repository](https://github.com/hibohiboo/odyssage)
 - [本体サイト](https://odyssage.com)（予定）
 - [テーマソング](https://soundcloud.com/example)（予定）
@@ -151,6 +167,7 @@ bun run local:all
 ## コンセプト詳細
 
 ### 「未知を辿る」の意味
+
 従来のTRPGは事前に用意されたシナリオに沿って進行しますが、Odyssage では：
 
 - **動的物語生成**: プレイヤーの選択によって新しい展開が生まれる
@@ -158,6 +175,7 @@ bun run local:all
 - **探索的創作**: 参加者全員で未知の物語世界を創造
 
 ### 非同期プレイの利点
+
 - **時間制約なし**: 都合の良い時間に参加・行動選択
 - **熟考可能**: じっくり考えてから行動決定
 - **継続参加**: 長期間にわたる壮大な物語展開
@@ -166,6 +184,7 @@ bun run local:all
 ---
 
 ## 関連ドキュメント
+
 - [[setup]] - 環境構築詳細
 - [[quick-start]] - 開発開始手順
 - [[../00-index]] - ドキュメント全体ハブ
