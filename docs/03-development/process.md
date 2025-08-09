@@ -7,7 +7,7 @@ React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バ
 
 ## 現在のスプリント情報
 - **現在のスプリント**: Sprint 003 (2025-08-09土 〜 2025-08-15金)
-- **証跡ファイル保存場所**: `docs/development/sprints/sprint_003/`
+- **証跡ファイル保存場所**: `docs/03-development/sprints/sprint_003/`
 
 ## 開発手順
 
@@ -18,11 +18,12 @@ React + TypeScript (フロントエンド) と Hono.js + Cloudflare Workers (バ
 
 ```bash
 # 証跡ファイル作成場所（現在のスプリント: Sprint 003）
-docs/development/sprints/sprint_003/[機能名]-implementation.md
+docs/03-development/sprints/sprint_003/[機能名]-implementation.md
 
 # 例
-docs/development/sprints/sprint_003/document-architecture-implementation.md
-docs/development/sprints/sprint_003/github-pages-migration-plan.md
+docs/03-development/sprints/sprint_003/document-architecture-implementation.md
+docs/03-development/sprints/sprint_003/development-directory-consolidation-plan.md
+docs/03-development/sprints/sprint_003/github-pages-migration-plan.md
 ```
 
 #### 2. 証跡ファイルの基本構成
