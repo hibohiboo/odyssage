@@ -21,6 +21,7 @@ TRPGセッション管理システムの概要、技術選定、ブランチ戦�
 
 ### [[02-architecture]] - システム設計
 - **ハイブリッドDB構成**: PostgreSQL + Neo4j の設計思想
+- **環境変数仕様**: 設定管理・セキュリティ・環境分離戦略
 - **API設計**: OpenAPI仕様書とREST設計原則
 - **アーキテクチャ概要**: システム全体の技術構成
 
@@ -30,9 +31,9 @@ TRPGセッション管理システムの概要、技術選定、ブランチ戦�
 - **実装記録**: 各機能の詳細な実装証跡
 
 ### [[04-deployment]] - 運用・デプロイ
-- **ローカル環境**: 開発環境構築・Docker活用
-- **本番デプロイ**: Cloudflare Pages・GitHub Actions
-- **インフラ管理**: 各種サービス設定・運用手順
+- **ローカル環境**: 開発環境構築・Docker活用・トラブルシューティング
+- **本番運用**: Cloudflare Pages・GitHub Actions・監視・セキュリティ
+- **インフラ管理**: 各種サービス設定・災害復旧・緊急対応
 
 ### [[05-archive]] - 過去記録
 - **廃止予定**: 使用しなくなった技術・ドキュメント
@@ -78,14 +79,25 @@ docs/astro/ - GitHub Pages公開・Storybook・技術文書
 
 ### タグ検索
 
+**カテゴリ別**
 - #getting-started - 入門・概要情報
 - #architecture - システム設計・技術構成
 - #development - 開発プロセス・実装記録  
 - #deployment - 運用・インフラ・環境構築
 - #archive - 過去記録・廃止予定
-- #sprint - スプリント実装記録
+
+**技術別**
 - #graphdb - Neo4j・グラフDB関連
 - #api - API設計・OpenAPI仕様
+- #configuration - 環境変数・設定管理
+- #security - セキュリティ・認証・暗号化
+- #monitoring - 監視・可観測性・アラート
+
+**作業別**
+- #sprint - スプリント実装記録
+- #tdd - テスト駆動開発・品質保証
+- #infrastructure - インフラ・Docker・運用
+- #troubleshooting - 問題解決・デバッグ・FAQ
 
 ## 📊 プロジェクト状況
 

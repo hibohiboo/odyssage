@@ -48,6 +48,14 @@ graph TB
 - **Neo4j**: 複雑な関係性・探索が重要なデータ（物語構造、キャラクター関係）
 - **同期戦略**: リアルタイム同期とイベント駆動アーキテクチャ
 
+### [[environment-variables]] - 環境変数仕様
+アプリケーション設定・機密情報管理・環境別設定戦略
+
+#### 設計ポイント
+- **命名規約**: UPPERCASE_SNAKE_CASE統一・カテゴリ別接頭辞
+- **セキュリティ**: 機密情報のCloudflare Secrets管理
+- **環境分離**: 開発・ステージング・本番の設定分離
+
 ### [[api-design]] - API設計指針
 **OpenAPI First** アプローチによるAPI設計・実装戦略
 
@@ -160,6 +168,7 @@ sequenceDiagram
 
 ### 設計書
 - [[database-design]] - ハイブリッドDB詳細設計
+- [[environment-variables]] - 環境変数・設定管理仕様
 - [[api-design]] - REST API仕様・設計原則
 - [[overview]] - システム全体像・技術選定
 

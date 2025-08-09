@@ -64,13 +64,48 @@ odyssage/
 
 ### Feature-Sliced Design (フロントエンド)
 ```
-src/
-├── app/          # アプリケーション設定
+apps/frontend/src/
+├── app/          # グローバルなアプリケーション設定（ルート、状態管理など）
 ├── pages/        # ページコンポーネント
-├── widgets/      # 複合UI部品
-├── features/     # ビジネス機能
-├── entities/     # ドメインエンティティ
-└── shared/       # 共通ユーティリティ
+├── widgets/      # UIウィジェット（ヘッダー、フッターなど）
+├── features/     # ドメイン機能（キャラクター管理、シナリオ管理など）
+├── entities/     # ドメインエンティティ（Character, Scenarioなど）
+└── shared/       # 共通コンポーネント、ユーティリティ
+```
+
+### バックエンドAPI構造
+```
+apps/backend/src/
+├── index.ts           # エントリーポイント
+├── middleware/        # 認証などのミドルウェア
+│   └── authorizeMIddleware.ts
+├── route/             # APIルート定義
+│   ├── gm.ts          # ゲームマスター関連API
+│   ├── session.ts     # セッション管理API
+│   └── user.ts        # ユーザー管理API
+└── utils/             # ユーティリティ
+    ├── generateUUID.ts
+    ├── logger.ts
+    └── verifyJWT.ts
+```
+
+### 共有パッケージ
+```
+packages/
+├── core/              # 共通のコアロジック（DDDのドメイン層）
+│   ├── character/     # キャラクター文脈
+│   ├── scenario/      # シナリオ文脈
+│   ├── session/       # セッション文脈
+│   └── party/         # パーティ文脈
+├── database/          # PostgreSQL・Neo4jアクセス
+├── graph-database/    # Neo4j専用クエリライブラリ
+├── schema/            # API・DB スキーマ定義（Valibot）
+├── ui/                # UIコンポーネントライブラリ
+└── bdd-e2e-test/      # BDD E2Eテスト（Playwright + Cucumber）
+    ├── e2e/
+    │   ├── features/  # Gherkin シナリオファイル
+    │   └── tests/     # ステップ定義ファイル
+    └── utils/         # テストユーティリティ
 ```
 
 ## 開発環境
