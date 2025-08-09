@@ -14,6 +14,20 @@
 [Odyssage テーマソング](https://suno.com/song/79917a5e-040d-4378-a1f3-3023fd161697)  
 [開発者ドキュメント](https://hibohiboo.github.io/odyssage/ja/introduction/)
 
+# 📚 ドキュメント体系
+
+## 🚀 はじめての方へ
+
+- **[📋 ドキュメントインデックス](./docs/00-index.md)** - 全ドキュメントのハブ
+- **[🎯 プロジェクト入門](./docs/01-getting-started/README.md)** - プロジェクト概要・コンセプト
+- **[⚙️ 環境構築ガイド](./docs/04-deployment/local-environment.md)** - 詳細な開発環境構築手順
+
+## 🔧 開発者向け
+
+- **[🏗️ アーキテクチャ設計](./docs/02-architecture/README.md)** - システム全体設計・技術選定
+- **[⚡ 開発プロセス](./docs/03-development/process.md)** - TDD・証跡管理・品質保証手順
+- **[🏃‍♂️ スプリント運用](./docs/03-development/sprints/README.md)** - アジャイル開発実践
+
 # 開発環境
 
 ## ワークスペース
@@ -22,7 +36,7 @@
 
 ## 最初にやること
 
-```
+```bash
 npm run init
 bun install
 ```
