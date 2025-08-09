@@ -131,6 +131,24 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
 
 ---
 
+## 🔧 **Phase 4: ドキュメント品質改善** (追加実装: 2025-08-09)
+
+### 重複・リンク・タグ問題の修正
+- [ ] **重複ファイル削除**
+  - [ ] `docs/architecture/database-design.md` 削除（`docs/02-architecture/`に統一済み）
+  - [ ] `docs/architecture/environment-variables.md` 削除（移行メモ削除・統一完了）
+  - [ ] `docs/architecture/` ディレクトリの段階的廃止確認
+- [ ] **不存在リンクファイルの作成**
+  - [ ] `docs/02-architecture/api-design.md` 作成
+  - [ ] `docs/02-architecture/overview.md` 作成
+- [ ] **リンク切れ修正とWikiリンク正規化**
+  - [ ] `docs/02-architecture/README.md` の不存在リンク修正
+  - [ ] Wiki形式リンクの統一化
+- [ ] **READMEファイル改善**
+  - [ ] `readme.md` プロジェクト概要充実
+  - [ ] `readme-ja.md` ドキュメント体系導線強化
+  - [ ] タグの一貫性確保
+
 ## 🔜 **Future Enhancement Tasks** (次Sprint以降)
 
 ### ナビゲーション最適化 (優先度: 中)
