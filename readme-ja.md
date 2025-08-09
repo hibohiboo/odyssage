@@ -27,6 +27,8 @@
 - **[🏗️ アーキテクチャ設計](./docs/02-architecture/README.md)** - システム全体設計・技術選定
 - **[⚡ 開発プロセス](./docs/03-development/process.md)** - TDD・証跡管理・品質保証手順
 - **[🏃‍♂️ スプリント運用](./docs/03-development/sprints/README.md)** - アジャイル開発実践
+- **[📋 テスト戦略](./docs/03-development/testing-strategy.md)** - 包括的テスト実践ガイド
+- **[🏗️ 設計フレームワーク](./docs/03-development/architecture-design-framework.md)** - アーキテクチャ設計手法
 
 # 開発環境
 

@@ -86,11 +86,11 @@ graph LR
 **テーマ**: [[sprints/sprint_003/document-architecture-implementation|ドキュメントリアーキテクティング]]
 
 #### 主要タスク
-- [x] 新ドキュメント構成設計
-- [x] Sprints管理体制統一  
-- [ ] Phase 1: 基盤整備（ディレクトリ作成・重要文書移行）
-- [ ] Phase 2: コンテンツ統合（不要ファイル削除・Foamリンク）
-- [ ] Phase 3: 最適化完成（GitHub Pages統合）
+- [x] Phase 1-3: 新ドキュメント構成設計・基盤整備
+- [x] Phase 4: ドキュメント品質改善（重複解消・リンク修正）  
+- [x] Phase 5: Development ディレクトリ統合（進行中）
+  - [x] 設計判断記録・移行準備・ファイル移行
+  - [ ] リンク更新・クリーンアップ
 
 ### 完了スプリント
 - **Sprint 001** (2025-07-19土〜2025-07-25金): [[sprints/sprint_001|GraphDB Integration]]

@@ -37,6 +37,8 @@
 
 ### 🔧 For Developers
 - **Development Process**: [Process Guide](./docs/03-development/process.md)
+- **Testing Strategy**: [Testing Framework](./docs/03-development/testing-strategy.md)
+- **Architecture Design**: [Design Framework](./docs/03-development/architecture-design-framework.md)
 - **Local Environment**: [Setup Instructions](./docs/04-deployment/local-environment.md)
 - **Contributing**: [Development Sprints](./docs/03-development/sprints/README.md)
 
