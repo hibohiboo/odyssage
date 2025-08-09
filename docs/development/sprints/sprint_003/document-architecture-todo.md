@@ -42,6 +42,9 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
   - [ ] `tdd.prompt.md` 削除
   - [ ] `typescript.prompt.md` 削除
 - [ ] `docs/astro/src/pages/ja/` の重複ドキュメント削除
+  - [ ] `introduction.md` 削除（内容をREADME.mdに統合済み）
+  - [ ] `application-architecture.md` 削除（アーキテクチャ文書に統合）
+  - [ ] その他日本語ドキュメント（13ファイル）削除
   - [ ] 削除前に重要情報の他文書への移行確認
 
 ### ドキュメント集約・統合
@@ -126,6 +129,20 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
 - [ ] アクセス効率測定（目標: 3クリック以内）
 - [ ] リンク密度測定（目標: 各文書平均5リンク以上）
 - [ ] 検索性測定（目標: Foamでの関連文書発見率80%以上）
+
+## 専門ディレクトリ対応
+
+### 技術ツール現状維持
+- [ ] `docs/code-maat/` 動作確認・現状維持
+- [ ] `docs/dbdoc/` 動作確認・現状維持  
+- [ ] `docs/redocly/` 動作確認・現状維持
+- [ ] `docs/astro/public/` 生成コンテンツ確認・保持
+
+### Astro統合システム改修
+- [ ] Foam→Astro自動変換スクリプト実装
+- [ ] `docs/astro/src/pages/` の自動生成システム構築
+- [ ] GitHub Pages公開システムの新構成対応
+- [ ] Wikiリンク→Webリンク変換機能実装
 
 ## 継続的改善
 
