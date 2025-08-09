@@ -138,6 +138,7 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
   - [x] `docs/architecture/database-design.md` 削除（`docs/02-architecture/`に統一済み）
   - [x] `docs/architecture/environment-variables.md` 削除（移行メモ削除・統一完了）
   - [x] `docs/architecture/README.md` 廃止メモ更新・段階的廃止準備完了
+  - [x] `docs/architecture/` ディレクトリ完全削除（アーカイブ移行後）
 - [x] **不存在リンクファイルの作成**
   - [x] `docs/02-architecture/api-design.md` 作成（REST API設計指針・OpenAPIファースト）
   - [x] `docs/02-architecture/overview.md` 作成（システム全体概要・技術スタック・アーキテクチャ）
