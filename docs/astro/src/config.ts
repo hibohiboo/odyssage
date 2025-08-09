@@ -6,22 +6,6 @@ export const SITE = {
 export const BASE_PATH = 'odyssage';
 export const SIDEBAR: Sidebar = {
   ja: {
-    目次: [
-      { text: 'イントロダクション', link: `${BASE_PATH}/ja/introduction` },
-      {
-        text: 'ビジョン',
-        link: `${BASE_PATH}/ja/ddd/businessdomain/domain`,
-      },
-      {
-        text: 'ユースケース',
-        link: `${BASE_PATH}/ja/ddd/businessdomain/usecase`,
-      },
-      {
-        text: 'Context Mapping',
-        link: `${BASE_PATH}/ja/ddd/businessdomain/contextmap`,
-      },
-      { text: '技術選定', link: `${BASE_PATH}/ja/application-architecture` },
-    ],
     開発用: [
       {
         text: 'Storybook',
