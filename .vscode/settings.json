@@ -45,11 +45,11 @@
   ],
   // コード生成時
   "github.copilot.chat.codeGeneration.instructions": [
-    { "file": ".github/copilot-instructions.md" }
+    { "file": ".github/copilot-instructions/base.md" }
   ],
   // テスト生成時
   "github.copilot.chat.testGeneration.instructions": [
-    { "file": ".github/copilot-instructions.md" },
+    { "file": ".github/copilot-instructions/testing.md" },
     { "text": "テストケースは日本語で記載すること" }
   ],
   // コミットメッセージ生成時
@@ -58,5 +58,6 @@
     { "text": "何のための変更かを記載すること" }
   ],
   "chat.tools.autoApprove": false,
-  "chat.promptFiles": true
+  "chat.promptFiles": true,
+  "markdown.styles": [".vscode/custom-tag-style.css"]
 }

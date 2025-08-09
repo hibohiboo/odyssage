@@ -1,9 +1,5 @@
 # 環境変数仕様
 
-> **移行メモ**: このファイルは `docs/02-architecture/environment-variables.md` に移行されました。
-> 
-> **リンク**: [[../02-architecture/environment-variables]]
-
 ## 命名規約
 
 ### 基本原則
@@ -96,3 +92,19 @@ NEO4J_PASSWORD=password
 - **文書化**: 新しい環境変数追加時はこの文書を更新
 - **検証**: 環境変数の設定漏れチェック機能の実装推奨
 - **型安全性**: TypeScript環境変数定義の活用推奨
+
+---
+
+## 📖 関連リソース
+
+### アーキテクチャ
+- [[database-design]] - データベース設計・接続設定
+- [[api-design]] - API設計・認証方式
+- [[overview]] - システム全体構成
+
+### 開発・運用
+- [[../03-development/process]] - 開発プロセス・環境構築
+- [[../04-deployment/local-environment]] - ローカル環境構築詳細
+- [[../04-deployment/production]] - 本番環境・セキュリティ設定
+
+#architecture #configuration #environment #security
