@@ -50,7 +50,9 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
   - [ ] ディレクトリ構造の統一
 - [ ] アーキテクチャドキュメントを `docs/02-architecture/` に集約
   - [ ] `docs/architecture/environment-variables.md` 移行
+  - [ ] `docs/architecture/database-design.md` 移行  
   - [ ] `docs/architecture/README.md` 更新
+  - [ ] `docs/design/README.md` を `docs/02-architecture/` に統合
 - [ ] インフラ関連を `docs/04-deployment/` に統合
   - [ ] `infra/local/*/readme.md` の内容統合
   - [ ] ローカル環境構築手順の一元化

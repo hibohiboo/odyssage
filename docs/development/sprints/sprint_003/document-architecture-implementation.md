@@ -40,8 +40,16 @@ GitHub Issue #109 に基づくドキュメント構造の全面的な再設計�
 - `.github/copilot-instructions/`: 旧Copilot指示書群（**削除対象**）
 - `.github/prompts/`: 旧プロンプト群（**削除対象**）
 
+**docs/配下の専門ディレクトリ**
+- `docs/astro/`: Astro.js静的サイト生成（**部分削除・統合**）
+  - `src/pages/ja/`: 重複する日本語ドキュメント群（**削除対象**）
+  - `public/`: 生成済み静的コンテンツ（Storybook、DBドキュメント、OpenAPI等）（**保持**）
+- `docs/code-maat/`: コード分析ツール（**現状維持**）
+- `docs/dbdoc/`: データベースドキュメント自動生成（**現状維持**）
+- `docs/design/`: 設計ドキュメント管理（**02-architecture/へ統合**）
+- `docs/redocly/`: OpenAPI仕様書管理・Redocly生成（**現状維持**）
+
 **その他**
-- `docs/astro/src/pages/ja/`: 重複する日本語ドキュメント群（**削除対象**）
 - `packages/*/README.md`: 各パッケージの説明書
 - `infra/local/*/readme.md`: ローカル環境設定
 
@@ -113,10 +121,26 @@ docs/
 - [ ] 古い情報の更新・整理
 - [ ] 運用ルール策定
 
-### 削除対象ファイル
+### 移行・削除・統合対象ファイル
+
+#### 削除対象ファイル
 - `.github/copilot-instructions/` （全体）
 - `.github/prompts/` （全体）
 - `docs/astro/src/pages/ja/` （重複ドキュメント）
+
+#### 統合対象ディレクトリ
+- `docs/design/README.md` → `docs/02-architecture/README.md` に統合
+- 既存の `docs/architecture/` → 新しい `docs/02-architecture/` の基盤として活用
+
+#### 現状維持ディレクトリ（技術ツール）
+- `docs/code-maat/` - コード分析ツール専用
+- `docs/dbdoc/` - データベースドキュメント生成ツール
+- `docs/redocly/` - OpenAPI仕様書管理システム
+- `docs/astro/public/` - 生成済み静的コンテンツ（Storybook、DBドキュメント等）
+
+#### Astro統合対応
+- `docs/astro/src/pages/` - 新ドキュメント構成からの自動生成に変更
+- GitHub Pages公開システム - Foam→Astro変換システムで継続
 
 ## 実装ガイドライン
 
