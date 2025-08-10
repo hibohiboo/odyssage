@@ -169,7 +169,7 @@ GitHub Issue #109 に基づくドキュメント構造の全面再設計実装�
 - [x] **Development ディレクトリ重複問題の発見**
   - [x] `docs/development/` vs `docs/03-development/` 重複状況分析
   - [x] 混乱要因・影響範囲調査完了
-  - [x] 解決方針検討・技術選択理由記録（[[development-directory-consolidation-plan]]）
+  - [x] 解決方針検討・技術選択理由記録（[[document-architecture/development-directory-consolidation-plan]]）
 
 ## ✅ **Phase 5: Development ディレクトリ統合** (完了: 2025-08-09)
 
