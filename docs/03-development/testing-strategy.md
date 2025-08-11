@@ -330,10 +330,26 @@ describe('API名 統合テスト', () => {
 - ❌ ローカル環境でのパフォーマンステスト
 - ❌ 詳細すぎるコメント・プロパティ単位の個別検証
 - ❌ `[正常系]`等の冗長なテスト名プレフィックス
+- ❌ **個別エンドポイントでの不要なヘッダーテスト**（特殊要件なしなら既存で十分）
+
+#### **6. データ変更APIの重要パターン**
+```typescript
+// ✅ upsert動作の適切な検証
+it('新規ユーザー登録', async () => {
+  const res = await putUser(newUserId, userData);
+  expect(res.status).toBe(204);
+  
+  // 重要: 操作後の状態確認
+  const getRes = await getUser(newUserId);
+  expect(getRes.status).toBe(200);
+  expect(await getRes.json()).toEqual(expectedData);
+});
+```
 
 ### 参考実装
 - **GET /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
-- **成功例**: 137行→84行（39%削減）の可読性向上達成
+- **PUT /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
+- **成功例**: 冗長テスト排除・upsert動作検証・スキーマ変更対応
 
 ---
 
