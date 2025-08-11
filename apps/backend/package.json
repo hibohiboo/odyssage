@@ -9,7 +9,6 @@
     "start": "wrangler dev",
     "test": "vitest run --config vitest.config.mts",
     "watch": "vitest --config vitest.config.mts",
-    "integration-test": "DEBUG=testcontainers* vitest run --config vitest.config.integration.mts",
     "ncu": "ncu -u",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
