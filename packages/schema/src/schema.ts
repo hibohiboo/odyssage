@@ -31,7 +31,7 @@ export const scenarioRequestSchema = v.object({
   id: v.string(),
   title: v.string(),
   overview: v.string(),
-  visibility: v.optional(v.string()),
+  visibility: v.optional(v.picklist(['public', 'private'])),
 });
 
 export const userScenarioParamSchema = v.object({

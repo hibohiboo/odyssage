@@ -59,7 +59,7 @@ export const user = new Hono<Env>()
         title: json.title,
         userId: param.uid,
         overview: json.overview,
-        visibility: json.visibility,
+        visibility: json.visibility ?? 'private', // デフォルト値を適用
       });
       return c.json({ message: 'Scenario created successfully' }, 201);
     },
