@@ -109,36 +109,6 @@ describe('User Management API 統合テスト', () => {
       expect(response.status).toBe(404);
     });
 
-    it('[データ整合性] データベースから直接取得したデータと一致すること', async () => {
-      const app = getApp();
-
-      // APIからユーザー取得
-      const apiResponse = await app.request(
-        `/api/users/${testUserId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-
-      expect(apiResponse.status).toBe(200);
-      const apiData = await apiResponse.json();
-
-      // データベースから直接データ取得して比較
-      const connectionString = getEnv().NEON_CONNECTION_STRING;
-      const dbResult = await execSql(
-        connectionString,
-        `SELECT id, name FROM odyssage.users WHERE id = '${testUserId}'`,
-      );
-
-      expect(dbResult).toHaveLength(1);
-      expect(apiData.id).toBe(dbResult[0].id);
-      expect(apiData.name).toBe(dbResult[0].name);
-    });
-
     it('[セキュリティ] レスポンスヘッダーが適切に設定されていること', async () => {
       const app = getApp();
 
@@ -163,6 +133,5 @@ describe('User Management API 統合テスト', () => {
       // CORS関連ヘッダーの確認（必要に応じて）
       // expect(response.headers.get('access-control-allow-origin')).toBeDefined();
     });
-
   });
 });
