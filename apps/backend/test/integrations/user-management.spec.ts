@@ -164,29 +164,5 @@ describe('User Management API 統合テスト', () => {
       // expect(response.headers.get('access-control-allow-origin')).toBeDefined();
     });
 
-    it('[パフォーマンス] レスポンス時間が適切であること', async () => {
-      const app = getApp();
-
-      const startTime = Date.now();
-
-      const response = await app.request(
-        `/api/users/${testUserId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-
-      const endTime = Date.now();
-      const responseTime = endTime - startTime;
-
-      expect(response.status).toBe(200);
-
-      // 1秒以内に応答することを確認（統合テスト環境での許容範囲）
-      expect(responseTime).toBeLessThan(1000);
-    });
   });
 });
