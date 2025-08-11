@@ -14,6 +14,89 @@
 - **焦点**: DDD実装・テスト戦略・段階的改善計画
 - **期間**: Sprint 003 期間中の継続議論
 
+## 📝 議論の発端と誤解発見プロセス
+
+### ユーザーからの重要な指摘
+
+#### **🎯 当初の課題認識**
+私（Claude）は初期分析で以下のように判断：
+- 「セッション作成は中核的業務だが、DDDレイヤー分離が未実装で重大課題」
+- 「Cloudflare Workers環境でのDDD実装における制約を考慮すべき」
+
+#### **🔍 ユーザーの本質的指摘**
+> 「Cloudflare Workers 環境でのDDD実装における制約は？と考えている時点で誤解があるように思えます。このアプリは、バックエンドとフロントエンドが合わさって稼働するウェブアプリです。今回はバックエンドに関するリアーキティングを考えました。ここで、バックエンドのみなら、データベースを更新するだけの補完的な業務と考えていました。この設計判断に誤りがありますか。DDDを行う時、フロントエンドとバックエンドのつながりはどう考えるべきだったでしょうか」
+
+#### **💡 誤解の核心を突く質問**
+1. **境界設定の誤認識**: バックエンドを単体システムとして評価していた
+2. **制約の誤解**: Cloudflare Workersを「制約」として捉えていた
+3. **フルスタック理解の不足**: フロントエンド・バックエンド連携の理解不足
+
+### 調査・検証プロセス
+
+#### **📊 フロントエンドコード詳細調査**
+
+**調査対象ファイル**:
+- `apps/frontend/src/entities/scenario/api/useOptimisticScenes.ts` (楽観的更新の複雑ロジック)
+- `apps/frontend/src/entities/scenario/hooks/useCreateScenario.ts` (作成ワークフロー)
+- `apps/frontend/src/entities/session/hooks/useCreateSession.ts` (セッション管理)
+
+**発見した重要事実**:
+```typescript
+// 複雑なビジネスロジック例: useOptimisticScenes.ts:48-77
+const optimisticCreate = useCallback((sceneData) => {
+  const tempId = `temp_${generateUuid()}`;
+  const newScene: Scene = { ...sceneData, id: tempId, scenarioId };
+  setCurrent(prev => [...prev, newScene].sort((a, b) => a.order - b.order));
+  setHasUnsavedChanges(true);
+}, [scenarioId]);
+```
+
+#### **🔄 バックエンドコード再確認**
+
+**調査対象ファイル**:
+- `apps/backend/src/route/session.ts` (実際のAPI実装)
+- `apps/backend/src/route/user.ts` (CRUD操作)
+
+**発見した重要事実**:
+```typescript
+// シンプルなCRUD例: session.ts:87-101
+.post('/', vValidator('json', sessionRequestSchema), async (c) => {
+  const sessionId = generateUUID();
+  await createSession(c.env.NEON_CONNECTION_STRING, {
+    id: sessionId,
+    gmId: json.gmId,
+    scenarioId: json.scenarioId,
+    title: json.title,
+    status: '準備中', // シンプルなデフォルト値設定
+  });
+})
+```
+
+### 誤解の根本原因分析
+
+#### **❌ 私の根本的な思い込み**
+1. **単体システム思考**: バックエンドを独立したDDDシステムとして評価
+2. **複雑性の場所の誤認**: ビジネスロジックがバックエンドにあると仮定
+3. **技術制約の誤解**: Edge Computingの「軽量性」を「制約」と誤認識
+
+#### **✅ 正しい理解への転換点**
+**フロントエンドの実装状況確認後**:
+- 複雑な状態管理・楽観的更新はすべてフロントエンドで実装済み
+- TRPGの中核価値（リアルタイムUX・インタラクティブ体験）もフロントエンドで実現
+- バックエンドは本当に「データ永続化の補完的業務」として適切に設計されていた
+
+### 学習成果と気づき
+
+#### **🎯 重要な学び**
+1. **フルスタックアーキテクチャの境界設計**: システムの価値実現がどこで行われているかの理解が重要
+2. **DDDの適用範囲**: 必ずしもバックエンドに複雑なドメイン層が必要ではない
+3. **技術選択の文脈理解**: 「制約」ではなく「最適化」の観点で技術を評価する重要性
+
+#### **📚 設計判断への示唆**
+- **「補完的業務」の正しい評価**: 重要度と複雑度は必ずしも比例しない
+- **適切なテスト投資**: 複雑性がある場所に応じたテスト戦略
+- **過剰設計の回避**: 問題が存在しない場所への不要な複雑化を避ける
+
 ## 🔍 現状分析結果
 
 ### 技術的課題の詳細
