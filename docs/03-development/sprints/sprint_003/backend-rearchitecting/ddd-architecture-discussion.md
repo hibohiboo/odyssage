@@ -116,84 +116,62 @@ graph TD
 - **データ永続化**: バックエンドの補完的だが重要な役割
 - **システム全体**: 適切な関心の分離が既に達成済み
 
-## 💡 改善戦略案
+## 💡 **修正された改善戦略案**
 
-### Phase 1: アーキテクチャ基盤整備
+### **✅ 現状の妥当性確認**
 
-#### **Domain層の実装**
+**既に適切に実装されている点**:
+- **フロントエンド**: 複雑なビジネスロジックが適切に実装
+- **バックエンド**: シンプルなCRUD APIとして機能
+- **テスト**: E2E テスト（BDD）が充実している
+- **アーキテクチャ**: 関心の分離が適切
+
+### **実際に必要な改善項目**
+
+#### **Phase 1: 品質・保守性の向上**
+
+**1. エラーハンドリングの統一**
 ```typescript
-// 提案: packages/core/domain/
-export class Scenario {
-  constructor(
-    private id: ScenarioId,
-    private title: string,
-    private authorId: UserId,
-    private visibility: Visibility
-  ) {}
-  
-  // ドメインロジック
-  public changeVisibility(newVisibility: Visibility, requesterId: UserId): void {
-    if (!this.canChangeVisibility(requesterId)) {
-      throw new DomainError('権限がありません');
-    }
-    this.visibility = newVisibility;
-  }
-  
-  private canChangeVisibility(userId: UserId): boolean {
-    return this.authorId.equals(userId);
-  }
-}
+// 現在: 各ルートで個別実装
+// 改善案: 共通エラーハンドリングミドルウェア
 ```
 
-#### **Application層の実装**
+**2. バリデーションの強化**
 ```typescript
-// 提案: packages/core/application/
-export class ScenarioApplicationService {
-  constructor(
-    private scenarioRepository: IScenarioRepository,
-    private userRepository: IUserRepository
-  ) {}
-  
-  async createScenario(command: CreateScenarioCommand): Promise<ScenarioDto> {
-    const author = await this.userRepository.findById(command.authorId);
-    if (!author) throw new ApplicationError('ユーザーが見つかりません');
-    
-    const scenario = Scenario.create(command.title, command.authorId);
-    await this.scenarioRepository.save(scenario);
-    
-    return ScenarioDto.fromDomain(scenario);
-  }
-}
+// 現在: Valibot での基本的な検証
+// 改善案: ビジネスルール検証の追加（重複チェック等）
 ```
 
-### Phase 2: テスト戦略の強化
-
-#### **現在のテスト状況**
-- E2E テスト: ✅ 充実（packages/bdd-e2e-test/）
-- 統合テスト: ⚠️ 基本的なAPI動作確認のみ
-- 単体テスト: ❌ ドメインロジックが未テスト
-
-#### **強化案**
+**3. ログ・監視の充実**
 ```typescript
-// ドメインテスト例
-describe('Scenario', () => {
-  test('作成者のみが可視性を変更できる', () => {
-    const scenario = new Scenario(id, title, authorId, Visibility.Private);
-    const otherUserId = new UserId('other-user');
-    
-    expect(() => {
-      scenario.changeVisibility(Visibility.Public, otherUserId);
-    }).toThrow('権限がありません');
-  });
-});
+// 現在: 基本的なコンソールログ
+// 改善案: 構造化ログ、メトリクス収集
 ```
 
-### Phase 3: 段階的移行
+#### **Phase 2: パフォーマンス最適化**
 
-#### **移行戦略**
-1. **新機能**: DDD パターンで実装
-2. **既存機能**: 段階的にリファクタリング
-3. **レガシーコード**: インターフェース経由で隔離
+**データベース最適化**:
+- クエリ効率化
+- インデックス最適化
+- 接続プールの改善
+
+**レスポンス時間改善**:
+- キャッシュ戦略
+- データ取得の最適化
+
+#### **Phase 3: 運用・保守性向上**
+
+**開発体験の改善**:
+- 型安全性の強化
+- 自動テストの拡充
+- デバッグ・ログの改善
+
+### **❌ 不要な改善項目**
+
+**過剰なDDD実装**:
+- Domain層の実装 → フロントエンドで実装済み
+- Application層の複雑化 → 現状で十分
+- Repository パターン → 単純なCRUDには不要
 
 ## 🤔 議論ポイント
 
