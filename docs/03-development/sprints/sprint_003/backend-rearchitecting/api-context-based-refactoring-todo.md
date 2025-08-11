@@ -242,15 +242,15 @@ PUT /api/users/{uid}                             # ユーザー情報更新（�
    - 効果: 権限境界明確化
 
 **🟡 優先度: 中（実装要検討）**
-3. **`POST /api/sessions` → `POST /api/gm/{uid}/sessions`**
-   - 理由: GM文脈特化、セッション作成権限明確化
+3. **`POST /api/sessions` → `POST /api/game-masters/{uid}/sessions`**
+   - 理由: GM文脈特化、セッション作成権限明確化、ロール名統一
    - 影響: 中程度（GM機能のみ）
-   - 効果: セキュリティ向上
+   - 効果: セキュリティ向上・命名一貫性
 
-4. **`GET /api/sessions/gm/{gm_id}` → `GET /api/gm/{uid}/sessions`**
-   - 理由: パラメータ名統一（gm_id → uid）
-   - 影響: 中程度（既存GM機能）
-   - 効果: 命名一貫性
+4. **`GET /api/sessions/gm/{gm_id}` → `GET /api/game-masters/{uid}/sessions`**
+   - 理由: ロール名統一（gm → game-masters）・パラメータ名統一（gm_id → uid）
+   - 影響: 中程度（既存GM機能、テスト大幅修正必要）
+   - 効果: 命名一貫性・RESTful化
 
 **🔴 優先度: 低（新機能・将来実装）**
 5. **Playerセッション参加機能（新規）**
