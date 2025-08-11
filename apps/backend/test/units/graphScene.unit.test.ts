@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from 'vitest';
+import { describe, expect, vi, beforeEach, it } from 'vitest';
 
 // Neo4j driver mock
 const mockSession = {

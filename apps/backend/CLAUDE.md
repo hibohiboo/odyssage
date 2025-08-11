@@ -30,6 +30,7 @@ src/
 - **Hono.js**: 軽量Webフレームワーク
 - **Firebase Auth**: 認証基盤
 - **TypeScript**: 型安全性
+- **Bun**: パッケージマネージャー・ランタイム (npm は使用しない)
 
 ## API設計原則
 - **OpenAPI First**: docs/redocly/openapi/api.yamlに従った実装
@@ -57,3 +58,17 @@ src/
 2. Valibotスキーマでバリデーション実装
 3. 統合テストでAPIの動作確認
 4. Cloudflare Workersにデプロイ
+
+## テスト実行
+```bash
+# ユニットテスト実行
+bun run test
+
+# 統合テスト実行（Docker必須）
+bun run integration-test
+
+# テスト監視モード
+bun run watch
+```
+
+**重要**: npm は使用せず、必ず bun を使用する
