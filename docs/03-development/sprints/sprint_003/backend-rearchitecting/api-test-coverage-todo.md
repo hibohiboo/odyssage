@@ -68,7 +68,7 @@
 ## 🟡 **Medium Priority - 機能完全性確保（次段階実装）**
 
 ### User Scenario Stock API Tests
-- [ ] **GET /api/users/{uid}/stocked-scenarios** - ストックシナリオ一覧取得テスト
+- [x] **GET /api/users/{uid}/stocked-scenarios** - ストックシナリオ一覧取得テスト（実装完了・テスト通過確認済み）
   - [ ] 正常系: ユーザーストック一覧取得
   - [ ] データ関係性: user-scenario関係確認
   - [ ] セキュリティ: JWT認証必須確認
