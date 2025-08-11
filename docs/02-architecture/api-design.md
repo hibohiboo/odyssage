@@ -174,23 +174,26 @@ docs/redocly/openapi/
 2. **統合テスト**: データベース連携を含む動作確認
 3. **契約テスト**: OpenAPI仕様書との整合性確認
 
-### テストケース設計
+### テスト記述統一化（2025-08-11更新）
 ```typescript
+// ✅ 統一済み構文: it() 使用
 // 正常系テスト
-test('GET /api/scenarios - 成功時にシナリオ一覧を返す', async () => {
+it('should return scenario list on GET /api/scenarios success', async () => {
   // テストロジック
 });
 
-// 異常系テスト
-test('POST /api/scenarios - バリデーションエラー時に400を返す', async () => {
+// 異常系テスト  
+it('should return 400 on POST /api/scenarios validation error', async () => {
   // テストロジック
 });
 
 // 認証テスト
-test('認証なしアクセス時に401を返す', async () => {
+it('should return 401 on unauthorized access', async () => {
   // テストロジック
 });
 ```
+
+**重要**: 全テストで `it()` を使用、`test()` は使用禁止
 
 ## 📈 監視・ログ
 
