@@ -102,7 +102,7 @@ describe('GraphDBシーン統合テスト', () => {
       const res = await getScenesByScenario(VALID_SCENARIO_ID);
       expect(res.status).toBe(200);
 
-      const body = await res.json();
+      const body = await res.json<any[]>();
       expect(Array.isArray(body)).toBe(true);
 
       if (body.length > 0) {
@@ -158,11 +158,11 @@ describe('GraphDBシーン統合テスト', () => {
 
       const beforeList = await (
         await getScenesByScenario(VALID_SCENARIO_ID)
-      ).json();
+      ).json<any[]>();
       await deleteScene(VALID_SCENE_ID);
       const afterList = await (
         await getScenesByScenario(VALID_SCENARIO_ID)
-      ).json();
+      ).json<any[]>();
 
       expect(afterList.length).toBe(beforeList.length - 1);
       expect(afterList.some((s: any) => s.id === VALID_SCENE_ID)).toBe(false);
