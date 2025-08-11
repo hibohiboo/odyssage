@@ -410,6 +410,83 @@ interface GMPublicScenarioResponse {
 3. 公開シナリオ取得時のストック状態判定
 4. JWT内のロール情報と権限マッピング
 
+#### **🎮 セッション関連の乖離分析**
+
+**現在のセッションAPI仕様調査結果**:
+
+**1. 基本エンドポイント構成**:
+```yaml
+GET /api/sessions                   # 一覧取得（gmIdクエリパラメータ対応）
+POST /api/sessions                  # セッション作成
+GET /api/sessions/{id}              # 個別セッション取得
+GET /api/sessions/gm/{gm_id}        # GM別セッション一覧
+PATCH /api/gm/{uid}/sessions/{id}   # GM専用セッション更新
+```
+
+**2. 現在の設計アプローチ分析**:
+
+**✅ 部分的なHybrid Approach実装済み**:
+- `/api/sessions` - 基本RESTfulエンドポイント + クエリパラメータで文脈対応
+- `/api/sessions/gm/{gm_id}` - GM特化エンドポイント
+- `/api/gm/{uid}/sessions/{id}` - GM専用管理エンドポイント
+
+**❌ 不足している仕様・機能**:
+
+**プレイヤー視点の文脈が完全欠如**:
+```typescript
+// 必要だが存在しない仕様
+interface PlayerSessionRequirements {
+  // プレイヤー参加可能なセッション一覧
+  availableSessions: {
+    endpoint: '/api/sessions/player/available'; // 存在しない！
+    response: {
+      gmName: string;           // 仕様にない
+      canJoin: boolean;         // 仕様にない
+      isParticipating: boolean; // 仕様にない
+      scenario: {               // 詳細情報なし
+        difficulty: string;
+        playerCountRange: string;
+      };
+    };
+  };
+  
+  // プレイヤーのセッション参加・離脱機能
+  sessionActions: {
+    joinEndpoint: '/api/sessions/{id}/actions/join';   // 存在しない！
+    leaveEndpoint: '/api/sessions/{id}/actions/leave'; // 存在しない！
+  };
+}
+```
+
+**レスポンススキーマの文脈対応不足**:
+```yaml
+# sessions.yaml - 同一スキーマ（SessionList）を参照
+# 問題：GM文脈とPlayer文脈で必要な情報が大きく異なる
+GET /api/sessions:
+  responses:
+    '200':
+      schema:
+        $ref: 'session.yaml#/SessionList'  # 汎用スキーマ
+
+GET /api/sessions/gm/{gm_id}:
+  responses:
+    '200':
+      schema:
+        $ref: 'session.yaml#/SessionList'  # 同じスキーマ！
+```
+
+**権限エラーの文脈対応**:
+```yaml
+# gmSessionUpdate.yaml - 良い例
+'403':
+  description: 権限エラー
+  schema:
+    properties:
+      message:
+        example: "このセッションの状態を更新する権限がありません"
+# ✅ 権限エラーが文脈に応じて説明されている
+```
+
 ## 🎯 API設計哲学: RESTful vs 文脈特化のバランス
 
 ### 根本的な設計思想の検討
