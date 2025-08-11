@@ -65,7 +65,7 @@ describe('Scenario Public API 統合テスト', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('application/json');
 
-    const data = await res.json();
+    const data = await res.json<any[]>();
     expect(Array.isArray(data)).toBe(true);
     expect(data.length).toBeGreaterThanOrEqual(3);
 
@@ -80,7 +80,7 @@ describe('Scenario Public API 統合テスト', () => {
     const res = await getScenarios();
     expect(res.status).toBe(200);
 
-    const data = await res.json();
+    const data = await res.json<any[]>();
     expect(Array.isArray(data)).toBe(true);
 
     if (data.length > 0) {
