@@ -135,20 +135,174 @@ Authorization: Bearer {gm-jwt}
 }
 ```
 
-## 🔍 現在の実装状況調査
+## 🔍 現在の実装状況調査結果
 
-### 既存OpenAPI仕様の確認が必要
+### 既存OpenAPI仕様の分析
 
-**調査対象**:
-- `docs/redocly/openapi/api.yaml` - OpenAPI仕様書
-- 実際のAPI実装との比較
-- 文脈別の権限制御実装状況
+#### **📋 現在のエンドポイント構成**
 
-**確認ポイント**:
-1. **エンドポイント定義**: 文脈別のエンドポイント設計
-2. **レスポンススキーマ**: ユーザー権限に応じたフィールド差分
-3. **エラーレスポンス**: 権限エラーの統一的な表現
-4. **認証・認可**: JWT内のロール情報と権限チェック
+**シナリオ関連エンドポイント**:
+```yaml
+/api/scenarios              # 全シナリオ取得（認証不要）
+/api/scenarios/public       # 公開シナリオ取得（認証不要）
+/api/scenario/{id}          # 個別シナリオ取得
+/api/users/{uid}/scenario   # ユーザーシナリオCRUD（認証必要）
+/api/users/{uid}/stocked-scenarios           # ストック一覧
+/api/users/{uid}/stocked-scenarios/{id}      # ストック操作
+```
+
+**セッション関連エンドポイント**:
+```yaml
+/api/sessions               # セッション一覧・作成
+/api/sessions/{id}          # 個別セッション操作
+/api/sessions/gm/{gm_id}    # GM別セッション一覧
+/api/gm/{uid}/sessions/{id} # GMによるセッション更新
+```
+
+### 発見された乖離・課題
+
+#### **🚨 重要な乖離ポイント**
+
+**1. 文脈情報の不足**:
+```yaml
+# OpenAPI仕様（scenariosPublic.yaml）
+get:
+  summary: 公開シナリオ一覧取得
+  # 問題：GMの文脈での利用を想定しているが仕様に明記なし
+  schema:
+    properties:
+      id: string
+      title: string
+      overview: string
+      updatedAt: string
+    # 欠如：authorName, canStock, isStocked フィールド
+```
+
+```typescript
+// 実際の実装需要（GMの文脈）
+interface GMPublicScenarioResponse {
+  id: string;
+  title: string;
+  overview: string;
+  updatedAt: string;
+  authorName: string;    // 仕様にない！
+  canStock: boolean;     // 仕様にない！
+  isStocked: boolean;    // 仕様にない！
+}
+```
+
+**2. 権限情報の欠如**:
+```yaml
+# userScenario.yaml - GET /api/users/{uid}/scenario
+# 問題：作成者の文脈で必要な権限情報が仕様にない
+schema:
+  properties:
+    id: string
+    title: string
+    visibility: string
+    updatedAt: string
+    # 欠如：canEdit, canDelete, canPublish 等の権限情報
+```
+
+**3. エラーレスポンスの文脈対応不足**:
+```yaml
+# 現在の仕様：汎用エラーレスポンスのみ
+400:
+  $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+# 問題：文脈別の詳細エラー情報なし
+```
+
+#### **🎯 具体的な不整合例**
+
+**シナリオストック機能**:
+
+**OpenAPI仕様**:
+```yaml
+# userScenarioStocks.yaml
+parameters:
+  - name: user_id        # パラメータ名が不一致！
+    in: path
+# userScenarioStockItem.yaml
+# 存在しない！POST/DELETE の仕様が未定義
+```
+
+**実際の実装**:
+```typescript
+// user.ts:94-108
+.post(
+  '/:uid/stocked-scenarios/:id',  // パラメータは 'uid' 
+  vValidator('param', userScenarioParamSchema),
+  async (c) => {
+    // ストック作成ロジック
+    await createScenarioStock(c.env.NEON_CONNECTION_STRING, {
+      userId: param.uid,
+      scenarioId: param.id,
+    });
+    return c.json({ message: 'Scenario stocked successfully' }, 201);
+  }
+)
+```
+
+### 文脈ベース要件との照合
+
+#### **❌ 不足している仕様**
+
+**シナリオ作成者の文脈**:
+```typescript
+// 必要だが仕様にない情報
+interface AuthorScenarioListResponse {
+  scenarios: Array<{
+    id: string;
+    title: string;
+    visibility: 'public' | 'private';
+    updatedAt: string;
+    // 以下は仕様に存在しない
+    canEdit: boolean;         // 常に true（自分のシナリオ）
+    canDelete: boolean;       // 常に true
+    canChangeVisibility: boolean; // 公開設定変更可能
+    editUrl: string;          // 編集画面への直リンク
+    stockCount?: number;      // 他ユーザーにストックされた回数
+  }>;
+}
+```
+
+**GMの文脈**:
+```typescript
+// 公開シナリオ一覧で必要だが仕様にない情報
+interface GMPublicScenarioResponse {
+  scenarios: Array<{
+    id: string;
+    title: string;
+    overview: string;
+    updatedAt: string;
+    // 以下は仕様に存在しない
+    authorName: string;       // 作成者名
+    authorId: string;         // 作成者ID
+    difficulty?: string;      // 難易度
+    playerCount?: string;     // 推奨プレイヤー数
+    playtime?: string;        // 想定プレイ時間
+    isStocked: boolean;       // 現在のユーザーがストック済みか
+    canCreateSession: boolean; // セッション作成可能か
+    sessionCreateUrl: string; // セッション作成画面URL
+  }>;
+}
+```
+
+#### **⚠️ 権限制御の実装状況**
+
+**現在の実装確認結果**:
+```typescript
+// user.ts - 権限制御の実装状況
+.post('/:uid/scenario', ...) // ✅ JWT認証必要
+.put('/:uid/scenario/:id', ...) // ❓ 所有者チェック実装要確認
+.post('/:uid/stocked-scenarios/:id', ...) // ❓ 自分以外のシナリオのみストック可能かチェック要確認
+```
+
+**要調査事項**:
+1. シナリオ編集時の所有者チェック実装
+2. ストック時の重複チェック・自己ストック防止
+3. 公開シナリオ取得時のストック状態判定
+4. JWT内のロール情報と権限マッピング
 
 ## 🎯 文脈ベースAPI設計の課題
 
