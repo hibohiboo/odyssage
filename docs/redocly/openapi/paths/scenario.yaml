@@ -1,7 +1,15 @@
 get:
-  summary: シナリオ取得
+  summary: シナリオ取得 (非推奨)
   operationId: "getScenarioById"
-  description: "指定したシナリオの詳細情報を取得"
+  deprecated: true
+  description: |
+    **⚠️ 非推奨**: このエンドポイントは非推奨です。
+    
+    新しいエンドポイント `GET /api/scenarios/{id}` を使用してください。
+    RESTful命名統一のため、単数形から複数形に変更されました。
+    
+    **移行期間**: 2025年11月まで（3ヶ月間）
+    **新エンドポイント**: `/api/scenarios/{id}`
   parameters:
     - in: "path"
       name: "id"
