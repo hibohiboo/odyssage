@@ -767,6 +767,91 @@ interface ContextualError {
 }
 ```
 
+## ✅ **設計方針の決定**
+
+### **🎯 Hybrid Approach の具体的指針確定**
+
+#### **明確な設計判断基準**
+
+**📖 参照系操作 → RESTful統一エンドポイント**
+```http
+# 基本方針：情報取得は統一エンドポイントでシンプルに
+GET /api/scenarios          # 全シナリオ一覧
+GET /api/scenarios/public   # 公開シナリオ一覧  
+GET /api/scenarios/{id}     # 個別シナリオ詳細
+GET /api/sessions           # セッション一覧
+GET /api/sessions/{id}      # 個別セッション詳細
+
+# 権限・文脈による情報差は内部制御またはクエリパラメータで対応
+GET /api/sessions?context=player    # プレイヤー文脈での一覧
+GET /api/sessions?context=gm        # GM文脈での一覧
+```
+
+**✏️ 更新系操作 → 文脈特化エンドポイント**
+```http
+# 基本方針：データ変更は明確な権限・文脈分離
+POST /api/users/{uid}/scenarios          # シナリオ作成（作成者文脈）
+PUT /api/users/{uid}/scenarios/{id}      # シナリオ編集（作成者文脈）
+POST /api/gm/{uid}/sessions              # セッション作成（GM文脈）
+PUT /api/gm/{uid}/sessions/{id}          # セッション編集（GM文脈）
+POST /api/player/{uid}/sessions/{id}/join    # セッション参加（プレイヤー文脈）
+DELETE /api/player/{uid}/sessions/{id}/leave # セッション離脱（プレイヤー文脈）
+```
+
+#### **設計判断の根拠**
+
+**参照系をRESTfulにする理由**:
+- ✅ **キャッシュ効率**: 同一エンドポイントでCDNキャッシュが有効
+- ✅ **実装シンプル性**: 権限に応じたフィールド追加・除外で対応可能
+- ✅ **フロントエンド利便性**: 単一のAPIコールで基本情報取得
+- ✅ **拡張性**: 新しい文脈が追加されても既存エンドポイント活用可能
+
+**更新系を文脈特化にする理由**:
+- 🔒 **セキュリティ**: 誤操作防止・権限境界の明確化
+- 🎯 **意図の明確性**: URLから操作者の文脈・権限が明確
+- ✅ **実装安全性**: 所有者チェック・権限検証が自然に実装される
+- 📝 **監査性**: ログからユーザー文脈別の操作追跡が容易
+
+### **📋 適用ルール**
+
+#### **参照系API設計ルール**
+```typescript
+interface ReadOperationGuideline {
+  pattern: 'GET /api/{resource}[/{id}]';
+  responseStrategy: 'contextual_fields';
+  authRequired: boolean; // 必要に応じて
+  
+  implementation: {
+    // 基本情報は全文脈共通
+    baseFields: ['id', 'title', 'createdAt', 'updatedAt'];
+    
+    // JWT解析で文脈判定、必要フィールド追加
+    contextualFields: {
+      author: ['canEdit', 'canDelete', 'editUrl'];
+      gm: ['canStock', 'isStocked', 'authorName'];  
+      player: ['gmName', 'canJoin', 'joinUrl'];
+    };
+  };
+}
+```
+
+#### **更新系API設計ルール**
+```typescript
+interface UpdateOperationGuideline {
+  pattern: 'POST|PUT|PATCH|DELETE /api/{role}/{uid}/{resource}[/{id}][/actions/{action}]';
+  authRequired: true; // 必須
+  ownershipCheck: true; // uid === JWT.sub 必須
+  
+  examples: [
+    'POST /api/authors/{uid}/scenarios',           // シナリオ作成
+    'PUT /api/authors/{uid}/scenarios/{id}',       // シナリオ編集  
+    'POST /api/gm/{uid}/sessions',                 // セッション作成
+    'PATCH /api/gm/{uid}/sessions/{id}',           // セッション状態更新
+    'POST /api/player/{uid}/sessions/{id}/actions/join'  // 参加アクション
+  ];
+}
+```
+
 ## 🤔 設計判断のポイント
 
 ### 議論すべき事項
