@@ -13,24 +13,26 @@ describe('Scenario Public API 統合テスト', () => {
   const testScenario1 = {
     id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039901',
     title: 'テストシナリオ1',
+    overview: 'これは公開テストシナリオ1の概要です。',
     visibility: 'public',
   };
   const testScenario2 = {
     id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039902',
     title: 'テストシナリオ2',
+    overview: 'これはプライベートテストシナリオ2の概要です。',
     visibility: 'private',
   };
   const testScenario3 = {
     id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039903',
     title: 'テストシナリオ3',
+    overview: 'これは公開テストシナリオ3の概要です。',
     visibility: 'public',
   };
   const insertSQL = `
-          
-          INSERT INTO odyssage.scenarios (id, title, user_id, visibility, updated_at) VALUES 
-            ('${testScenario1.id}', '${testScenario1.title}', '${testUserId}', '${testScenario1.visibility}', CURRENT_TIMESTAMP),
-            ('${testScenario2.id}', '${testScenario2.title}', '${testUserId}', '${testScenario2.visibility}', CURRENT_TIMESTAMP),
-            ('${testScenario3.id}', '${testScenario3.title}', '${testUserId}', '${testScenario3.visibility}', CURRENT_TIMESTAMP);
+          INSERT INTO odyssage.scenarios (id, title, overview, user_id, visibility, updated_at) VALUES 
+            ('${testScenario1.id}', '${testScenario1.title}', '${testScenario1.overview}', '${testUserId}', '${testScenario1.visibility}', CURRENT_TIMESTAMP),
+            ('${testScenario2.id}', '${testScenario2.title}', '${testScenario2.overview}', '${testUserId}', '${testScenario2.visibility}', CURRENT_TIMESTAMP),
+            ('${testScenario3.id}', '${testScenario3.title}', '${testScenario3.overview}', '${testUserId}', '${testScenario3.visibility}', CURRENT_TIMESTAMP);
         `;
 
   const { getApp, getEnv, getConnectionString } = setupTestEnv({
