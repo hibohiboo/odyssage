@@ -1,388 +1,171 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { setupTestEnv } from './test-utils';
 
-/**
- * GraphDBシーン関連のエンドポイントに対する統合テスト
- * Neo4jのテストコンテナを使用してGraphDB操作を含む統合テストを実行します  
- */
 describe('GraphDBシーン統合テスト', () => {
-  // テストシーンの情報
-  const testScenarioId = '550e8400-e29b-41d4-a716-446655440000';
-  const testSceneId = '660e8400-e29b-41d4-a716-446655440001';
-  const testSceneData = {
+  /** ------------------------------
+   * テスト用データ
+   * ------------------------------ */
+  const VALID_SCENARIO_ID = '550e8400-e29b-41d4-a716-446655440000';
+  const VALID_SCENE_ID = '660e8400-e29b-41d4-a716-446655440001';
+  const VALID_SCENE_DATA = {
     title: 'テストシーン',
     overview: 'これはテスト用のシーンです。GraphDBに保存されます。',
-    scenarioId: testScenarioId,
+    scenarioId: VALID_SCENARIO_ID,
     order: 0,
   };
 
-  // テスト環境のセットアップ（Neo4j用）
+  const INVALID_UUID = 'invalid-uuid';
+  const NON_EXISTENT_SCENARIO_ID = '770e8400-e29b-41d4-a716-446655440000';
+  const NON_EXISTENT_SCENE_ID = '880e8400-e29b-41d4-a716-446655440002';
+
+  /** ------------------------------
+   * 環境セットアップ
+   * ------------------------------ */
   const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async () => {
-      // GraphDBのクリーンアップは各テストケース内で実行
+      // 将来、GraphDBの初期化/クリーンアップをここに実装
     },
   });
 
   beforeEach(async () => {
-    // 各テスト前にGraphDBをクリーンアップ
-    // Neo4jコンテナのセットアップとクリーンアップ処理は将来実装予定
+    // 各テスト前のクリーンアップ処理（将来実装予定）
   });
 
-  // テストケース：GraphDBシーンを作成できることを確認
-  it('GraphDBにシーンを作成できること', async () => {
-    const app = getApp();
-
-    // PUT リクエストでGraphDBシーンを作成
-    const response = await app.request(
-      `/api/graph-scenes/${testSceneId}`,
+  /** ------------------------------
+   * API呼び出しヘルパー
+   * ------------------------------ */
+  const putScene = (sceneId: string, data: object) =>
+    getApp().request(
+      `/api/graph-scenes/${sceneId}`,
       {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testSceneData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       },
       getEnv(),
     );
 
-    // レスポンスステータスを確認
-    expect(response.status).toBe(200);
+  const getScenesByScenario = (scenarioId: string) =>
+    getApp().request(
+      `/api/graph-scenes/scenario/${scenarioId}`,
+      { method: 'GET', headers: { 'Content-Type': 'application/json' } },
+      getEnv(),
+    );
 
-    // レスポンスボディを確認
-    const responseData = await response.json();
-    expect(responseData).toEqual({
-      id: testSceneId,
-      title: testSceneData.title,
-      overview: testSceneData.overview,
-      scenarioId: testScenarioId,
-      order: 0,
+  const deleteScene = (sceneId: string) =>
+    getApp().request(
+      `/api/graph-scenes/${sceneId}`,
+      { method: 'DELETE', headers: { 'Content-Type': 'application/json' } },
+      getEnv(),
+    );
+
+  /** ------------------------------
+   * シーン作成テスト
+   * ------------------------------ */
+  describe('シーン作成', () => {
+    it('GraphDBにシーンを作成できる', async () => {
+      const res = await putScene(VALID_SCENE_ID, VALID_SCENE_DATA);
+      expect(res.status).toBe(200);
+
+      const body = await res.json();
+      expect(body).toEqual({ id: VALID_SCENE_ID, ...VALID_SCENE_DATA });
+    });
+
+    it('必須フィールド不足で400エラー', async () => {
+      const invalidData = {
+        overview: VALID_SCENE_DATA.overview,
+        scenarioId: VALID_SCENARIO_ID,
+        order: 0,
+      };
+      const res = await putScene(VALID_SCENE_ID, invalidData);
+      expect(res.status).toBe(400);
+    });
+
+    it('不正なscenarioId形式で400エラー', async () => {
+      const invalidData = { ...VALID_SCENE_DATA, scenarioId: INVALID_UUID };
+      const res = await putScene(VALID_SCENE_ID, invalidData);
+      expect(res.status).toBe(400);
+    });
+
+    it('負のorder値で400エラー', async () => {
+      const invalidData = { ...VALID_SCENE_DATA, order: -1 };
+      const res = await putScene(VALID_SCENE_ID, invalidData);
+      expect(res.status).toBe(400);
     });
   });
 
-  // テストケース：必須フィールドが不足している場合のバリデーション
-  it('必須フィールドが不足している場合400エラーを返すこと', async () => {
-    const app = getApp();
+  /** ------------------------------
+   * シーン一覧取得テスト
+   * ------------------------------ */
+  describe('シーン一覧取得', () => {
+    it('正常に取得できる', async () => {
+      const res = await getScenesByScenario(VALID_SCENARIO_ID);
+      expect(res.status).toBe(200);
 
-    // titleフィールドを欠いたリクエスト
-    const invalidData = {
-      overview: testSceneData.overview,
-      scenarioId: testScenarioId,
-      order: 0,
-    };
+      const body = await res.json();
+      expect(Array.isArray(body)).toBe(true);
 
-    const response = await app.request(
-      `/api/graph-scenes/${testSceneId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidData),
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
-  });
-
-  // テストケース：不正なscenarioId形式の場合のバリデーション
-  it('不正なscenarioId形式の場合400エラーを返すこと', async () => {
-    const app = getApp();
-
-    // 不正なUUID形式のscenarioId
-    const invalidData = {
-      title: testSceneData.title,
-      overview: testSceneData.overview,
-      scenarioId: 'invalid-uuid',
-      order: 0,
-    };
-
-    const response = await app.request(
-      `/api/graph-scenes/${testSceneId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidData),
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
-  });
-
-  // テストケース：負の順序値の場合のバリデーション
-  it('負の順序値の場合400エラーを返すこと', async () => {
-    const app = getApp();
-
-    // 負の値のorder
-    const invalidData = {
-      title: testSceneData.title,
-      overview: testSceneData.overview,
-      scenarioId: testScenarioId,
-      order: -1,
-    };
-
-    const response = await app.request(
-      `/api/graph-scenes/${testSceneId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidData),
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
-  });
-
-  // テストケース：シーン一覧取得の正常動作
-  it('シナリオに関連するシーン一覧を正常に取得できること', async () => {
-    const app = getApp();
-
-    // シーン一覧取得のリクエスト
-    const response = await app.request(
-      `/api/graph-scenes/scenario/${testScenarioId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-      getEnv(),
-    );
-
-    // レスポンスステータスの確認
-    expect(response.status).toBe(200);
-
-    // レスポンスボディの確認
-    const responseBody = await response.json();
-    expect(Array.isArray(responseBody)).toBe(true);
-
-    // 配列内の各要素が適切な構造を持つことを確認
-    if (responseBody.length > 0) {
-      const scene = responseBody[0];
-      expect(scene).toHaveProperty('id');
-      expect(scene).toHaveProperty('title');
-      expect(scene).toHaveProperty('overview');
-      expect(scene).toHaveProperty('scenarioId');
-      expect(scene).toHaveProperty('order');
-      expect(typeof scene.order).toBe('number');
-    }
-  });
-
-  // テストケース：不正なシナリオIDでのシーン一覧取得
-  it('不正なシナリオIDの場合400エラーを返すこと', async () => {
-    const app = getApp();
-
-    // 不正なUUID形式のシナリオID
-    const invalidScenarioId = 'invalid-uuid';
-
-    const response = await app.request(
-      `/api/graph-scenes/scenario/${invalidScenarioId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
-  });
-
-  // テストケース：存在しないシナリオIDでのシーン一覧取得
-  it('存在しないシナリオIDの場合空の配列を返すこと', async () => {
-    const app = getApp();
-
-    // 存在しないが正しい形式のUUID
-    const nonExistentScenarioId = '770e8400-e29b-41d4-a716-446655440000';
-
-    const response = await app.request(
-      `/api/graph-scenes/scenario/${nonExistentScenarioId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      },
-      getEnv(),
-    );
-
-    // 正常なレスポンスステータス
-    expect(response.status).toBe(200);
-
-    // 空の配列が返されることを確認
-    const responseBody = await response.json();
-    expect(Array.isArray(responseBody)).toBe(true);
-    expect(responseBody.length).toBe(0);
-  });
-
-  // テストケース：GraphDBシーンの削除機能
-  describe('GraphDBシーン削除機能', () => {
-    // テストケース：存在するシーンの削除
-    it('存在するシーンを正常に削除できること', async () => {
-      const app = getApp();
-
-      // 事前にシーンを作成
-      const createResponse = await app.request(
-        `/api/graph-scenes/${testSceneId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(testSceneData),
-        },
-        getEnv(),
-      );
-      
-      // 作成が成功していることを確認
-      expect(createResponse.status).toBe(200);
-
-      // DELETEリクエストでシーンを削除
-      const deleteResponse = await app.request(
-        `/api/graph-scenes/${testSceneId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-
-      // 削除成功のステータスを確認
-      expect(deleteResponse.status).toBe(204);
-
-      // レスポンスボディが空であることを確認
-      const responseText = await deleteResponse.text();
-      expect(responseText).toBe('');
+      if (body.length > 0) {
+        expect(body[0]).toMatchObject({
+          id: expect.any(String),
+          title: expect.any(String),
+          overview: expect.any(String),
+          scenarioId: expect.any(String),
+          order: expect.any(Number),
+        });
+      }
     });
 
-    // テストケース：存在しないシーンの削除
-    it('存在しないシーンの削除で404エラーを返すこと', async () => {
-      const app = getApp();
-
-      // 存在しないシーンIDで削除を試行
-      const nonExistentSceneId = '880e8400-e29b-41d4-a716-446655440002';
-      
-      const response = await app.request(
-        `/api/graph-scenes/${nonExistentSceneId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-
-      // 404エラーのステータスを確認
-      expect(response.status).toBe(404);
-
-      // エラーレスポンスの確認
-      const responseData = await response.json();
-      expect(responseData).toHaveProperty('error');
-      expect(responseData.error).toBe('Scene not found');
+    it('不正なシナリオID形式で400エラー', async () => {
+      const res = await getScenesByScenario(INVALID_UUID);
+      expect(res.status).toBe(400);
     });
 
-    // テストケース：不正なUUID形式での削除
-    it('不正なUUID形式の場合400エラーを返すこと', async () => {
-      const app = getApp();
+    it('存在しないシナリオIDで空配列', async () => {
+      const res = await getScenesByScenario(NON_EXISTENT_SCENARIO_ID);
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual([]);
+    });
+  });
 
-      // 不正なUUID形式のシーンID
-      const invalidSceneId = 'invalid-uuid';
-      
-      const response = await app.request(
-        `/api/graph-scenes/${invalidSceneId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
+  /** ------------------------------
+   * シーン削除テスト
+   * ------------------------------ */
+  describe('シーン削除', () => {
+    it('存在するシーンを削除できる', async () => {
+      expect((await putScene(VALID_SCENE_ID, VALID_SCENE_DATA)).status).toBe(
+        200,
       );
 
-      // UUIDバリデーションエラーで400が返される
-      expect(response.status).toBe(400);
+      const delRes = await deleteScene(VALID_SCENE_ID);
+      expect(delRes.status).toBe(204);
+      expect(await delRes.text()).toBe('');
     });
 
-    // テストケース：削除後のシーン一覧確認
-    it('シーン削除後にシーン一覧から除外されることを確認', async () => {
-      const app = getApp();
+    it('存在しないシーン削除で404エラー', async () => {
+      const res = await deleteScene(NON_EXISTENT_SCENE_ID);
+      expect(res.status).toBe(404);
+      expect(await res.json()).toMatchObject({ error: 'Scene not found' });
+    });
 
-      // 事前にシーンを作成
-      await app.request(
-        `/api/graph-scenes/${testSceneId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(testSceneData),
-        },
-        getEnv(),
-      );
+    it('不正なUUID形式で400エラー', async () => {
+      const res = await deleteScene(INVALID_UUID);
+      expect(res.status).toBe(400);
+    });
 
-      // 作成後のシーン一覧を取得
-      const listBeforeDelete = await app.request(
-        `/api/graph-scenes/scenario/${testScenarioId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-      
-      const scenesBeforeDelete = await listBeforeDelete.json();
-      const sceneCountBefore = scenesBeforeDelete.length;
+    it('削除後に一覧から除外される', async () => {
+      await putScene(VALID_SCENE_ID, VALID_SCENE_DATA);
 
-      // シーンを削除
-      await app.request(
-        `/api/graph-scenes/${testSceneId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
+      const beforeList = await (
+        await getScenesByScenario(VALID_SCENARIO_ID)
+      ).json();
+      await deleteScene(VALID_SCENE_ID);
+      const afterList = await (
+        await getScenesByScenario(VALID_SCENARIO_ID)
+      ).json();
 
-      // 削除後のシーン一覧を取得
-      const listAfterDelete = await app.request(
-        `/api/graph-scenes/scenario/${testScenarioId}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-        getEnv(),
-      );
-      
-      const scenesAfterDelete = await listAfterDelete.json();
-
-      // シーン数が減っていることを確認
-      expect(scenesAfterDelete.length).toBe(sceneCountBefore - 1);
-
-      // 削除したシーンが一覧に含まれていないことを確認
-      const deletedSceneExists = scenesAfterDelete.some(
-        (scene: any) => scene.id === testSceneId
-      );
-      expect(deletedSceneExists).toBe(false);
+      expect(afterList.length).toBe(beforeList.length - 1);
+      expect(afterList.some((s: any) => s.id === VALID_SCENE_ID)).toBe(false);
     });
   });
 });
