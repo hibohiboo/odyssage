@@ -284,4 +284,57 @@ API・データ永続化統合:
 
 **重要な変更点**: DDDドメインモデル前提を廃止、フルスタック責務分担に基づく戦略に統一
 
+---
+
+## 📚 APIテスト実装ベストプラクティス（2025-08-11追加）
+
+### 実装完了から得た重要な教訓
+
+#### **1. バリデーションテスト注意事項**
+- **期待値の推測禁止**: スキーマ定義確認→実動作確認→テストケース作成
+- **実例**: `userParamSchema = v.object({ uid: v.string() })`の場合、空文字で400エラーにならない
+- **対策**: 事前にスキーマ内容とAPI実装両方を確認
+
+#### **2. テスト冗長性の排除** 
+- **同一データソース検証の回避**: beforeSetupデータと期待値の重複検証を防ぐ
+- **実例**: 「API取得」テストと「API-DB一致」テストが同じデータで重複
+- **対策**: テストケース追加前に既存テストとの重複チェック
+
+#### **3. 可読性パターンの活用**
+```typescript
+// ✅ 推奨パターン（graph-scenario.spec.ts準拠）
+describe('API名 統合テスト', () => {
+  const { getApp, getEnv } = setupTestEnv({ beforeSetup: ... });
+  let app: ReturnType<typeof getApp>;
+  
+  beforeEach(() => { app = getApp(); });
+  
+  /** 共通リクエスト関数 */
+  const apiRequest = async (params) => app.request(...);
+  
+  it('簡潔なテスト名', async () => {
+    const res = await apiRequest(data);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(expectedData);
+  });
+});
+```
+
+#### **4. 環境考慮したテスト範囲**
+- **パフォーマンステスト除外**: Testcontainersローカル環境では意味なし
+- **機能テスト集中**: 正常系・異常系・エラーハンドリング・レスポンス形式
+- **本番測定**: パフォーマンスはCloudflare Analytics等で実測
+
+#### **5. 避けるべきアンチパターン**
+- ❌ 冗長なデータ整合性テスト（同一データソースでの重複検証）
+- ❌ ローカル環境でのパフォーマンステスト
+- ❌ 詳細すぎるコメント・プロパティ単位の個別検証
+- ❌ `[正常系]`等の冗長なテスト名プレフィックス
+
+### 参考実装
+- **GET /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
+- **成功例**: 137行→84行（39%削減）の可読性向上達成
+
+---
+
 この戦略により、業務領域に応じた効率的で適切なテストアプローチを実現します。

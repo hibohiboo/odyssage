@@ -140,6 +140,77 @@
 
 ---
 
+## 📚 実装完了からの学習・知見（2025-08-11更新）
+
+### ✅ GET /api/users/{uid} テスト実装完了から得た重要な知見
+
+#### **実装時の重要な発見**
+
+1. **バリデーションテスト注意点**:
+   - `userParamSchema = v.object({ uid: v.string() })` → 単純string、制約なし
+   - 空文字列でも400エラーにならず404エラー（実際動作確認必須）
+   - **教訓**: 期待値は推測ではなく実動作で確認
+
+2. **テスト冗長性の除去**:
+   - ❌ 「APIとDBデータ一致」テスト → 「正常系取得」テストと完全重複
+   - beforeSetupで挿入したデータを両方で検証 → 不要な重複
+   - **教訓**: 同一データソースでの検証重複を避ける
+
+3. **可読性向上の効果**:
+   - graph-scenario.spec.tsパターン適用: 137行 → 84行（39%削減）
+   - 共通リクエスト関数 + beforeEach + 簡潔なテスト名
+   - **教訓**: 既存の良いパターンを積極活用
+
+4. **パフォーマンステスト不適切性**:
+   - Testcontainersローカル環境 ≠ 本番Cloudflare Workers環境
+   - 測定値に意味がなく、テスト実行時間のみ増加
+   - **教訓**: 環境差異を考慮したテスト戦略
+
+#### **確立された成功パターン**
+
+```typescript
+// ✅ 推奨テスト構造（参考実装: user-management.spec.ts）
+describe('API名 統合テスト', () => {
+  const testData = { ... };
+  const { getApp, getEnv } = setupTestEnv({ beforeSetup: ... });
+  let app: ReturnType<typeof getApp>;
+  
+  beforeEach(() => { app = getApp(); });
+  
+  /** 共通リクエスト関数 */
+  const apiRequest = async (params) => app.request(...);
+  
+  it('正常系動作確認', async () => {
+    const res = await apiRequest(validData);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(expectedData); // 直接比較
+  });
+  
+  it('異常系エラー確認', async () => {
+    const res = await apiRequest(invalidData);  
+    expect(res.status).toBe(404);
+    expect(await res.text()).toBe('Not Found'); // エラー内容確認
+  });
+});
+```
+
+#### **避けるべきアンチパターン**
+
+- ❌ 冗長なデータ整合性テスト（同一データソースでの重複検証）
+- ❌ ローカル環境でのパフォーマンステスト
+- ❌ 詳細すぎるコメント・プロパティ単位の個別検証
+- ❌ バリデーションエラー期待値の推測（実際動作確認必須）
+- ❌ `[正常系]`等の冗長なテスト名プレフィックス
+
+#### **次回実装への提言**
+
+1. **バリデーション確認**: スキーマ定義を事前確認し、実際の動作を想定
+2. **テスト冗長性チェック**: 既存テストとの重複検証を避ける  
+3. **パターン再利用**: graph-scenario.spec.ts的な簡潔パターンの活用
+4. **認証仕様確認**: JWT認証が必要なエンドポイントかの事前確認
+
+---
+
 ## 🛠️ 実装ガイドライン
 
 ### テストファイル命名規則
