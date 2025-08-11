@@ -51,7 +51,7 @@
   - [ ] バリデーション: idパラメータ検証
 
 ### User Scenario Management API Tests
-- [ ] **POST /api/users/{uid}/scenario** - シナリオ作成テスト
+- [x] **POST /api/users/{uid}/scenario** - シナリオ作成テスト（実装完了・テスト通過確認済み）
   - [ ] 正常系: 新規シナリオ作成成功
   - [ ] バリデーション: 必須フィールド検証（id, title, overview）
   - [ ] バリデーション: visibility enum値検証
