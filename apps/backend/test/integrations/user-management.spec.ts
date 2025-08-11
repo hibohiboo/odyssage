@@ -12,7 +12,7 @@ describe('User Management API 統合テスト', () => {
   const testUserName = 'テストユーザー太郎';
   const nonExistentUserId = 'non-existent-user-id';
 
-  const { getApp, getEnv } = setupTestEnv({
+  const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       await execSql(
         connectionString,
@@ -40,17 +40,17 @@ describe('User Management API 統合テスト', () => {
 
   it('存在するユーザーを正しく取得できる', async () => {
     const res = await getUser(testUserId);
-    
+
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('application/json');
-    
+
     const data = await res.json();
     expect(data).toEqual({ id: testUserId, name: testUserName });
   });
 
   it('存在しないユーザーで404エラー', async () => {
     const res = await getUser(nonExistentUserId);
-    
+
     expect(res.status).toBe(404);
     expect(res.headers.get('content-type')).toContain('text/plain');
     expect(await res.text()).toBe('Not Found');
@@ -67,7 +67,7 @@ describe('User Management API 統合テスト', () => {
     const apiData = await apiRes.json();
 
     const dbResult = await execSql(
-      getEnv().NEON_CONNECTION_STRING,
+      getConnectionString(),
       `SELECT id, name FROM odyssage.users WHERE id = '${testUserId}'`,
     );
 
@@ -77,7 +77,7 @@ describe('User Management API 統合テスト', () => {
 
   it('レスポンスヘッダーが適切に設定される', async () => {
     const res = await getUser(testUserId);
-    
+
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('application/json');
   });
