@@ -102,7 +102,7 @@ Access-Control-Allow-Headers: Authorization,Content-Type
 
 ## 📊 データモデル設計
 
-### UUID活用
+### UUID活用とドメインオブジェクト
 ```typescript
 // 全てのリソースIDはUUID
 interface BaseResource {
@@ -110,24 +110,45 @@ interface BaseResource {
   createdAt: string; // ISO 8601
   updatedAt: string; // ISO 8601
 }
+
+// ドメインオブジェクト（値オブジェクトを含む）
+interface ScenarioDomain extends BaseResource {
+  title: ScenarioTitle;           // 値オブジェクト
+  overview: ScenarioOverview;     // 値オブジェクト
+  authorId: AuthorId;             // 識別子
+  visibility: Visibility;         // 列挙型
+  status: ScenarioStatus;         // 状態オブジェクト
+  
+  // ドメインメソッド（フロントエンドで実装）
+  canBePublished(): boolean;
+  validateForPublication(): ValidationResult;
+  generatePublicUrl(): string;
+}
 ```
 
-### ハイブリッドDB対応
+### ハイブリッドDB対応とドメイン境界
 ```typescript
-// PostgreSQL向け（メタデータ）
-interface ScenarioMetadata extends BaseResource {
+// PostgreSQL向け（永続化用DTO）
+interface ScenarioMetadataDTO extends BaseResource {
   title: string;
   overview: string;
   authorId: string;
   visibility: 'public' | 'private';
+  
+  // バックエンドでの最小限バリデーション
+  static validateForPersistence(dto: ScenarioMetadataDTO): ValidationResult;
 }
 
-// Neo4j向け（構造データ）
-interface ScenarioStructure {
+// Neo4j向け（関係性・構造データ）
+interface ScenarioStructureDTO {
   id: string; // PostgreSQLと共通UUID
   title: string; // 冗長データ（検索性能向上）
   overview: string; // 冗長データ
-  // 将来: scenes, events, messages
+  authorId: string;
+  // scenes, events, messages の関係性
+  
+  // グラフDB特有のドメインルール
+  static validateGraphStructure(dto: ScenarioStructureDTO): ValidationResult;
 }
 ```
 
@@ -189,12 +210,41 @@ docs/redocly/openapi/
 - **下位互換性**: 破壊的変更の慎重な管理
 - **非推奨マーク**: 将来削除予定APIの明示
 
-## 🔍 テスト戦略
+## 🔍 テスト戦略（フルスタックDDD対応）
 
-### API テストレベル
-1. **単体テスト**: 個別エンドポイントの動作確認
-2. **統合テスト**: データベース連携を含む動作確認
-3. **契約テスト**: OpenAPI仕様書との整合性確認
+### フルスタック境界でのテスト戦略
+```typescript
+// 🎯 フロントエンド: ドメインロジック重点テスト
+describe('ScenarioWorkflowService', () => {
+  it('should validate business rules correctly', () => {
+    const scenario = new ScenarioAggregate(input);
+    const result = scenario.validateForPublication();
+    expect(result.isValid).toBe(true);
+  });
+  
+  it('should handle optimistic conflict resolution', () => {
+    const resolver = new OptimisticConflictResolver();
+    const resolution = resolver.resolve(localChanges, serverState);
+    expect(resolution.strategy).toBe('merge-with-priority');
+  });
+});
+
+// ⚡ バックエンド: 軽量統合テスト重点
+describe('Scenario API Integration', () => {
+  it('should persist scenario data correctly', async () => {
+    const response = await api.post('/api/scenarios', validDTO);
+    expect(response.status).toBe(201);
+    
+    const persisted = await db.findById(response.body.id);
+    expect(persisted.title).toBe(validDTO.title);
+  });
+});
+```
+
+### API テストレベル（DDD適用境界考慮）
+1. **統合テスト（重点）**: データベース連携・API動作確認
+2. **E2Eテスト（重点）**: フロントエンド複雑ロジックの完全検証  
+3. **単体テスト（最小限）**: バックエンド境界値・エラーケース
 
 ### テスト記述統一化（2025-08-11更新）
 ```typescript
