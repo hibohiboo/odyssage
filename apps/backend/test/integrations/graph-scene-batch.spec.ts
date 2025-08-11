@@ -48,7 +48,7 @@ describe('GraphDBシーン一括更新統合テスト', () => {
     const res = await batchUpdateScenes(testScenarioId, defaultScenes);
     expect(res.status).toBe(200);
 
-    const data = await res.json();
+    const data = (await res.json()) as any;
     expect(data.scenes).toHaveLength(3);
     expect(data.summary.totalScenes).toBe(3);
 
@@ -62,7 +62,7 @@ describe('GraphDBシーン一括更新統合テスト', () => {
   it('空配列で更新すると全削除される', async () => {
     await batchUpdateScenes(testScenarioId, defaultScenes);
     const res = await batchUpdateScenes(testScenarioId, []);
-    const data = await res.json();
+    const data = (await res.json()) as any;
     expect(data.scenes).toHaveLength(0);
     expect(data.summary.totalScenes).toBe(0);
   });
@@ -82,7 +82,7 @@ describe('GraphDBシーン一括更新統合テスト', () => {
   it('存在しないシナリオIDは404エラー', async () => {
     const id = '770e8400-e29b-41d4-a716-446655440000';
     const res = await batchUpdateScenes(id, defaultScenes);
-    const data = await res.json();
+    const data = (await res.json()) as any;
     expect(res.status).toBe(404);
     expect(data.error).toBe('Scenario not found');
   });
@@ -91,8 +91,8 @@ describe('GraphDBシーン一括更新統合テスト', () => {
     const batchRes = await batchUpdateScenes(testScenarioId, defaultScenes);
     const listRes = await getScenes(testScenarioId);
 
-    const batchData = await batchRes.json();
-    const listData = await listRes.json();
+    const batchData = (await batchRes.json()) as any;
+    const listData = (await listRes.json()) as any;
 
     expect(listData).toHaveLength(batchData.scenes.length);
     expect(listData.map((s: any) => s.title)).toEqual(
@@ -103,7 +103,7 @@ describe('GraphDBシーン一括更新統合テスト', () => {
   it('50件でも正常に更新でき順序も保持される', async () => {
     const largeScenes = generateScenes(50);
     const res = await batchUpdateScenes(testScenarioId, largeScenes);
-    const data = await res.json();
+    const data = (await res.json()) as any;
 
     expect(data.scenes).toHaveLength(50);
     data.scenes.forEach((scene: any, i: number) => {
