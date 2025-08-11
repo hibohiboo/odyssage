@@ -37,6 +37,9 @@ const route = new Hono<Env>()
       c.env.NEON_CONNECTION_STRING,
       param.id,
     );
+    if (!data) {
+      return c.text('Not Found', 404);
+    }
     return c.json(data);
   });
 export default route;
