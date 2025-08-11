@@ -95,37 +95,35 @@ Integration Tests
 - **実装方法**: トランザクションスクリプト（データ構造シンプル）
 - **テスト方針**: 逆ピラミッド型テスト（統合テスト重視）
 
-#### Phase 1: Unit Tests（重点実装）
+#### Phase 1: E2E Tests（重点実装）
 ```
-バックエンド:
-- GraphDBシーンドメインロジック
-- シーン作成・更新・削除ルール
-- データ整合性検証
-- エラーハンドリング
-
-フロントエンド:
-- useGraphScenesQuery Hookロジック
-- シーン状態管理
-- フォームバリデーション
+ユーザーシナリオ（フロントエンド重視）:
+- シーン作成・編集・削除の完全なフロー
+- 楽観的更新の正常動作確認
+- GraphDBとの連携動作
+- エラー状態でのUX確認
 ```
 
 #### Phase 2: Integration Tests（中程度）
 ```
-API:
+API・データ永続化:
 - GET /api/graph-scenes/scenario/{scenarioId}
 - PUT /api/graph-scenes/{id}
 - Neo4j・PostgreSQL統合
-
-データベース:
-- GraphDB関係性の整合性
-- 障害時のフォールバック
+- データ整合性確認
 ```
 
-#### Phase 3: E2E Tests（最小限）
+#### Phase 3: Unit Tests（最小限）
 ```
-重要シナリオのみ:
-- シーン作成・編集・削除の基本フロー
-- GraphDB障害時のユーザー体験
+バックエンド境界値・エラーケース:
+- UUID形式検証
+- データ変換処理
+- Neo4j接続エラーハンドリング
+
+フロントエンド重要ロジック:
+- useOptimisticScenes の複雑な状態管理
+- useGraphScenesQuery のキャッシュ戦略
+- フォーム状態の楽観的更新
 ```
 
 ### ユーザー認証機能
