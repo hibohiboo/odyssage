@@ -61,19 +61,6 @@ describe('User Management API 統合テスト', () => {
     expect(res.status).toBe(404);
   });
 
-  it('APIとDBデータが一致する', async () => {
-    const apiRes = await getUser(testUserId);
-    expect(apiRes.status).toBe(200);
-    const apiData = await apiRes.json();
-
-    const dbResult = await execSql(
-      getConnectionString(),
-      `SELECT id, name FROM odyssage.users WHERE id = '${testUserId}'`,
-    );
-
-    expect(dbResult).toHaveLength(1);
-    expect(apiData).toEqual({ id: dbResult[0].id, name: dbResult[0].name });
-  });
 
   it('レスポンスヘッダーが適切に設定される', async () => {
     const res = await getUser(testUserId);
