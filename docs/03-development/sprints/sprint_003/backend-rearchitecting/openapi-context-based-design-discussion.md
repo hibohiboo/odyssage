@@ -66,8 +66,37 @@ interface GameMaster {
     // セッション管理権限
     sessions: {
       create: true;       // シナリオベースでセッション作成
-      manage: true;       // 自分が作成したセッションの管理
-      invite: true;       // プレイヤーの招待
+      read: true;         // 全セッション閲覧
+      update: true;       // 自分が作成したセッションのみ編集可能
+      delete: true;       // 自分が作成したセッションのみ削除可能
+      manage: true;       // 自分が作成したセッションの進行管理
+      invite: true;       // プレイヤーの招待・除名
+    };
+  };
+}
+```
+
+#### **👥 プレイヤー（Player）**
+```typescript
+interface Player {
+  role: 'player';
+  permissions: {
+    // セッションに対する権限
+    sessions: {
+      create: false;      // セッション作成不可
+      read: true;         // 参加セッション・公開セッションの閲覧
+      update: false;      // セッション編集不可
+      delete: false;      // セッション削除不可
+      join: true;         // セッションへの参加申請
+      leave: true;        // セッションからの離脱
+      interact: true;     // セッション内での行動・発言
+    };
+    // シナリオに対する権限（プレイヤー視点）
+    scenarios: {
+      create: false;      // シナリオ作成不可
+      read: true;         // 公開シナリオの閲覧
+      update: false;      // シナリオ編集不可
+      delete: false;      // シナリオ削除不可
     };
   };
 }
@@ -132,6 +161,83 @@ Authorization: Bearer {gm-jwt}
   "error": "INSUFFICIENT_PERMISSION",
   "message": "シナリオの編集は作成者のみ可能です",
   "context": "scenario_edit_permission"
+}
+```
+
+#### **🎮 セッション管理の文脈**
+
+**GMの文脈（セッション一覧）**:
+```http
+GET /api/sessions/gm/{gm_id}
+Authorization: Bearer {gm-jwt}
+# レスポンス：GMが作成したセッション一覧（編集可能情報付き）
+{
+  "sessions": [
+    {
+      "id": "session-uuid",
+      "title": "冒険セッション",
+      "scenarioTitle": "謎の洞窟",
+      "status": "準備中",
+      "playerCount": 3,
+      "maxPlayers": 5,
+      "canEdit": true,        // 自分が作成したセッション
+      "canDelete": true,
+      "canManage": true,      // 進行管理可能
+      "editUrl": "/gm/sessions/{id}/edit",
+      "manageUrl": "/gm/sessions/{id}/manage"
+    }
+  ]
+}
+```
+
+**プレイヤーの文脈（セッション一覧）**:
+```http
+GET /api/sessions
+Authorization: Bearer {player-jwt}
+# レスポンス：参加中・参加可能なセッション一覧（閲覧専用情報）
+{
+  "sessions": [
+    {
+      "id": "session-uuid",
+      "title": "冒険セッション",
+      "gmName": "マスター太郎",
+      "scenarioTitle": "謎の洞窟",
+      "status": "進行中",
+      "playerCount": 3,
+      "maxPlayers": 5,
+      "canJoin": true,        // 参加可能
+      "canView": true,        // 閲覧可能
+      "isParticipating": false, // 現在の参加状況
+      "joinUrl": "/player/sessions/{id}/join",
+      "viewUrl": "/player/sessions/{id}"
+    }
+  ]
+}
+```
+
+**GMによるセッション編集**:
+```http
+PUT /api/gm/{uid}/sessions/{sessionId}
+Authorization: Bearer {gm-jwt}
+# 条件：uid === セッション作成者のGM ID
+{
+  "title": "更新されたセッション名",
+  "status": "進行中",
+  "maxPlayers": 6
+}
+```
+
+**プレイヤーによるセッション編集試行（エラーケース）**:
+```http
+PUT /api/gm/{uid}/sessions/{sessionId}
+Authorization: Bearer {player-jwt}
+# レスポンス：403 Forbidden
+{
+  "error": "ROLE_PERMISSION_DENIED",
+  "message": "セッションの編集はGMのみ可能です",
+  "context": "player",
+  "allowedActions": ["view", "join", "leave"],
+  "redirectSuggestion": "/player/sessions"
 }
 ```
 
