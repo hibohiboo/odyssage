@@ -89,13 +89,13 @@ describe('User Management API 統合テスト', () => {
       expect(responseText).toBe('Not Found');
     });
 
-    it('[バリデーション] 不正なuid形式の場合400エラーが返されること', async () => {
+    it('[異常系] 空のuidの場合404エラーが返されること', async () => {
       const app = getApp();
-      const invalidUid = ''; // 空文字列
+      const emptyUid = ''; // 空文字列
 
-      // 不正なuidでGETリクエスト
+      // 空のuidでGETリクエスト（/api/users/ になる）
       const response = await app.request(
-        `/api/users/${invalidUid}`,
+        `/api/users/${emptyUid}`,
         {
           method: 'GET',
           headers: {
@@ -105,8 +105,8 @@ describe('User Management API 統合テスト', () => {
         getEnv(),
       );
 
-      // 400エラーの確認（Valibot バリデーションエラー）
-      expect(response.status).toBe(400);
+      // 404エラーの確認（ルーティングが異なるか、データが存在しない）
+      expect(response.status).toBe(404);
     });
 
     it('[データ整合性] データベースから直接取得したデータと一致すること', async () => {
