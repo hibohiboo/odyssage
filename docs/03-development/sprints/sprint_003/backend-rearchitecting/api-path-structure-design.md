@@ -290,8 +290,39 @@ PATCH /api/gm/{uid}/sessions/{id}       # ✅ 既に新構造
 |---------------------|------------|----------|
 | `POST /api/users/{uid}/scenario` | `POST /api/authors/{uid}/scenarios` | 役割の明確化・複数形統一 |
 | `PUT /api/users/{uid}/scenario/{id}` | `PUT /api/authors/{uid}/scenarios/{id}` | 同上 |
-| `POST /api/sessions` | `POST /api/gm/{uid}/sessions` | GM文脈の明確化 |
-| `POST /api/users/{uid}/stocked-scenarios/{id}` | `POST /api/gm/{uid}/stocks` | リソース名の簡潔化 |
+| `POST /api/sessions` | `POST /api/game-masters/{uid}/sessions` | GM文脈の明確化 |
+| `GET /api/sessions/gm/{gm_id}` | `GET /api/game-masters/{uid}/sessions` | パラメータ名統一・RESTful化 |
+| `POST /api/users/{uid}/stocked-scenarios/{id}` | `POST /api/game-masters/{uid}/stocks` | リソース名の簡潔化・ロール明確化 |
+
+### 既存実装との整合性課題
+
+#### **パラメータ命名の不整合**
+```yaml
+# 現在: sessionsByGm.yaml
+parameters:
+  - name: gm_id    # ← 不整合
+
+# 統一後
+parameters:  
+  - name: uid      # ← 全体で統一
+```
+
+#### **ロール名の表記揺れ**
+```http
+# 現在の実装
+PATCH /api/gm/{uid}/sessions/{id}           # ← 既存実装
+GET /api/sessions/gm/{gm_id}                # ← 旧形式
+
+# 統一後の構造
+PATCH /api/game-masters/{uid}/sessions/{id} # ← 新統一形式
+GET /api/game-masters/{uid}/sessions        # ← RESTful形式
+```
+
+#### **統合アクションプラン**
+1. **パラメータ名統一**: `gm_id` → `uid`
+2. **ロール名統一**: `gm` → `game-masters` 
+3. **RESTful化**: `/sessions/gm/{id}` → `/game-masters/{uid}/sessions`
+4. **OpenAPI仕様更新**: 統一後の構造に準拠
 
 ## ⚡ 設計上の考慮事項
 
