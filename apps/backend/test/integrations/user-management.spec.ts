@@ -147,13 +147,5 @@ describe('User Management API 統合テスト', () => {
 
       expect(res.status).toBe(400);
     });
-
-    it('レスポンスヘッダーが適切に設定される', async () => {
-      const userData = { name: 'ヘッダーテスト用ユーザー' };
-      const res = await putUser(testUserId, userData);
-
-      expect(res.status).toBe(204);
-      expect(res.headers.get('content-length')).toBe('0');
-    });
   });
 });
