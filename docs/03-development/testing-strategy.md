@@ -385,6 +385,37 @@ describe('User Stock API 統合テスト', () => {
 });
 ```
 
+#### **11. テスト環境での認証バイパス考慮事項**
+
+**現在の実装**: `CLOUDFLARE_ENV === 'test'` で認証処理をバイパス
+
+**メリット**: 
+- テスト実装簡素化・実行安定性向上・外部依存排除
+- ビジネスロジックに集中・CI/CD環境での実行容易性
+
+**デメリット**: 
+- 認証・認可ロジック未検証・本番環境との差異
+- セキュリティテスト欠如・権限境界テスト不可
+
+**推奨アプローチ**: 
+```typescript
+// 認証レベル別テスト戦略
+describe('認証不要API', () => {
+  // 現在のバイパスアプローチ継続
+});
+
+describe('ビジネスロジック統合', () => {
+  // 認証バイパス、機能検証に集中
+});
+
+describe('認証・認可専用', () => {
+  // 将来実装: 認証ミドルウェア専用テスト
+  // JWT検証・権限境界・セキュリティテスト
+});
+```
+
+**詳細分析**: [[sprints/sprint_003/backend-rearchitecting/test-authentication-bypass-analysis]]
+
 ### 参考実装
 - **単一リソース操作**: `apps/backend/test/integrations/user-management.spec.ts` (GET/PUT /api/users/{uid})
 - **個別リソース取得**: `apps/backend/test/integrations/scenario-detail.spec.ts` (GET /api/scenario/{id})
