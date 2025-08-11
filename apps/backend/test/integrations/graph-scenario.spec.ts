@@ -1,158 +1,66 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { setupTestEnv } from './test-utils';
-
 /**
  * GraphDBシナリオ関連のエンドポイントに対する統合テスト
- * Neo4jのテストコンテナを使用してGraphDB操作を含む統合テストを実行します  
+ * Neo4jのテストコンテナを使用してGraphDB操作を含む統合テストを実行します
  */
 describe('GraphDBシナリオ統合テスト', () => {
-  // テストシナリオの情報
   const testScenarioId = '550e8400-e29b-41d4-a716-446655440000';
-  const testScenarioData = {
+  const validScenario = {
     title: 'テストシナリオ',
     overview: 'これはテスト用のシナリオです。GraphDBに保存されます。',
   };
+  const updatedScenario = {
+    title: '更新されたテストシナリオ',
+    overview: 'これは更新されたシナリオの概要です。',
+  };
 
-  // テスト環境のセットアップ（Neo4j用）
-  const { getApp, getEnv } = setupTestEnv({
-    beforeSetup: async () => {
-      // GraphDBのクリーンアップは各テストケース内で実行
-    },
+  const { getApp, getEnv } = setupTestEnv();
+  let app: ReturnType<typeof getApp>;
+
+  beforeEach(() => {
+    app = getApp();
+    // GraphDBのクリーンアップ処理は今後実装予定
   });
 
-  beforeEach(async () => {
-    // 各テスト前にGraphDBをクリーンアップ
-    // Neo4jコンテナのセットアップとクリーンアップ処理は将来実装予定
-  });
-
-  // テストケース：GraphDBシナリオを作成できることを確認
-  it('GraphDBにシナリオを作成できること', async () => {
-    const app = getApp();
-
-    // PUT リクエストでGraphDBシナリオを作成
-    const response = await app.request(
+  /** GraphDBシナリオをPUTで作成・更新する共通関数 */
+  const putScenario = async (data: Record<string, any>) =>
+    app.request(
       `/api/graph-scenarios/${testScenarioId}`,
       {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testScenarioData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       },
       getEnv(),
     );
 
-    // レスポンスステータスを確認
-    expect(response.status).toBe(200);
+  it('GraphDBにシナリオを作成できる', async () => {
+    const res = await putScenario(validScenario);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ id: testScenarioId, ...validScenario });
+  });
 
-    // レスポンスボディを確認
-    const responseData = await response.json();
-    expect(responseData).toEqual({
+  it('GraphDBシナリオを更新できる', async () => {
+    await putScenario(validScenario); // 事前作成
+    const res = await putScenario(updatedScenario);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
       id: testScenarioId,
-      title: testScenarioData.title,
-      overview: testScenarioData.overview,
+      ...updatedScenario,
     });
   });
 
-  // テストケース：GraphDBシナリオを更新できることを確認
-  it('GraphDBシナリオを更新できること', async () => {
-    const app = getApp();
-
-    // 最初にシナリオを作成
-    await app.request(
-      `/api/graph-scenarios/${testScenarioId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(testScenarioData),
-      },
-      getEnv(),
-    );
-
-    // 更新データ
-    const updatedData = {
-      title: '更新されたテストシナリオ',
-      overview: 'これは更新されたシナリオの概要です。',
-    };
-
-    // PUT リクエストでシナリオを更新
-    const response = await app.request(
-      `/api/graph-scenarios/${testScenarioId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),
-      },
-      getEnv(),
-    );
-
-    // レスポンスステータスを確認
-    expect(response.status).toBe(200);
-
-    // レスポンスボディを確認
-    const responseData = await response.json();
-    expect(responseData).toEqual({
-      id: testScenarioId,
-      title: updatedData.title,
-      overview: updatedData.overview,
-    });
+  it('空タイトルでバリデーションエラー', async () => {
+    const res = await putScenario({ title: '', overview: 'テスト概要' });
+    expect(res.status).toBe(400);
   });
 
-  // テストケース：バリデーションエラーを正しく処理することを確認
-  it('不正なリクエストデータでバリデーションエラーが返ることを確認', async () => {
-    const app = getApp();
-
-    // 不正なデータ（titleが空文字）
-    const invalidData = {
-      title: '',
-      overview: 'テスト概要',
-    };
-
-    // PUT リクエストで不正なデータを送信
-    const response = await app.request(
-      `/api/graph-scenarios/${testScenarioId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },  
-        body: JSON.stringify(invalidData),
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
-  });
-
-  // テストケース：長すぎるデータでバリデーションエラーが返ることを確認
-  it('長すぎるタイトルでバリデーションエラーが返ることを確認', async () => {
-    const app = getApp();
-
-    // 長すぎるタイトル（101文字）
-    const invalidData = {
+  it('長すぎるタイトルでバリデーションエラー', async () => {
+    const res = await putScenario({
       title: 'a'.repeat(101),
       overview: 'テスト概要',
-    };
-
-    // PUT リクエストで不正なデータを送信
-    const response = await app.request(
-      `/api/graph-scenarios/${testScenarioId}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(invalidData),
-      },
-      getEnv(),
-    );
-
-    // バリデーションエラーのステータスを確認
-    expect(response.status).toBe(400);
+    });
+    expect(res.status).toBe(400);
   });
 });
