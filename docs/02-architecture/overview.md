@@ -73,14 +73,50 @@ graph TB
 
 ## 🔄 アーキテクチャパターン
 
-### ドメイン駆動設計（DDD）
+### フルスタック境界設計とDDD
+
+#### **システム全体におけるレイヤー分離**
+```mermaid
+graph TB
+    subgraph "Frontend (React)"
+        P[Presentation Layer]
+        D[Domain Layer<br/>複雑なビジネスロジック]
+        A[Application Layer<br/>状態管理・ワークフロー]
+    end
+    
+    subgraph "Backend (Cloudflare Workers)"
+        API[API Layer<br/>シンプルなCRUD]
+        I[Infrastructure Layer<br/>データ永続化]
+    end
+    
+    P --> D
+    D --> A
+    A --> API
+    API --> I
+    
+    style D fill:#e1f5fe
+    style A fill:#e8f5e8
+    style API fill:#fff3e0
+    style I fill:#fce4ec
 ```
-Domain Layer (ビジネスロジック)
-    ↓ 依存関係の逆転
-Application Layer (ユースケース実装)
-    ↓
-Infrastructure Layer (技術的実装)
-```
+
+#### **責務の明確な分離**
+
+**🎯 Frontend（React + TypeScript）**:
+- **複雑なビジネスロジック**: 楽観的更新・状態遷移・ワークフロー制御
+- **リッチなUX**: リアルタイム操作・インタラクティブUI
+- **ドメイン知識**: TRPG固有のルール・シナリオ管理ロジック
+
+**⚡ Backend（Cloudflare Workers + Hono.js）**:
+- **データ永続化**: PostgreSQL・Neo4jへのCRUD操作
+- **認証・認可**: Firebase Auth連携・JWT検証
+- **基本検証**: スキーマバリデーション・整合性チェック
+
+#### **設計判断の根拠**
+- **パフォーマンス**: Edge Computing活用によりデータ操作を軽量化
+- **UX最適化**: フロントエンドでの楽観的更新により応答性向上
+- **開発効率**: 関心の分離により各層の専門性を最大化
+- **スケーラビリティ**: シンプルなバックエンドにより水平拡張を容易化
 
 ### CQRS（読み書き分離）
 - **Command**: データ変更操作 → PostgreSQL中心
@@ -195,16 +231,82 @@ interface StructuredLog {
 - **学習コスト**: 豊富な情報・人材確保容易
 - **エコシステム**: 豊富なライブラリ・ツール
 - **型安全性**: 大規模開発での保守性確保
+- **ビジネスロジック適合**: 複雑な状態管理・UXワークフローに最適
 
 ### Cloudflare Workers
 - **パフォーマンス**: Edge Computing による低レイテンシ
 - **運用コスト**: サーバーレスによる運用負荷軽減
 - **スケーラビリティ**: トラフィック増加への自動対応
+- **アーキテクチャ適合**: 軽量なCRUD操作に最適化された実行環境
 
 ### ハイブリッドDB
 - **PostgreSQL**: 確実性が重要なデータの信頼性
 - **Neo4j**: 複雑な関係性データの高速処理
 - **適材適所**: データ特性に応じた最適技術選択
+
+## 🤔 設計判断指針とガイドライン
+
+### フロントエンド vs バックエンド役割分担
+
+#### **フロントエンドで実装すべきもの**:
+- **複雑な状態管理**: 楽観的更新・ライフサイクル制御
+- **ビジネスワークフロー**: 作成→編集→保存の複雑なフロー
+- **リアルタイムUX**: インタラクティブな操作・即座のフィードバック
+- **ドメイン特化ロジック**: TRPG固有のルール・制約
+
+#### **バックエンドで実装すべきもの**:
+- **データ永続化**: 確実なCRUD操作・整合性保証
+- **認証・認可**: セキュリティ境界での検証
+- **基本バリデーション**: スキーマ検証・重複チェック
+- **外部システム連携**: Database・Firebase Auth等
+
+#### **判断基準**:
+```typescript
+// 複雑なビジネスロジック → Frontend
+if (hasComplexStateMachine || requiresOptimisticUpdate) {
+  // React hooks・state managementで実装
+}
+
+// シンプルなCRUD → Backend
+if (isBasicDataPersistence && requiresDataIntegrity) {
+  // Hono.js APIで実装
+}
+```
+
+### テスト戦略指針
+
+#### **各層のテスト責務**:
+
+**Frontend Testing**:
+- **Component Tests**: UI コンポーネントの動作確認
+- **Hook Tests**: ビジネスロジック・状態管理のテスト
+- **Integration Tests**: フロー全体の統合テスト
+
+**Backend Testing**:
+- **API Tests**: エンドポイントの基本動作確認
+- **Schema Validation Tests**: 入力データの検証テスト
+- **Integration Tests**: Database連携の確認
+
+**E2E Testing**:
+- **BDD Tests**: 実際のユーザーシナリオでの動作保証
+- **Cross-browser Tests**: 環境差異の検証
+
+#### **テスト投資レベル判断**:
+- **フロントエンド**: 複雑なビジネスロジックのため高投資
+- **バックエンド**: シンプルなCRUDのため中程度投資
+- **E2E**: ユーザー価値保証のため必須投資
+
+### アーキテクチャ進化指針
+
+#### **過剰な複雑化を避ける**:
+- ❌ バックエンドでの過度なDDD実装
+- ❌ 不要なマイクロサービス分割
+- ❌ 複雑な抽象化レイヤー
+
+#### **適切な改善方向**:
+- ✅ エラーハンドリング・ログの統一
+- ✅ パフォーマンス監視・最適化
+- ✅ 開発体験・保守性の向上
 
 ---
 
