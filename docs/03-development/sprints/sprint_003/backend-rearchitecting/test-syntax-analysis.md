@@ -251,10 +251,15 @@ packages/bdd-e2e-test/e2e/playwright/signup.test.ts
 apps/backend/test/units/graphScene.unit.test.ts
 
 # 修正内容
-- test() → it() への機械的置換
-- テスト記述の統一（命名規則適用）
-- describe() 階層の見直し
+- test() → it() への機械的置換のみ
+- テスト名（文字列）は変更しない
+- 既存のテスト記述はそのまま保持
 ```
+
+#### **⚠️ 重要な留意点**
+- **構文のみ変更**: `test(` → `it(` の置換のみ実施
+- **文字列保持**: テスト名やdescribe内容は既存のまま維持
+- **段階的改善**: 命名規則統一は別途検討・実装
 
 #### **Phase 3: 品質確保（1週間）**
 ```typescript

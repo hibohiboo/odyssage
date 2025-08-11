@@ -117,7 +117,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
   });
 
   describe('getScenesForScenario', () => {
-    test('正常な場合: シーンリストを順序付きで取得', async () => {
+    it('正常な場合: シーンリストを順序付きで取得', async () => {
       // Arrange
       const mockScenes = [
         {
@@ -191,7 +191,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
       expect(mockSession.close).toHaveBeenCalled();
     });
 
-    test('異常な場合: Neo4jエラー時にエラーをthrow', async () => {
+    it('異常な場合: Neo4jエラー時にエラーをthrow', async () => {
       // Arrange
       const mockError = new Error('Connection failed');
       mockSession.run.mockRejectedValue(mockError);
@@ -204,7 +204,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
       expect(mockSession.close).toHaveBeenCalled();
     });
 
-    test('空のシーンリストの場合: 空配列を返す', async () => {
+    it('空のシーンリストの場合: 空配列を返す', async () => {
       // Arrange
       mockSession.run.mockResolvedValue({
         records: [],
@@ -220,7 +220,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
   });
 
   describe('createOrUpdateScene', () => {
-    test('正常な場合: シーンを作成・更新し、関係性を構築', async () => {
+    it('正常な場合: シーンを作成・更新し、関係性を構築', async () => {
       // Arrange
       const mockSceneResult = {
         get: vi.fn((key: string) => {
@@ -273,7 +273,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
       expect(mockSession.close).toHaveBeenCalled();
     });
 
-    test('異常な場合: シーン作成に失敗時エラーをthrow', async () => {
+    it('異常な場合: シーン作成に失敗時エラーをthrow', async () => {
       // Arrange
       mockSession.run.mockResolvedValue({
         records: [],
@@ -295,7 +295,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
   });
 
   describe('Validation Logic Unit Tests', () => {
-    test('UUIDバリデーション: 正しい形式のUUIDを受け入れる', () => {
+    it('UUIDバリデーション: 正しい形式のUUIDを受け入れる', () => {
       const validUUID = '550e8400-e29b-41d4-a716-446655440000';
       // UUID正規表現パターンのテスト
       const uuidPattern =
@@ -303,14 +303,14 @@ describe('GraphScene Business Logic Unit Tests', () => {
       expect(uuidPattern.test(validUUID)).toBe(true);
     });
 
-    test('UUIDバリデーション: 不正な形式のUUIDを拒否する', () => {
+    it('UUIDバリデーション: 不正な形式のUUIDを拒否する', () => {
       const invalidUUID = 'invalid-uuid';
       const uuidPattern =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       expect(uuidPattern.test(invalidUUID)).toBe(false);
     });
 
-    test('シーン順序の数値バリデーション', () => {
+    it('シーン順序の数値バリデーション', () => {
       const validOrders = [1, 2, 100, 999];
       const invalidOrders = [-1, 0, '文字列', null, undefined];
 
@@ -325,7 +325,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
   });
 
   describe('Data Transformation Logic', () => {
-    test('Neo4jレスポンスからJSONレスポンスへの変換', () => {
+    it('Neo4jレスポンスからJSONレスポンスへの変換', () => {
       const mockNeo4jRecord = {
         get: vi.fn((key: string) => {
           const data = {
@@ -363,7 +363,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
       });
     });
 
-    test('null値やundefinedの適切な処理', () => {
+    it('null値やundefinedの適切な処理', () => {
       const mockNeo4jRecord = {
         get: vi.fn((key: string) => {
           const data = {

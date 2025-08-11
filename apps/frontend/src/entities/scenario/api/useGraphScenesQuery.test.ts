@@ -35,7 +35,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
   });
 
   describe('Hook初期化・設定', () => {
-    test('scenarioIdが存在する場合、適切なキーでデータ取得を開始する', () => {
+    it('scenarioIdが存在する場合、適切なキーでデータ取得を開始する', () => {
       const scenarioId = 'test-scenario-123';
       mockUseSWR.mockReturnValue({
         data: undefined,
@@ -56,7 +56,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       );
     });
 
-    test('scenarioIdが存在しない場合、データ取得を実行しない', () => {
+    it('scenarioIdが存在しない場合、データ取得を実行しない', () => {
       mockUseSWR.mockReturnValue({
         data: undefined,
         error: undefined,
@@ -74,7 +74,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
   });
 
   describe('APIデータ取得処理', () => {
-    test('正常な場合：APIからシーンデータを取得し、JSONとして返す', async () => {
+    it('正常な場合：APIからシーンデータを取得し、JSONとして返す', async () => {
       const mockScenes = [
         {
           id: 'scene-1',
@@ -110,7 +110,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       });
     });
 
-    test('API応答がok=falseの場合：エラーメッセージをthrowする', async () => {
+    it('API応答がok=falseの場合：エラーメッセージをthrowする', async () => {
       mockApiGet.mockResolvedValue({
         ok: false,
         status: 500,
@@ -132,7 +132,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       await expect(fetcherFunction()).rejects.toThrow('Failed to fetch scenes');
     });
 
-    test('ネットワークエラーの場合：元のエラーをそのままthrowする', async () => {
+    it('ネットワークエラーの場合：元のエラーをそのままthrowする', async () => {
       const networkError = new Error('Network connection failed');
       mockApiGet.mockRejectedValue(networkError);
 
@@ -156,7 +156,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
   });
 
   describe('Hook戻り値・状態管理', () => {
-    test('データ取得中：isLoadingがtrueを返す', () => {
+    it('データ取得中：isLoadingがtrueを返す', () => {
       mockUseSWR.mockReturnValue({
         data: undefined,
         error: undefined,
@@ -173,7 +173,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       expect(result.current.error).toBeUndefined();
     });
 
-    test('データ取得成功：dataにシーンリストが格納される', () => {
+    it('データ取得成功：dataにシーンリストが格納される', () => {
       const mockScenes = [
         {
           id: 'scene-1',
@@ -200,7 +200,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       expect(result.current.error).toBeUndefined();
     });
 
-    test('データ取得失敗：errorにエラー情報が格納される', () => {
+    it('データ取得失敗：errorにエラー情報が格納される', () => {
       const mockError = new Error('Fetch failed');
 
       mockUseSWR.mockReturnValue({
@@ -219,7 +219,7 @@ describe('useGraphScenesQuery Hook Unit Tests', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    test('SWRのmutate関数が適切に公開される', () => {
+    it('SWRのmutate関数が適切に公開される', () => {
       const mockMutate = vi.fn();
 
       mockUseSWR.mockReturnValue({
