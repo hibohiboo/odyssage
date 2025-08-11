@@ -201,10 +201,12 @@ PUT /api/users/{uid}                             # ユーザー情報更新（�
 | `GET /api/users/{uid}/scenario` | `GET /api/scenarios?author={uid}` | 統合 | RESTful参照系統一 |
 | `POST /api/users/{uid}/scenario` | `POST /api/authors/{uid}/scenarios` | 文脈特化 | Author文脈明確化 |
 | `PUT /api/users/{uid}/scenario/{id}` | `PUT /api/authors/{uid}/scenarios/{id}` | 文脈特化 | Author権限明確化 |
-| `POST /api/sessions` | `POST /api/gm/{uid}/sessions` | 文脈特化 | GM作成権限明確化 |
+| `POST /api/sessions` | `POST /api/game-masters/{uid}/sessions` | 文脈特化 | GM作成権限・ロール名統一 |
+| `GET /api/sessions/gm/{gm_id}` | `GET /api/game-masters/{uid}/sessions` | 文脈特化 | ロール名・パラメータ名統一 |
+| `PATCH /api/gm/{uid}/sessions/{id}` | `PATCH /api/game-masters/{uid}/sessions/{id}` | ロール統一 | 命名一貫性確保 |
 | `GET /api/users/{uid}/stocked-scenarios` | `GET /api/scenarios/stocked?gm={uid}` | 統合 | RESTful参照系統一 |
-| `POST /api/users/{uid}/stocked-scenarios/{id}` | `POST /api/gm/{uid}/scenarios/{id}/actions/stock` | 文脈特化 | GM文脈・アクション明確化 |
-| `DELETE /api/users/{uid}/stocked-scenarios/{id}` | `DELETE /api/gm/{uid}/scenarios/{id}/actions/unstock` | 文脈特化 | GM文脈・アクション明確化 |
+| `POST /api/users/{uid}/stocked-scenarios/{id}` | `POST /api/game-masters/{uid}/scenarios/{id}/actions/stock` | 文脈特化 | GM文脈・ロール名統一 |
+| `DELETE /api/users/{uid}/stocked-scenarios/{id}` | `DELETE /api/game-masters/{uid}/scenarios/{id}/actions/unstock` | 文脈特化 | GM文脈・ロール名統一 |
 
 ---
 
@@ -454,17 +456,49 @@ const getScenarioDetail = (id: string) =>
 - [ ] 廃止スケジュール・告知
 ```
 
-### **📊 全体移行スケジュール案**
+### **📊 全体移行スケジュール案（修正版）**
 
-| API移行対象 | 予定期間 | 作業量 | 開始予定 |
-|------------|----------|--------|----------|
-| **`GET /api/scenario/{id}` → `scenarios/{id}`** | 12日 | 低 | 即時開始可能 |
-| **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API1完了後 |
-| **`POST /api/sessions` → `gm/{uid}/sessions`** | 18日 | 中 | API2完了後 |  
-| **`GET /api/sessions/gm/{gm_id}` → `gm/{uid}/sessions`** | 15日 | 中 | API3完了後 |
-| **Player参加機能（新規）** | 25日 | 高 | API4完了後 |
+| 順位 | API移行対象 | 予定期間 | 作業量 | 開始予定 | 主な変更内容 |
+|------|------------|----------|--------|----------|-------------|
+| 1 | **`GET /api/scenario/{id}` → `scenarios/{id}`** | 12日 | 低 | 即時開始可能 | RESTful統一のみ |
+| 2 | **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API1完了後 | Author文脈特化 |
+| 3 | **既存`PATCH /api/gm/{uid}/sessions/{id}` → `game-masters/{uid}/sessions/{id}`** | 10日 | 中 | API2完了後 | ロール名統一のみ |
+| 4 | **`GET /api/sessions/gm/{gm_id}` → `game-masters/{uid}/sessions`** | 20日 | 高 | API3完了後 | ロール名・パラメータ名・テスト大幅修正 |
+| 5 | **`POST /api/sessions` → `game-masters/{uid}/sessions`** | 18日 | 中 | API4完了後 | 新GM文脈エンドポイント |
+| 6 | **Player参加機能（新規）** | 25日 | 高 | API5完了後 | 完全新機能 |
 
-**合計予定期間**: 約3-4か月（85日、段階的実施）
+**合計予定期間**: 約4-5か月（100日、段階的実施）
+
+### **⚠️ 重要な設計変更事項**
+
+#### **1. ロール名統一: `gm` → `game-masters`**
+```http
+# api-path-structure-design.md に基づく修正
+❌ 旧計画: /api/gm/{uid}/...
+✅ 新計画: /api/game-masters/{uid}/...
+
+理由: 
+- 英語表記の統一性（authors, game-masters, players）
+- 国際化対応・可読性向上
+- RESTful命名慣習への準拠
+```
+
+#### **2. パラメータ名統一: `gm_id` → `uid`**  
+```http
+# 現在の不整合
+❌ GET /api/sessions/gm/{gm_id}    # パラメータ名不統一
+❌ PATCH /api/gm/{uid}/sessions/{id} # ロール名不統一
+
+# 統一後
+✅ GET /api/game-masters/{uid}/sessions  # 統一命名
+✅ PATCH /api/game-masters/{uid}/sessions/{id} # 統一命名
+```
+
+#### **3. テスト環境問題への対応**
+**test-architecture-analysis.md** により発見された重要課題:
+- **統合テスト実行率: 0%** (Docker環境問題)
+- **既存テスト破綻リスク: 高** (エンドポイント大幅変更)
+- **修正工数増加: 2-3日/API** (テスト修復含む)
 
 ---
 
