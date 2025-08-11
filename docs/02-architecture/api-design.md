@@ -11,6 +11,23 @@ OdyssageのREST API設計原則、OpenAPIファーストアプローチ、バリ
 - **補完的業務としての設計**: バックエンドAPIは「データ更新の補完業務」として軽量設計
 - **Edge Computing最適化**: Cloudflare Workersの特性を活かした効率的実装
 
+#### **DDD適用境界の明確化**
+```typescript
+// ✅ フロントエンド: 複雑なドメインロジック
+interface TRPGDomainService {
+  createScenarioWorkflow(input: CreateScenarioInput): ScenarioWorkflowResult;
+  handleOptimisticConflict(local: Change[], server: State): Resolution;
+  validateBusinessRules(scenario: Scenario): ValidationResult;
+}
+
+// ✅ バックエンド: 最小限のドメインルール + 永続化
+interface APIScenarioService {
+  validateForPersistence(dto: ScenarioDTO): ValidationResult;
+  persistScenario(dto: ScenarioDTO): Promise<PersistResult>;
+  checkUniqueness(title: string): Promise<boolean>;
+}
+```
+
 ### OpenAPI First アプローチ
 - **仕様書駆動開発**: 実装前にOpenAPI定義必須
 - **契約による設計**: フロントエンド・バックエンド間の明確な契約
