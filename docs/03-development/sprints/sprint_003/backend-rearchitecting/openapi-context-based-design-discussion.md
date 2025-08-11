@@ -609,6 +609,90 @@ PUT /api/sessions/{id}/actions/manage # GM管理アクション
 - ⚠️ 設計判断基準の明確化が必要
 - ⚠️ 一貫性の維持にガバナンスが必要
 
+### **🎯 現在の実装分析：既にHybrid Approachを採用**
+
+#### **📊 現状の設計パターン確認**
+
+**シナリオAPI**：比較的Pure RESTful
+```http
+GET /api/scenarios              # 汎用一覧
+GET /api/scenarios/public       # 公開一覧（文脈特化）
+GET /api/users/{uid}/scenario   # 作成者専用（文脈特化）
+```
+
+**セッションAPI**：明確なHybrid Approach
+```http
+# 基本RESTful
+GET /api/sessions               # 汎用（クエリで文脈対応）
+POST /api/sessions              # 汎用作成
+GET /api/sessions/{id}          # 個別取得
+
+# 文脈特化
+GET /api/sessions/gm/{gm_id}    # GM管理専用
+PATCH /api/gm/{uid}/sessions/{id} # GM更新専用
+```
+
+**✅ 判断**: 既存の設計は**Hybrid Approach**の方向性で実装されている
+
+### **🤔 設計判断基準の提案**
+
+#### **文脈特化エンドポイントが必要な条件**
+
+**1. 情報需要の根本的差異**
+```typescript
+// 判断基準：同じリソースでも50%以上のフィールドが異なる場合
+interface GMSessionView {
+  canEdit: boolean;     // GM専用
+  canDelete: boolean;   // GM専用
+  editUrl: string;      // GM専用
+  manageUrl: string;    // GM専用
+  playerManagement: {}; // GM専用
+}
+
+interface PlayerSessionView {
+  gmName: string;       // Player専用
+  canJoin: boolean;     // Player専用
+  joinUrl: string;      // Player専用
+  scenario: {};         // Player専用（詳細情報）
+}
+// → 共通フィールドが50%未満 → 文脈特化エンドポイント推奨
+```
+
+**2. 権限制御の複雑性**
+```typescript
+// 判断基準：複雑な権限ロジックが必要な場合
+if (requiresOwnershipCheck && hasComplexRoleBasedLogic) {
+  // 文脈特化エンドポイント推奨
+  // 例：/api/gm/{uid}/sessions/{id} （所有者チェック必須）
+}
+```
+
+**3. セキュリティ境界の明確性**
+```typescript
+// 判断基準：誤操作防止が重要な場合
+if (isDestructiveOperation || hasHighSecurityRequirement) {
+  // 明示的な文脈特化エンドポイント推奨
+  // 例：セッション削除・プレイヤー除名等
+}
+```
+
+#### **RESTful統一エンドポイントで十分な条件**
+
+**1. 基本的なCRUD操作**
+```typescript
+// 判断基準：権限チェックが単純で、レスポンスが類似
+interface BasicResource {
+  commonFields: 80%; // 80%以上が共通フィールド
+  simplePermissionCheck: true; // JWTの基本権限チェックのみ
+}
+// → 統一エンドポイント + 内部権限制御で十分
+```
+
+**2. 主に参照系の操作**
+```http
+GET /api/scenarios/{id}  # 個別シナリオ閲覧（文脈によらず同じ情報）
+```
+
 ## 🔬 文脈特化設計の課題
 
 ### 設計上の検討事項
