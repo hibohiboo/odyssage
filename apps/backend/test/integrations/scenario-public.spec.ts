@@ -59,6 +59,17 @@ describe('Scenario Public API 統合テスト', () => {
       getEnv(),
     );
 
+  /** 公開シナリオ一覧をGETで取得する共通関数 */
+  const getPublicScenarios = async () =>
+    app.request(
+      '/api/scenarios/public',
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      getEnv(),
+    );
+
   it('全シナリオ一覧を正しく取得できる', async () => {
     const res = await getScenarios();
 
@@ -128,5 +139,92 @@ describe('Scenario Public API 統合テスト', () => {
     );
 
     expect(res.status).toBe(200);
+  });
+
+  describe('GET /api/scenarios/public', () => {
+    it('公開シナリオのみを正しく取得できる', async () => {
+      const res = await getPublicScenarios();
+
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const data = await res.json<any[]>();
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBe(2); // public シナリオのみ（testScenario1, testScenario3）
+
+      // 公開シナリオが含まれていることを確認
+      const scenarioIds = data.map((scenario: any) => scenario.id);
+      expect(scenarioIds).toContain(testScenario1.id);
+      expect(scenarioIds).toContain(testScenario3.id);
+
+      // プライベートシナリオが含まれていないことを確認
+      expect(scenarioIds).not.toContain(testScenario2.id);
+    });
+
+    it('visibility フィールドが全て public であることを確認', async () => {
+      const res = await getPublicScenarios();
+      expect(res.status).toBe(200);
+
+      const data = await res.json<any[]>();
+      expect(Array.isArray(data)).toBe(true);
+
+      // 全てのシナリオがpublicであることを確認
+      data.forEach((scenario: any) => {
+        expect(scenario.visibility).toBe('public');
+      });
+    });
+
+    it('レスポンススキーマが適切な形式である', async () => {
+      const res = await getPublicScenarios();
+      expect(res.status).toBe(200);
+
+      const data = await res.json<any[]>();
+      expect(Array.isArray(data)).toBe(true);
+
+      if (data.length > 0) {
+        const scenario = data[0];
+
+        // 必須フィールドの存在確認
+        expect(scenario).toHaveProperty('id');
+        expect(scenario).toHaveProperty('title');
+        expect(scenario).toHaveProperty('updatedAt');
+
+        // フィールド型の確認
+        expect(typeof scenario.id).toBe('string');
+        expect(typeof scenario.title).toBe('string');
+        expect(typeof scenario.updatedAt).toBe('string');
+      }
+    });
+
+    it('公開シナリオが0件でも正常に動作する', async () => {
+      // 全シナリオをprivateに変更
+      await execSql(
+        getEnv().NEON_CONNECTION_STRING,
+        "UPDATE odyssage.scenarios SET visibility = 'private'",
+      );
+
+      const res = await getPublicScenarios();
+
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const data = await res.json<any[]>();
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBe(0);
+    });
+
+    it('認証不要で正常にアクセスできる', async () => {
+      const res = await app.request(
+        '/api/scenarios/public',
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          // Authorizationヘッダーを意図的に省略
+        },
+        getEnv(),
+      );
+
+      expect(res.status).toBe(200);
+    });
   });
 });
