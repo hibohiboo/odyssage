@@ -346,6 +346,18 @@ it('新規ユーザー登録', async () => {
 });
 ```
 
+#### **7. OpenAPI First 開発プロセス**
+- **原則**: 実装変更前に必ずOpenAPI仕様を先に修正
+- **対象**: パラメータ名・エラーケース・認証要件・レスポンススキーマ
+- **効果**: 仕様と実装の一貫性保証・後戻り作業削減
+- **フロー**: OpenAPI修正 → 実装修正 → テスト確認
+
+#### **8. 実践的な注意事項**
+- **テストコマンド**: `bun run test` が正しい（`bun test` は直接実行で環境変数等が不足）
+- **エラーハンドリング**: 配列分割代入時の `undefined` チェック必須
+- **バリデーション確認**: 期待値は推測せず実際動作で確認
+- **Docker環境**: 統合テストはTestcontainers必須・環境問題の切り分け重要
+
 ### 参考実装
 - **GET /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
 - **PUT /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
