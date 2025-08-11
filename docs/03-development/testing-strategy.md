@@ -358,9 +358,39 @@ it('新規ユーザー登録', async () => {
 - **バリデーション確認**: 期待値は推測せず実際動作で確認
 - **Docker環境**: 統合テストはTestcontainers必須・環境問題の切り分け重要
 
+#### **9. データベース制約とエラーハンドリング**
+- **DB制約エラー**: 重複制約・外部キー制約違反は500エラーで適切に処理される
+- **冪等性重要**: DELETE操作は存在しないリソースでも200成功が適切
+- **テーブル名確認**: 実装前にDrizzle ORMスキーマ定義の正確な確認必須
+- **制約期待値**: DB制約違反テストでは500エラーを期待値に設定
+
+#### **10. 複合エンドポイントテスト戦略**
+```typescript
+// ✅ 関連する複数エンドポイントを1つのファイルで統合テスト
+describe('User Stock API 統合テスト', () => {
+  // GET/POST/DELETE を関係性を含めて包括的にテスト
+  beforeEach(async () => {
+    // クリーンアップ→テストデータ準備の効率化
+    await execSql(conn, 'delete from scenario_stock'); 
+    await execSql(conn, 'delete from scenarios');
+    // テストシナリオ準備
+  });
+  
+  it('操作後の状態確認', async () => {
+    await addStock(userId, scenarioId); // POST操作
+    
+    const stocks = await getStocks(userId); // GET確認
+    expect(stocks.length).toBe(1); // 関係性検証
+  });
+});
+```
+
 ### 参考実装
-- **GET /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
-- **PUT /api/users/{uid}**: `apps/backend/test/integrations/user-management.spec.ts`
+- **単一リソース操作**: `apps/backend/test/integrations/user-management.spec.ts` (GET/PUT /api/users/{uid})
+- **個別リソース取得**: `apps/backend/test/integrations/scenario-detail.spec.ts` (GET /api/scenario/{id})
+- **リスト取得**: `apps/backend/test/integrations/scenario-public.spec.ts` (GET /api/scenarios, GET /api/scenarios/public)
+- **認証付きリソース管理**: `apps/backend/test/integrations/user-scenario.spec.ts` (POST/GET /api/users/{uid}/scenario)
+- **複合エンドポイント**: `apps/backend/test/integrations/user-stock.spec.ts` (GET/POST/DELETE stocked-scenarios)
 - **成功例**: 冗長テスト排除・upsert動作検証・スキーマ変更対応
 
 ---
