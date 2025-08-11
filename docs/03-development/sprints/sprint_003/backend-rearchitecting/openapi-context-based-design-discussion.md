@@ -410,7 +410,129 @@ interface GMPublicScenarioResponse {
 3. 公開シナリオ取得時のストック状態判定
 4. JWT内のロール情報と権限マッピング
 
-## 🎯 文脈ベースAPI設計の課題
+## 🎯 API設計哲学: RESTful vs 文脈特化のバランス
+
+### 根本的な設計思想の検討
+
+#### **🤔 現在の課題：文脈による要件差異**
+
+**同一リソースでも文脈によって大きく異なる情報需要**:
+
+```typescript
+// 同じ「セッション一覧」でも...
+
+// GM文脈: 管理・編集に必要な情報
+interface GMSessionListResponse {
+  sessions: Array<{
+    canEdit: boolean;       // 編集権限
+    canDelete: boolean;     // 削除権限
+    editUrl: string;        // 編集画面URL
+    manageUrl: string;      // 進行管理URL
+    playerManagement: {     // プレイヤー管理情報
+      pendingInvitations: number;
+      activePlayersCount: number;
+    };
+  }>;
+}
+
+// Player文脈: 参加・閲覧に必要な情報
+interface PlayerSessionListResponse {
+  sessions: Array<{
+    gmName: string;         // GMの名前
+    canJoin: boolean;       // 参加可能性
+    isParticipating: boolean; // 参加状況
+    joinUrl: string;        // 参加申請URL
+    viewUrl: string;        // 閲覧URL
+    scenario: {             // シナリオ詳細情報
+      difficulty: string;
+      playerCountRange: string;
+    };
+  }>;
+}
+```
+
+#### **📊 3つのAPI設計アプローチの比較**
+
+### **アプローチA: Pure RESTful Design**
+
+**思想**: リソース中心、統一エンドポイント、内部で権限制御
+
+```http
+# 統一エンドポイント
+GET /api/sessions
+Authorization: Bearer {jwt}
+
+# JWTのロール情報で内部的にレスポンス変更
+# GM用・Player用のレスポンスを動的生成
+```
+
+**メリット**:
+- ✅ RESTful原則に忠実
+- ✅ エンドポイント数が少ない
+- ✅ キャッシュ戦略がシンプル
+- ✅ HTTP標準に準拠
+
+**デメリット**:
+- ❌ OpenAPI仕様で文脈別要件を表現困難
+- ❌ フロントエンドでの利用パターンが不明確
+- ❌ レスポンス形式が予測しづらい
+- ❌ 型安全性の確保が困難
+
+### **アプローチB: Complete Context Separation**
+
+**思想**: ユーザー文脈別の完全分離設計
+
+```http
+# GM専用エンドポイント
+GET /api/gm/sessions
+POST /api/gm/sessions/{id}/invite-player
+PUT /api/gm/sessions/{id}/manage
+
+# Player専用エンドポイント  
+GET /api/player/sessions/available
+POST /api/player/sessions/{id}/join
+GET /api/player/sessions/{id}/view
+```
+
+**メリット**:
+- ✅ 文脈別要件を明確に表現
+- ✅ 権限制御が明快
+- ✅ 型安全性が高い
+- ✅ フロントエンドでの利用が直感的
+
+**デメリット**:
+- ❌ エンドポイント数の爆発的増加
+- ❌ RESTful原則からの逸脱
+- ❌ コードの重複リスク
+- ❌ メンテナンスコスト増加
+
+### **アプローチC: Hybrid Approach**
+
+**思想**: 基本RESTful + 文脈特化エンドポイント
+
+```http
+# 基本リソースエンドポイント（共通）
+GET /api/sessions/{id}
+POST /api/sessions
+
+# 文脈特化エンドポイント（必要な場合のみ）
+GET /api/sessions/gm/{gm_id}          # GM管理一覧
+GET /api/sessions/player/available    # プレイヤー参加可能一覧
+POST /api/sessions/{id}/actions/join  # プレイヤー参加アクション
+PUT /api/sessions/{id}/actions/manage # GM管理アクション
+```
+
+**メリット**:
+- ✅ RESTfulの基本を維持
+- ✅ 必要な文脈特化に対応
+- ✅ 段階的な拡張が可能
+- ✅ 適度な複雑さで実用的
+
+**デメリット**:
+- ⚠️ 設計判断基準の明確化が必要
+- ⚠️ 一貫性の維持にガバナンスが必要
+
+## 🔬 文脈特化設計の課題
 
 ### 設計上の検討事項
 
