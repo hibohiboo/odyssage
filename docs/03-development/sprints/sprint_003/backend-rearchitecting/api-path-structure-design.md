@@ -392,6 +392,32 @@ POST /api/players/{uid}/sessions/{id}/participation
 DELETE /api/players/{uid}/sessions/{id}/participation
 ```
 
+#### **推奨方針: ハイブリッド方式**
+
+**状態変更**: 専用リソース方式（RESTful準拠）
+```http
+# セッション状態管理
+PATCH /api/game-masters/{uid}/sessions/{id}/status
+{ "status": "進行中" }
+
+# 可視性設定
+PATCH /api/authors/{uid}/scenarios/{id}/visibility  
+{ "visibility": "public" }
+```
+
+**ビジネスアクション**: アクション指定方式（文脈特化）
+```http
+# 複雑なビジネスロジック
+POST /api/players/{uid}/sessions/{id}/actions/join
+POST /api/game-masters/{uid}/sessions/{id}/actions/invite
+DELETE /api/players/{uid}/sessions/{id}/actions/leave
+```
+
+**判定基準**:
+- **単純な属性変更** → 専用リソース（RESTful）
+- **複雑なビジネス処理** → アクション指定（文脈明確化）
+- **既存実装との整合性** → 現在の `/api/gm/{uid}/sessions/{id}` パターン考慮
+
 ### **3. 段階的移行戦略**
 
 **Question**: 一括移行 vs 段階的移行？
@@ -400,6 +426,99 @@ DELETE /api/players/{uid}/sessions/{id}/participation
 - フロントエンドへの影響
 - 後方互換性の維持期間
 - 開発・テスト工数
+
+#### **推奨戦略: 段階的移行**
+
+**Phase 1: 新パス追加（既存維持）**
+```http
+# 新パス実装（推奨）
+POST /api/authors/{uid}/scenarios     ← 新規追加
+PUT /api/authors/{uid}/scenarios/{id} ← 新規追加
+
+# 既存パス維持（非推奨）
+POST /api/users/{uid}/scenario        ← 廃止予定
+PUT /api/users/{uid}/scenario/{id}    ← 廃止予定
+```
+
+**Phase 2: フロントエンド移行**
+```typescript
+// 段階的な移行例
+const createScenario = async (uid: string, data: ScenarioData) => {
+  try {
+    // 新APIを優先使用
+    return await api.post(`/api/authors/${uid}/scenarios`, data);
+  } catch (error) {
+    // フォールバック（一時的）
+    console.warn('新APIが失敗、旧APIにフォールバック');
+    return await api.post(`/api/users/${uid}/scenario`, data);
+  }
+};
+```
+
+**Phase 3: 旧パス廃止**
+- 使用状況監視後に段階的廃止
+- 十分な移行期間（3-6ヶ月）確保
+
+#### **移行スケジュール案**
+
+| フェーズ | 期間 | 作業内容 | 影響範囲 |
+|----------|------|----------|----------|
+| **Phase 1** | 2週間 | 新パス実装・テスト | バックエンドのみ |
+| **Phase 2** | 4週間 | フロントエンド移行・並行運用 | 全体 |
+| **Phase 3** | 2週間 | 旧API削除・最終テスト | バックエンド・クリーンアップ |
+
+#### **リスク軽減策**
+
+**A. 互換性検証**
+```yaml
+# 移行検証用テストスイート
+migration_tests:
+  - name: "新旧API結果一致確認"
+    old_endpoint: "POST /api/users/{uid}/scenario"
+    new_endpoint: "POST /api/authors/{uid}/scenarios"
+    validation: "response_schema_match"
+  
+  - name: "権限制御一致確認" 
+    scenarios: ["unauthorized", "forbidden", "success"]
+    validation: "status_code_match"
+```
+
+**B. 段階的フロントエンド移行**
+```typescript
+// 機能フラグによる段階的移行
+const useNewAPI = featureFlag('new_api_endpoints');
+
+const scenarioAPI = {
+  create: useNewAPI 
+    ? (uid, data) => api.post(`/api/authors/${uid}/scenarios`, data)
+    : (uid, data) => api.post(`/api/users/${uid}/scenario`, data),
+  
+  update: useNewAPI
+    ? (uid, id, data) => api.put(`/api/authors/${uid}/scenarios/${id}`, data) 
+    : (uid, id, data) => api.put(`/api/users/${uid}/scenario/${id}`, data)
+};
+```
+
+**C. 監視・ロールバック準備**
+```typescript
+// API使用状況監視
+const apiMetrics = {
+  old_endpoints: {
+    'POST /api/users/{uid}/scenario': 0,
+    'PUT /api/users/{uid}/scenario/{id}': 0
+  },
+  new_endpoints: {
+    'POST /api/authors/{uid}/scenarios': 0, 
+    'PUT /api/authors/{uid}/scenarios/{id}': 0
+  }
+};
+
+// 問題発生時のロールバック
+const rollbackToOldAPI = () => {
+  featureFlag.disable('new_api_endpoints');
+  console.log('新APIでエラー発生、旧APIに緊急ロールバック');
+};
+```
 
 ---
 
