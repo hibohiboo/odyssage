@@ -193,7 +193,7 @@ describe('GraphScene Business Logic Unit Tests', () => {
 
     it('異常な場合: Neo4jエラー時にエラーをthrow', async () => {
       // Arrange
-      const mockError = new Error('Connection failed');
+      const mockError = new Error('Database error');
       mockSession.run.mockRejectedValue(mockError);
 
       // Act & Assert
