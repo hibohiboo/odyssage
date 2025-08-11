@@ -210,98 +210,261 @@ PUT /api/users/{uid}                             # ユーザー情報更新（�
 
 ## 📈 実装計画・段階的移行戦略
 
-### Phase 1: 基盤整備・設計確定（Week 1）
+> **⚠️ 重要な変更**: ユーザーフィードバックに基づく計画修正
+> - **プロセス変更**: 仕様更新 → テスト修正 → 実装修正 → テスト確認 → フロントエンド反映
+> - **アプローチ変更**: 一括移行から **1APIずつ完全移行** に変更
 
-#### **🔍 現状分析完了**
-- [x] **既存API構造の詳細分析**
-  - [x] エンドポイント一覧・マッピング作成
-  - [x] 権限制御実装状況確認
-  - [x] OpenAPI仕様との乖離特定
+### 🔄 新移行プロセス（1API単位）
 
-#### **📋 設計策定**
-- [ ] **新階層構造の詳細設計**
-  - [ ] 文脈別エンドポイントパス確定
-  - [ ] 権限チェックロジック設計
-  - [ ] エラーハンドリング文脈対応設計
+#### **標準移行フロー**
+```
+1. OpenAPI仕様更新    📝 仕様先行
+2. テスト修正・追加    🧪 期待動作定義  
+3. 実装修正・新規追加   💻 実装変更
+4. テスト実行・確認    ✅ 動作確認
+5. フロントエンド反映   🎨 UI/UX更新
+6. 旧API廃止準備      🗑️ 段階的廃止
+```
+
+### 📋 対象API優先順位・選定
+
+#### **移行対象API分析**
+
+**🟢 優先度: 高（影響小・効果大）**
+1. **`GET /api/scenario/{id}` → `GET /api/scenarios/{id}`**
+   - 理由: 単純なパス修正、RESTful統一
+   - 影響: 最小限（参照系のみ）
+   - 効果: API一貫性向上
+
+2. **`POST /api/users/{uid}/scenario` → `POST /api/authors/{uid}/scenarios`**
+   - 理由: Author文脈明確化、基本CRUD機能
+   - 影響: 中程度（作成者機能のみ）
+   - 効果: 権限境界明確化
+
+**🟡 優先度: 中（実装要検討）**
+3. **`POST /api/sessions` → `POST /api/gm/{uid}/sessions`**
+   - 理由: GM文脈特化、セッション作成権限明確化
+   - 影響: 中程度（GM機能のみ）
+   - 効果: セキュリティ向上
+
+4. **`GET /api/sessions/gm/{gm_id}` → `GET /api/gm/{uid}/sessions`**
+   - 理由: パラメータ名統一（gm_id → uid）
+   - 影響: 中程度（既存GM機能）
+   - 効果: 命名一貫性
+
+**🔴 優先度: 低（新機能・将来実装）**
+5. **Playerセッション参加機能（新規）**
+   - `POST /api/players/{uid}/sessions/{id}/actions/join`
+   - 理由: 新機能、実装範囲大
+   - 影響: 大（新機能開発）
+   - 効果: 機能拡張
+
+---
+
+## 🎯 第1弾API移行計画: `GET /api/scenario/{id}` → `GET /api/scenarios/{id}`
+
+### **選定理由**
+- ✅ **最小リスク**: 参照系のみ、破壊的変更なし
+- ✅ **明確な改善**: RESTful命名統一（scenario → scenarios）  
+- ✅ **学習効果**: 移行プロセスの確立・検証に最適
+- ✅ **即効性**: API一貫性向上の即時効果
+
+### **詳細移行計画**
+
+#### **Step 1: OpenAPI仕様更新（3日）**
+
+**1-1. 新パス仕様作成**
+- [ ] **`docs/redocly/openapi/paths/scenarios-detail.yaml` 作成**
+  - 新パス: `GET /api/scenarios/{id}`
+  - パラメータ名統一: `id` (UUID形式)
+  - レスポンススキーマ: 既存維持 + 文脈別フィールド拡張準備
+
+**1-2. 旧パス仕様更新**  
+- [ ] **`docs/redocly/openapi/paths/scenario.yaml` にDeprecated追加**
+  - `deprecated: true` マーク
+  - `description` に移行案内追加
+  - 新パスへのリダイレクト案内
+
+**1-3. スキーマ拡張準備**
+```yaml
+# scenarios-detail.yaml 拡張予定
+ScenarioDetailResponse:
+  allOf:
+    - $ref: '#/components/schemas/BaseScenario'
+    - type: object
+      properties:
+        # 文脈別フィールド（将来実装）
+        authorPermissions:
+          $ref: '#/components/schemas/AuthorPermissions'
+        gmInfo:
+          $ref: '#/components/schemas/GMContextInfo'
+```
+
+#### **Step 2: テスト修正・追加（2日）**
+
+**2-1. 既存テスト更新**
+- [ ] **`scenario-detail.spec.ts` パス修正**
+  - リクエストURL: `/api/scenario/{id}` → `/api/scenarios/{id}`
+  - テストデータ・期待値: 変更なし
+  - 新旧パス並行テスト期間設定
+
+**2-2. 移行テスト追加**
+- [ ] **新旧API結果一致テスト作成**
+```typescript
+describe('API移行確認テスト', () => {
+  it('新旧エンドポイントで同一結果を返すこと', async () => {
+    const oldResponse = await app.request('/api/scenario/test-id');
+    const newResponse = await app.request('/api/scenarios/test-id');
+    
+    expect(oldResponse.status).toBe(newResponse.status);
+    expect(await oldResponse.json()).toEqual(await newResponse.json());
+  });
+});
+```
+
+#### **Step 3: 実装修正・新規追加（2日）**
+
+**3-1. 新パス実装**
+- [ ] **`route/index.ts` に新エンドポイント追加**
+```typescript
+// 新パス追加（推奨）
+.get('/scenarios/:id', vValidator('param', idSchema), async (c) => {
+  const param = c.req.valid('param');
+  const [data] = await getScenariosByid(c.env.NEON_CONNECTION_STRING, param.id);
+  if (!data) {
+    return c.text('Not Found', 404);
+  }
+  return c.json(data);
+})
+
+// 旧パス維持（非推奨警告付き）
+.get('/scenario/:id', vValidator('param', idSchema), async (c) => {
+  // Deprecated警告
+  c.header('X-Deprecated-Endpoint', 'true');
+  c.header('X-New-Endpoint', 'GET /api/scenarios/{id}');
   
-- [ ] **移行計画・優先順位決定**
-  - [ ] 影響範囲分析（フロントエンド・テスト）
-  - [ ] 段階的移行スケジュール策定
-  - [ ] 後方互換性保持戦略
+  // 同一ロジック実行（重複回避）
+  return scenarioDetailHandler(c);
+});
+```
 
-### Phase 2: 参照系API統一（Week 2）
+**3-2. 共通ハンドラー抽出**
+- [ ] **重複ロジック排除**
+```typescript
+const scenarioDetailHandler = async (c: Context) => {
+  const param = c.req.valid('param');
+  const [data] = await getScenariosByid(c.env.NEON_CONNECTION_STRING, param.id);
+  if (!data) {
+    return c.text('Not Found', 404);
+  }
+  return c.json(data);
+};
+```
 
-#### **🔄 RESTfulエンドポイント統一**
-- [ ] **シナリオ参照系改善**
-  - [ ] `GET /api/scenario/{id}` → `GET /api/scenarios/{id}` パス修正
-  - [ ] 文脈別フィールド追加ロジック実装
-  - [ ] JWTベースの権限情報付加機能
-  
-- [ ] **セッション参照系強化**
-  - [ ] 既存 `GET /api/sessions` の文脈別レスポンス対応
-  - [ ] Player/GM文脈での情報差別化実装
+#### **Step 4: テスト実行・確認（1日）**
 
-#### **📝 OpenAPI仕様更新**
-- [ ] **参照系スキーマ更新**
-  - [ ] 文脈別レスポンススキーマ定義
-  - [ ] oneOf・examples活用した文脈表現
-  - [ ] 権限フィールド仕様化
+**4-1. 統合テスト実行**
+- [ ] **新パステスト実行**: `bun run test scenarios-detail.spec.ts`
+- [ ] **移行テスト実行**: 新旧API結果一致確認
+- [ ] **既存テスト確認**: 他機能への影響確認
 
-### Phase 3: 更新系API文脈特化（Week 3-4）
+**4-2. 手動テスト実行**
+- [ ] **新パス動作確認**: Postman/curl での動作確認
+- [ ] **Deprecated警告確認**: 旧パスでのヘッダー確認
 
-#### **🎨 Author文脈エンドポイント実装**
-- [ ] **新エンドポイント実装**
-  - [ ] `POST /api/authors/{uid}/scenarios` 作成
-  - [ ] `PUT /api/authors/{uid}/scenarios/{id}` 編集
-  - [ ] 所有者チェック・権限制御実装
-  
-- [ ] **既存エンドポイント移行**
-  - [ ] 現在の `/api/users/{uid}/scenario` 系を文脈特化
-  - [ ] 後方互換性維持（Deprecated警告付き）
+#### **Step 5: フロントエンド反映（3日）**
 
-#### **🎲 GM文脈エンドポイント拡張**
-- [ ] **セッション管理強化**
-  - [ ] `POST /api/gm/{uid}/sessions` GM専用作成
-  - [ ] `DELETE /api/gm/{uid}/sessions/{id}` 削除機能追加
-  
-- [ ] **シナリオストック機能移行**
-  - [ ] `POST /api/gm/{uid}/scenarios/{id}/actions/stock` 
-  - [ ] `DELETE /api/gm/{uid}/scenarios/{id}/actions/unstock`
-  - [ ] アクションベースURL設計実装
+**5-1. フロントエンド側パス更新**
+- [ ] **APIクライアント更新**
+```typescript
+// 修正前
+const getScenarioDetail = (id: string) => 
+  api.get(`/api/scenario/${id}`);
 
-#### **👥 Player文脈エンドポイント新設**
-- [ ] **セッション参加機能実装**
-  - [ ] `POST /api/player/{uid}/sessions/{id}/actions/join`
-  - [ ] `DELETE /api/player/{uid}/sessions/{id}/actions/leave`
-  - [ ] Player権限・参加制限チェック
+// 修正後  
+const getScenarioDetail = (id: string) => 
+  api.get(`/api/scenarios/${id}`);
+```
 
-### Phase 4: テスト・品質確保（Week 5）
+**5-2. 段階的移行対応**
+- [ ] **機能フラグ対応**（必要に応じて）
+- [ ] **エラー処理更新**: Deprecated警告への対応
 
-#### **🧪 既存テスト更新**
-- [ ] **統合テストの移行対応**
-  - [ ] 新エンドポイントパスでのテスト更新
-  - [ ] 文脈別レスポンス検証テスト追加
-  - [ ] 権限チェックテストの拡充
+#### **Step 6: 旧API廃止準備（1日）**
 
-#### **📊 新機能テスト作成**
-- [ ] **Player文脈APIテスト**
-  - [ ] セッション参加・離脱機能テスト
-  - [ ] Player権限制御テスト
-  
-- [ ] **文脈別エラーハンドリングテスト**
-  - [ ] 権限エラーの文脈対応テスト
-  - [ ] 適切なエラーメッセージ・リダイレクト提案テスト
+**6-1. 使用状況監視**
+- [ ] **アクセスログ確認**: 旧パスの使用状況監視
+- [ ] **フロントエンド完全移行確認**: 新パスへの完全切り替え確認
 
-### Phase 5: 後方互換性削除・完全移行（Week 6）
+**6-2. 廃止スケジュール設定**
+- [ ] **廃止予告**: 3か月後廃止予定の告知
+- [ ] **ドキュメント更新**: 移行完了の記録
 
-#### **🗑️ 旧エンドポイント廃止**
-- [ ] **Deprecated警告期間後の削除**
-  - [ ] 旧パス `/api/users/{uid}/scenario` 系削除
-  - [ ] 旧パス `/api/scenario/{id}` 削除
-  
-- [ ] **最終整合性確認**
-  - [ ] OpenAPI仕様の完全更新
-  - [ ] ドキュメント・ガイドライン最新化
+### **成功指標・確認項目**
+
+#### **技術指標**
+- [x] **新パス正常動作**: 全テスト通過（既存同等）
+- [x] **旧パス維持**: Deprecated警告付きで正常動作
+- [x] **パフォーマンス**: 応答時間劣化なし
+- [x] **エラーハンドリング**: 404・500エラーの適切な処理
+
+#### **プロセス指標**  
+- [x] **仕様先行**: OpenAPI更新後の実装実施
+- [x] **テスト先行**: テスト修正後の実装修正
+- [x] **段階的移行**: 新旧API並行運用期間確保
+- [x] **フロントエンド完了**: UI側への完全反映
+
+---
+
+## 🚀 移行プロセス標準化
+
+### **テンプレート化した移行フロー**
+
+#### **各APIごとの標準作業**
+```markdown
+# API移行計画: [API名]
+
+## Step 1: OpenAPI仕様更新（[予定日数]日）
+- [ ] 新パス仕様作成・ファイル配置
+- [ ] 旧パス Deprecated マーク  
+- [ ] スキーマ更新・拡張対応
+
+## Step 2: テスト修正・追加（[予定日数]日）
+- [ ] 既存テストのパス修正
+- [ ] 新旧API一致確認テスト追加
+- [ ] エラーケース・権限テスト追加
+
+## Step 3: 実装修正・新規追加（[予定日数]日）
+- [ ] 新パス実装・ハンドラー作成
+- [ ] 旧パス Deprecated 警告追加
+- [ ] 権限チェック・エラーハンドリング実装
+
+## Step 4: テスト実行・確認（1日）
+- [ ] 統合テスト実行・結果確認
+- [ ] 手動テスト・動作確認  
+- [ ] 既存機能影響確認
+
+## Step 5: フロントエンド反映（[予定日数]日）
+- [ ] APIクライアント更新
+- [ ] UI/UX修正・テスト
+- [ ] 段階的移行・機能フラグ対応
+
+## Step 6: 旧API廃止準備（1日）  
+- [ ] 使用状況監視・移行確認
+- [ ] 廃止スケジュール・告知
+```
+
+### **📊 全体移行スケジュール案**
+
+| API移行対象 | 予定期間 | 作業量 | 開始予定 |
+|------------|----------|--------|----------|
+| **`GET /api/scenario/{id}` → `scenarios/{id}`** | 12日 | 低 | 即時開始可能 |
+| **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API1完了後 |
+| **`POST /api/sessions` → `gm/{uid}/sessions`** | 18日 | 中 | API2完了後 |  
+| **`GET /api/sessions/gm/{gm_id}` → `gm/{uid}/sessions`** | 15日 | 中 | API3完了後 |
+| **Player参加機能（新規）** | 25日 | 高 | API4完了後 |
+
+**合計予定期間**: 約3-4か月（85日、段階的実施）
 
 ---
 
