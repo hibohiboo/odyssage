@@ -42,26 +42,5 @@ const route = new Hono<Env>()
       return c.text('Not Found', 404);
     }
     return c.json(data);
-  })
-  // 旧API（非推奨）- 後方互換性維持
-  .get('/scenario/:id', vValidator('param', idSchema), async (c) => {
-    // Deprecated警告ヘッダー追加
-    c.header('X-Deprecated-Endpoint', 'true');
-    c.header('X-New-Endpoint', 'GET /api/scenarios/{id}');
-    c.header('X-Deprecated-Until', '2025-11-01');
-    
-    // 廃止準備：使用状況ログ出力
-    console.warn(`[DEPRECATED] Legacy API /api/scenario/${c.req.param('id')} accessed. Client should migrate to /api/scenarios/${c.req.param('id')} before 2025-11-01. User-Agent: ${c.req.header('User-Agent') || 'unknown'}, IP: ${c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'}`);
-    
-    // 共通ロジック実行（完全に同一のロジック・レスポンス）
-    const param = c.req.valid('param');
-    const [data] = await getScenariosByid(
-      c.env.NEON_CONNECTION_STRING,
-      param.id,
-    );
-    if (!data) {
-      return c.text('Not Found', 404);
-    }
-    return c.json(data);
   });
 export default route;

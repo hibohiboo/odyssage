@@ -5,8 +5,7 @@ import { setupTestEnv } from './test-utils';
 
 /**
  * Scenario Detail API統合テスト
- * GET /api/scenarios/{id} エンドポイントのテスト（新API）
- * GET /api/scenario/{id} エンドポイントのテスト（旧API・非推奨）
+ * GET /api/scenarios/{id} エンドポイントのテスト
  */
 describe('Scenario Detail API 統合テスト', () => {
   const testUserId = 'test-user-id-12345';
@@ -54,16 +53,6 @@ describe('Scenario Detail API 統合テスト', () => {
       getEnv(),
     );
 
-  /** シナリオ詳細をGETで取得する共通関数（旧API・非推奨） */
-  const getScenarioLegacy = async (id: string) =>
-    app.request(
-      `/api/scenario/${id}`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      },
-      getEnv(),
-    );
 
   describe('新API: GET /api/scenarios/{id}', () => {
     it('存在するシナリオを正しく取得できる', async () => {
@@ -129,48 +118,4 @@ describe('Scenario Detail API 統合テスト', () => {
     });
   });
 
-  describe('旧API: GET /api/scenario/{id} (非推奨)', () => {
-    it('存在するシナリオを正しく取得できる（後方互換性）', async () => {
-      const res = await getScenarioLegacy(testScenario.id);
-
-      expect(res.status).toBe(200);
-      expect(res.headers.get('content-type')).toContain('application/json');
-
-      const data = await res.json();
-      expect(data).toEqual({
-        id: testScenario.id,
-        title: testScenario.title,
-        overview: testScenario.overview,
-        visibility: testScenario.visibility,
-        updatedAt: expect.any(String),
-      });
-    });
-
-    it('Deprecated警告ヘッダーが付与されること', async () => {
-      const res = await getScenarioLegacy(testScenario.id);
-
-      expect(res.headers.get('X-Deprecated-Endpoint')).toBe('true');
-      expect(res.headers.get('X-New-Endpoint')).toBe('GET /api/scenarios/{id}');
-      expect(res.headers.get('X-Deprecated-Until')).toBe('2025-11-01');
-    });
-  });
-
-  describe('API移行互換性テスト', () => {
-    it('新旧エンドポイントが完全に同一結果を返すこと', async () => {
-      const oldResponse = await getScenarioLegacy(testScenario.id);
-      const newResponse = await getScenarioNew(testScenario.id);
-
-      // ステータス・レスポンス本体の完全一致確認
-      expect(oldResponse.status).toBe(newResponse.status);
-      expect(await oldResponse.json()).toEqual(await newResponse.json());
-    });
-
-    it('404エラーも新旧で同一であること', async () => {
-      const oldResponse = await getScenarioLegacy(nonExistentScenarioId);
-      const newResponse = await getScenarioNew(nonExistentScenarioId);
-
-      expect(oldResponse.status).toBe(newResponse.status);
-      expect(await oldResponse.text()).toBe(await newResponse.text());
-    });
-  });
 });
