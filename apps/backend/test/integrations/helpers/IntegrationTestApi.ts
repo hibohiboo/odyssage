@@ -215,7 +215,21 @@ export class IntegrationTestApi {
   }
 
   /**
-   * シナリオ詳細を取得
+   * シナリオ詳細を取得（公開エンドポイント）
+   */
+  async getScenarioDetail(scenarioId: string) {
+    return this.app.request(
+      `/api/scenarios/${scenarioId}`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * シナリオ詳細を取得（ユーザー管理下）
    */
   async getScenarioById(userId: string, scenarioId: string) {
     return this.app.request(
