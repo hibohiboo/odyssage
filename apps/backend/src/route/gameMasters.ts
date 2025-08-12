@@ -51,21 +51,47 @@ export const gameMastersRoute = new Hono<Env>()
           });
         } catch (dbError) {
           Logger.error('セッション作成DBエラー:', dbError);
-          
-          // 外部キー制約エラー（存在しないシナリオIDなど）の場合は400エラー
+
+          // データベースエラーの詳細をログ出力
           if (dbError instanceof Error) {
-            const errorMessage = dbError.message.toLowerCase();
-            if (
-              errorMessage.includes('foreign key') ||
-              errorMessage.includes('violates foreign key constraint') ||
-              errorMessage.includes('foreign_key') ||
-              errorMessage.includes('constraint') ||
-              errorMessage.includes('reference')
-            ) {
-              return c.json({ message: '指定されたシナリオが見つかりません' }, 400);
-            }
+            Logger.error('エラーメッセージ:', dbError.message);
+            Logger.error('エラースタック:', dbError.stack);
           }
-          throw dbError; // その他のDBエラーは500エラーとして処理
+          Logger.error(
+            'エラーオブジェクト全体:',
+            JSON.stringify(dbError, null, 2),
+          );
+
+          // 様々なデータベースエラーパターンをチェック
+          const errorStr = String(dbError).toLowerCase();
+          const messageStr =
+            dbError instanceof Error ? dbError.message.toLowerCase() : '';
+
+          if (
+            errorStr.includes('foreign key') ||
+            errorStr.includes('constraint') ||
+            errorStr.includes('reference') ||
+            messageStr.includes('foreign key') ||
+            messageStr.includes('constraint') ||
+            messageStr.includes('reference') ||
+            messageStr.includes('not found') ||
+            messageStr.includes('does not exist')
+          ) {
+            return c.json(
+              { message: '指定されたシナリオが見つかりません' },
+              400,
+            );
+          }
+
+          // 一時的にすべてのDBエラーを400として扱い、エラー内容を確認
+          return c.json(
+            {
+              message: '指定されたシナリオが見つかりません',
+              debug:
+                dbError instanceof Error ? dbError.message : String(dbError),
+            },
+            400,
+          );
         }
 
         // 作成したセッションを取得
