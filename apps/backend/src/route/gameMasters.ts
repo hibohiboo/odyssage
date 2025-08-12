@@ -52,18 +52,10 @@ export const gameMastersRoute = new Hono<Env>()
         } catch (dbError) {
           Logger.error('セッション作成DBエラー:', dbError);
 
-          // Drizzle + PostgreSQLの外部キー制約エラーを検出
+          // PostgreSQL外部キー制約違反エラー (23503) を検出
           if (dbError instanceof Error) {
-            // DrizzleQueryErrorの場合、causeオブジェクトにPostgreSQLエラー詳細が含まれる
-            const errorData = dbError as any;
-            const cause = errorData?.cause;
-            
-            // PostgreSQLエラーコード 23503 = foreign_key_violation
-            if (
-              cause?.code === '23503' ||
-              cause?.name === 'PostgresError' ||
-              dbError.constructor?.name === 'DrizzleQueryError'
-            ) {
+            const errorData = dbError as { cause?: { code?: string } };
+            if (errorData.cause?.code === '23503') {
               return c.json({ message: '指定されたシナリオが見つかりません' }, 400);
             }
           }
