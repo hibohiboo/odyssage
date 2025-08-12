@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { setupTestEnv } from './test-utils';
 import { IntegrationTestApi, TestFixtures } from './helpers';
+import { setupTestEnv } from './test-utils';
 
 /**
  * User Management API統合テスト
@@ -22,12 +22,10 @@ describe('User Management API 統合テスト', () => {
 
   let app: ReturnType<typeof getApp>;
   let api: IntegrationTestApi;
-  let fixtures: TestFixtures;
 
   beforeEach(() => {
     app = getApp();
     api = new IntegrationTestApi(app, getEnv());
-    fixtures = new TestFixtures(getConnectionString());
   });
 
   // 共通関数は IntegrationTestApi に移行済み
@@ -103,13 +101,13 @@ describe('User Management API 統合テスト', () => {
     });
 
     it('nameフィールドが未定義でバリデーションエラー', async () => {
-      const res = await api.putUserRaw(testUserId, {}); // name フィールドなし
+      const res = await api.putUser(testUserId, {}); // name フィールドなし
 
       expect(res.status).toBe(400);
     });
 
     it('不正なJSONでバリデーションエラー', async () => {
-      const res = await api.putUserWithInvalidJson(testUserId, 'invalid json string');
+      const res = await api.putUser(testUserId, 'invalid json string');
 
       expect(res.status).toBe(400);
     });

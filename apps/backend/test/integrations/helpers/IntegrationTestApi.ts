@@ -28,44 +28,16 @@ export class IntegrationTestApi {
 
   /**
    * ユーザー情報を登録・更新
+   * @param uid ユーザーID
+   * @param userData ユーザーデータまたは文字列（テスト用）
    */
-  async putUser(uid: string, userData: { name: string }) {
+  async putUser(uid: string, userData: any) {
     return this.app.request(
       `/api/users/${uid}`,
       {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      },
-      this.env,
-    );
-  }
-
-  /**
-   * ユーザー情報を任意のオブジェクトで更新（バリデーション テスト用）
-   */
-  async putUserRaw(uid: string, userData: any) {
-    return this.app.request(
-      `/api/users/${uid}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      },
-      this.env,
-    );
-  }
-
-  /**
-   * 不正なJSONでユーザー更新を試行（バリデーション テスト用）
-   */
-  async putUserWithInvalidJson(uid: string, invalidBody: string) {
-    return this.app.request(
-      `/api/users/${uid}`,
-      {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: invalidBody,
+        body: typeof userData === 'string' ? userData : JSON.stringify(userData),
       },
       this.env,
     );
