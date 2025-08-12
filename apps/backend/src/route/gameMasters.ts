@@ -1,5 +1,6 @@
 // filepath: d:\projects\odyssage\apps\backend\src\route\gameMasters.ts
 import { vValidator } from '@hono/valibot-validator';
+import { createSession } from '@odyssage/database/src/queries/insert';
 import {
   getSessionsByGmId,
   getSessionById,
@@ -7,6 +8,7 @@ import {
 import { updateSessionStatus } from '@odyssage/database/src/queries/update_session';
 import {
   userParamSchema,
+  sessionRequestSchema,
   sessionStatusUpdateSchema,
   sessionStatuSchema,
   parse,
@@ -14,15 +16,66 @@ import {
 } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
+import { generateUUID } from '../utils/generateUUID';
 import { Logger } from '../utils/logger';
 
 /**
  * ゲームマスター（GM）文脈のエンドポイント
+ * - POST /{uid}/sessions: GMが新しいセッションを作成
  * - GET /{uid}/sessions: 指定GMが管理するセッション一覧を取得
  * - PATCH /{uid}/sessions/{id}: GMがセッションの状態を更新
  */
 export const gameMastersRoute = new Hono<Env>()
   .use('/:uid/sessions/:id', authorizeMiddleware)
+  .use('/:uid/sessions', authorizeMiddleware)
+  .post(
+    '/:uid/sessions',
+    vValidator('param', userParamSchema),
+    vValidator('json', sessionRequestSchema),
+    async (c) => {
+      try {
+        const param = c.req.valid('param');
+        const json = c.req.valid('json');
+
+        // UUIDを生成
+        const sessionId = generateUUID();
+
+        // セッションをデータベースに登録
+        await createSession(c.env.NEON_CONNECTION_STRING, {
+          id: sessionId,
+          gmId: param.uid,
+          scenarioId: json.scenarioId,
+          title: json.title,
+          status: '準備中',
+        });
+
+        // 作成したセッションを取得
+        const [createdSession] = await getSessionById(
+          c.env.NEON_CONNECTION_STRING,
+          sessionId,
+        );
+
+        if (!createdSession) {
+          return c.json({ message: 'Failed to retrieve created session' }, 500);
+        }
+
+        // レスポンス形式に整形し、既存実装と同一形式を維持
+        const response = {
+          id: createdSession.id,
+          gmId: createdSession.gmId,
+          scenarioId: createdSession.scenarioId,
+          title: createdSession.title,
+          status: createdSession.status,
+          createdAt: createdSession.createdAt.toISOString(),
+        };
+
+        return c.json(response, 201);
+      } catch (error) {
+        Logger.error('GM セッション作成エラー:', error);
+        return c.json({ message: 'セッションの作成に失敗しました' }, 500);
+      }
+    },
+  )
   .get('/:uid/sessions', vValidator('param', userParamSchema), async (c) => {
     try {
       const param = c.req.valid('param');
