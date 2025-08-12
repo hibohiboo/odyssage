@@ -8,7 +8,7 @@ import {
 import { updateSessionStatus } from '@odyssage/database/src/queries/update_session';
 import {
   userParamSchema,
-  sessionRequestSchema,
+  gameMasterSessionRequestSchema,
   sessionStatusUpdateSchema,
   sessionStatuSchema,
   parse,
@@ -31,7 +31,7 @@ export const gameMastersRoute = new Hono<Env>()
   .post(
     '/:uid/sessions',
     vValidator('param', userParamSchema),
-    vValidator('json', sessionRequestSchema),
+    vValidator('json', gameMasterSessionRequestSchema),
     async (c) => {
       try {
         const param = c.req.valid('param');

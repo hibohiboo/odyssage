@@ -66,6 +66,12 @@ export const sessionRequestSchema = v.object({
   title: v.string(),
 });
 
+// Game Masters API用のセッション作成スキーマ（gmIdはパスパラメータから取得）
+export const gameMasterSessionRequestSchema = v.object({
+  scenarioId: v.string(),
+  title: v.string(),
+});
+
 export const sessionStatusUpdateSchema = v.object({
   status: sessionStatuSchema,
 });
@@ -83,6 +89,7 @@ export const sessionResponseSchema = v.object({
 });
 
 export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;
+export type GameMasterSessionRequest = v.InferInput<typeof gameMasterSessionRequestSchema>;
 export type SessionResponse = v.InferOutput<typeof sessionResponseSchema>;
 
 // GraphDB Scenario schemas

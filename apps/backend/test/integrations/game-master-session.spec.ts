@@ -169,7 +169,7 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(data.length).toBe(2);
 
       // GMのセッションが含まれていることを確認
-      const sessionTitles = data.map((session) => session.name);
+      const sessionTitles = data.map((session) => session.title);
       expect(sessionTitles).toContain('テストセッション1');
       expect(sessionTitles).toContain('テストセッション2');
     });
