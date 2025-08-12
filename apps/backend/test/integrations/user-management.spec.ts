@@ -12,7 +12,7 @@ describe('User Management API 統合テスト', () => {
   const testUserName = 'テストユーザー太郎';
   const nonExistentUserId = 'non-existent-user-id';
 
-  const { getApp, getEnv, getConnectionString } = setupTestEnv({
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       await execSql(
         connectionString,

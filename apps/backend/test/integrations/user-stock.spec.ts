@@ -12,14 +12,14 @@ describe('User Scenario Stock API 統合テスト', () => {
   const testUserName = 'テストユーザー太郎';
   const testAuthorId = 'author-user-id-67890';
   const testAuthorName = 'シナリオ作成者';
-  
+
   const testScenario1 = {
     id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039901',
     title: 'ストック用シナリオ1',
     overview: 'これはストック用のテストシナリオ1です。',
     visibility: 'public',
   };
-  
+
   const testScenario2 = {
     id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039902',
     title: 'ストック用シナリオ2',
@@ -46,7 +46,7 @@ describe('User Scenario Stock API 統合テスト', () => {
     // クリーンアップ
     await execSql(getConnectionString(), 'delete from odyssage.scenario_stock');
     await execSql(getConnectionString(), 'delete from odyssage.scenarios');
-    
+
     // テストシナリオを準備
     await execSql(
       getConnectionString(),
@@ -62,9 +62,9 @@ describe('User Scenario Stock API 統合テスト', () => {
       `/api/users/${uid}/stocked-scenarios`,
       {
         method: 'GET',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock-jwt-token' // 認証必須
+          Authorization: 'Bearer mock-jwt-token', // 認証必須
         },
       },
       getEnv(),
@@ -76,9 +76,9 @@ describe('User Scenario Stock API 統合テスト', () => {
       `/api/users/${uid}/stocked-scenarios/${scenarioId}`,
       {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock-jwt-token'
+          Authorization: 'Bearer mock-jwt-token',
         },
       },
       getEnv(),
@@ -90,9 +90,9 @@ describe('User Scenario Stock API 統合テスト', () => {
       `/api/users/${uid}/stocked-scenarios/${scenarioId}`,
       {
         method: 'DELETE',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer mock-jwt-token'
+          Authorization: 'Bearer mock-jwt-token',
         },
       },
       getEnv(),
@@ -125,7 +125,7 @@ describe('User Scenario Stock API 統合テスト', () => {
       expect(data.length).toBe(2);
 
       // ストックされたシナリオが含まれていることを確認
-      const stockedIds = data.map(item => item.id);
+      const stockedIds = data.map((item) => item.id);
       expect(stockedIds).toContain(testScenario1.id);
       expect(stockedIds).toContain(testScenario2.id);
     });
@@ -198,10 +198,10 @@ describe('User Scenario Stock API 統合テスト', () => {
       expect(res1.status).toBe(201);
 
       // 同じシナリオを再度ストック
-      const res2 = await addScenarioStock(testUserId, testScenario1.id);
+      await addScenarioStock(testUserId, testScenario1.id);
       // 重複の場合の動作を確認（500エラーまたは重複ハンドリング）
       // 実装次第でテストケース調整が必要
-      
+
       // ストック一覧で重複がないことを確認
       const listRes = await getStockedScenarios(testUserId);
       const stocks = await listRes.json<any[]>();
@@ -230,7 +230,9 @@ describe('User Scenario Stock API 統合テスト', () => {
       expect(res.headers.get('content-type')).toContain('application/json');
 
       const data = await res.json();
-      expect(data).toEqual({ message: 'Scenario removed from stock successfully' });
+      expect(data).toEqual({
+        message: 'Scenario removed from stock successfully',
+      });
 
       // ストックが削除されたことを確認
       const listRes = await getStockedScenarios(testUserId);

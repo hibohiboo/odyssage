@@ -10,6 +10,7 @@
     "test": "vitest run --config vitest.config.mts",
     "watch": "vitest --config vitest.config.mts",
     "ncu": "ncu -u",
+    "build": "eslint .",
     "lint": "eslint .",
     "put-secret-neonkey": "wrangler secret put NEON_CONNECTION_STRING",
     "put-secret-firebase-project-id": "wrangler secret put FIREBASE_PROJECT_ID",
