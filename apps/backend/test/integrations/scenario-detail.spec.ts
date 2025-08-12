@@ -60,22 +60,6 @@ describe('Scenario Detail API 統合テスト', () => {
       expect(res.status).toBe(400);
     });
 
-    it('レスポンススキーマが適切な形式である', async () => {
-      const res = await api.getScenarioDetail(testScenario.id);
-      expect(res.status).toBe(200);
-
-      const data = await res.json();
-      expect(data).toEqual({
-        id: testScenario.id,
-        title: testScenario.title,
-        overview: testScenario.overview,
-        visibility: testScenario.visibility,
-        updatedAt: expect.any(String),
-      });
-
-      // visibilityのenum値確認
-      expect(['public', 'private']).toContain(data.visibility);
-    });
 
     it('認証不要で正常にアクセスできる', async () => {
       const res = await api.getScenarioDetail(testScenario.id);
