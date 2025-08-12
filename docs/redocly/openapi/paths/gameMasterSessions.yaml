@@ -113,7 +113,17 @@ post:
               message:
                 type: string
                 description: エラーメッセージ
-                example: '必須フィールドが不足しています'
+            required:
+              - message
+          examples:
+            invalid_fields:
+              summary: '必須フィールド不足'
+              value:
+                message: '必須フィールドが不足しています'
+            invalid_scenario:
+              summary: '存在しないシナリオID'
+              value:
+                message: '指定されたシナリオが見つかりません'
     '401':
       description: 認証が必要です
       content:

@@ -40,14 +40,33 @@ export const gameMastersRoute = new Hono<Env>()
         // UUIDを生成
         const sessionId = generateUUID();
 
-        // セッションをデータベースに登録
-        await createSession(c.env.NEON_CONNECTION_STRING, {
-          id: sessionId,
-          gmId: param.uid,
-          scenarioId: json.scenarioId,
-          title: json.title,
-          status: '準備中',
-        });
+        // セッションをデータベースに登録（存在しないシナリオIDの場合は400エラー）
+        try {
+          await createSession(c.env.NEON_CONNECTION_STRING, {
+            id: sessionId,
+            gmId: param.uid,
+            scenarioId: json.scenarioId,
+            title: json.title,
+            status: '準備中',
+          });
+        } catch (dbError) {
+          Logger.error('セッション作成DBエラー:', dbError);
+          
+          // 外部キー制約エラー（存在しないシナリオIDなど）の場合は400エラー
+          if (dbError instanceof Error) {
+            const errorMessage = dbError.message.toLowerCase();
+            if (
+              errorMessage.includes('foreign key') ||
+              errorMessage.includes('violates foreign key constraint') ||
+              errorMessage.includes('foreign_key') ||
+              errorMessage.includes('constraint') ||
+              errorMessage.includes('reference')
+            ) {
+              return c.json({ message: '指定されたシナリオが見つかりません' }, 400);
+            }
+          }
+          throw dbError; // その他のDBエラーは500エラーとして処理
+        }
 
         // 作成したセッションを取得
         const [createdSession] = await getSessionById(
