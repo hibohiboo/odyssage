@@ -21,7 +21,8 @@
     /* Ensure that casing is correct in imports. */
     "forceConsistentCasingInFileNames": true,
     /* Skip type checking all .d.ts files. */
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "./dist"
   },
   "exclude": ["test", ".wrangler"],
   "include": ["worker-configuration.d.ts", "src/**/*.ts"]
