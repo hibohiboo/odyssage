@@ -1,7 +1,6 @@
-import { execSql } from '@odyssage/database/test-utils/execSql';
 import { generateUUID } from '@odyssage/lib/index';
-
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeEach } from 'vitest';
+import { IntegrationTestApi, TestFixtures } from './helpers';
 import { setupTestEnv } from './test-utils';
 
 /**
@@ -10,22 +9,27 @@ import { setupTestEnv } from './test-utils';
  * データベース操作を含む統合テストを実行します
  */
 describe('セッション統合テスト', () => {
-  // テストユーザーとシナリオの情報
-  const testUserId = 'test-user-id';
-  const testUserName = 'テストユーザー';
-  const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
-  const testScenarioTitle = 'テストシナリオ';
-  // テスト環境のセットアップ
+  // TestFixtures の統一定数を使用
+  const testUserId = TestFixtures.TEST_USERS.GM_USER.id;
+  const testScenarioId = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.id;
+  const testScenarioTitle = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.title;
+
   const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
-      await execSql(
-        connectionString,
-        `
-         INSERT INTO odyssage.users (id, name) VALUES ('${testUserId}', '${testUserName}');
-         INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP)
-        `,
-      );
+      // 統一フィクスチャーを使用
+      const fixtures = new TestFixtures(connectionString);
+      await fixtures.setupBasicTestData();
     },
+  });
+
+  let app: ReturnType<typeof getApp>;
+  let api: IntegrationTestApi;
+  let fixtures: TestFixtures;
+
+  beforeEach(async () => {
+    app = getApp();
+    api = new IntegrationTestApi(app, getEnv());
+    fixtures = new TestFixtures(getConnectionString());
   });
 
   // 注意: セッション作成機能は POST /api/game-masters/{uid}/sessions に移行済み
@@ -33,30 +37,32 @@ describe('セッション統合テスト', () => {
 
   // GET /api/sessions/:id のテスト（まだ有効なAPI）
   it('セッションIDでセッション詳細を取得できること', async () => {
-    const app = getApp();
-    const env = getEnv();
-
-    // 直接データベースにテストセッションを挿入
+    // TestFixturesを使用してテストセッションを作成
     const testSessionId = generateUUID();
-
-    await execSql(
-      getConnectionString(),
-      `INSERT INTO odyssage.sessions (id, gm_id, scenario_id, title, status, created_at, updated_at) 
-       VALUES ('${testSessionId}', '${testUserId}', '${testScenarioId}', 'テスト用セッション', '準備中', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+    await fixtures.createSession(
+      testSessionId,
+      testUserId,
+      testScenarioId,
+      'テスト用セッション',
+      '準備中'
     );
 
-    // GET リクエストでセッションを取得
-    const getResponse = await app.request(
-      `/api/sessions/${testSessionId}`,
-      undefined,
-      env,
-    );
+    // APIクライアントでセッション詳細を取得
+    const getResponse = await api.getSessionById(testSessionId);
 
     expect(getResponse.status).toBe(200);
 
-    const retrievedSession = (await getResponse.json()) as any;
-    expect(retrievedSession.id).toBe(testSessionId);
-    expect(retrievedSession.title).toBe('テスト用セッション');
-    expect(retrievedSession.scenarioTitle).toBe(testScenarioTitle);
+    // 値による直接検証に変更
+    const retrievedSession = await getResponse.json();
+    expect(retrievedSession).toEqual({
+      id: testSessionId,
+      title: 'テスト用セッション',
+      status: '準備中',
+      scenarioId: testScenarioId,
+      scenarioTitle: testScenarioTitle,
+      gmId: testUserId,
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
+    });
   });
 });
