@@ -192,7 +192,7 @@
   - ✅ game-master-session.spec.ts リファクタリング
   - ✅ session-gm.spec.ts リファクタリング  
   - ✅ user-management.spec.ts リファクタリング
-  - ✅ session.spec.ts APIクライアント適用
+  - ✅ session.spec.ts APIクライアント適用 + 過剰テスト削除
   - ✅ session-update.spec.ts 統合テストAPI適用
   - ⬜ scenario-*.spec.ts 共通化とフィクスチャー適用
   - ⬜ user-stock.spec.ts APIクライアント適用
@@ -200,7 +200,7 @@
 - **フェーズ3**: ⬜ 0/3完了
 - **フェーズ4**: ⬜ 0/2完了
 
-**総進捗**: 9/15タスク完了 (60%)
+**総進捗**: 8/15タスク完了 (53%)
 
 ---
 

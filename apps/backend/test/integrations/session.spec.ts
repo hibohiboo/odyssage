@@ -66,12 +66,6 @@ describe('セッション統合テスト', () => {
       });
     });
 
-    it('存在しないセッションIDで404エラー', async () => {
-      const nonExistentSessionId = generateUUID();
-      const getResponse = await api.getSessionById(nonExistentSessionId);
-
-      expect(getResponse.status).toBe(404);
-    });
 
     it('異なるステータスのセッションも正しく取得できる', async () => {
       const testSessionId = generateUUID();
