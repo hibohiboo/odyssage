@@ -59,7 +59,7 @@
 ### **移行対象**
 ```http
 旧API: GET /api/sessions/gm/{gm_id}
-新API: GET /api/game-masters/{gm_id}/sessions
+新API: GET /api/game-masters/{uid}/sessions
 ```
 
 ### **設計原則適用**
@@ -82,7 +82,7 @@
 
 #### **2. パス変更内容**
 - **ロール名統一**: `gm` → `game-masters`
-- **パラメータ名統一**: `gm_id` → `gm_id`（維持）
+- **パラメータ名統一**: `gm_id` → `uid`（他APIとの一貫性）
 - **RESTful化**: 文脈特化パス構造
 
 #### **3. OpenAPI仕様調整**
