@@ -18,6 +18,7 @@ export default tseslint.config(
       'sonarjs/no-nested-functions': ['off'],
       'no-plusplus': ['off'],
       'sonarjs/no-nested-template-literals': ['off'],
+      'class-methods-use-this': ['off'],
     },
   },
   {

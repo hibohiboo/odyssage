@@ -1,17 +1,15 @@
-import { execSql } from '@odyssage/database/test-utils/execSql';
-
 import { describe, expect, it, beforeEach } from 'vitest';
 import { setupTestEnv } from './test-utils';
+import { IntegrationTestApi, TestFixtures } from './helpers';
 
 /**
  * Game Master Session Management API統合テスト
  * POST /api/game-masters/{uid}/sessions, GET /api/game-masters/{uid}/sessions エンドポイントのテスト
  */
 describe('Game Master Session Management API 統合テスト', () => {
-  const testGMId = 'test-gm-id-12345';
-  const testGMName = 'テストゲームマスター';
-  const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039901';
-  const testScenarioTitle = 'テストシナリオ';
+  // テストデータ定数を統一
+  const testGMId = TestFixtures.TEST_USERS.GM_USER.id;
+  const testScenarioId = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.id;
   const testSession = {
     scenarioId: testScenarioId,
     title: 'テストセッション1',
@@ -19,73 +17,56 @@ describe('Game Master Session Management API 統合テスト', () => {
 
   const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
-      // テストGM（ユーザー）とシナリオを準備
-      await execSql(
-        connectionString,
-        `INSERT INTO odyssage.users (id, name) VALUES ('${testGMId}', '${testGMName}');`,
-      );
-      await execSql(
-        connectionString,
-        `INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testGMId}', CURRENT_TIMESTAMP);`,
-      );
+      // 統一フィクスチャーを使用
+      const fixtures = new TestFixtures(connectionString);
+      await fixtures.setupBasicTestData();
     },
   });
 
   let app: ReturnType<typeof getApp>;
+  let api: IntegrationTestApi;
+  let fixtures: TestFixtures;
 
   beforeEach(async () => {
     app = getApp();
-    await execSql(getConnectionString(), 'delete from odyssage.sessions');
+    api = new IntegrationTestApi(app, getEnv());
+    fixtures = new TestFixtures(getConnectionString());
+    
+    // セッションのみクリーンアップ（ユーザー・シナリオは保持）
+    await fixtures.cleanupSessions();
   });
 
-  /** セッションをPOSTで作成する共通関数 */
-  const createSession = async (uid: string, sessionData: any) =>
-    app.request(
-      `/api/game-masters/${uid}/sessions`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer mock-jwt-token', // 認証必須
-        },
-        body: JSON.stringify(sessionData),
-      },
-      getEnv(),
-    );
-
-  /** GMセッション一覧をGETで取得する共通関数 */
-  const getGMSessions = async (uid: string) =>
-    app.request(
-      `/api/game-masters/${uid}/sessions`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      },
-      getEnv(),
-    );
+  // 共通関数は IntegrationTestApi に移行済み
 
   describe('POST /api/game-masters/{uid}/sessions', () => {
     it('新規セッションを正しく作成できる', async () => {
-      const res = await createSession(testGMId, testSession);
+      const res = await api.createSession(testGMId, testSession);
 
       expect(res.status).toBe(201);
       expect(res.headers.get('content-type')).toContain('application/json');
 
+      // 値による直接検証に変更
       const data = await res.json();
-      expect(data).toHaveProperty('id');
-      expect(data).toHaveProperty('gmId', testGMId);
-      expect(data).toHaveProperty('scenarioId', testSession.scenarioId);
-      expect(data).toHaveProperty('title', testSession.title);
-      expect(data).toHaveProperty('status', '準備中');
-      expect(data).toHaveProperty('createdAt');
+      expect(data).toEqual({
+        id: expect.any(String),
+        gmId: testGMId,
+        scenarioId: testSession.scenarioId,
+        title: testSession.title,
+        status: '準備中',
+        createdAt: expect.any(String),
+      });
 
       // 作成されたセッションが取得できることを確認
-      const listRes = await getGMSessions(testGMId);
+      const listRes = await api.getGmSessions(testGMId);
       expect(listRes.status).toBe(200);
       const sessions = await listRes.json<any[]>();
       expect(sessions.length).toBe(1);
-      expect(sessions[0].id).toBe(data.id);
-      expect(sessions[0].title).toBe(testSession.title);
+      expect(sessions[0]).toEqual(
+        expect.objectContaining({
+          id: data.id,
+          title: testSession.title,
+        })
+      );
     });
 
     it('必須フィールドが不足している場合400エラー', async () => {
