@@ -97,7 +97,7 @@
 
 ## 🔍 調査履歴
 
-### **2025-08-12: Sprint 003 API移行調査**
+### **2025-08-12: Sprint 003 第1弾API移行調査**
 
 **調査範囲**:
 ```bash
@@ -106,11 +106,31 @@ apps/frontend/**/*.{ts,tsx,js,jsx,vue}
 ```
 
 **調査結果**:
-- `GET /api/scenario/{id}`: フロントエンドで未使用
+- `GET /api/scenario/{id}`: フロントエンドで未使用 → 削除実施
 - 他のscenario関連API: `/api/graph-scenes/scenario/{scenarioId}` は別API・使用中
 
 **調査者**: Claude (Sprint 003作業中)  
 **調査方法**: Grep tool による全文検索
+
+### **2025-08-12: Sprint 003 第2弾API移行調査**
+
+**調査範囲**:
+```bash
+# フロントエンド全体でのGMセッション関連API使用状況調査
+apps/frontend/**/*.{ts,tsx,js,jsx}
+```
+
+**調査結果**:
+- `GET /api/sessions/gm/{gm_id}`: フロントエンドで未使用 → 削除実施
+- `GET /api/game-masters/{uid}/sessions`: フロントエンドで未使用 → 削除検討
+- 実際の使用API: `GET /api/sessions?gm_id={uid}` (クエリパラメータ形式)
+
+**重要発見**:
+- **移行対象自体が不要**: 旧APIも新APIも使用されておらず、代替APIが存在
+- **工数無駄の発覚**: 不要な移行作業による約150行の実装が無価値化
+
+**調査者**: Claude (Sprint 003作業中)  
+**調査方法**: Grep tool による複数パターン検索
 
 ---
 
@@ -168,7 +188,14 @@ apps/frontend/**/*.{ts,tsx,js,jsx,vue}
 **関連ドキュメント**:
 - `docs/02-architecture/api-design.md`
 - `docs/03-development/sprints/sprint_003/backend-rearchitecting/`
+- `docs/03-development/sprints/sprint_003/backend-rearchitecting/unused-api-cleanup-candidates.md`
+- `docs/03-development/sprints/sprint_003/backend-rearchitecting/api-migration-phase2-completion.md`
 - `docs/redocly/openapi/api.yaml`
+
+**注目すべき発見**:
+- **第2弾移行**: 移行対象API自体が未使用という重要な発見
+- **プロセス改善**: 事前調査の重要性が明確化
+- **工数効率**: 未使用API移行による無駄作業の回避必要性
 
 **タグ**: #api-cleanup #maintenance #technical-debt #architecture
 
