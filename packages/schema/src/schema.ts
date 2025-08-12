@@ -60,12 +60,6 @@ export const sessionStatuSchema = v.picklist([
 ] as const);
 export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
 
-export const sessionRequestSchema = v.object({
-  gmId: v.string(),
-  scenarioId: v.string(),
-  title: v.string(),
-});
-
 // Game Masters API用のセッション作成スキーマ（gmIdはパスパラメータから取得）
 export const gameMasterSessionRequestSchema = v.object({
   scenarioId: v.string(),
@@ -88,7 +82,6 @@ export const sessionResponseSchema = v.object({
   createdAt: v.string(),
 });
 
-export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;
 export type GameMasterSessionRequest = v.InferInput<typeof gameMasterSessionRequestSchema>;
 export type SessionResponse = v.InferOutput<typeof sessionResponseSchema>;
 
