@@ -154,6 +154,37 @@ User-Agent: unknown, IP: unknown
 **関連Issue**: GitHub #111（バックエンドリアーキテクティング）  
 **次回対象**: POST /api/users/{uid}/scenario → POST /api/authors/{uid}/scenarios  
 
-**ステータス**: **🎯 第1弾移行完全完了**
+---
 
-#api-migration #restful-design #backend-refactoring #completed
+## 🧹 技術的負債削除（2025-08-12 追加実施）
+
+### **削除内容**
+ユーザーの「コードは負債です。不要になったものは記憶が新しいうちに削除しましょう」との指摘を受け、段階的移行期間をスキップして旧APIを即座に削除しました。
+
+**削除対象**:
+- ✅ **バックエンド実装**: `apps/backend/src/route/index.ts` の旧API完全削除
+- ✅ **OpenAPI仕様**: `docs/redocly/openapi/paths/scenario.yaml` ファイル削除
+- ✅ **仕様統合**: `docs/redocly/openapi/api.yaml` から旧パス削除
+- ✅ **テストコード整理**: 旧API・移行テスト削除、5テストに最適化
+
+### **削除後テスト結果**（2025-08-12 12:06:07）
+```
+✓ scenario-detail.spec.ts (5 tests) 2290ms  # 旧API削除後
+✓ 全テスト117件 通過                        # 全体影響なし
+```
+
+### **技術的負債削除効果**
+1. **コード量削減**: 旧API実装・テスト・仕様で約200行削除
+2. **保守性向上**: 重複コードによる保守負荷解消
+3. **認知負荷軽減**: 開発者が考慮すべきAPIパスの統一
+
+### **リスク管理**
+- **外部利用者への影響**: フロントエンド未使用により実質的影響なし
+- **段階的移行省略**: 内部プロジェクトのため迅速削除を優先
+- **ロールバック**: Git履歴での復元可能性確保
+
+---
+
+**ステータス**: **🎯 第1弾移行・技術的負債削除完全完了**
+
+#api-migration #restful-design #backend-refactoring #technical-debt-cleanup #completed
