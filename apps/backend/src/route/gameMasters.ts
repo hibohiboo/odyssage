@@ -1,6 +1,9 @@
 // filepath: d:\projects\odyssage\apps\backend\src\route\gameMasters.ts
 import { vValidator } from '@hono/valibot-validator';
-import { getSessionsByGmId, getSessionById } from '@odyssage/database/src/queries/select';
+import {
+  getSessionsByGmId,
+  getSessionById,
+} from '@odyssage/database/src/queries/select';
 import { updateSessionStatus } from '@odyssage/database/src/queries/update_session';
 import {
   userParamSchema,
@@ -20,13 +23,10 @@ import { Logger } from '../utils/logger';
  */
 export const gameMastersRoute = new Hono<Env>()
   .use('/:uid/sessions/:id', authorizeMiddleware)
-  .get(
-    '/:uid/sessions',
-    vValidator('param', userParamSchema),
-    async (c) => {
+  .get('/:uid/sessions', vValidator('param', userParamSchema), async (c) => {
     try {
       const param = c.req.valid('param');
-      const uid = param.uid;
+      const { uid } = param;
 
       if (!uid) {
         return c.json({ message: 'ユーザーIDが必要です' }, 400);

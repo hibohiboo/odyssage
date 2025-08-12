@@ -8,7 +8,6 @@ import { idSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
 import { gameMastersRoute } from './gameMasters';
-import { gmRoute } from './gm';
 import { graphScenarioRoute } from './graphScenario';
 import { graphSceneRoute } from './graphScene';
 import { sessionRoute } from './session';
@@ -19,7 +18,6 @@ const route = new Hono<Env>()
   .use('/users/*', authorizeMiddleware)
   .route('/users', user)
   .route('/sessions', sessionRoute) // セッションルーターを統合
-  .route('/gm', gmRoute) // GM管理ルーターを統合
   .route('/game-masters', gameMastersRoute) // ゲームマスター文脈ルーターを統合
   .route('/graph-scenarios', graphScenarioRoute) // GraphDBシナリオルーターを統合
   .route('/graph-scenes', graphSceneRoute) // GraphDBシーンルーターを統合
