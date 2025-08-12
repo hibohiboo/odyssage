@@ -20,6 +20,45 @@ import { generateUUID } from '../utils/generateUUID';
 import { Logger } from '../utils/logger';
 
 /**
+ * セッション作成処理
+ */
+const handleSessionCreation = async (
+  connectionString: string,
+  sessionData: {
+    id: string;
+    gmId: string;
+    scenarioId: string;
+    title: string;
+    status: string;
+  }
+): Promise<{ success: boolean; error?: string; statusCode?: number }> => {
+  try {
+    await createSession(connectionString, sessionData);
+    return { success: true };
+  } catch (dbError) {
+    Logger.error('セッション作成DBエラー:', dbError);
+
+    // PostgreSQL外部キー制約違反エラー (23503) を検出
+    if (dbError instanceof Error) {
+      const errorData = dbError as { cause?: { code?: string } };
+      if (errorData.cause?.code === '23503') {
+        return { 
+          success: false, 
+          error: '指定されたシナリオが見つかりません', 
+          statusCode: 400 
+        };
+      }
+    }
+    
+    return { 
+      success: false, 
+      error: 'セッションの作成に失敗しました', 
+      statusCode: 500 
+    };
+  }
+};
+
+/**
  * ゲームマスター（GM）文脈のエンドポイント
  * - POST /{uid}/sessions: GMが新しいセッションを作成
  * - GET /{uid}/sessions: 指定GMが管理するセッション一覧を取得
@@ -37,31 +76,19 @@ export const gameMastersRoute = new Hono<Env>()
         const param = c.req.valid('param');
         const json = c.req.valid('json');
 
-        // UUIDを生成
         const sessionId = generateUUID();
 
-        // セッションをデータベースに登録（存在しないシナリオIDの場合は400エラー）
-        try {
-          await createSession(c.env.NEON_CONNECTION_STRING, {
-            id: sessionId,
-            gmId: param.uid,
-            scenarioId: json.scenarioId,
-            title: json.title,
-            status: '準備中',
-          });
-        } catch (dbError) {
-          Logger.error('セッション作成DBエラー:', dbError);
+        // セッション作成処理
+        const result = await handleSessionCreation(c.env.NEON_CONNECTION_STRING, {
+          id: sessionId,
+          gmId: param.uid,
+          scenarioId: json.scenarioId,
+          title: json.title,
+          status: '準備中',
+        });
 
-          // PostgreSQL外部キー制約違反エラー (23503) を検出
-          if (dbError instanceof Error) {
-            const errorData = dbError as { cause?: { code?: string } };
-            if (errorData.cause?.code === '23503') {
-              return c.json({ message: '指定されたシナリオが見つかりません' }, 400);
-            }
-          }
-          
-          // その他のDBエラーは500エラーとして処理
-          return c.json({ message: 'セッションの作成に失敗しました' }, 500);
+        if (!result.success) {
+          return c.json({ message: result.error }, result.statusCode!);
         }
 
         // 作成したセッションを取得
@@ -74,17 +101,15 @@ export const gameMastersRoute = new Hono<Env>()
           return c.json({ message: 'Failed to retrieve created session' }, 500);
         }
 
-        // レスポンス形式に整形し、既存実装と同一形式を維持
-        const response = {
+        // レスポンス形式に整形
+        return c.json({
           id: createdSession.id,
           gmId: createdSession.gmId,
           scenarioId: createdSession.scenarioId,
           title: createdSession.title,
           status: createdSession.status,
           createdAt: createdSession.createdAt.toISOString(),
-        };
-
-        return c.json(response, 201);
+        }, 201);
       } catch (error) {
         Logger.error('GM セッション作成エラー:', error);
         return c.json({ message: 'セッションの作成に失敗しました' }, 500);
