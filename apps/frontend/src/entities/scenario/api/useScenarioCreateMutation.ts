@@ -6,7 +6,7 @@ type Props = {
   uid: string;
 };
 export const useScenarioCreateMutation = (props: Props) => {
-  const { $post } = apiClient.api.users[':uid'].scenario;
+  const { $post } = apiClient.api.authors[':uid'].scenarios;
   const fetcherFactory =
     (param: InferRequestType<typeof $post>['param']) =>
     async (
