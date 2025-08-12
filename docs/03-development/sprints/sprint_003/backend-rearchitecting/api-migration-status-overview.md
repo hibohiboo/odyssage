@@ -9,7 +9,7 @@
 | 優先度 | 現在のエンドポイント | 新エンドポイント | 移行種別 | 実装状況 | OpenAPI状況 | テスト状況 |
 |--------|---------------------|-----------------|----------|----------|-------------|-----------|
 | **1** | `GET /api/scenario/{id}` | `GET /api/scenarios/{id}` | パス修正 | ✅ **完了** | ✅ 完了 | ✅ 完了 |
-| **2** | `GET /api/sessions/gm/{gm_id}` | `GET /api/game-masters/{gm_id}/sessions` | 文脈特化 | ❌ **未実装** | ⚠️ 仕様のみ | ❌ 旧API準拠 |
+| **2** | `GET /api/sessions/gm/{gm_id}` | `GET /api/game-masters/{uid}/sessions` | 文脈特化 | ❌ **未実装** | ⚠️ 仕様のみ | ❌ 旧API準拠 |
 | **3** | `POST /api/users/{uid}/scenario` | `POST /api/authors/{uid}/scenarios` | 文脈特化 | ❌ 未実装 | ❌ 未対応 | ❌ 未対応 |
 | **4** | `PUT /api/users/{uid}/scenario/{id}` | `PUT /api/authors/{uid}/scenarios/{id}` | 文脈特化 | ❌ 未実装 | ❌ 未対応 | ❌ 未対応 |
 | **5** | `PATCH /api/gm/{uid}/sessions/{id}` | `PATCH /api/game-masters/{uid}/sessions/{id}` | ロール統一 | ❌ 未実装 | ❌ 未対応 | ❌ 未対応 |
@@ -26,7 +26,7 @@
 ### **移行対象詳細**
 ```http
 旧API: GET /api/sessions/gm/{gm_id}
-新API: GET /api/game-masters/{gm_id}/sessions
+新API: GET /api/game-masters/{uid}/sessions
 ```
 
 ### **現状分析**
@@ -43,14 +43,16 @@
 
 #### **❌ 未完了項目**
 1. **バックエンド実装**: 
-   - 新API `GET /api/game-masters/{gm_id}/sessions` 未実装 ❌
+   - 新API `GET /api/game-masters/{uid}/sessions` 未実装 ❌
    - 旧API廃止警告未追加 ❌
    
 2. **統合テスト**:
    - `apps/backend/test/integrations/session-gm.spec.ts` が旧API準拠 ❌
    - 新APIテスト未追加 ❌
 
-3. **フロントエンド調査**: 未実施 ❌
+3. **フロントエンド対応**: 
+   - 影響調査未実施 ❌
+   - 新API置き換え対応未実施 ❌
 
 ---
 
@@ -84,8 +86,9 @@ schema:
 ### **2. バックエンド実装未対応**
 
 #### **問題**:
-- 新APIエンドポイント `GET /api/game-masters/{gm_id}/sessions` が未実装
+- 新APIエンドポイント `GET /api/game-masters/{uid}/sessions` が未実装
 - `apps/backend/src/route/index.ts` に `game-masters` ルート定義なし
+- パラメータ名統一: `{gm_id}` → `{uid}` への変更必要
 
 #### **解決方針**:
 1. 新ルート作成または既存ルート拡張
@@ -114,14 +117,18 @@ schema:
 - [ ] **期待値維持**: レスポンス形式・テストロジック維持
 
 ### **Phase 3: バックエンド実装**
-- [ ] **新エンドポイント実装**: `GET /api/game-masters/{gm_id}/sessions`
+- [ ] **新エンドポイント実装**: `GET /api/game-masters/{uid}/sessions`
 - [ ] **旧エンドポイント廃止警告**: ヘッダー・ログ追加
 - [ ] **ロジック流用**: 既存 `getSessionsByGmId` 完全流用
 
-### **Phase 4: 検証・完了**
+### **Phase 4: 検証・フロントエンド対応**
 - [ ] **テスト実行**: 新API動作確認
-- [ ] **フロントエンド調査**: 使用状況確認
-- [ ] **技術的負債削除**: 旧API削除
+- [ ] **フロントエンド影響調査**: 旧API使用状況確認
+- [ ] **フロントエンド修正**: 新APIへの置き換え（必要に応じて）
+
+### **Phase 5: 完了・技術的負債削除**
+- [ ] **旧API削除**: 技術的負債の即座削除
+- [ ] **移行完了報告**: ドキュメント更新
 
 ---
 

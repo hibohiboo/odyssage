@@ -11,7 +11,7 @@ get:
   description: |
     **⚠️ このAPIは非推奨です。新しいエンドポイントをご利用ください。**
     
-    **新API**: `GET /api/game-masters/{gm_id}/sessions`
+    **新API**: `GET /api/game-masters/{uid}/sessions`
     **廃止予定日**: 2025-11-01
     
     特定のGMが作成・管理しているセッション一覧を取得します。

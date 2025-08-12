@@ -1,5 +1,5 @@
 parameters:
-  - name: gm_id
+  - name: uid
     in: path
     description: ゲームマスターのユーザーID
     required: true
