@@ -474,10 +474,10 @@ const getScenarioDetail = (id: string) =>
 
 | 順位 | API移行対象 | 予定期間 | 作業量 | 開始予定 | 主な変更内容 |
 |------|------------|----------|--------|----------|-------------|
-| 1 | **`GET /api/scenario/{id}` → `scenarios/{id}`** | 12日 | 低 | 即時開始可能 | RESTful統一のみ |
-| 2 | **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API1完了後 | Author文脈特化 |
-| 3 | **既存`PATCH /api/gm/{uid}/sessions/{id}` → `game-masters/{uid}/sessions/{id}`** | 10日 | 中 | API2完了後 | ロール名統一のみ |
-| 4 | **`GET /api/sessions/gm/{gm_id}` → `game-masters/{uid}/sessions`** | 20日 | 高 | API3完了後 | ロール名・パラメータ名・テスト大幅修正 |
+| ✅ | **`GET /api/scenario/{id}` → `scenarios/{id}`** | 完了 | 低 | 2025-08-12完了 | RESTful統一のみ |
+| ✅ | **`GET /api/sessions/gm/{gm_id}` → `game-masters/{uid}/sessions`** | 完了 | 中 | 2025-08-12完了 | ロール名・パラメータ名統一 |
+| 🎯 | **`PATCH /api/gm/{uid}/sessions/{id}` → `game-masters/{uid}/sessions/{id}`** | 進行中 | 低 | 2025-08-12開始 | ロール名統一のみ |
+| 4 | **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API3完了後 | Author文脈特化 |
 | 5 | **`POST /api/sessions` → `game-masters/{uid}/sessions`** | 18日 | 中 | API4完了後 | 新GM文脈エンドポイント |
 | 6 | **Player参加機能（新規）** | 25日 | 高 | API5完了後 | 完全新機能 |
 
