@@ -1,4 +1,5 @@
 import { execSql } from '@odyssage/database/test-utils/execSql';
+import { generateUUID } from '@odyssage/lib/index';
 
 import { describe, expect, it } from 'vitest';
 import { setupTestEnv } from './test-utils';
@@ -15,7 +16,7 @@ describe('セッション統合テスト', () => {
   const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
   const testScenarioTitle = 'テストシナリオ';
   // テスト環境のセットアップ
-  const { getApp, getEnv } = setupTestEnv({
+  const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       await execSql(
         connectionString,
@@ -36,13 +37,12 @@ describe('セッション統合テスト', () => {
     const env = getEnv();
 
     // 直接データベースにテストセッションを挿入
-    const { getConnectionString } = setupTestEnv({});
-    const testSessionId = 'test-session-id-123';
-    
+    const testSessionId = generateUUID();
+
     await execSql(
       getConnectionString(),
       `INSERT INTO odyssage.sessions (id, gm_id, scenario_id, title, status, created_at, updated_at) 
-       VALUES ('${testSessionId}', '${testUserId}', '${testScenarioId}', 'テスト用セッション', '準備中', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+       VALUES ('${testSessionId}', '${testUserId}', '${testScenarioId}', 'テスト用セッション', '準備中', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
     );
 
     // GET リクエストでセッションを取得
