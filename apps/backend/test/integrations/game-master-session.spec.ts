@@ -61,12 +61,15 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(listRes.status).toBe(200);
       const sessions = await listRes.json();
       expect(sessions.length).toBe(1);
-      expect(sessions[0]).toEqual(
-        expect.objectContaining({
-          id: data.id,
-          title: testSession.title,
-        }),
-      );
+      expect(sessions[0]).toEqual({
+        id: data.id,
+        title: testSession.title,
+        status: '準備中',
+        scenarioId: testSession.scenarioId,
+        scenarioTitle: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
     });
 
     it('必須フィールドが不足している場合400エラー', async () => {
@@ -167,26 +170,21 @@ describe('Game Master Session Management API 統合テスト', () => {
 
       const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBe(2);
 
-      if (data.length > 0) {
-        const session = data[0];
+      const session = data[0];
+      expect(session).toEqual({
+        id: expect.any(String),
+        title: expect.any(String),
+        status: expect.any(String),
+        scenarioId: expect.any(String),
+        scenarioTitle: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
 
-        // 値による直接検証に変更（型チェック削除）
-        expect(session).toEqual(
-          expect.objectContaining({
-            id: expect.any(String),
-            title: expect.any(String),
-            status: expect.any(String),
-            scenarioId: expect.any(String),
-            scenarioTitle: expect.any(String),
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-          }),
-        );
-
-        // status値の確認
-        expect(['準備中', '進行中', '完了', '中断']).toContain(session.status);
-      }
+      // status値の確認
+      expect(['準備中', '進行中', '完了', '中断']).toContain(session.status);
     });
 
     it('セッションが存在しないGMでは空配列を返す', async () => {
