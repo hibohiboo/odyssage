@@ -65,75 +65,112 @@ describe('Scenario Detail API 統合テスト', () => {
       getEnv(),
     );
 
-  it('存在するシナリオを正しく取得できる', async () => {
-    const res = await getScenario(testScenario.id);
+  describe('新API: GET /api/scenarios/{id}', () => {
+    it('存在するシナリオを正しく取得できる', async () => {
+      const res = await getScenarioNew(testScenario.id);
 
-    expect(res.status).toBe(200);
-    expect(res.headers.get('content-type')).toContain('application/json');
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
 
-    const data = await res.json();
-    expect(data).toEqual({
-      id: testScenario.id,
-      title: testScenario.title,
-      overview: testScenario.overview,
-      visibility: testScenario.visibility,
-      updatedAt: expect.any(String), // タイムスタンプは動的なので型のみチェック
+      const data = await res.json();
+      expect(data).toEqual({
+        id: testScenario.id,
+        title: testScenario.title,
+        overview: testScenario.overview,
+        visibility: testScenario.visibility,
+        updatedAt: expect.any(String), // タイムスタンプは動的なので型のみチェック
+      });
+
+      // updatedAtが有効な日付形式であることを確認
+      expect(new Date(data.updatedAt)).toBeInstanceOf(Date);
     });
 
-    // updatedAtが有効な日付形式であることを確認
-    expect(new Date(data.updatedAt)).toBeInstanceOf(Date);
+    it('存在しないシナリオで404エラー', async () => {
+      const res = await getScenarioNew(nonExistentScenarioId);
+
+      expect(res.status).toBe(404);
+      expect(res.headers.get('content-type')).toContain('text/plain');
+      expect(await res.text()).toBe('Not Found');
+    });
+
+    it('不正なUUID形式で400エラー', async () => {
+      const res = await getScenarioNew(invalidFormatId);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('レスポンススキーマが適切な形式である', async () => {
+      const res = await getScenarioNew(testScenario.id);
+      expect(res.status).toBe(200);
+
+      const data = await res.json();
+
+      // 必須フィールドの存在確認
+      expect(data).toHaveProperty('id');
+      expect(data).toHaveProperty('title');
+      expect(data).toHaveProperty('overview');
+      expect(data).toHaveProperty('visibility');
+      expect(data).toHaveProperty('updatedAt');
+
+      // フィールド型の確認
+      expect(typeof data.id).toBe('string');
+      expect(typeof data.title).toBe('string');
+      expect(typeof data.overview).toBe('string');
+      expect(typeof data.visibility).toBe('string');
+      expect(typeof data.updatedAt).toBe('string');
+
+      // visibilityのenum値確認
+      expect(['public', 'private']).toContain(data.visibility);
+    });
+
+    it('認証不要で正常にアクセスできる', async () => {
+      const res = await getScenarioNew(testScenario.id);
+      expect(res.status).toBe(200);
+    });
   });
 
-  it('存在しないシナリオで404エラー', async () => {
-    const res = await getScenario(nonExistentScenarioId);
+  describe('旧API: GET /api/scenario/{id} (非推奨)', () => {
+    it('存在するシナリオを正しく取得できる（後方互換性）', async () => {
+      const res = await getScenarioLegacy(testScenario.id);
 
-    expect(res.status).toBe(404);
-    expect(res.headers.get('content-type')).toContain('text/plain');
-    expect(await res.text()).toBe('Not Found');
+      expect(res.status).toBe(200);
+      expect(res.headers.get('content-type')).toContain('application/json');
+
+      const data = await res.json();
+      expect(data).toEqual({
+        id: testScenario.id,
+        title: testScenario.title,
+        overview: testScenario.overview,
+        visibility: testScenario.visibility,
+        updatedAt: expect.any(String),
+      });
+    });
+
+    it('Deprecated警告ヘッダーが付与されること', async () => {
+      const res = await getScenarioLegacy(testScenario.id);
+
+      expect(res.headers.get('X-Deprecated-Endpoint')).toBe('true');
+      expect(res.headers.get('X-New-Endpoint')).toBe('GET /api/scenarios/{id}');
+      expect(res.headers.get('X-Deprecated-Until')).toBe('2025-11-01');
+    });
   });
 
-  it('不正なUUID形式で400エラー', async () => {
-    const res = await getScenario(invalidFormatId);
+  describe('API移行互換性テスト', () => {
+    it('新旧エンドポイントが完全に同一結果を返すこと', async () => {
+      const oldResponse = await getScenarioLegacy(testScenario.id);
+      const newResponse = await getScenarioNew(testScenario.id);
 
-    expect(res.status).toBe(400);
-  });
+      // ステータス・レスポンス本体の完全一致確認
+      expect(oldResponse.status).toBe(newResponse.status);
+      expect(await oldResponse.json()).toEqual(await newResponse.json());
+    });
 
-  it('レスポンススキーマが適切な形式である', async () => {
-    const res = await getScenario(testScenario.id);
-    expect(res.status).toBe(200);
+    it('404エラーも新旧で同一であること', async () => {
+      const oldResponse = await getScenarioLegacy(nonExistentScenarioId);
+      const newResponse = await getScenarioNew(nonExistentScenarioId);
 
-    const data = await res.json();
-
-    // 必須フィールドの存在確認
-    expect(data).toHaveProperty('id');
-    expect(data).toHaveProperty('title');
-    expect(data).toHaveProperty('overview');
-    expect(data).toHaveProperty('visibility');
-    expect(data).toHaveProperty('updatedAt');
-
-    // フィールド型の確認
-    expect(typeof data.id).toBe('string');
-    expect(typeof data.title).toBe('string');
-    expect(typeof data.overview).toBe('string');
-    expect(typeof data.visibility).toBe('string');
-    expect(typeof data.updatedAt).toBe('string');
-
-    // visibilityのenum値確認
-    expect(['public', 'private']).toContain(data.visibility);
-  });
-
-  it('認証不要で正常にアクセスできる', async () => {
-    // Authorizationヘッダーなしでリクエスト
-    const res = await app.request(
-      `/api/scenario/${testScenario.id}`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        // Authorizationヘッダーを意図的に省略
-      },
-      getEnv(),
-    );
-
-    expect(res.status).toBe(200);
+      expect(oldResponse.status).toBe(newResponse.status);
+      expect(await oldResponse.text()).toBe(await newResponse.text());
+    });
   });
 });

@@ -31,7 +31,8 @@ const route = new Hono<Env>()
 
     return c.json(data);
   })
-  .get('/scenario/:id', vValidator('param', idSchema), async (c) => {
+  // 共通シナリオ詳細ハンドラー
+  const scenarioDetailHandler = async (c: any) => {
     const param = c.req.valid('param');
     const [data] = await getScenariosByid(
       c.env.NEON_CONNECTION_STRING,
@@ -41,5 +42,19 @@ const route = new Hono<Env>()
       return c.text('Not Found', 404);
     }
     return c.json(data);
+  }
+  
+  // 新API（推奨）- RESTful統一
+  .get('/scenarios/:id', vValidator('param', idSchema), scenarioDetailHandler)
+  
+  // 旧API（非推奨）- 後方互換性維持
+  .get('/scenario/:id', vValidator('param', idSchema), async (c) => {
+    // Deprecated警告ヘッダー追加
+    c.header('X-Deprecated-Endpoint', 'true');
+    c.header('X-New-Endpoint', 'GET /api/scenarios/{id}');
+    c.header('X-Deprecated-Until', '2025-11-01');
+    
+    // 共通ハンドラー実行（完全に同一のロジック・レスポンス）
+    return scenarioDetailHandler(c);
   });
 export default route;
