@@ -7,11 +7,19 @@ parameters:
       type: string
 
 get:
-  summary: GM管理セッション一覧
+  summary: GM管理セッション一覧（非推奨）
   description: |
+    **⚠️ このAPIは非推奨です。新しいエンドポイントをご利用ください。**
+    
+    **新API**: `GET /api/game-masters/{gm_id}/sessions`
+    **廃止予定日**: 2025-11-01
+    
     特定のGMが作成・管理しているセッション一覧を取得します。
     準備中、進行中、終了などの異なるステータスのセッションがすべて含まれます。
+    
+    **注意**: レスポンス形式は新APIと完全に同一です。
   operationId: getSessionsByGm
+  deprecated: true
   tags:
     - session
   responses:

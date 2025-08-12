@@ -1,0 +1,51 @@
+parameters:
+  - name: gm_id
+    in: path
+    description: ゲームマスターのユーザーID
+    required: true
+    schema:
+      type: string
+
+get:
+  summary: ゲームマスター管理セッション一覧
+  operationId: "getSessionsByGameMaster"
+  description: |
+    指定したゲームマスターが作成・管理しているセッション一覧を取得します。
+    
+    **新API**: RESTful命名統一・文脈特化に基づく推奨エンドポイント
+    旧エンドポイント `/api/sessions/gm/{gm_id}` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  tags:
+    - session
+    - game-master
+  responses:
+    '200':
+      description: セッション一覧取得成功
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/session.yaml#/SessionList'
+          examples:
+            success:
+              summary: "正常レスポンス"
+              value:
+                - id: "550e8400-e29b-41d4-a716-446655440000"
+                  title: "失われた遺跡の謎"
+                  status: "準備中"
+                  scenarioId: "660e8400-e29b-41d4-a716-446655440001"
+                  scenarioTitle: "古代遺跡探索"
+                  createdAt: "2025-04-01T10:00:00Z"
+                  updatedAt: "2025-04-01T12:00:00Z"
+    '400':
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッション一覧の取得に失敗しました"
