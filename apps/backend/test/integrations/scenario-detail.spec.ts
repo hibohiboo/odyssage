@@ -56,7 +56,7 @@ describe('Scenario Detail API 統合テスト', () => {
 
   describe('GET /api/scenarios/{id}', () => {
     it('存在するシナリオを正しく取得できる', async () => {
-      const res = await getScenarioNew(testScenario.id);
+      const res = await getScenario(testScenario.id);
 
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
@@ -75,7 +75,7 @@ describe('Scenario Detail API 統合テスト', () => {
     });
 
     it('存在しないシナリオで404エラー', async () => {
-      const res = await getScenarioNew(nonExistentScenarioId);
+      const res = await getScenario(nonExistentScenarioId);
 
       expect(res.status).toBe(404);
       expect(res.headers.get('content-type')).toContain('text/plain');
@@ -83,13 +83,13 @@ describe('Scenario Detail API 統合テスト', () => {
     });
 
     it('不正なUUID形式で400エラー', async () => {
-      const res = await getScenarioNew(invalidFormatId);
+      const res = await getScenario(invalidFormatId);
 
       expect(res.status).toBe(400);
     });
 
     it('レスポンススキーマが適切な形式である', async () => {
-      const res = await getScenarioNew(testScenario.id);
+      const res = await getScenario(testScenario.id);
       expect(res.status).toBe(200);
 
       const data = await res.json();
@@ -113,7 +113,7 @@ describe('Scenario Detail API 統合テスト', () => {
     });
 
     it('認証不要で正常にアクセスできる', async () => {
-      const res = await getScenarioNew(testScenario.id);
+      const res = await getScenario(testScenario.id);
       expect(res.status).toBe(200);
     });
   });
