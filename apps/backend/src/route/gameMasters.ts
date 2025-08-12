@@ -30,8 +30,8 @@ const handleSessionCreation = async (
     scenarioId: string;
     title: string;
     status: string;
-  }
-): Promise<{ success: boolean; error?: string; statusCode?: number }> => {
+  },
+) => {
   try {
     await createSession(connectionString, sessionData);
     return { success: true };
@@ -42,19 +42,19 @@ const handleSessionCreation = async (
     if (dbError instanceof Error) {
       const errorData = dbError as { cause?: { code?: string } };
       if (errorData.cause?.code === '23503') {
-        return { 
-          success: false, 
-          error: '指定されたシナリオが見つかりません', 
-          statusCode: 400 
-        };
+        return {
+          success: false,
+          error: '指定されたシナリオが見つかりません',
+          statusCode: 400,
+        } as const;
       }
     }
-    
-    return { 
-      success: false, 
-      error: 'セッションの作成に失敗しました', 
-      statusCode: 500 
-    };
+
+    return {
+      success: false,
+      error: 'セッションの作成に失敗しました',
+      statusCode: 500,
+    } as const;
   }
 };
 
@@ -79,16 +79,19 @@ export const gameMastersRoute = new Hono<Env>()
         const sessionId = generateUUID();
 
         // セッション作成処理
-        const result = await handleSessionCreation(c.env.NEON_CONNECTION_STRING, {
-          id: sessionId,
-          gmId: param.uid,
-          scenarioId: json.scenarioId,
-          title: json.title,
-          status: '準備中',
-        });
+        const result = await handleSessionCreation(
+          c.env.NEON_CONNECTION_STRING,
+          {
+            id: sessionId,
+            gmId: param.uid,
+            scenarioId: json.scenarioId,
+            title: json.title,
+            status: '準備中',
+          },
+        );
 
         if (!result.success) {
-          return c.json({ message: result.error }, result.statusCode!);
+          return c.json({ message: result.error }, result.statusCode);
         }
 
         // 作成したセッションを取得
@@ -102,14 +105,17 @@ export const gameMastersRoute = new Hono<Env>()
         }
 
         // レスポンス形式に整形
-        return c.json({
-          id: createdSession.id,
-          gmId: createdSession.gmId,
-          scenarioId: createdSession.scenarioId,
-          title: createdSession.title,
-          status: createdSession.status,
-          createdAt: createdSession.createdAt.toISOString(),
-        }, 201);
+        return c.json(
+          {
+            id: createdSession.id,
+            gmId: createdSession.gmId,
+            scenarioId: createdSession.scenarioId,
+            title: createdSession.title,
+            status: createdSession.status,
+            createdAt: createdSession.createdAt.toISOString(),
+          },
+          201,
+        );
       } catch (error) {
         Logger.error('GM セッション作成エラー:', error);
         return c.json({ message: 'セッションの作成に失敗しました' }, 500);
