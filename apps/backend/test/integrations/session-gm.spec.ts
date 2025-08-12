@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { setupTestEnv } from './test-utils';
 import { IntegrationTestApi, TestFixtures } from './helpers';
+import { setupTestEnv } from './test-utils';
 
 /**
  * GM Session Management API統合テスト

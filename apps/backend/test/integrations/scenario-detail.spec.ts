@@ -8,11 +8,10 @@ import { setupTestEnv } from './test-utils';
  */
 describe('Scenario Detail API 統合テスト', () => {
   // TestFixtures の統一定数を使用
-  const testUserId = TestFixtures.TEST_USERS.GM_USER.id;
   const testScenario = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO;
   const invalidFormatId = 'invalid-uuid-format';
 
-  const { getApp, getEnv, getConnectionString } = setupTestEnv({
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       // 統一フィクスチャーを使用
       const fixtures = new TestFixtures(connectionString);
@@ -22,12 +21,10 @@ describe('Scenario Detail API 統合テスト', () => {
 
   let app: ReturnType<typeof getApp>;
   let api: IntegrationTestApi;
-  let fixtures: TestFixtures;
 
   beforeEach(async () => {
     app = getApp();
     api = new IntegrationTestApi(app, getEnv());
-    fixtures = new TestFixtures(getConnectionString());
   });
 
   // 共通関数は IntegrationTestApi に移行済み

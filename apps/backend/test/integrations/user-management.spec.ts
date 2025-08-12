@@ -12,7 +12,7 @@ describe('User Management API 統合テスト', () => {
   const testUserName = TestFixtures.TEST_USERS.GM_USER.name;
   const nonExistentUserId = 'non-existent-user-id';
 
-  const { getApp, getEnv, getConnectionString } = setupTestEnv({
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       // 統一フィクスチャーを使用
       const fixtures = new TestFixtures(connectionString);

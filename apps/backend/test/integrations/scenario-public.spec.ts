@@ -7,8 +7,6 @@ import { setupTestEnv } from './test-utils';
  * GET /api/scenarios エンドポイントのテスト
  */
 describe('Scenario Public API 統合テスト', () => {
-  // TestFixtures の統一定数を使用
-  const testUserId = TestFixtures.TEST_USERS.GM_USER.id;
 
   const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
