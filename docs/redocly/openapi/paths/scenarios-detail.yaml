@@ -6,6 +6,8 @@ get:
     
     **新API**: RESTful命名統一に基づく推奨エンドポイント
     旧エンドポイント `/api/scenario/{id}` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
   parameters:
     - in: "path"
       name: "id"
@@ -20,6 +22,7 @@ get:
       content:
         application/json:
           schema:
+            # ✅ 既存仕様と完全同一のスキーマ
             type: "object"
             properties:
               id:
@@ -40,29 +43,6 @@ get:
                 type: "string"
                 format: "date-time"
                 description: "最終更新日時"
-              # 将来の文脈別フィールド拡張用
-              authorPermissions:
-                type: "object"
-                description: "作成者権限情報（認証時のみ）"
-                properties:
-                  canEdit:
-                    type: "boolean"
-                  canDelete:
-                    type: "boolean"
-                  editUrl:
-                    type: "string"
-                required: ["canEdit", "canDelete"]
-              gmInfo:
-                type: "object"
-                description: "GM文脈情報（GM認証時のみ）"
-                properties:
-                  canStock:
-                    type: "boolean"
-                  isStocked:
-                    type: "boolean"
-                  authorName:
-                    type: "string"
-                required: ["canStock", "isStocked"]
             required:
               - "id"
               - "title"
@@ -71,38 +51,14 @@ get:
               - "updatedAt"
             additionalProperties: false
           examples:
-            basic:
-              summary: "基本レスポンス（未認証）"
+            success:
+              summary: "正常レスポンス"
               value:
                 id: "550e8400-e29b-41d4-a716-446655440000"
                 title: "失われた遺跡の謎"
                 overview: "古代遺跡を探索する冒険シナリオ"
                 visibility: "public"
                 updatedAt: "2025-04-01T12:00:00Z"
-            author:
-              summary: "作成者文脈レスポンス"
-              value:
-                id: "550e8400-e29b-41d4-a716-446655440000"
-                title: "失われた遺跡の謎"
-                overview: "古代遺跡を探索する冒険シナリオ"
-                visibility: "public"
-                updatedAt: "2025-04-01T12:00:00Z"
-                authorPermissions:
-                  canEdit: true
-                  canDelete: true
-                  editUrl: "/authors/scenarios/550e8400-e29b-41d4-a716-446655440000/edit"
-            gm:
-              summary: "GM文脈レスポンス"
-              value:
-                id: "550e8400-e29b-41d4-a716-446655440000"
-                title: "失われた遺跡の謎"
-                overview: "古代遺跡を探索する冒険シナリオ"
-                visibility: "public"
-                updatedAt: "2025-04-01T12:00:00Z"
-                gmInfo:
-                  canStock: true
-                  isStocked: false
-                  authorName: "シナリオ作成者"
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
     404:

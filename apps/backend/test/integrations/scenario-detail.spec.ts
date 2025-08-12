@@ -5,7 +5,8 @@ import { setupTestEnv } from './test-utils';
 
 /**
  * Scenario Detail API統合テスト
- * GET /api/scenario/{id} エンドポイントのテスト
+ * GET /api/scenarios/{id} エンドポイントのテスト（新API）
+ * GET /api/scenario/{id} エンドポイントのテスト（旧API・非推奨）
  */
 describe('Scenario Detail API 統合テスト', () => {
   const testUserId = 'test-user-id-12345';
@@ -42,8 +43,19 @@ describe('Scenario Detail API 統合テスト', () => {
     await execSql(getConnectionString(), insertSQL);
   });
 
-  /** シナリオ詳細をGETで取得する共通関数 */
-  const getScenario = async (id: string) =>
+  /** シナリオ詳細をGETで取得する共通関数（新API） */
+  const getScenarioNew = async (id: string) =>
+    app.request(
+      `/api/scenarios/${id}`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      getEnv(),
+    );
+
+  /** シナリオ詳細をGETで取得する共通関数（旧API・非推奨） */
+  const getScenarioLegacy = async (id: string) =>
     app.request(
       `/api/scenario/${id}`,
       {
