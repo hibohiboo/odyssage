@@ -33,19 +33,48 @@
 
 ## 📊 詳細情報
 
-### **GET /api/scenario/{id}** ✅ 削除完了
+### **GET /api/scenario/{id}** ❌ 調査ミス発覚・問題発生
+
+**⚠️ 重大問題**: フロントエンドで実際に使用中のAPIを誤って削除
 
 **基本情報**:
-- **現在のステータス**: 削除済み（第1弾移行完了）
-- **代替API**: `GET /api/scenarios/{id}`
+- **現在のステータス**: 削除済み（誤削除）
+- **実際の使用状況**: `apps/frontend/src/entities/scenario/api/fetchScenrio.ts:16` で使用中
 - **削除実施日**: 2025-08-12
-- **フロントエンド使用状況**: 未使用（削除時点確認済み）
+- **問題発覚日**: 2025-08-12（削除後に発見）
 
-**削除完了内容**:
-- ✅ バックエンド実装削除: `apps/backend/src/route/index.ts`
-- ✅ OpenAPI仕様削除: `docs/redocly/openapi/paths/scenario.yaml`
-- ✅ 関連テスト削除: 旧API・移行テスト削除、5テストに最適化
-- ✅ 技術的負債解消: 約200行のコード削除
+**実際の使用箇所**:
+```typescript
+// apps/frontend/src/entities/scenario/api/fetchScenrio.ts
+const response = await apiClient.api.scenario[':id'].$get({
+  param: { id },
+});
+```
+
+**調査ミスの原因**:
+1. **検索パターン不足**: `/api/scenario/` 文字列での検索のみ実施
+2. **HonoClient理解不足**: APIクライアントがパス文字列を直接記述しない仕組みの見落とし
+3. **検索範囲不足**: `.scenario[':id']` や `apiClient.api.scenario` パターンの検索漏れ
+
+**実際に必要だった検索パターン**:
+```bash
+# 実施済み（不十分）
+grep -r "/api/scenario/" apps/frontend/
+
+# 必要だった検索（実施していない）
+grep -r "\.scenario\[" apps/frontend/
+grep -r "apiClient.*scenario" apps/frontend/
+grep -r "api.*scenario.*get\|scenario.*api.*get" apps/frontend/
+```
+
+**削除による実害**:
+- ❌ **機能破綻**: シナリオ詳細表示機能が完全に動作不能
+- ❌ **バックエンドエラー**: 404エラーが発生
+- ❌ **ユーザー影響**: シナリオ詳細ページアクセス不可
+
+**緊急対応必要**:
+- 🚨 **即座復旧**: 削除したAPIの緊急復旧が必要
+- 🚨 **テスト実行**: フロントエンド動作確認が必要
 
 ### **GET /api/game-masters/{uid}/sessions** ⚠️ 削除検討
 
@@ -97,7 +126,7 @@
 
 ## 🔍 調査履歴
 
-### **2025-08-12: Sprint 003 第1弾API移行調査**
+### **2025-08-12: Sprint 003 第1弾API移行調査** ❌ 調査ミス
 
 **調査範囲**:
 ```bash
@@ -105,12 +134,22 @@
 apps/frontend/**/*.{ts,tsx,js,jsx,vue}
 ```
 
-**調査結果**:
-- `GET /api/scenario/{id}`: フロントエンドで未使用 → 削除実施
+**実施した検索（不十分）**:
+```bash
+grep -r "/api/scenario/" apps/frontend/  # ❌ 見つからず
+grep -r "scenario.*api" apps/frontend/   # ❌ パターン不適切
+```
+
+**調査結果（誤り）**:
+- `GET /api/scenario/{id}`: フロントエンドで未使用 → **❌ 誤判定・誤削除**
 - 他のscenario関連API: `/api/graph-scenes/scenario/{scenarioId}` は別API・使用中
 
+**調査ミス発覚（同日）**:
+- **実際の使用箇所**: `apps/frontend/src/entities/scenario/api/fetchScenrio.ts:16`
+- **使用形式**: `apiClient.api.scenario[':id'].$get()` （Honoクライアント形式）
+
 **調査者**: Claude (Sprint 003作業中)  
-**調査方法**: Grep tool による全文検索
+**調査方法**: Grep tool による全文検索（パターン不足）
 
 ### **2025-08-12: Sprint 003 第2弾API移行調査**
 
@@ -203,12 +242,53 @@ apps/frontend/**/*.{ts,tsx,js,jsx}
 
 ## 💡 改善提案
 
+### **🚨 緊急改善（調査ミス再発防止）**
+
+#### **必須検索パターン確立**
+```bash
+# 1. 直接文字列検索
+grep -r "/api/{エンドポイント}/" apps/frontend/
+
+# 2. HonoClient形式検索（重要）
+grep -r "\.{エンドポイント}\[" apps/frontend/
+grep -r "apiClient.*{エンドポイント}" apps/frontend/
+
+# 3. 型定義・import検索
+grep -r "from.*{エンドポイント}" apps/frontend/
+grep -r "import.*{エンドポイント}" apps/frontend/
+
+# 4. 動的・テンプレート検索
+grep -r "\`.*{エンドポイント}.*\`" apps/frontend/
+grep -r "\${.*{エンドポイント}" apps/frontend/
+```
+
+#### **調査チェックリスト必須化**
+- [ ] 複数検索パターンでの確認
+- [ ] HonoClient・APIクライアント形式の確認
+- [ ] 型定義・import文の確認
+- [ ] テストファイルでの使用確認
+- [ ] 設定ファイル・環境変数での使用確認
+
+#### **検証プロセス強化**
+1. **削除前テスト**: フロントエンドビルド・E2E テストの事前実行
+2. **段階的削除**: 仕様削除→テスト実行→実装削除の順序
+3. **ロールバック準備**: 削除前の完全バックアップ・復旧手順確立
+
 ### **自動化検討事項**
 1. **未使用API検出**: フロントエンドビルド時の未使用APIエンドポイント自動検出
 2. **使用状況監視**: 本番環境でのAPIアクセスログ自動解析
 3. **削除影響分析**: 削除前の影響範囲自動分析ツール
+4. **🆕 HonoClient解析**: APIクライアント利用状況の自動解析ツール
 
 ### **プロセス改善**
 1. **新API設計時**: 将来の削除容易性を考慮した設計ガイドライン策定
 2. **定期レビュー**: Sprint計画時のAPI削除候補レビュー組み込み
 3. **外部連携**: 外部クライアント向けの廃止予告・移行ガイダンス標準化
+4. **🆕 調査手法**: HonoClient・APIクライアント特有の検索パターン標準化
+5. **🆕 検証強化**: 削除前の必須テスト実行プロセス確立
+
+### **教訓・知見**
+1. **APIクライアント理解**: フレームワーク固有のAPI呼び出し形式の重要性
+2. **検索パターン重要性**: 単一パターン検索の危険性
+3. **削除影響深刻性**: 使用中API削除による機能完全停止リスク
+4. **即座検証必要性**: 削除後の迅速な動作確認の重要性
