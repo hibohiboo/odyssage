@@ -24,10 +24,23 @@ import { Logger } from '../utils/logger';
  * - GET /sessions/gm/:gm_id: 特定のGMが管理するセッション一覧を取得
  */
 export const sessionRoute = new Hono<Env>()
-  // 1. 特定のパスを持つルートを先に定義
+  // 1. 特定のパスを持つルートを先に定義（非推奨）
   .get('/gm/:gm_id', async (c) => {
     try {
       const gmId = c.req.param('gm_id');
+
+      // Deprecated警告ヘッダー
+      c.header('X-Deprecated-Endpoint', 'true');
+      c.header('X-New-Endpoint', 'GET /api/game-masters/{uid}/sessions');
+      c.header('X-Deprecated-Until', '2025-11-01');
+
+      // 使用状況監視ログ
+      console.warn(
+        `[DEPRECATED] Legacy API /api/sessions/gm/${gmId} accessed. ` +
+        `Client should migrate to /api/game-masters/{uid}/sessions before 2025-11-01. ` +
+        `User-Agent: ${c.req.header('user-agent') || 'unknown'}, ` +
+        `IP: ${c.req.header('cf-connecting-ip') || 'unknown'}`
+      );
 
       if (!gmId) {
         return c.json({ message: 'GM IDが必要です' }, 400);

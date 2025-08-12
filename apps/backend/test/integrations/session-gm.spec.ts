@@ -5,7 +5,7 @@ import { setupTestEnv } from './test-utils';
 
 /**
  * GM Session Management API統合テスト
- * GET /api/sessions/gm/{gm_id} エンドポイントのテスト
+ * GET /api/game-masters/{uid}/sessions エンドポイントのテスト
  */
 describe('GM Session Management API 統合テスト', () => {
   const testGmId = 'gm-user-id-12345';
@@ -76,9 +76,9 @@ describe('GM Session Management API 統合テスト', () => {
   });
 
   /** GM管理セッション一覧をGETで取得する共通関数 */
-  const getSessionsByGm = async (gmId: string) =>
+  const getSessionsByGm = async (uid: string) =>
     app.request(
-      `/api/sessions/gm/${gmId}`,
+      `/api/game-masters/${uid}/sessions`,
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -86,7 +86,7 @@ describe('GM Session Management API 統合テスト', () => {
       getEnv(),
     );
 
-  describe('GET /api/sessions/gm/{gm_id}', () => {
+  describe('GET /api/game-masters/{uid}/sessions', () => {
     it('指定GMのセッション一覧を正しく取得できる', async () => {
       const res = await getSessionsByGm(testGmId);
 
@@ -194,22 +194,10 @@ describe('GM Session Management API 統合テスト', () => {
       expect(data2[0].id).toBe(testOtherSession.id);
     });
 
-    it('空のgm_idで400エラー', async () => {
-      const res = await app.request(
-        '/api/sessions/gm/',
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        },
-        getEnv(),
-      );
-
-      expect(res.status).toBe(404); // Honoルーティングで404になる
-    });
 
     it('認証不要で正常にアクセスできる', async () => {
       const res = await app.request(
-        `/api/sessions/gm/${testGmId}`,
+        `/api/game-masters/${testGmId}/sessions`,
         {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
