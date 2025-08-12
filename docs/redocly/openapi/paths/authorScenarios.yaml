@@ -1,0 +1,207 @@
+parameters:
+  - name: uid
+    in: path
+    description: シナリオ作成者（Author）のユーザーID
+    required: true
+    schema:
+      type: string
+
+post:
+  summary: シナリオ作成（Author文脈）
+  operationId: "createScenarioByAuthor"
+  description: |
+    シナリオ作成者（Author）として新しいシナリオを作成します。
+    
+    **新API**: Author文脈特化に基づく推奨エンドポイント
+    旧エンドポイント `/api/users/{uid}/scenario` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  tags:
+    - scenario
+    - author
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - id
+            - title
+            - overview
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: シナリオID（UUID形式）
+            title:
+              type: string
+              minLength: 1
+              maxLength: 100
+              description: シナリオタイトル
+            overview:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: シナリオ概要
+            visibility:
+              type: string
+              enum: ["public", "private"]
+              default: "private"
+              description: シナリオの公開設定（省略時はprivate）
+        examples:
+          create_private:
+            summary: "プライベートシナリオ作成"
+            value:
+              id: "550e8400-e29b-41d4-a716-446655440000"
+              title: "失われた遺跡の謎"
+              overview: "古代文明の謎を解き明かす冒険シナリオ"
+              visibility: "private"
+          create_public:
+            summary: "公開シナリオ作成"
+            value:
+              id: "660e8400-e29b-41d4-a716-446655440001"
+              title: "都市の陰謀"
+              overview: "現代都市を舞台とした政治陰謀シナリオ"
+              visibility: "public"
+  responses:
+    '201':
+      description: シナリオが正常に作成されました
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - message
+            properties:
+              message:
+                type: string
+                example: "シナリオが正常に作成されました"
+          examples:
+            success:
+              summary: "作成成功"
+              value:
+                message: "シナリオが正常に作成されました"
+    '400':
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "必須フィールドが不足しています"
+    '401':
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "認証が必要です"
+    '403':
+      description: 権限エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "このユーザーとしてシナリオを作成する権限がありません"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "シナリオの作成に失敗しました"
+
+get:
+  summary: Author管理シナリオ一覧
+  operationId: "getScenariosByAuthor"
+  description: |
+    指定したシナリオ作成者（Author）が作成・管理しているシナリオ一覧を取得します。
+    
+    **新API**: Author文脈特化に基づく推奨エンドポイント
+    旧エンドポイント `/api/users/{uid}/scenario` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  tags:
+    - scenario
+    - author
+  responses:
+    '200':
+      description: シナリオ一覧取得成功
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: object
+              required:
+                - id
+                - title
+                - updatedAt
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                  description: シナリオID
+                title:
+                  type: string
+                  description: シナリオタイトル
+                overview:
+                  type: string
+                  description: シナリオ概要
+                visibility:
+                  type: string
+                  enum: ["public", "private"]
+                  description: シナリオの公開設定
+                updatedAt:
+                  type: string
+                  format: date-time
+                  description: シナリオの更新日時（ISO 8601形式）
+              additionalProperties: false
+          examples:
+            success:
+              summary: "正常レスポンス"
+              value:
+                - id: "550e8400-e29b-41d4-a716-446655440000"
+                  title: "失われた遺跡の謎"
+                  overview: "古代文明の謎を解き明かす冒険シナリオ"
+                  visibility: "private"
+                  updatedAt: "2025-04-01T12:00:00Z"
+                - id: "660e8400-e29b-41d4-a716-446655440001"
+                  title: "都市の陰謀"
+                  overview: "現代都市を舞台とした政治陰謀シナリオ"
+                  visibility: "public"
+                  updatedAt: "2025-04-01T10:00:00Z"
+    '400':
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "ユーザーIDが無効です"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "シナリオ一覧の取得に失敗しました"
