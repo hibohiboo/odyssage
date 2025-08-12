@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
-import { setupTestEnv } from './test-utils';
 import { IntegrationTestApi, TestFixtures } from './helpers';
+import { setupTestEnv } from './test-utils';
 
 /**
  * Game Master Session Management API統合テスト
@@ -31,7 +31,7 @@ describe('Game Master Session Management API 統合テスト', () => {
     app = getApp();
     api = new IntegrationTestApi(app, getEnv());
     fixtures = new TestFixtures(getConnectionString());
-    
+
     // セッションのみクリーンアップ（ユーザー・シナリオは保持）
     await fixtures.cleanupSessions();
   });
@@ -65,7 +65,7 @@ describe('Game Master Session Management API 統合テスト', () => {
         expect.objectContaining({
           id: data.id,
           title: testSession.title,
-        })
+        }),
       );
     });
 
@@ -75,7 +75,7 @@ describe('Game Master Session Management API 統合テスト', () => {
         // scenarioIdを省略
       };
 
-      const res = await createSession(testGMId, invalidSession);
+      const res = await api.createSession(testGMId, invalidSession);
       expect(res.status).toBe(400);
     });
 
@@ -85,38 +85,31 @@ describe('Game Master Session Management API 統合テスト', () => {
         scenarioId: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039999',
       };
 
-      const res = await createSession(testGMId, invalidSession);
+      const res = await api.createSession(testGMId, invalidSession);
       expect(res.status).toBe(400);
-      
+
+      // 値による直接検証に変更
       const errorData = await res.json();
-      expect(errorData).toHaveProperty('message');
-      expect(typeof errorData.message).toBe('string');
+      expect(errorData).toEqual({
+        message: expect.any(String),
+      });
     });
 
     it('認証なしでもテスト環境ではバイパスされ201成功', async () => {
-      const res = await app.request(
-        `/api/game-masters/${testGMId}/sessions`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          // Authorization ヘッダーなし（テスト環境ではバイパス）
-          body: JSON.stringify({
-            scenarioId: testScenarioId,
-            title: 'テストセッション認証なし',
-          }),
-        },
-        getEnv(),
-      );
+      const res = await api.createSessionWithoutAuth(testGMId, {
+        scenarioId: testScenarioId,
+        title: 'テストセッション認証なし',
+      });
 
       expect(res.status).toBe(201); // テスト環境では認証バイパス
     });
 
     it('複数セッション作成時にユニークIDが生成される', async () => {
-      const session1 = await createSession(testGMId, {
+      const session1 = await api.createSession(testGMId, {
         ...testSession,
         title: 'セッション1',
       });
-      const session2 = await createSession(testGMId, {
+      const session2 = await api.createSession(testGMId, {
         ...testSession,
         title: 'セッション2',
       });
@@ -136,15 +129,15 @@ describe('Game Master Session Management API 統合テスト', () => {
   describe('GET /api/game-masters/{uid}/sessions', () => {
     beforeEach(async () => {
       // テストデータを準備
-      await createSession(testGMId, testSession);
-      await createSession(testGMId, {
+      await api.createSession(testGMId, testSession);
+      await api.createSession(testGMId, {
         scenarioId: testScenarioId,
         title: 'テストセッション2',
       });
     });
 
     it('指定GMのセッション一覧を正しく取得できる', async () => {
-      const res = await getGMSessions(testGMId);
+      const res = await api.getGmSessions(testGMId);
 
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
@@ -153,14 +146,23 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(2);
 
-      // GMのセッションが含まれていることを確認
-      const sessionTitles = data.map((session) => session.title);
-      expect(sessionTitles).toContain('テストセッション1');
-      expect(sessionTitles).toContain('テストセッション2');
+      // toContainEqualで値による検証に変更
+      expect(data).toContainEqual(
+        expect.objectContaining({
+          title: 'テストセッション1',
+          scenarioId: testScenarioId,
+        }),
+      );
+      expect(data).toContainEqual(
+        expect.objectContaining({
+          title: 'テストセッション2',
+          scenarioId: testScenarioId,
+        }),
+      );
     });
 
     it('レスポンススキーマが適切な形式である', async () => {
-      const res = await getGMSessions(testGMId);
+      const res = await api.getGmSessions(testGMId);
       expect(res.status).toBe(200);
 
       const data = await res.json<any[]>();
@@ -169,23 +171,18 @@ describe('Game Master Session Management API 統合テスト', () => {
       if (data.length > 0) {
         const session = data[0];
 
-        // 必須フィールドの存在確認（実際のレスポンス形式に合わせて修正）
-        expect(session).toHaveProperty('id');
-        expect(session).toHaveProperty('title');
-        expect(session).toHaveProperty('status');
-        expect(session).toHaveProperty('scenarioId');
-        expect(session).toHaveProperty('scenarioTitle');
-        expect(session).toHaveProperty('createdAt');
-        expect(session).toHaveProperty('updatedAt');
-
-        // フィールド型の確認
-        expect(typeof session.id).toBe('string');
-        expect(typeof session.title).toBe('string');
-        expect(typeof session.status).toBe('string');
-        expect(typeof session.scenarioId).toBe('string');
-        expect(typeof session.scenarioTitle).toBe('string');
-        expect(typeof session.createdAt).toBe('string');
-        expect(typeof session.updatedAt).toBe('string');
+        // 値による直接検証に変更（型チェック削除）
+        expect(session).toEqual(
+          expect.objectContaining({
+            id: expect.any(String),
+            title: expect.any(String),
+            status: expect.any(String),
+            scenarioId: expect.any(String),
+            scenarioTitle: expect.any(String),
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+          }),
+        );
 
         // status値の確認
         expect(['準備中', '進行中', '完了', '中断']).toContain(session.status);
@@ -194,7 +191,7 @@ describe('Game Master Session Management API 統合テスト', () => {
 
     it('セッションが存在しないGMでは空配列を返す', async () => {
       const nonExistentGMId = 'non-existent-gm-id';
-      const res = await getGMSessions(nonExistentGMId);
+      const res = await api.getGmSessions(nonExistentGMId);
 
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
@@ -205,16 +202,7 @@ describe('Game Master Session Management API 統合テスト', () => {
     });
 
     it('認証不要で正常にアクセスできる', async () => {
-      const res = await app.request(
-        `/api/game-masters/${testGMId}/sessions`,
-        {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          // Authorizationヘッダーなし
-        },
-        getEnv(),
-      );
-
+      const res = await api.getGmSessions(testGMId);
       expect(res.status).toBe(200);
     });
   });
