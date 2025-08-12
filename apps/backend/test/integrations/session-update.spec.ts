@@ -1,5 +1,6 @@
-import { execSql } from '@odyssage/database/test-utils/execSql';
-import { describe, expect, it } from 'vitest';
+import { generateUUID } from '@odyssage/lib/index';
+import { describe, expect, it, beforeEach } from 'vitest';
+import { IntegrationTestApi, TestFixtures } from './helpers';
 import { setupTestEnv } from './test-utils';
 
 /**
@@ -7,85 +8,65 @@ import { setupTestEnv } from './test-utils';
  * PATCH /api/game-masters/{uid}/sessions/{id} エンドポイントのテスト
  */
 describe('セッション状態更新 統合テスト', () => {
-  // テストデータ
-  const testUserId = 'test-gm-id';
-  const testUserName = 'テストGM';
-  const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
-  const testScenarioTitle = 'テストシナリオ';
-  const testSessionId = '4d8b1bc2-e2cc-5e1f-97e8-0d6e6e150010';
-  const testSessionTitle = 'テストセッション';
+  // TestFixtures の統一定数を使用
+  const testUserId = TestFixtures.TEST_USERS.GM_USER.id;
+  const testScenarioId = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.id;
 
-  // テスト環境のセットアップ
-  const { getApp, getEnv } = setupTestEnv({
+  const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
-      await execSql(
-        connectionString,
-        `
-         INSERT INTO odyssage.users (id, name) VALUES ('${testUserId}', '${testUserName}');
-         INSERT INTO odyssage.scenarios (id, title, user_id, updated_at) 
-            VALUES ('${testScenarioId}', '${testScenarioTitle}', '${testUserId}', CURRENT_TIMESTAMP);
-         INSERT INTO odyssage.sessions (id, gm_id, scenario_id, title, status, updated_at)
-            VALUES ('${testSessionId}', '${testUserId}', '${testScenarioId}', '${testSessionTitle}', '準備中', CURRENT_TIMESTAMP);
-        `,
-      );
+      // 統一フィクスチャーを使用
+      const fixtures = new TestFixtures(connectionString);
+      await fixtures.setupBasicTestData();
     },
   });
 
-  const headerWithAuth = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer test`,
-  };
+  let app: ReturnType<typeof getApp>;
+  let api: IntegrationTestApi;
+  let fixtures: TestFixtures;
+  let testSessionId: string;
+
+  beforeEach(async () => {
+    app = getApp();
+    api = new IntegrationTestApi(app, getEnv());
+    fixtures = new TestFixtures(getConnectionString());
+    
+    // 各テスト用にユニークなセッションIDを生成
+    testSessionId = generateUUID();
+    await fixtures.createSession(
+      testSessionId,
+      testUserId,
+      testScenarioId,
+      'テストセッション',
+      '準備中'
+    );
+  });
 
   // テストケース1: 正常系 - GMが自身のセッションのステータスを更新できる
   it('GMが自身のセッションのステータスを更新できる', async () => {
-    const app = getApp();
-    const env = getEnv();
+    // APIクライアントを使用してセッションステータスを更新
+    const patchResponse = await api.updateSessionStatus(testUserId, testSessionId, '進行中');
 
-    // リクエストボディ
-    const updateData = {
-      status: '進行中',
-    };
-
-    // PATCH リクエストでセッションステータスを更新
-    const patchResponse = await app.request(
-      `/api/game-masters/${testUserId}/sessions/${testSessionId}`,
-      {
-        method: 'PATCH',
-        headers: headerWithAuth,
-        body: JSON.stringify(updateData),
-      },
-      env,
-    );
-
-    // レスポンスの検証
+    // レスポンスの検証 - 値による直接検証に変更
     expect(patchResponse.status).toBe(200);
     const responseBody = await patchResponse.json();
-    expect(responseBody).toHaveProperty('id', testSessionId);
-    expect(responseBody).toHaveProperty('status', '進行中');
+    expect(responseBody).toEqual({
+      id: testSessionId,
+      status: '進行中',
+      gm_id: testUserId,
+      scenario_id: testScenarioId,
+      scenario_title: expect.any(String),
+      title: 'テストセッション',
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+    });
   });
 
   // テストケース2: 異常系 - 他のGMのセッションは更新できない
   it('他のGMのセッションは更新できない', async () => {
-    const app = getApp();
-    const env = getEnv();
-
     const otherUserId = 'other-user-id';
 
-    // リクエストボディ
-    const updateData = {
-      status: '終了',
-    };
-
-    // PATCH リクエストでセッションステータスを更新
-    const patchResponse = await app.request(
-      `/api/game-masters/${otherUserId}/sessions/${testSessionId}`,
-      {
-        method: 'PATCH',
-        headers: headerWithAuth,
-        body: JSON.stringify(updateData),
-      },
-      env,
-    );
+    // APIクライアントを使用して他のユーザーのセッション更新を試行
+    const patchResponse = await api.updateSessionStatus(otherUserId, testSessionId, '終了');
 
     // レスポンスの検証 - 認可エラー(403)が返ること
     expect(patchResponse.status).toBe(403);
@@ -93,26 +74,30 @@ describe('セッション状態更新 統合テスト', () => {
 
   // テストケース3: 異常系 - 不正なステータス値は更新できない
   it('不正なステータス値は更新できない', async () => {
-    const app = getApp();
-    const env = getEnv();
-
-    // リクエストボディ
-    const updateData = {
-      status: '不正な値',
-    };
-
-    // PATCH リクエストでセッションステータスを更新
-    const patchResponse = await app.request(
-      `/api/game-masters/${testUserId}/sessions/${testSessionId}`,
-      {
-        method: 'PATCH',
-        headers: headerWithAuth,
-        body: JSON.stringify(updateData),
-      },
-      env,
-    );
+    // APIクライアントを使用して不正なステータスでの更新を試行
+    const patchResponse = await api.updateSessionStatus(testUserId, testSessionId, '不正な値');
 
     // レスポンスの検証 - バリデーションエラー(400)が返ること
     expect(patchResponse.status).toBe(400);
+  });
+
+  // テストケース4: セッション終了ステータスの正常系テスト
+  it('セッションを終了ステータスに変更できる', async () => {
+    // APIクライアントを使用してセッションを終了状態に更新
+    const patchResponse = await api.updateSessionStatus(testUserId, testSessionId, '終了');
+
+    // レスポンスの検証 - 終了ステータスが正しく設定されること
+    expect(patchResponse.status).toBe(200);
+    const responseBody = await patchResponse.json();
+    expect(responseBody).toEqual({
+      id: testSessionId,
+      status: '終了',
+      gm_id: testUserId,
+      scenario_id: testScenarioId,
+      scenario_title: expect.any(String),
+      title: 'テストセッション',
+      created_at: expect.any(String),
+      updated_at: expect.any(String),
+    });
   });
 });

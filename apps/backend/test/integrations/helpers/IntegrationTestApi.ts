@@ -187,11 +187,25 @@ export class IntegrationTestApi {
   }
 
   /**
-   * 公開シナリオ一覧を取得
+   * 全シナリオ一覧を取得
+   */
+  async getAllScenarios() {
+    return this.app.request(
+      `/api/scenarios`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * 公開シナリオのみを取得
    */
   async getPublicScenarios() {
     return this.app.request(
-      `/api/scenarios`,
+      `/api/scenarios/public`,
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },

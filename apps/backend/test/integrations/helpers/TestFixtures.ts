@@ -37,6 +37,12 @@ export class TestFixtures {
       overview: 'これはプライベート用のテストシナリオです',
       visibility: 'private',
     },
+    PUBLIC_SCENARIO_2: {
+      id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039903',
+      title: 'パブリックテストシナリオ2',
+      overview: 'これは2つ目のパブリック用テストシナリオです',
+      visibility: 'public',
+    },
   } as const;
 
   static readonly TEST_SESSIONS = {
