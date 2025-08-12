@@ -59,7 +59,6 @@ describe('User Scenario Stock API 統合テスト', () => {
     );
   });
 
-
   describe('GET /api/users/{uid}/stocked-scenarios', () => {
     it('ストックがない場合は空配列を返す', async () => {
       const res = await api.getStockedScenarios(testUserId);
@@ -67,7 +66,7 @@ describe('User Scenario Stock API 統合テスト', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(data).toEqual([]);
     });
 
@@ -79,7 +78,7 @@ describe('User Scenario Stock API 統合テスト', () => {
       const res = await api.getStockedScenarios(testUserId);
       expect(res.status).toBe(200);
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(data).toHaveLength(2);
 
       // ストックされたシナリオが含まれていることを確認
@@ -95,7 +94,7 @@ describe('User Scenario Stock API 統合テスト', () => {
       const res = await api.getStockedScenarios(testUserId);
       expect(res.status).toBe(200);
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(data).toHaveLength(1);
 
       expect(data[0]).toEqual({
@@ -120,11 +119,13 @@ describe('User Scenario Stock API 統合テスト', () => {
       const res = await api.addScenarioStock(testUserId, testScenario1.id);
 
       expect(res.status).toBe(201);
-      expect(await res.json()).toEqual({ message: 'Scenario insert successfully' });
+      expect(await res.json()).toEqual({
+        message: 'Scenario insert successfully',
+      });
 
       // ストックされたことを確認
       const listRes = await api.getStockedScenarios(testUserId);
-      const stocks = await listRes.json<any[]>();
+      const stocks = await listRes.json();
       expect(stocks).toHaveLength(1);
       expect(stocks[0].id).toBe(testScenario1.id);
     });
@@ -139,7 +140,7 @@ describe('User Scenario Stock API 統合テスト', () => {
 
       // ストック一覧で重複がないことを確認
       const listRes = await api.getStockedScenarios(testUserId);
-      const stocks = await listRes.json<any[]>();
+      const stocks = await listRes.json();
       expect(stocks).toHaveLength(1);
     });
 
@@ -168,7 +169,7 @@ describe('User Scenario Stock API 統合テスト', () => {
 
       // ストックが削除されたことを確認
       const listRes = await api.getStockedScenarios(testUserId);
-      const stocks = await listRes.json<any[]>();
+      const stocks = await listRes.json();
       expect(stocks).toHaveLength(0);
     });
 
