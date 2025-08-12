@@ -51,13 +51,15 @@ Content-Type: application/json
 - [x] **統合テスト作成**: `game-master-session.spec.ts` 作成完了（9テスト）
 - [x] **新エンドポイント実装**: `gameMasters.ts` にPOSTロジック追加
 
-### 🚧 進行中
-- [ ] **スキーマ問題解決**: `sessionRequestSchema` vs `gameMasterSessionRequestSchema`
-- [ ] **テスト動作確認**: 4/9テスト失敗中（400エラー）
+### ✅ 完了済み（追加）
+- [x] **lintエラー修正**: 複雑度・any型・冗長条件の解消
+- [x] **フロントエンド修正**: createSession APIの新エンドポイント対応
+- [x] **型エラー修正**: as constによる型推論改善
+
+### 🚧 進行中  
+- [ ] **旧API非推奨化実装**
 
 ### ⏳ 残作業
-- [ ] **テスト修正・実行**: 全テスト通過確認
-- [ ] **フロントエンド修正**: API呼び出し箇所の修正
 - [ ] **旧API非推奨化**: Deprecatedヘッダー追加
 - [ ] **完了報告書作成**: 移行完了ドキュメント作成
 
