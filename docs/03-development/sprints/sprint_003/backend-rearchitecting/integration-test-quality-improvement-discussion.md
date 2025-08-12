@@ -146,52 +146,76 @@ export const TestFixtures = {
 };
 ```
 
-### 提案2: 型安全なレスポンス検証
+### 提案2: 値ベースの直接検証アプローチ
 
-#### **専用のアサーションヘルパー**
+#### **値による直接比較（推奨アプローチ）**
+型チェックや抽象化されたヘルパーを避け、実際の値で直接検証する：
+
 ```typescript
-// test/integrations/helpers/assertions.ts
-import { SessionResponse, GameMasterSessionRequest } from '@odyssage/schema';
-
-export const AssertionHelpers = {
-  // ✅ 改善案：構造とビジネスロジックを明確に分離
-  expectSessionResponse(actual: unknown, expected: Partial<SessionResponse>) {
-    expect(actual).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        gmId: expected.gmId || expect.any(String),
-        scenarioId: expected.scenarioId || expect.any(String),
-        title: expected.title || expect.any(String),
-        status: expected.status || expect.any(String),
-        createdAt: expect.any(String),
-        ...expected, // 明示的に指定された期待値を上書き
-      })
-    );
-  },
-
-  expectSessionArray(actual: unknown[], expectedLength?: number) {
-    expect(Array.isArray(actual)).toBe(true);
-    if (expectedLength !== undefined) {
-      expect(actual.length).toBe(expectedLength);
-    }
+// ✅ 改善提案：値による直接検証
+describe('POST /api/game-masters/{uid}/sessions', () => {
+  it('新規セッションを正しく作成できる', async () => {
+    const res = await api.createSession(testGMId, testSession);
+    expect(res.status).toBe(201);
     
-    // 各要素がセッションレスポンス形式であることを確認
-    actual.forEach(session => {
-      this.expectSessionResponse(session, {});
+    const data = await res.json();
+    
+    // 値による直接比較 - 期待値が明確で読みやすい
+    expect(data).toEqual({
+      id: expect.any(String), // IDのみランダム値なのでany
+      gmId: testGMId,
+      scenarioId: testSession.scenarioId,
+      title: testSession.title,
+      status: '準備中',
+      createdAt: expect.any(String), // 日時はランダムなのでany
     });
-  },
+  });
+});
+```
 
-  expectValidDateString(dateString: string) {
-    expect(typeof dateString).toBe('string');
-    expect(new Date(dateString)).toBeInstanceOf(Date);
-    expect(isNaN(new Date(dateString).getTime())).toBe(false);
-  }
-};
+#### **配列レスポンスの検証**
+```typescript
+// ✅ 配列の場合も値による直接比較
+it('指定GMのセッション一覧を正しく取得できる', async () => {
+  // テストセッションを2つ作成
+  const session1 = await api.createSession(testGMId, { 
+    scenarioId: testScenarioId, 
+    title: 'セッション1' 
+  });
+  const session2 = await api.createSession(testGMId, { 
+    scenarioId: testScenarioId, 
+    title: 'セッション2' 
+  });
+
+  const res = await api.getGmSessions(testGMId);
+  const sessions = await res.json();
+
+  // 期待される具体的なオブジェクトで比較
+  expect(sessions).toContainEqual({
+    id: (await session1.json()).id,
+    title: 'セッション1',
+    status: '準備中',
+    scenarioId: testScenarioId,
+    scenarioTitle: 'テストシナリオ',
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String),
+  });
+
+  expect(sessions).toContainEqual({
+    id: (await session2.json()).id,
+    title: 'セッション2',
+    status: '準備中',
+    scenarioId: testScenarioId,
+    scenarioTitle: 'テストシナリオ',
+    createdAt: expect.any(String),
+    updatedAt: expect.any(String),
+  });
+});
 ```
 
 #### **使用例の比較**
 ```typescript
-// ❌ 現在の実装
+// ❌ 現在の実装：冗長で期待値が分散
 expect(data).toHaveProperty('id');
 expect(data).toHaveProperty('gmId', testGMId);
 expect(data).toHaveProperty('scenarioId', testSession.scenarioId);
@@ -201,12 +225,14 @@ expect(data).toHaveProperty('createdAt');
 expect(typeof data.id).toBe('string');
 expect(typeof data.title).toBe('string');
 
-// ✅ 改善後
-AssertionHelpers.expectSessionResponse(data, {
+// ✅ 改善後：期待値が一箇所に集約、値で直接検証
+expect(data).toEqual({
+  id: expect.any(String),
   gmId: testGMId,
   scenarioId: testSession.scenarioId,
   title: testSession.title,
   status: '準備中',
+  createdAt: expect.any(String),
 });
 ```
 
@@ -214,7 +240,7 @@ AssertionHelpers.expectSessionResponse(data, {
 
 #### **テストケース分離の明確化**
 ```typescript
-// ✅ 改善案：関心の分離を明確化
+// ✅ 改善案：関心の分離を明確化、値による直接検証
 describe('POST /api/game-masters/{uid}/sessions', () => {
   describe('正常系', () => {
     it('新規セッションを正しく作成できる', async () => {
@@ -222,21 +248,43 @@ describe('POST /api/game-masters/{uid}/sessions', () => {
       expect(res.status).toBe(201);
       
       const data = await res.json();
-      AssertionHelpers.expectSessionResponse(data, {
+      expect(data).toEqual({
+        id: expect.any(String),
         gmId: testGMId,
-        ...testSession,
+        scenarioId: testSession.scenarioId,
+        title: testSession.title,
         status: '準備中',
+        createdAt: expect.any(String),
       });
     });
   });
 
   describe('異常系', () => {
-    it('必須フィールド不足で400エラー', async () => { /* ... */ });
-    it('存在しないシナリオIDで400エラー', async () => { /* ... */ });
+    it('必須フィールド不足で400エラー', async () => { 
+      const res = await api.createSession(testGMId, { title: 'テスト' }); // scenarioId省略
+      expect(res.status).toBe(400);
+    });
+    
+    it('存在しないシナリオIDで400エラー', async () => { 
+      const res = await api.createSession(testGMId, {
+        scenarioId: 'non-existent-scenario-id',
+        title: 'テスト'
+      });
+      expect(res.status).toBe(400);
+      
+      const error = await res.json();
+      expect(error).toEqual({
+        message: expect.any(String) // エラーメッセージの具体的な内容は変動する可能性があるため
+      });
+    });
   });
 
   describe('認証・認可', () => {
-    it('認証なしでもテスト環境ではバイパス', async () => { /* ... */ });
+    it('認証なしでもテスト環境ではバイパス', async () => { 
+      // 認証ヘッダーなしでリクエスト
+      const res = await api.createSessionWithoutAuth(testGMId, testSession);
+      expect(res.status).toBe(201);
+    });
   });
 });
 ```
