@@ -50,6 +50,9 @@ const route = new Hono<Env>()
     c.header('X-New-Endpoint', 'GET /api/scenarios/{id}');
     c.header('X-Deprecated-Until', '2025-11-01');
     
+    // 廃止準備：使用状況ログ出力
+    console.warn(`[DEPRECATED] Legacy API /api/scenario/${c.req.param('id')} accessed. Client should migrate to /api/scenarios/${c.req.param('id')} before 2025-11-01. User-Agent: ${c.req.header('User-Agent') || 'unknown'}, IP: ${c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For') || 'unknown'}`);
+    
     // 共通ロジック実行（完全に同一のロジック・レスポンス）
     const param = c.req.valid('param');
     const [data] = await getScenariosByid(
