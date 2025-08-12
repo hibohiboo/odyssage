@@ -3,7 +3,7 @@ get:
   summary: ユーザーがストックしたシナリオ一覧の取得
   description: 指定されたユーザーがストックしたシナリオの一覧を返します
   parameters:
-    - name: user_id
+    - name: uid
       in: path
       required: true
       schema:

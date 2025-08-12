@@ -79,6 +79,7 @@ export async function getScenarios(connectionString: string) {
     .select({
       id: scenariosTable.id,
       title: scenariosTable.title,
+      updatedAt: scenariosTable.updatedAt,
     })
     .from(scenariosTable)
     .orderBy(asc(scenariosTable.userId), asc(scenariosTable.title));

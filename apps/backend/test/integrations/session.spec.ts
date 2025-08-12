@@ -1,4 +1,5 @@
 import { execSql } from '@odyssage/database/test-utils/execSql';
+import { generateUUID } from '@odyssage/lib/index';
 
 import { describe, expect, it } from 'vitest';
 import { setupTestEnv } from './test-utils';
@@ -15,7 +16,7 @@ describe('セッション統合テスト', () => {
   const testScenarioId = '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039909';
   const testScenarioTitle = 'テストシナリオ';
   // テスト環境のセットアップ
-  const { getApp, getEnv } = setupTestEnv({
+  const { getApp, getEnv, getConnectionString } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       await execSql(
         connectionString,
@@ -27,38 +28,26 @@ describe('セッション統合テスト', () => {
     },
   });
 
-  // テストケース：セッションを作成して取得できることを確認
-  it('セッションを作成して正しく取得できること', async () => {
+  // 注意: セッション作成機能は POST /api/game-masters/{uid}/sessions に移行済み
+  // セッション作成のテストは game-master-session.spec.ts で実施
+
+  // GET /api/sessions/:id のテスト（まだ有効なAPI）
+  it('セッションIDでセッション詳細を取得できること', async () => {
     const app = getApp();
-    const env = getEnv(); // リクエストボディ（キャメルケースに修正）
-    const sessionData = {
-      gmId: testUserId,
-      scenarioId: testScenarioId,
-      title: 'テストセッション',
-    };
+    const env = getEnv();
 
-    // POST リクエストでセッションを作成
-    const postResponse = await app.request(
-      '/api/sessions',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sessionData),
-      },
-      getEnv(),
+    // 直接データベースにテストセッションを挿入
+    const testSessionId = generateUUID();
+
+    await execSql(
+      getConnectionString(),
+      `INSERT INTO odyssage.sessions (id, gm_id, scenario_id, title, status, created_at, updated_at) 
+       VALUES ('${testSessionId}', '${testUserId}', '${testScenarioId}', 'テスト用セッション', '準備中', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
     );
-    expect(postResponse.status).toBe(201);
-    const createdSession = (await postResponse.json()) as any;
-    expect(createdSession).toHaveProperty('id');
-    expect(createdSession.title).toBe(sessionData.title);
-    expect(createdSession.gmId).toBe(sessionData.gmId);
-    expect(createdSession.scenarioId).toBe(sessionData.scenarioId);
 
-    // 作成したセッションをGET リクエストで取得
+    // GET リクエストでセッションを取得
     const getResponse = await app.request(
-      `/api/sessions/${createdSession.id}`,
+      `/api/sessions/${testSessionId}`,
       undefined,
       env,
     );
@@ -66,8 +55,8 @@ describe('セッション統合テスト', () => {
     expect(getResponse.status).toBe(200);
 
     const retrievedSession = (await getResponse.json()) as any;
-    expect(retrievedSession.id).toBe(createdSession.id);
-    expect(retrievedSession.title).toBe(sessionData.title);
-    expect(retrievedSession.scenarioTitle).toBe(testScenarioTitle); // キャメルケースに修正
+    expect(retrievedSession.id).toBe(testSessionId);
+    expect(retrievedSession.title).toBe('テスト用セッション');
+    expect(retrievedSession.scenarioTitle).toBe(testScenarioTitle);
   });
 });

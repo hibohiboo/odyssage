@@ -3,7 +3,27 @@
 ## 概要
 
 本ドキュメントでは、Odyssageプロジェクトにおけるテスト戦略を定義します。
-業務領域とドメインモデルに基づく適切なテストアプローチを確立し、品質保証の指針とします。
+**フルスタックアーキテクチャでの責務分担**に基づく適切なテストアプローチを確立し、品質保証の指針とします。
+
+## 🔄 設計判断の重要な更新（2025-08-11）
+
+### DDDアーキテクチャ議論からの学習
+Sprint 003のバックエンドリアーキテクティング検討において、重要な設計判断の見直しを実施：
+
+#### **従来の誤認識**
+- バックエンドを独立したDDDシステムとして評価
+- 複雑なドメインロジックがバックエンドに存在すると仮定
+- Edge Computing環境を「制約」として認識
+
+#### **正しい理解への転換**
+- **フルスタック責務分担**: 複雑ビジネスロジックはフロントエンド、バックエンドはデータ永続化
+- **補完的業務の適切評価**: バックエンドは「データ更新の補完業務」として軽量・効率的設計
+- **技術選択の最適化**: Cloudflare Workers は制約ではなく最適化された選択
+
+#### **テスト戦略への影響**
+- **逆ピラミッド型テスト採用**: 統合テスト・E2Eテスト重視
+- **フロントエンド複雑性重視**: 楽観的更新・状態管理の品質保証
+- **バックエンド最小限テスト**: 境界値・エラー処理に絞った効率的テスト
 
 ## テスト戦略の決定フロー
 
@@ -87,42 +107,43 @@ Integration Tests
 
 ## 機能別テスト方針
 
-### GraphDBシーン機能
+### GraphDBシーン機能（2025-08-11 設計判断更新）
 - **業務領域**: 中核の業務領域
-- **実装方法**: ドメインモデル（複雑な関係性管理）
-- **テスト方針**: ピラミッド型テスト
+- **フルスタック責務分担**: 
+  - **フロントエンド**: 複雑なビジネスロジック（楽観的更新、状態管理）
+  - **バックエンド**: データ永続化（補完的業務）
+- **実装方法**: トランザクションスクリプト（データ構造シンプル）
+- **テスト方針**: 逆ピラミッド型テスト（統合テスト重視）
 
-#### Phase 1: Unit Tests（重点実装）
+#### Phase 1: E2E Tests（重点実装）
 ```
-バックエンド:
-- GraphDBシーンドメインロジック
-- シーン作成・更新・削除ルール
-- データ整合性検証
-- エラーハンドリング
-
-フロントエンド:
-- useGraphScenesQuery Hookロジック
-- シーン状態管理
-- フォームバリデーション
+ユーザーシナリオ（フロントエンド重視）:
+- シーン作成・編集・削除の完全なフロー
+- 楽観的更新の正常動作確認
+- GraphDBとの連携動作
+- エラー状態でのUX確認
 ```
 
 #### Phase 2: Integration Tests（中程度）
 ```
-API:
+API・データ永続化:
 - GET /api/graph-scenes/scenario/{scenarioId}
 - PUT /api/graph-scenes/{id}
 - Neo4j・PostgreSQL統合
-
-データベース:
-- GraphDB関係性の整合性
-- 障害時のフォールバック
+- データ整合性確認
 ```
 
-#### Phase 3: E2E Tests（最小限）
+#### Phase 3: Unit Tests（最小限）
 ```
-重要シナリオのみ:
-- シーン作成・編集・削除の基本フロー
-- GraphDB障害時のユーザー体験
+バックエンド境界値・エラーケース:
+- UUID形式検証
+- データ変換処理
+- Neo4j接続エラーハンドリング
+
+フロントエンド重要ロジック:
+- useOptimisticScenes の複雑な状態管理
+- useGraphScenesQuery のキャッシュ戦略
+- フォーム状態の楽観的更新
 ```
 
 ### ユーザー認証機能
@@ -202,52 +223,58 @@ E2E Tests:
 リリース準備      | 全テスト実行
 ```
 
-### 2. GraphDBシーン機能の推奨テスト計画
+### 2. GraphDBシーン機能の推奨テスト計画（2025-08-11改訂）
 
-#### Unit Tests（最重要・詳細実装）
+#### E2E Tests（最重要・詳細実装）
 ```
-バックエンド:
-- GraphSceneService: シーン作成・更新・削除ロジック
-- シーンドメインオブジェクト: ビジネスルール検証
-- Neo4jクエリビルダー: クエリ生成ロジック
-- バリデーター: データ整合性チェック
+ユーザー完全シナリオ:
+- シーン作成→編集→削除の完全フロー
+- 楽観的更新→サーバー同期の動作確認
+- 複数シーン同時編集での整合性
+- ネットワークエラー時の自動復旧UX
+- GraphDB障害時のフォールバック動作
 
-フロントエンド:
-- useGraphScenesQuery Hook: データ取得・キャッシュ管理
-- SceneForm コンポーネント: フォームロジック・バリデーション
-- シーン状態管理: Redux/Zustand状態更新ロジック
+フロントエンド重要ロジック（E2Eレベルで検証）:
+- useOptimisticScenes の状態管理
+- SceneForm 楽観的更新体験
+- エラー状態の適切な表示
 ```
 
 #### Integration Tests（中程度実装）
 ```
-API統合:
+API・データ永続化統合:
 - GET /api/graph-scenes/scenario/{scenarioId}: データ取得確認
 - PUT /api/graph-scenes/{id}: データ永続化確認
-
-データベース統合:
 - Neo4j・PostgreSQL間のデータ整合性
 - GraphDB関係性の正確性確認
 ```
 
-#### E2E Tests（最小限実装）
+#### Unit Tests（最小限実装）
 ```
-重要シナリオのみ:
-- シーン作成→表示の基本フロー（1シナリオ）
-- GraphDB障害時のユーザー体験（1シナリオ）
+バックエンド境界値処理:
+- GraphSceneService: データ変換・永続化ロジック  
+- Neo4jドライバー: 接続・クエリ実行エラー
+- バリデーター: UUID・データ形式チェック
+
+フロントエンド複雑ロジック単体:
+- useOptimisticScenes: 状態更新ルール
+- 楽観的更新: 競合状態の処理ロジック
 ```
 
 ## 完了基準
 
-### ドメインモデル機能の完了判定
+### フルスタック機能の完了判定（2025-08-11改訂）
+
+#### 中核業務（GraphDBシーンなど）の完了基準
 ```
-✅ Unit Tests: ドメインロジックが90%以上のカバレッジ
-✅ Integration Tests: 全APIエンドポイントが正常動作
+✅ E2E Tests: 全ユーザーシナリオが正常動作（最重要）
+✅ Integration Tests: API・データ永続化連携確認
 ✅ Lint・型チェック: エラーゼロ
-✅ 手動動作確認: 基本ユーザーシナリオが正常動作
-⭕ E2E Tests: 重要シナリオのみ（必須ではない）
+✅ 手動動作確認: 楽観的更新を含む完全フロー
+⭕ Unit Tests: 境界値・複雑ロジック単体（最小限）
 ```
 
-### トランザクションスクリプト機能の完了判定
+#### 補完・連携業務の完了判定
 ```
 ✅ E2E Tests: 全ユーザーシナリオが正常動作
 ✅ Integration Tests: API・外部サービス連携確認
@@ -255,4 +282,215 @@ API統合:
 ⭕ Unit Tests: 境界値・エラーケースのみ（最小限）
 ```
 
-この戦略により、業務領域に応じた効率的で適切なテストアプローチを実現します。
+**重要な変更点**: DDDドメインモデル前提を廃止、フルスタック責務分担に基づく戦略に統一
+
+---
+
+## 📚 APIテスト実装ベストプラクティス（2025-08-11追加）
+
+### 実装完了から得た重要な教訓
+
+#### **1. バリデーションテスト注意事項**
+- **期待値の推測禁止**: スキーマ定義確認→実動作確認→テストケース作成
+- **実例**: `userParamSchema = v.object({ uid: v.string() })`の場合、空文字で400エラーにならない
+- **対策**: 事前にスキーマ内容とAPI実装両方を確認
+
+#### **2. テスト冗長性の排除** 
+- **同一データソース検証の回避**: beforeSetupデータと期待値の重複検証を防ぐ
+- **実例**: 「API取得」テストと「API-DB一致」テストが同じデータで重複
+- **対策**: テストケース追加前に既存テストとの重複チェック
+
+#### **3. 可読性パターンの活用**
+```typescript
+// ✅ 推奨パターン（graph-scenario.spec.ts準拠）
+describe('API名 統合テスト', () => {
+  const { getApp, getEnv } = setupTestEnv({ beforeSetup: ... });
+  let app: ReturnType<typeof getApp>;
+  
+  beforeEach(() => { app = getApp(); });
+  
+  /** 共通リクエスト関数 */
+  const apiRequest = async (params) => app.request(...);
+  
+  it('簡潔なテスト名', async () => {
+    const res = await apiRequest(data);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(expectedData);
+  });
+});
+```
+
+#### **4. 環境考慮したテスト範囲**
+- **パフォーマンステスト除外**: Testcontainersローカル環境では意味なし
+- **機能テスト集中**: 正常系・異常系・エラーハンドリング・レスポンス形式
+- **本番測定**: パフォーマンスはCloudflare Analytics等で実測
+
+#### **5. 避けるべきアンチパターン**
+- ❌ 冗長なデータ整合性テスト（同一データソースでの重複検証）
+- ❌ ローカル環境でのパフォーマンステスト
+- ❌ 詳細すぎるコメント・プロパティ単位の個別検証
+- ❌ `[正常系]`等の冗長なテスト名プレフィックス
+- ❌ **個別エンドポイントでの不要なヘッダーテスト**（特殊要件なしなら既存で十分）
+
+#### **6. データ変更APIの重要パターン**
+```typescript
+// ✅ upsert動作の適切な検証
+it('新規ユーザー登録', async () => {
+  const res = await putUser(newUserId, userData);
+  expect(res.status).toBe(204);
+  
+  // 重要: 操作後の状態確認
+  const getRes = await getUser(newUserId);
+  expect(getRes.status).toBe(200);
+  expect(await getRes.json()).toEqual(expectedData);
+});
+```
+
+#### **7. OpenAPI First 開発プロセス**
+- **原則**: 実装変更前に必ずOpenAPI仕様を先に修正
+- **対象**: パラメータ名・エラーケース・認証要件・レスポンススキーマ
+- **効果**: 仕様と実装の一貫性保証・後戻り作業削減
+- **フロー**: OpenAPI修正 → 実装修正 → テスト確認
+
+#### **8. 実践的な注意事項**
+- **テストコマンド**: `bun run test` が正しい（`bun test` は直接実行で環境変数等が不足）
+- **エラーハンドリング**: 配列分割代入時の `undefined` チェック必須
+- **バリデーション確認**: 期待値は推測せず実際動作で確認
+- **Docker環境**: 統合テストはTestcontainers必須・環境問題の切り分け重要
+
+#### **9. データベース制約とエラーハンドリング**
+- **DB制約エラー**: 重複制約・外部キー制約違反は500エラーで適切に処理される
+- **冪等性重要**: DELETE操作は存在しないリソースでも200成功が適切
+- **テーブル名確認**: 実装前にDrizzle ORMスキーマ定義の正確な確認必須
+- **制約期待値**: DB制約違反テストでは500エラーを期待値に設定
+
+#### **10. 複合エンドポイントテスト戦略**
+```typescript
+// ✅ 関連する複数エンドポイントを1つのファイルで統合テスト
+describe('User Stock API 統合テスト', () => {
+  // GET/POST/DELETE を関係性を含めて包括的にテスト
+  beforeEach(async () => {
+    // クリーンアップ→テストデータ準備の効率化
+    await execSql(conn, 'delete from scenario_stock'); 
+    await execSql(conn, 'delete from scenarios');
+    // テストシナリオ準備
+  });
+  
+  it('操作後の状態確認', async () => {
+    await addStock(userId, scenarioId); // POST操作
+    
+    const stocks = await getStocks(userId); // GET確認
+    expect(stocks.length).toBe(1); // 関係性検証
+  });
+});
+```
+
+#### **11. テスト環境での認証バイパス考慮事項**
+
+**現在の実装**: `CLOUDFLARE_ENV === 'test'` で認証処理をバイパス
+
+**メリット**: 
+- テスト実装簡素化・実行安定性向上・外部依存排除
+- ビジネスロジックに集中・CI/CD環境での実行容易性
+
+**デメリット**: 
+- 認証・認可ロジック未検証・本番環境との差異
+- セキュリティテスト欠如・権限境界テスト不可
+
+**推奨アプローチ**: 
+```typescript
+// 認証レベル別テスト戦略
+describe('認証不要API', () => {
+  // 現在のバイパスアプローチ継続
+});
+
+describe('ビジネスロジック統合', () => {
+  // 認証バイパス、機能検証に集中
+});
+
+describe('認証・認可専用', () => {
+  // 将来実装: 認証ミドルウェア専用テスト
+  // JWT検証・権限境界・セキュリティテスト
+});
+```
+
+**詳細分析**: [[sprints/sprint_003/backend-rearchitecting/test-authentication-bypass-analysis]]
+
+#### **12. API移行・リファクタリングテスト戦略（2025-08-12追加）**
+
+**状況**: REST APIパス構造統一のため、段階的移行テストから迅速削除まで
+
+**移行フェーズ別テスト戦略**:
+```typescript
+// Phase 1: 移行互換性テスト（一時的）
+describe('API移行互換性テスト', () => {
+  it('新旧エンドポイントが完全に同一結果を返すこと', async () => {
+    const oldResponse = await getLegacyAPI();
+    const newResponse = await getNewAPI();
+    expect(await oldResponse.json()).toEqual(await newResponse.json());
+  });
+  
+  it('Deprecated警告ヘッダーが付与されること', async () => {
+    const response = await getLegacyAPI();
+    expect(response.headers.get('X-Deprecated-Endpoint')).toBe('true');
+  });
+});
+```
+
+**迅速削除のタイミング判断**:
+- ✅ **フロントエンド未使用確認**: 全ファイル検索で利用状況確認
+- ✅ **移行テスト完全通過**: 新旧API同一動作を保証
+- ✅ **即座削除の決断**: 「記憶が新しいうちに削除」原則
+- ✅ **技術的負債排除**: 重複コード・設定・テストの完全削除
+
+**削除時の作業パターン**:
+```typescript
+// Before: 9テスト（新API 5 + 旧API 2 + 移行互換性 2）
+describe('新API: GET /api/scenarios/{id}', () => { /* 5 tests */ });
+describe('旧API: GET /api/scenario/{id}', () => { /* 2 tests */ });
+describe('移行互換性テスト', () => { /* 2 tests */ });
+
+// After: 5テスト（新APIのみ）
+describe('GET /api/scenarios/{id}', () => { /* 5 tests */ });
+```
+
+**効果測定**:
+- **コード削除**: バックエンド実装・OpenAPI仕様・テストで約200行削除
+- **テスト効率化**: 9→5テストで実行時間43%短縮
+- **認知負荷軽減**: 開発者が考慮すべきAPIエンドポイント統一
+
+**重要な学習**:
+- **段階的移行は内部プロジェクトでは過剰**: 外部利用者なしなら即座削除が効率的
+- **移行テストの役割**: 動作保証確認後は速やかに削除対象
+- **フロントエンド影響確認**: 未使用APIの積極的削除検討材料
+
+#### **13. 技術的負債削除の指針（2025-08-12追加）**
+
+**削除タイミングの判断基準**:
+```
+外部影響度 × 実装複雑度 = 削除戦略
+
+高影響・高複雑度: 段階的移行（監視期間設定）
+高影響・低複雑度: 事前告知 + スケジュール削除  
+低影響・高複雑度: 代替確認 + 迅速削除
+低影響・低複雑度: 即座削除 ← 今回のケース
+```
+
+**「記憶が新しいうちに削除」の効果**:
+- **コンテキスト維持**: 変更背景・影響範囲の記憶が鮮明
+- **作業効率**: 関連ファイル・設定の把握済み
+- **品質向上**: 削除漏れ・影響範囲確認の精度向上
+- **技術的負債圧縮**: 保守負担の早期軽減
+
+### 参考実装
+- **単一リソース操作**: `apps/backend/test/integrations/user-management.spec.ts` (GET/PUT /api/users/{uid})
+- **個別リソース取得**: `apps/backend/test/integrations/scenario-detail.spec.ts` (GET /api/scenarios/{id}) 
+- **リスト取得**: `apps/backend/test/integrations/scenario-public.spec.ts` (GET /api/scenarios, GET /api/scenarios/public)
+- **認証付きリソース管理**: `apps/backend/test/integrations/user-scenario.spec.ts` (POST/GET /api/users/{uid}/scenario)
+- **複合エンドポイント**: `apps/backend/test/integrations/user-stock.spec.ts` (GET/POST/DELETE stocked-scenarios)
+- **API移行パターン**: 第1弾移行 `GET /api/scenario/{id} → GET /api/scenarios/{id}` (完了・削除済み)
+- **成功例**: 冗長テスト排除・upsert動作検証・迅速な技術的負債削除
+
+---
+
+この戦略により、業務領域に応じた効率的で適切なテストアプローチを実現し、技術的負債の迅速な削除による保守性向上を目指します。

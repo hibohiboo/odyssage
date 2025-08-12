@@ -73,20 +73,20 @@ graph TB
 
 ## 🔄 アーキテクチャパターン
 
-### フルスタック境界設計とDDD
+### フルスタック境界設計とDDD（2025-08-11改訂）
 
 #### **システム全体におけるレイヤー分離**
 ```mermaid
 graph TB
-    subgraph "Frontend (React)"
+    subgraph "Frontend (React) - ドメイン中心"
         P[Presentation Layer]
-        D[Domain Layer<br/>複雑なビジネスロジック]
-        A[Application Layer<br/>状態管理・ワークフロー]
+        D[Domain Layer<br/>TRPGビジネスロジック<br/>楽観的更新・競合解決]
+        A[Application Layer<br/>ワークフロー・状態管理<br/>ドメインサービス]
     end
     
-    subgraph "Backend (Cloudflare Workers)"
-        API[API Layer<br/>シンプルなCRUD]
-        I[Infrastructure Layer<br/>データ永続化]
+    subgraph "Backend (Cloudflare Workers) - インフラ中心"
+        API[API Layer<br/>軽量CRUD・バリデーション<br/>最小限ドメインルール]
+        I[Infrastructure Layer<br/>データ永続化・認証連携]
     end
     
     P --> D
@@ -100,23 +100,41 @@ graph TB
     style I fill:#fce4ec
 ```
 
-#### **責務の明確な分離**
+#### **DDD適用レベル別責務分担**
 
-**🎯 Frontend（React + TypeScript）**:
-- **複雑なビジネスロジック**: 楽観的更新・状態遷移・ワークフロー制御
-- **リッチなUX**: リアルタイム操作・インタラクティブUI
-- **ドメイン知識**: TRPG固有のルール・シナリオ管理ロジック
+**🎯 Frontend（React + TypeScript）- フルDDD適用**:
+```typescript
+// ドメインサービス例
+class OptimisticSceneManager {
+  handleConflictResolution(local: Scene[], server: Scene[]): Scene[]
+  validateSceneOrder(scenes: Scene[]): ValidationResult  
+  applyBusinessRules(scene: Scene): ValidationErrors
+}
 
-**⚡ Backend（Cloudflare Workers + Hono.js）**:
-- **データ永続化**: PostgreSQL・Neo4jへのCRUD操作
-- **認証・認可**: Firebase Auth連携・JWT検証
-- **基本検証**: スキーマバリデーション・整合性チェック
+// 集約ルート例  
+class ScenarioAggregate {
+  publish(): ValidationResult
+  canBeEditedBy(userId: UserId): boolean
+  addScene(scene: Scene): ValidationResult
+}
+```
 
-#### **設計判断の根拠**
-- **パフォーマンス**: Edge Computing活用によりデータ操作を軽量化
-- **UX最適化**: フロントエンドでの楽観的更新により応答性向上
-- **開発効率**: 関心の分離により各層の専門性を最大化
-- **スケーラビリティ**: シンプルなバックエンドにより水平拡張を容易化
+**⚡ Backend（Cloudflare Workers + Hono.js）- 最小限DDD適用**:
+```typescript
+// 最小限のドメインバリデーション
+class ScenarioValidator {
+  validateForPersistence(scenario: DTO): ValidationResult
+  checkTitleUniqueness(title: string): boolean
+  validateAuthorPermissions(authorId: string): boolean
+}
+```
+
+#### **設計判断の根拠とDDD戦略**
+- **境界の適切設定**: 複雑性がある場所（フロントエンド）にDDD集中
+- **パフォーマンス**: Edge Computing特性を活かした軽量バックエンド
+- **UX最適化**: フロントエンドでの豊富なドメインロジックにより応答性向上  
+- **開発効率**: 各層の特性に応じたDDD適用度で専門性最大化
+- **保守性**: ドメイン知識の明示的定義によるビジネスルール可視化
 
 ### CQRS（読み書き分離）
 - **Command**: データ変更操作 → PostgreSQL中心

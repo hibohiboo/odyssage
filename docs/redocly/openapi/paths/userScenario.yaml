@@ -40,7 +40,8 @@ post:
             visibility:
               type: "string"
               enum: ["public", "private"]
-              description: "シナリオの公開設定"
+              description: "シナリオの公開設定（省略時はprivate）"
+              default: "private"
           required:
             - "id"
             - "title"

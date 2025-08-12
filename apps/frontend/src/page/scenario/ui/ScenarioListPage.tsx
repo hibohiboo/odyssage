@@ -5,10 +5,12 @@ import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { uidSelector } from '@odyssage/frontend/shared/auth/model/authSlice';
 import { useAppSelector } from '@odyssage/frontend/shared/lib/store';
 
-type APIType = (typeof apiClient.api.users)[':uid']['scenario']['$get'];
+type APIType = (typeof apiClient.api.authors)[':uid']['scenarios']['$get'];
 type ScenarioResponse = Awaited<ReturnType<APIType>>;
-type ScenarioData =
+type ScenarioResponseData =
   ScenarioResponse extends ClientResponse<infer T> ? T : never;
+
+type ScenarioData = Exclude<ScenarioResponseData, { message: string }>;
 
 const ScenarioListPage = () => {
   const uid = useAppSelector(uidSelector);
@@ -18,11 +20,21 @@ const ScenarioListPage = () => {
   useEffect(() => {
     if (!uid) return;
     const fetchScenarios = async (id: string) => {
-      const response = await apiClient.api.users[':uid'].scenario.$get({
+      const response = await apiClient.api.authors[':uid'].scenarios.$get({
         param: { uid: id },
       });
+      if (!response.ok) {
+        console.error('Failed to fetch scenarios');
+        return;
+      }
       const data = await response.json();
-      setMyScenarios(data);
+      // 型ガード: 配列かどうかをチェック
+      if (Array.isArray(data)) {
+        setMyScenarios(data);
+      } else {
+        console.error('Expected scenario array, received:', data);
+        setMyScenarios([]);
+      }
     };
     fetchScenarios(uid);
   }, [uid]);

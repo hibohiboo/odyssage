@@ -30,7 +30,7 @@ test.beforeAll(async () => {
     await page.getByRole('button', { name: 'Delete' }).click();
   }
 });
-test('サインアップする', async ({ page }) => {
+it('サインアップする', async ({ page }) => {
   await page.goto('http://localhost:5173/');
   await page.getByRole('link', { name: 'ログイン' }).click();
   await page.getByRole('link', { name: 'サインアップ' }).click();
