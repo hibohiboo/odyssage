@@ -268,6 +268,73 @@ export class IntegrationTestApi {
     );
   }
 
+  // ===== ユーザーストック管理API =====
+
+  /**
+   * ユーザーのストックシナリオ一覧を取得
+   */
+  async getStockedScenarios(uid: string) {
+    return this.app.request(
+      `/api/users/${uid}/stocked-scenarios`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer mock-jwt-token',
+        },
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * ユーザーのストックシナリオ一覧を取得（認証なし）
+   */
+  async getStockedScenariosWithoutAuth(uid: string) {
+    return this.app.request(
+      `/api/users/${uid}/stocked-scenarios`,
+      {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * シナリオをストックに追加
+   */
+  async addScenarioStock(uid: string, scenarioId: string) {
+    return this.app.request(
+      `/api/users/${uid}/stocked-scenarios/${scenarioId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer mock-jwt-token',
+        },
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * シナリオをストックから削除
+   */
+  async removeScenarioStock(uid: string, scenarioId: string) {
+    return this.app.request(
+      `/api/users/${uid}/stocked-scenarios/${scenarioId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer mock-jwt-token',
+        },
+      },
+      this.env,
+    );
+  }
+
   // ===== ユーティリティメソッド =====
 
   /**
