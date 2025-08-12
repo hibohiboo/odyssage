@@ -169,6 +169,8 @@ return c.json(
 
 **第2弾で発見された問題**: 移行完了後に新API `GET /api/game-masters/{uid}/sessions` がフロントエンドで未使用と判明
 
+**第1弾調査ミス問題**: 使用中API `GET /api/scenario/{id}` を誤って削除 → フロントエンド前方修正で解決
+
 ---
 
 ## 🎯 次回移行への適用

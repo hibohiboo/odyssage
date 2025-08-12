@@ -14,7 +14,7 @@
 
 | API | 状況 | 発見日 | 備考 |
 |-----|------|--------|------|
-| `GET /api/scenario/{id}` | 旧API・削除済み | 2025-08-12 | 新API `/api/scenarios/{id}` に移行後削除<br/>第1弾移行完了 |
+| `GET /api/scenario/{id}` | 旧API・削除済み | 2025-08-12 | 調査ミスで誤削除→フロントエンド新API対応で復旧<br/>第1弾移行完了（結果的に成功） |
 | `GET /api/game-masters/{uid}/sessions` | 新API・未使用 | 2025-08-12 | フロントエンドで未使用<br/>代替API: `/api/sessions?gm_id={uid}` |
 
 ### **中優先度（要調査）**
@@ -33,25 +33,34 @@
 
 ## 📊 詳細情報
 
-### **GET /api/scenario/{id}** ❌ 調査ミス発覚・問題発生
+### **GET /api/scenario/{id}** ✅ 調査ミス発覚・復旧完了
 
-**⚠️ 重大問題**: フロントエンドで実際に使用中のAPIを誤って削除
+**⚠️ 調査ミス事例**: フロントエンドで実際に使用中のAPIを誤って削除 → フロントエンド側対応で解決
 
 **基本情報**:
-- **現在のステータス**: 削除済み（誤削除）
-- **実際の使用状況**: `apps/frontend/src/entities/scenario/api/fetchScenrio.ts:16` で使用中
+- **現在のステータス**: 削除済み（フロントエンド側で新API対応済み）
+- **実際の使用状況**: `apps/frontend/src/entities/scenario/api/fetchScenrio.ts:16` で使用中だった
 - **削除実施日**: 2025-08-12
 - **問題発覚日**: 2025-08-12（削除後に発見）
+- **復旧完了日**: 2025-08-12（フロントエンド置き換えで対応）
 
-**実際の使用箇所**:
+**調査ミス時の使用箇所**:
 ```typescript
-// apps/frontend/src/entities/scenario/api/fetchScenrio.ts
+// 調査ミス時（旧APIを使用中だった）
 const response = await apiClient.api.scenario[':id'].$get({
   param: { id },
 });
 ```
 
-**調査ミスの原因**:
+**復旧対応内容**:
+```typescript
+// 対応後（新APIに置き換え）
+const response = await apiClient.api.scenarios[':id'].$get({
+  param: { id },
+});
+```
+
+**調査ミスの根本原因**:
 1. **検索パターン不足**: `/api/scenario/` 文字列での検索のみ実施
 2. **HonoClient理解不足**: APIクライアントがパス文字列を直接記述しない仕組みの見落とし
 3. **検索範囲不足**: `.scenario[':id']` や `apiClient.api.scenario` パターンの検索漏れ
@@ -67,14 +76,15 @@ grep -r "apiClient.*scenario" apps/frontend/
 grep -r "api.*scenario.*get\|scenario.*api.*get" apps/frontend/
 ```
 
-**削除による実害**:
-- ❌ **機能破綻**: シナリオ詳細表示機能が完全に動作不能
-- ❌ **バックエンドエラー**: 404エラーが発生
-- ❌ **ユーザー影響**: シナリオ詳細ページアクセス不可
+**復旧アプローチ**:
+- ✅ **フロントエンド対応**: 旧API復旧ではなく新APIへの置き換えで解決
+- ✅ **効率的解決**: バックエンド変更不要での迅速な問題解決
+- ✅ **移行完了**: 結果的に意図した移行が完了
 
-**緊急対応必要**:
-- 🚨 **即座復旧**: 削除したAPIの緊急復旧が必要
-- 🚨 **テスト実行**: フロントエンド動作確認が必要
+**教訓・重要性**:
+- 🔍 **調査手法改善**: HonoClient対応の検索パターン必須
+- ⚡ **復旧方針**: 後方復旧より前方修正の有効性
+- 🎯 **最終目標達成**: 調査ミスがあっても移行目標は達成
 
 ### **GET /api/game-masters/{uid}/sessions** ⚠️ 削除検討
 
@@ -144,9 +154,11 @@ grep -r "scenario.*api" apps/frontend/   # ❌ パターン不適切
 - `GET /api/scenario/{id}`: フロントエンドで未使用 → **❌ 誤判定・誤削除**
 - 他のscenario関連API: `/api/graph-scenes/scenario/{scenarioId}` は別API・使用中
 
-**調査ミス発覚（同日）**:
+**調査ミス発覚・復旧完了（同日）**:
 - **実際の使用箇所**: `apps/frontend/src/entities/scenario/api/fetchScenrio.ts:16`
 - **使用形式**: `apiClient.api.scenario[':id'].$get()` （Honoクライアント形式）
+- **復旧方法**: フロントエンド側で `scenarios[':id'].$get()` に置き換え
+- **最終結果**: 意図した移行が完了（旧API→新API）
 
 **調査者**: Claude (Sprint 003作業中)  
 **調査方法**: Grep tool による全文検索（パターン不足）
@@ -292,3 +304,7 @@ grep -r "\${.*{エンドポイント}" apps/frontend/
 2. **検索パターン重要性**: 単一パターン検索の危険性
 3. **削除影響深刻性**: 使用中API削除による機能完全停止リスク
 4. **即座検証必要性**: 削除後の迅速な動作確認の重要性
+5. **🆕 復旧方針選択**: 旧API復旧 vs フロントエンド置き換えの判断基準
+   - **前方修正**: フロントエンド側で新APIに置き換え（推奨）
+   - **後方復旧**: 旧API復旧（一時的対応）
+   - **効率性**: 前方修正により移行目標も同時達成
