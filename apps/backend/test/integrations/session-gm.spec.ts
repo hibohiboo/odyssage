@@ -28,7 +28,7 @@ describe('GM Session Management API 統合テスト', () => {
     app = getApp();
     api = new IntegrationTestApi(app, getEnv());
     fixtures = new TestFixtures(getConnectionString());
-    
+
     // セッションのみクリーンアップ（ユーザー・シナリオは保持）
     await fixtures.cleanupSessions();
 
@@ -38,21 +38,21 @@ describe('GM Session Management API 統合テスト', () => {
       testGmId,
       testScenarioId,
       'テストセッション1',
-      '準備中'
+      '準備中',
     );
     await fixtures.createSession(
-      '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802', 
+      '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802',
       testGmId,
       testScenarioId,
       'テストセッション2',
-      '進行中'
+      '進行中',
     );
     await fixtures.createSession(
       '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039803',
       testOtherGmId,
       testScenarioId,
       'その他GMのセッション',
-      '準備中'
+      '準備中',
     );
   });
 
@@ -65,7 +65,7 @@ describe('GM Session Management API 統合テスト', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(2);
 
@@ -75,18 +75,20 @@ describe('GM Session Management API 統合テスト', () => {
           id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039801',
           title: 'テストセッション1',
           status: '準備中',
-        })
+        }),
       );
       expect(data).toContainEqual(
         expect.objectContaining({
           id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802',
-          title: 'テストセッション2', 
+          title: 'テストセッション2',
           status: '進行中',
-        })
+        }),
       );
 
       // その他GMのセッションが含まれていないことを確認
-      expect(data.every(s => s.id !== '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039803')).toBe(true);
+      expect(
+        data.every((s) => s.id !== '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039803'),
+      ).toBe(true);
     });
 
     it('セッションが存在しないGMでは空配列を返す', async () => {
@@ -96,7 +98,7 @@ describe('GM Session Management API 統合テスト', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(0);
     });
@@ -105,44 +107,42 @@ describe('GM Session Management API 統合テスト', () => {
       const res = await api.getGmSessions(testGmId);
       expect(res.status).toBe(200);
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
 
-      if (data.length > 0) {
-        const session = data[0];
+      const session = data[0];
 
-        // 値による直接検証に変更（型チェック削除）
-        expect(session).toEqual(
-          expect.objectContaining({
-            id: expect.any(String),
-            title: expect.any(String),
-            status: expect.any(String),
-            scenarioId: expect.any(String),
-            scenarioTitle: expect.any(String),
-            createdAt: expect.any(String),
-            updatedAt: expect.any(String),
-          })
-        );
+      // 値による直接検証に変更（型チェック削除）
+      expect(session).toEqual({
+        id: expect.any(String),
+        title: expect.any(String),
+        status: expect.any(String),
+        scenarioId: expect.any(String),
+        scenarioTitle: expect.any(String),
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
 
-        // 関連データの確認
-        expect(session.scenarioId).toBe(testScenarioId);
-        expect(session.scenarioTitle).toBe(TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.title);
-      }
+      // 関連データの確認
+      expect(session.scenarioId).toBe(testScenarioId);
+      expect(session.scenarioTitle).toBe(
+        TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.title,
+      );
     });
 
     it('複数ステータスのセッションを適切に取得する', async () => {
       const res = await api.getGmSessions(testGmId);
       expect(res.status).toBe(200);
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(data.length).toBe(2);
 
       // 複数ステータスの確認を簡潔に
       expect(data).toContainEqual(
-        expect.objectContaining({ status: '準備中' })
+        expect.objectContaining({ status: '準備中' }),
       );
       expect(data).toContainEqual(
-        expect.objectContaining({ status: '進行中' })
+        expect.objectContaining({ status: '進行中' }),
       );
 
       // 各セッションの詳細確認
@@ -151,37 +151,40 @@ describe('GM Session Management API 統合テスト', () => {
           id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039801',
           title: 'テストセッション1',
           status: '準備中',
-        })
+        }),
       );
       expect(data).toContainEqual(
         expect.objectContaining({
           id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802',
           title: 'テストセッション2',
           status: '進行中',
-        })
+        }),
       );
     });
 
     it('データフィルタリングが正しく動作する', async () => {
       // testGmId のセッション確認
       const res1 = await api.getGmSessions(testGmId);
-      const data1 = await res1.json<any[]>();
+      const data1 = await res1.json();
       expect(data1.length).toBe(2);
-      
+
       // 値ベース検証で期待されるセッションを確認
-      const expectedIds = ['3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039801', '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802'];
-      expect(data1.every(s => expectedIds.includes(s.id))).toBe(true);
+      const expectedIds = [
+        '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039801',
+        '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039802',
+      ];
+      expect(data1.every((s) => expectedIds.includes(s.id))).toBe(true);
 
       // testOtherGmId のセッション確認
       const res2 = await api.getGmSessions(testOtherGmId);
-      const data2 = await res2.json<any[]>();
+      const data2 = await res2.json();
       expect(data2.length).toBe(1);
       expect(data2[0]).toEqual(
         expect.objectContaining({
           id: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039803',
           title: 'その他GMのセッション',
           status: '準備中',
-        })
+        }),
       );
     });
 
@@ -192,7 +195,7 @@ describe('GM Session Management API 統合テスト', () => {
 
     it('セッション順序が更新日時順（降順）である', async () => {
       const res = await api.getGmSessions(testGmId);
-      const data = await res.json<any[]>();
+      const data = await res.json();
 
       expect(data.length).toBeGreaterThanOrEqual(2);
 
