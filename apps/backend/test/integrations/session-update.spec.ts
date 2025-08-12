@@ -4,6 +4,7 @@ import { setupTestEnv } from './test-utils';
 
 /**
  * セッション状態更新APIに対する統合テスト
+ * PATCH /api/game-masters/{uid}/sessions/{id} エンドポイントのテスト
  */
 describe('セッション状態更新 統合テスト', () => {
   // テストデータ
@@ -47,7 +48,7 @@ describe('セッション状態更新 統合テスト', () => {
 
     // PATCH リクエストでセッションステータスを更新
     const patchResponse = await app.request(
-      `/api/gm/${testUserId}/sessions/${testSessionId}`,
+      `/api/game-masters/${testUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
         headers: headerWithAuth,
@@ -77,7 +78,7 @@ describe('セッション状態更新 統合テスト', () => {
 
     // PATCH リクエストでセッションステータスを更新
     const patchResponse = await app.request(
-      `/api/gm/${otherUserId}/sessions/${testSessionId}`,
+      `/api/game-masters/${otherUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
         headers: headerWithAuth,
@@ -102,7 +103,7 @@ describe('セッション状態更新 統合テスト', () => {
 
     // PATCH リクエストでセッションステータスを更新
     const patchResponse = await app.request(
-      `/api/gm/${testUserId}/sessions/${testSessionId}`,
+      `/api/game-masters/${testUserId}/sessions/${testSessionId}`,
       {
         method: 'PATCH',
         headers: headerWithAuth,

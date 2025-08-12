@@ -18,12 +18,17 @@ import { Logger } from '../utils/logger';
  */
 export const gmRoute = new Hono<Env>()
   .use('/:uid/*', authorizeMiddleware)
-  // GMがセッションの状態を更新するエンドポイント
+  // 【非推奨】GMがセッションの状態を更新するエンドポイント
   .patch(
     '/:uid/sessions/:id',
     vValidator('param', idUidSchema),
     vValidator('json', sessionStatusUpdateSchema),
     async (c) => {
+      // Deprecated警告ヘッダー追加
+      c.header('X-Deprecated-Endpoint', 'true');
+      c.header('X-New-Endpoint', 'PATCH /api/game-masters/{uid}/sessions/{id}');
+      c.header('X-Deprecation-Date', '2025-08-12');
+      Logger.warn(`Deprecated endpoint accessed: PATCH /api/gm/${c.req.param('uid')}/sessions/${c.req.param('id')} - Use /api/game-masters/{uid}/sessions/{id} instead`);
       try {
         const uid = c.req.param('uid');
         const sessionId = c.req.param('id');

@@ -1,0 +1,150 @@
+parameters:
+  - name: uid
+    in: path
+    description: ゲームマスターのユーザーID
+    required: true
+    schema:
+      type: string
+  - name: id
+    in: path
+    description: セッションID（UUID形式）
+    required: true
+    schema:
+      type: string
+      format: uuid
+
+patch:
+  summary: セッション状態更新
+  operationId: "updateSessionStatusByGameMaster"
+  description: |
+    ゲームマスターが自身が管理するセッションの状態を更新します。
+    
+    **新API**: ロール名統一（gm → game-masters）に基づく推奨エンドポイント
+    旧エンドポイント `/api/gm/{uid}/sessions/{id}` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  tags:
+    - session
+    - game-master
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+          properties:
+            status:
+              type: string
+              enum: ["準備中", "進行中", "終了"]
+              description: 更新後のセッション状態
+        examples:
+          start_session:
+            summary: "セッション開始"
+            value:
+              status: "進行中"
+          end_session:
+            summary: "セッション終了"
+            value:
+              status: "終了"
+  responses:
+    '200':
+      description: セッション状態更新成功
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - id
+              - gm_id
+              - scenario_id
+              - title
+              - status
+              - created_at
+              - updated_at
+              - scenario_title
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: セッションID
+              gm_id:
+                type: string
+                description: ゲームマスターのユーザーID
+              scenario_id:
+                type: string
+                format: uuid
+                description: シナリオID
+              title:
+                type: string
+                description: セッションタイトル
+              status:
+                type: string
+                enum: ["準備中", "進行中", "終了"]
+                description: セッション状態
+              created_at:
+                type: string
+                format: date-time
+                description: 作成日時（ISO 8601形式）
+              updated_at:
+                type: string
+                format: date-time
+                description: 更新日時（ISO 8601形式）
+              scenario_title:
+                type: string
+                description: シナリオタイトル
+          examples:
+            success:
+              summary: "正常レスポンス"
+              value:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                gm_id: "test-gm-id"
+                scenario_id: "660e8400-e29b-41d4-a716-446655440001"
+                title: "失われた遺跡の謎"
+                status: "進行中"
+                created_at: "2025-04-01T10:00:00Z"
+                updated_at: "2025-04-01T12:00:00Z"
+                scenario_title: "古代遺跡探索"
+    '400':
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "不正なステータス値です"
+    '403':
+      description: 権限エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "このセッションの状態を更新する権限がありません"
+    '404':
+      description: セッションが見つからない
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションが見つかりません"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "セッションの状態更新に失敗しました"
