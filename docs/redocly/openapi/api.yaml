@@ -30,8 +30,6 @@ paths:
     $ref: './paths/sessions.yaml'
   /api/sessions/{id}:
     $ref: './paths/session.yaml'
-  /api/sessions/gm/{gm_id}:
-    $ref: './paths/sessionsByGm.yaml'
   /api/game-masters/{uid}/sessions:
     $ref: './paths/gameMasterSessions.yaml'
   /api/graph-scenarios/{id}:

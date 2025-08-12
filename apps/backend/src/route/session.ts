@@ -21,54 +21,9 @@ import { Logger } from '../utils/logger';
  * - GET /sessions: セッション一覧を取得（公開のみ、またはGM IDを指定）
  * - POST /sessions: 新しいセッションを作成
  * - GET /sessions/:id: 特定のセッションを取得
- * - GET /sessions/gm/:gm_id: 特定のGMが管理するセッション一覧を取得
  */
 export const sessionRoute = new Hono<Env>()
-  // 1. 特定のパスを持つルートを先に定義（非推奨）
-  .get('/gm/:gm_id', async (c) => {
-    try {
-      const gmId = c.req.param('gm_id');
-
-      // Deprecated警告ヘッダー
-      c.header('X-Deprecated-Endpoint', 'true');
-      c.header('X-New-Endpoint', 'GET /api/game-masters/{uid}/sessions');
-      c.header('X-Deprecated-Until', '2025-11-01');
-
-      // 使用状況監視ログ
-      console.warn(
-        `[DEPRECATED] Legacy API /api/sessions/gm/${gmId} accessed. ` +
-        `Client should migrate to /api/game-masters/{uid}/sessions before 2025-11-01. ` +
-        `User-Agent: ${c.req.header('user-agent') || 'unknown'}, ` +
-        `IP: ${c.req.header('cf-connecting-ip') || 'unknown'}`
-      );
-
-      if (!gmId) {
-        return c.json({ message: 'GM IDが必要です' }, 400);
-      }
-
-      const sessions = await getSessionsByGmId(
-        c.env.NEON_CONNECTION_STRING,
-        gmId,
-      );
-
-      // 直接キャメルケースのプロパティ名を指定してレスポンス
-      return c.json(
-        sessions.map((session) => ({
-          id: session.id,
-          title: session.title,
-          status: session.status,
-          scenarioId: session.scenarioId,
-          scenarioTitle: session.scenarioTitle,
-          createdAt: session.createdAt.toISOString(),
-          updatedAt: session.updatedAt.toISOString(),
-        })),
-      );
-    } catch (error) {
-      Logger.error('セッション一覧取得エラー:', error);
-      return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
-    }
-  })
-  // 2. セッション一覧を取得するルートを定義
+  // 1. セッション一覧を取得するルートを定義
   .get('/', async (c) => {
     try {
       // クエリパラメータからGM IDを取得（オプション）
@@ -96,7 +51,7 @@ export const sessionRoute = new Hono<Env>()
       return c.json({ message: 'セッション一覧の取得に失敗しました' }, 500);
     }
   })
-  // 3. POST リクエストを処理するエンドポイント
+  // 2. POST リクエストを処理するエンドポイント
   .post('/', vValidator('json', sessionRequestSchema), async (c) => {
     try {
       const json = c.req.valid('json');
@@ -145,7 +100,7 @@ export const sessionRoute = new Hono<Env>()
       );
     }
   })
-  // 4. 単一のセッションを取得するルートを最後に定義
+  // 3. 単一のセッションを取得するルートを最後に定義
   .get('/:id', vValidator('param', idSchema), async (c) => {
     try {
       const param = c.req.valid('param');
