@@ -14,13 +14,14 @@
 
 | API | 状況 | 発見日 | 備考 |
 |-----|------|--------|------|
-| `GET /api/scenario/{id}` | 旧API・非推奨 | 2025-08-12 | 新API `/api/scenarios/{id}` に移行済み<br/>2025-11-01 廃止予定 |
+| `GET /api/scenario/{id}` | 旧API・削除済み | 2025-08-12 | 新API `/api/scenarios/{id}` に移行後削除<br/>第1弾移行完了 |
+| `GET /api/game-masters/{uid}/sessions` | 新API・未使用 | 2025-08-12 | フロントエンドで未使用<br/>代替API: `/api/sessions?gm_id={uid}` |
 
 ### **中優先度（要調査）**
 
 | API | 状況 | 発見日 | 備考 |
 |-----|------|--------|------|
-| - | - | - | 今後の調査で追加 |
+| `GET /api/sessions/gm/{gm_id}` | 旧API・削除済み | 2025-08-12 | 第2弾移行で削除済み<br/>フロントエンドで元々未使用 |
 
 ### **低優先度（保留）**
 
@@ -32,33 +33,65 @@
 
 ## 📊 詳細情報
 
-### **GET /api/scenario/{id}**
+### **GET /api/scenario/{id}** ✅ 削除完了
 
 **基本情報**:
-- **現在のステータス**: 非推奨・廃止予定
+- **現在のステータス**: 削除済み（第1弾移行完了）
 - **代替API**: `GET /api/scenarios/{id}`
-- **廃止予定日**: 2025-11-01
-- **フロントエンド使用状況**: 未使用（2025-08-12 調査時点）
+- **削除実施日**: 2025-08-12
+- **フロントエンド使用状況**: 未使用（削除時点確認済み）
+
+**削除完了内容**:
+- ✅ バックエンド実装削除: `apps/backend/src/route/index.ts`
+- ✅ OpenAPI仕様削除: `docs/redocly/openapi/paths/scenario.yaml`
+- ✅ 関連テスト削除: 旧API・移行テスト削除、5テストに最適化
+- ✅ 技術的負債解消: 約200行のコード削除
+
+### **GET /api/game-masters/{uid}/sessions** ⚠️ 削除検討
+
+**基本情報**:
+- **現在のステータス**: 実装済み・未使用
+- **実装日**: 2025-08-12（第2弾移行で作成）
+- **フロントエンド使用状況**: 未使用（作成時点で確認済み）
+- **代替API**: `GET /api/sessions?gm_id={uid}` （フロントエンドで実際に使用中）
 
 **発見経緯**:
-- Sprint 003 バックエンドリアーキテクティング作業中
-- API移行プロセスでフロントエンド反映確認時に未使用を発見
-- 検索範囲: `apps/frontend/**/*.{ts,tsx,js,jsx,vue}`
-- 検索パターン: `/api/scenario/`、`scenario.*api`
+- 第2弾API移行 (`/api/sessions/gm/{gm_id}` → `/api/game-masters/{uid}/sessions`) 作業中
+- フロントエンド影響調査で新旧両APIとも未使用を発見
+- 実際の使用API: クエリパラメータ形式 `GET /api/sessions?gm_id={uid}`
+
+**削除候補ファイル**:
+- `apps/backend/src/route/gameMasters.ts` (全体)
+- `apps/backend/src/route/index.ts:23` (ルート登録)
+- `docs/redocly/openapi/paths/gameMasterSessions.yaml` (全体)
+- `docs/redocly/openapi/api.yaml:35` (パス登録)
+- `apps/backend/test/integrations/session-gm.spec.ts` (全体)
 
 **削除による影響**:
 - ✅ **フロントエンド**: 影響なし（未使用のため）
-- ✅ **バックエンドテスト**: 移行テストを残すことで問題なし
-- ⚠️ **外部クライアント**: 存在する可能性（要監視）
-- ⚠️ **ドキュメント**: OpenAPI仕様からの削除が必要
+- ✅ **代替手段**: `GET /api/sessions?gm_id={uid}` で同等機能提供
+- ✅ **バックエンドテスト**: 削除しても他機能への影響なし
+- ⚠️ **移行作業**: 実装した移行作業が無価値化
 
-**削除手順（2025-11-01以降）**:
-1. 使用状況ログの最終確認（外部利用者の有無）
-2. バックエンド実装からの削除 (`apps/backend/src/route/index.ts`)
-3. OpenAPI仕様からの削除 (`docs/redocly/openapi/`)
-4. 関連テストの移行・削除判断
+**削除効果**:
+- **コード削減**: 約150行
+- **保守負荷軽減**: 未使用APIの維持コスト削除
+- **API設計明確化**: 重複機能の排除
 
-**削除見込み時期**: 2025-11-01（廃止予定日）
+**削除見込み時期**: 未定（リファクタリング時に検討）
+
+### **GET /api/sessions/gm/{gm_id}** ✅ 削除完了
+
+**基本情報**:
+- **現在のステータス**: 削除済み（第2弾移行完了）
+- **削除実施日**: 2025-08-12
+- **フロントエンド使用状況**: 元々未使用
+- **代替API**: 理論上は `GET /api/game-masters/{uid}/sessions`、実際は `GET /api/sessions?gm_id={uid}`
+
+**削除完了内容**:
+- ✅ バックエンド実装削除: `apps/backend/src/route/session.ts`
+- ✅ OpenAPI仕様削除: `docs/redocly/openapi/paths/sessionsByGm.yaml`
+- ✅ 技術的負債解消: 約150行のコード削除
 
 ---
 
