@@ -42,8 +42,8 @@ describe('Scenario Detail API 統合テスト', () => {
     await execSql(getConnectionString(), insertSQL);
   });
 
-  /** シナリオ詳細をGETで取得する共通関数（新API） */
-  const getScenarioNew = async (id: string) =>
+  /** シナリオ詳細をGETで取得する共通関数 */
+  const getScenario = async (id: string) =>
     app.request(
       `/api/scenarios/${id}`,
       {
@@ -54,7 +54,7 @@ describe('Scenario Detail API 統合テスト', () => {
     );
 
 
-  describe('新API: GET /api/scenarios/{id}', () => {
+  describe('GET /api/scenarios/{id}', () => {
     it('存在するシナリオを正しく取得できる', async () => {
       const res = await getScenarioNew(testScenario.id);
 
