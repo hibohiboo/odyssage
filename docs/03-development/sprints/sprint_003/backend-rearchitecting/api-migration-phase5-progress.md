@@ -55,13 +55,11 @@ Content-Type: application/json
 - [x] **lintエラー修正**: 複雑度・any型・冗長条件の解消
 - [x] **フロントエンド修正**: createSession APIの新エンドポイント対応
 - [x] **型エラー修正**: as constによる型推論改善
+- [x] **旧API完全削除**: POST /api/sessionsエンドポイント削除完了
+- [x] **旧APIテスト修正**: session.spec.ts UUID問題解決・テスト通過
 
-### 🚧 進行中  
-- [ ] **旧API非推奨化実装**
-
-### ⏳ 残作業
-- [ ] **旧API非推奨化**: Deprecatedヘッダー追加
-- [ ] **完了報告書作成**: 移行完了ドキュメント作成
+### ✅ 移行完了
+**第5弾移行作業完了**: 2025-08-12 21:15
 
 ## 🔧 技術実装詳細
 
@@ -310,6 +308,42 @@ const response = await apiClient.api['game-masters'][':uid'].sessions.$post({
 ```
 
 **教訓**: Hono Clientは型安全性を保ちつつ、バックエンドとフロントエンドの整合性を自動保証する
+
+### 🐛 テスト実装時の注意点
+
+#### **6. PostgreSQL UUID制約とテストデータ**
+**問題**: テストでハードコードした文字列IDでUUID制約違反エラー
+```typescript
+// ❌ エラー: 'test-session-id-123' は有効なUUID形式ではない
+const testSessionId = 'test-session-id-123';
+```
+
+**解決**: 適切なUUID生成関数の使用
+```typescript
+// ✅ 解決: generateUUID()で有効なUUID生成
+import { generateUUID } from '@odyssage/lib/index';
+const testSessionId = generateUUID();
+```
+
+**教訓**: データベース制約に合わせた適切なテストデータ生成が必要
+
+#### **7. テスト環境でのスコープ問題**
+**問題**: テスト内で新しいsetupTestEnv()を作成し、接続文字列が未定義
+```typescript
+// ❌ 問題: テスト内で新たにsetupTestEnvを作成
+const { getConnectionString } = setupTestEnv({});
+await execSql(getConnectionString(), sql); // undefined エラー
+```
+
+**解決**: 外部スコープのsetupTestEnv結果を利用
+```typescript
+// ✅ 解決: 既存のsetupTestEnv結果を利用
+const { getConnectionString } = setupTestEnv({ /* setup */ });
+// テスト内では getConnectionString() を直接使用
+await execSql(getConnectionString(), sql);
+```
+
+**教訓**: テスト環境のセットアップは1度だけ行い、スコープ管理に注意する
 
 ---
 
