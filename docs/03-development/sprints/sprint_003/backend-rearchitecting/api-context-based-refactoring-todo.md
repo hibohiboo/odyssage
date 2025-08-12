@@ -476,7 +476,7 @@ const getScenarioDetail = (id: string) =>
 |------|------------|----------|--------|----------|-------------|
 | ✅ | **`GET /api/scenario/{id}` → `scenarios/{id}`** | 完了 | 低 | 2025-08-12完了 | RESTful統一のみ |
 | ✅ | **`GET /api/sessions/gm/{gm_id}` → `game-masters/{uid}/sessions`** | 完了 | 中 | 2025-08-12完了 | ロール名・パラメータ名統一 |
-| 🎯 | **`PATCH /api/gm/{uid}/sessions/{id}` → `game-masters/{uid}/sessions/{id}`** | 進行中 | 低 | 2025-08-12開始 | ロール名統一のみ |
+| ✅ | **`PATCH /api/gm/{uid}/sessions/{id}` → `game-masters/{uid}/sessions/{id}`** | 完了 | 低 | 2025-08-12完了 | ロール名統一のみ |
 | 4 | **`POST /api/users/{uid}/scenario` → `authors/{uid}/scenarios`** | 15日 | 中 | API3完了後 | Author文脈特化 |
 | 5 | **`POST /api/sessions` → `game-masters/{uid}/sessions`** | 18日 | 中 | API4完了後 | 新GM文脈エンドポイント |
 | 6 | **Player参加機能（新規）** | 25日 | 高 | API5完了後 | 完全新機能 |
