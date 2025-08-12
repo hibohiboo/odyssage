@@ -52,46 +52,24 @@ export const gameMastersRoute = new Hono<Env>()
         } catch (dbError) {
           Logger.error('セッション作成DBエラー:', dbError);
 
-          // データベースエラーの詳細をログ出力
+          // Drizzle + PostgreSQLの外部キー制約エラーを検出
           if (dbError instanceof Error) {
-            Logger.error('エラーメッセージ:', dbError.message);
-            Logger.error('エラースタック:', dbError.stack);
+            // DrizzleQueryErrorの場合、causeオブジェクトにPostgreSQLエラー詳細が含まれる
+            const errorData = dbError as any;
+            const cause = errorData?.cause;
+            
+            // PostgreSQLエラーコード 23503 = foreign_key_violation
+            if (
+              cause?.code === '23503' ||
+              cause?.name === 'PostgresError' ||
+              dbError.constructor?.name === 'DrizzleQueryError'
+            ) {
+              return c.json({ message: '指定されたシナリオが見つかりません' }, 400);
+            }
           }
-          Logger.error(
-            'エラーオブジェクト全体:',
-            JSON.stringify(dbError, null, 2),
-          );
-
-          // 様々なデータベースエラーパターンをチェック
-          const errorStr = String(dbError).toLowerCase();
-          const messageStr =
-            dbError instanceof Error ? dbError.message.toLowerCase() : '';
-
-          if (
-            errorStr.includes('foreign key') ||
-            errorStr.includes('constraint') ||
-            errorStr.includes('reference') ||
-            messageStr.includes('foreign key') ||
-            messageStr.includes('constraint') ||
-            messageStr.includes('reference') ||
-            messageStr.includes('not found') ||
-            messageStr.includes('does not exist')
-          ) {
-            return c.json(
-              { message: '指定されたシナリオが見つかりません' },
-              400,
-            );
-          }
-
-          // 一時的にすべてのDBエラーを400として扱い、エラー内容を確認
-          return c.json(
-            {
-              message: '指定されたシナリオが見つかりません',
-              debug:
-                dbError instanceof Error ? dbError.message : String(dbError),
-            },
-            400,
-          );
+          
+          // その他のDBエラーは500エラーとして処理
+          return c.json({ message: 'セッションの作成に失敗しました' }, 500);
         }
 
         // 作成したセッションを取得
