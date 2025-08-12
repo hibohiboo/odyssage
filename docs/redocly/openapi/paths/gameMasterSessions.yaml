@@ -6,15 +6,154 @@ parameters:
     schema:
       type: string
 
+post:
+  summary: セッション作成（Game Master文脈）
+  operationId: 'createSessionByGameMaster'
+  description: |
+    ゲームマスター（GM）として新しいセッションを作成します。
+
+    **新API**: Game Master文脈特化に基づく推奨エンドポイント
+    旧エンドポイント `POST /api/sessions` は非推奨です。
+
+    **権限**: GMとしての認証が必要です。パラメータのuidと認証トークンのuidが一致している必要があります。
+  tags:
+    - session
+    - game-master
+  security:
+    - BearerAuth: []
+  requestBody:
+    description: 作成するセッションの情報
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            scenarioId:
+              type: string
+              format: uuid
+              description: 使用するシナリオのID
+              example: '87654321-4321-4321-4321-cba987654321'
+            title:
+              type: string
+              description: セッションのタイトル
+              minLength: 1
+              maxLength: 255
+              example: '初心者歓迎！クトゥルフの呼び声'
+          required:
+            - scenarioId
+            - title
+        examples:
+          basic_session:
+            summary: 基本的なセッション作成例
+            value:
+              scenarioId: '87654321-4321-4321-4321-cba987654321'
+              title: '初心者歓迎！クトゥルフの呼び声'
+  responses:
+    '201':
+      description: セッションが正常に作成されました
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+                description: 作成されたセッションのID
+                example: 'abcdef12-3456-7890-abcd-ef1234567890'
+              gmId:
+                type: string
+                format: uuid
+                description: ゲームマスターのユーザーID
+                example: '12345678-1234-1234-1234-123456789abc'
+              scenarioId:
+                type: string
+                format: uuid
+                description: 使用するシナリオのID
+                example: '87654321-4321-4321-4321-cba987654321'
+              title:
+                type: string
+                description: セッションのタイトル
+                example: '初心者歓迎！クトゥルフの呼び声'
+              status:
+                type: string
+                description: セッションの現在の状態
+                enum: ['準備中', '進行中', '完了', '中断']
+                example: '準備中'
+              createdAt:
+                type: string
+                format: date-time
+                description: セッション作成日時（ISO 8601形式）
+                example: '2025-08-12T09:30:00Z'
+            required:
+              - id
+              - gmId
+              - scenarioId
+              - title
+              - status
+              - createdAt
+          examples:
+            successful_creation:
+              summary: セッション作成成功レスポンス
+              value:
+                id: 'abcdef12-3456-7890-abcd-ef1234567890'
+                gmId: '12345678-1234-1234-1234-123456789abc'
+                scenarioId: '87654321-4321-4321-4321-cba987654321'
+                title: '初心者歓迎！クトゥルフの呼び声'
+                status: '準備中'
+                createdAt: '2025-08-12T09:30:00Z'
+    '400':
+      description: リクエストデータが不正です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: エラーメッセージ
+                example: '必須フィールドが不足しています'
+    '401':
+      description: 認証が必要です
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: '認証トークンが無効です'
+    '403':
+      description: 権限がありません（パラメータのuidと認証トークンのuidが不一致）
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'このユーザーIDでセッションを作成する権限がありません'
+    '500':
+      description: サーバー内部エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'セッションの作成に失敗しました'
+
 get:
   summary: ゲームマスター管理セッション一覧
-  operationId: "getSessionsByGameMaster"
+  operationId: 'getSessionsByGameMaster'
   description: |
     指定したゲームマスターが作成・管理しているセッション一覧を取得します。
-    
+
     **新API**: RESTful命名統一・文脈特化に基づく推奨エンドポイント
     旧エンドポイント `/api/sessions/gm/{gm_id}` は非推奨です。
-    
+
     **注意**: レスポンス形式は旧APIと完全に同一です。
   tags:
     - session
@@ -28,15 +167,15 @@ get:
             $ref: '../components/schemas/session.yaml#/SessionList'
           examples:
             success:
-              summary: "正常レスポンス"
+              summary: '正常レスポンス'
               value:
-                - id: "550e8400-e29b-41d4-a716-446655440000"
-                  title: "失われた遺跡の謎"
-                  status: "準備中"
-                  scenarioId: "660e8400-e29b-41d4-a716-446655440001"
-                  scenarioTitle: "古代遺跡探索"
-                  createdAt: "2025-04-01T10:00:00Z"
-                  updatedAt: "2025-04-01T12:00:00Z"
+                - id: '550e8400-e29b-41d4-a716-446655440000'
+                  title: '失われた遺跡の謎'
+                  status: '準備中'
+                  scenarioId: '660e8400-e29b-41d4-a716-446655440001'
+                  scenarioTitle: '古代遺跡探索'
+                  createdAt: '2025-04-01T10:00:00Z'
+                  updatedAt: '2025-04-01T12:00:00Z'
     '400':
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
     '500':
@@ -48,4 +187,4 @@ get:
             properties:
               message:
                 type: string
-                example: "セッション一覧の取得に失敗しました"
+                example: 'セッション一覧の取得に失敗しました'
