@@ -59,7 +59,7 @@ describe('Game Master Session Management API 統合テスト', () => {
       // 作成されたセッションが取得できることを確認
       const listRes = await api.getGmSessions(testGMId);
       expect(listRes.status).toBe(200);
-      const sessions = await listRes.json<any[]>();
+      const sessions = await listRes.json();
       expect(sessions.length).toBe(1);
       expect(sessions[0]).toEqual(
         expect.objectContaining({
@@ -75,7 +75,7 @@ describe('Game Master Session Management API 統合テスト', () => {
         // scenarioIdを省略
       };
 
-      const res = await api.createSession(testGMId, invalidSession);
+      const res = await api.createSession(testGMId, invalidSession as any);
       expect(res.status).toBe(400);
     });
 
@@ -117,8 +117,8 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(session1.status).toBe(201);
       expect(session2.status).toBe(201);
 
-      const data1 = await session1.json<any>();
-      const data2 = await session2.json<any>();
+      const data1 = await session1.json();
+      const data2 = await session2.json();
 
       expect(data1.id).not.toBe(data2.id);
       expect(data1.title).toBe('セッション1');
@@ -142,7 +142,7 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(2);
 
@@ -165,7 +165,7 @@ describe('Game Master Session Management API 統合テスト', () => {
       const res = await api.getGmSessions(testGMId);
       expect(res.status).toBe(200);
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
 
       if (data.length > 0) {
@@ -196,7 +196,7 @@ describe('Game Master Session Management API 統合テスト', () => {
       expect(res.status).toBe(200);
       expect(res.headers.get('content-type')).toContain('application/json');
 
-      const data = await res.json<any[]>();
+      const data = await res.json();
       expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(0);
     });
