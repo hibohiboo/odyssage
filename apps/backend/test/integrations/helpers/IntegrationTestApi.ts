@@ -41,6 +41,36 @@ export class IntegrationTestApi {
     );
   }
 
+  /**
+   * ユーザー情報を任意のオブジェクトで更新（バリデーション テスト用）
+   */
+  async putUserRaw(uid: string, userData: any) {
+    return this.app.request(
+      `/api/users/${uid}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData),
+      },
+      this.env,
+    );
+  }
+
+  /**
+   * 不正なJSONでユーザー更新を試行（バリデーション テスト用）
+   */
+  async putUserWithInvalidJson(uid: string, invalidBody: string) {
+    return this.app.request(
+      `/api/users/${uid}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: invalidBody,
+      },
+      this.env,
+    );
+  }
+
   // ===== セッション管理API（Game Masters） =====
 
   /**

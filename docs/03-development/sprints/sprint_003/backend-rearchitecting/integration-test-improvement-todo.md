@@ -160,10 +160,10 @@
   - ✅ TestFixturesクラス作成
   - ✅ ヘルパーディレクトリ作成
 
-- **フェーズ2**: 🔄 1/7完了
+- **フェーズ2**: 🔄 3/7完了
   - ✅ game-master-session.spec.ts リファクタリング
-  - ⬜ session-gm.spec.ts リファクタリング
-  - ⬜ user-management.spec.ts リファクタリング
+  - ✅ session-gm.spec.ts リファクタリング  
+  - ✅ user-management.spec.ts リファクタリング
   - ⬜ session.spec.ts APIクライアント適用
   - ⬜ scenario-*.spec.ts 共通化とフィクスチャー適用
   - ⬜ user-stock.spec.ts APIクライアント適用
@@ -172,7 +172,7 @@
 - **フェーズ3**: ⬜ 0/3完了
 - **フェーズ4**: ⬜ 0/2完了
 
-**総進捗**: 4/15タスク完了 (27%)
+**総進捗**: 6/15タスク完了 (40%)
 
 ---
 
