@@ -7,6 +7,7 @@ import {
 import { idSchema } from '@odyssage/schema/src/schema';
 import { Hono } from 'hono';
 import { authorizeMiddleware } from '../middleware/authorizeMIddleware';
+import { authorsRoute } from './authors';
 import { gameMastersRoute } from './gameMasters';
 import { graphScenarioRoute } from './graphScenario';
 import { graphSceneRoute } from './graphScene';
@@ -17,6 +18,7 @@ const route = new Hono<Env>()
   .get('/', (c) => c.text('Hello Cloudflare Workers!'))
   .use('/users/*', authorizeMiddleware)
   .route('/users', user)
+  .route('/authors', authorsRoute) // シナリオ作成者文脈ルーターを統合
   .route('/sessions', sessionRoute) // セッションルーターを統合
   .route('/game-masters', gameMastersRoute) // ゲームマスター文脈ルーターを統合
   .route('/graph-scenarios', graphScenarioRoute) // GraphDBシナリオルーターを統合

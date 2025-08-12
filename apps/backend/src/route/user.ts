@@ -51,6 +51,12 @@ export const user = new Hono<Env>()
     vValidator('param', userParamSchema),
     vValidator('json', scenarioRequestSchema),
     async (c) => {
+      // Deprecated警告ヘッダー追加
+      c.header('X-Deprecated-Endpoint', 'true');
+      c.header('X-New-Endpoint', 'POST /api/authors/{uid}/scenarios');
+      c.header('X-Deprecation-Date', '2025-08-12');
+      console.log(`Deprecated endpoint accessed: POST /api/users/${c.req.param('uid')}/scenario - Use /api/authors/{uid}/scenarios instead`);
+      
       const param = c.req.valid('param');
       const json = c.req.valid('json');
 
@@ -65,6 +71,12 @@ export const user = new Hono<Env>()
     },
   )
   .get('/:uid/scenario', vValidator('param', userParamSchema), async (c) => {
+    // Deprecated警告ヘッダー追加
+    c.header('X-Deprecated-Endpoint', 'true');
+    c.header('X-New-Endpoint', 'GET /api/authors/{uid}/scenarios');
+    c.header('X-Deprecation-Date', '2025-08-12');
+    console.log(`Deprecated endpoint accessed: GET /api/users/${c.req.param('uid')}/scenario - Use /api/authors/{uid}/scenarios instead`);
+    
     const param = c.req.valid('param');
     const data = await getScenariosByUid(
       c.env.NEON_CONNECTION_STRING,
@@ -78,6 +90,12 @@ export const user = new Hono<Env>()
     vValidator('param', userScenarioParamSchema),
     vValidator('json', scenarioUpdateRequestSchema),
     async (c) => {
+      // Deprecated警告ヘッダー追加
+      c.header('X-Deprecated-Endpoint', 'true');
+      c.header('X-New-Endpoint', 'PUT /api/authors/{uid}/scenarios/{id}');
+      c.header('X-Deprecation-Date', '2025-08-12');
+      console.log(`Deprecated endpoint accessed: PUT /api/users/${c.req.param('uid')}/scenario/${c.req.param('id')} - Use /api/authors/{uid}/scenarios/{id} instead`);
+      
       const param = c.req.valid('param');
       const json = c.req.valid('json');
 
