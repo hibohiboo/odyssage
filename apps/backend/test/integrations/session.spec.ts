@@ -35,34 +35,68 @@ describe('セッション統合テスト', () => {
   // 注意: セッション作成機能は POST /api/game-masters/{uid}/sessions に移行済み
   // セッション作成のテストは game-master-session.spec.ts で実施
 
-  // GET /api/sessions/:id のテスト（まだ有効なAPI）
-  it('セッションIDでセッション詳細を取得できること', async () => {
-    // TestFixturesを使用してテストセッションを作成
-    const testSessionId = generateUUID();
-    await fixtures.createSession(
-      testSessionId,
-      testUserId,
-      testScenarioId,
-      'テスト用セッション',
-      '準備中'
-    );
+  describe('GET /api/sessions/:id', () => {
+    it('セッションIDでセッション詳細を取得できること', async () => {
+      // TestFixturesを使用してテストセッションを作成
+      const testSessionId = generateUUID();
+      await fixtures.createSession(
+        testSessionId,
+        testUserId,
+        testScenarioId,
+        'テスト用セッション',
+        '準備中'
+      );
 
-    // APIクライアントでセッション詳細を取得
-    const getResponse = await api.getSessionById(testSessionId);
+      // APIクライアントでセッション詳細を取得
+      const getResponse = await api.getSessionById(testSessionId);
 
-    expect(getResponse.status).toBe(200);
+      expect(getResponse.status).toBe(200);
 
-    // 値による直接検証に変更
-    const retrievedSession = await getResponse.json();
-    expect(retrievedSession).toEqual({
-      id: testSessionId,
-      title: 'テスト用セッション',
-      status: '準備中',
-      scenarioId: testScenarioId,
-      scenarioTitle: testScenarioTitle,
-      gmId: testUserId,
-      createdAt: expect.any(String),
-      updatedAt: expect.any(String),
+      // 値による直接検証に変更
+      const retrievedSession = await getResponse.json();
+      expect(retrievedSession).toEqual({
+        id: testSessionId,
+        title: 'テスト用セッション',
+        status: '準備中',
+        scenarioId: testScenarioId,
+        scenarioTitle: testScenarioTitle,
+        gmId: testUserId,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
+    });
+
+    it('存在しないセッションIDで404エラー', async () => {
+      const nonExistentSessionId = generateUUID();
+      const getResponse = await api.getSessionById(nonExistentSessionId);
+
+      expect(getResponse.status).toBe(404);
+    });
+
+    it('異なるステータスのセッションも正しく取得できる', async () => {
+      const testSessionId = generateUUID();
+      await fixtures.createSession(
+        testSessionId,
+        testUserId,
+        testScenarioId,
+        '進行中セッション',
+        '進行中'
+      );
+
+      const getResponse = await api.getSessionById(testSessionId);
+      expect(getResponse.status).toBe(200);
+
+      const retrievedSession = await getResponse.json();
+      expect(retrievedSession).toEqual({
+        id: testSessionId,
+        title: '進行中セッション',
+        status: '進行中',
+        scenarioId: testScenarioId,
+        scenarioTitle: testScenarioTitle,
+        gmId: testUserId,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      });
     });
   });
 });
