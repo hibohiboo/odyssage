@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import useSWR from 'swr';
-import { describe, test, vi, expect, beforeEach } from 'vitest';
+import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 import { useGraphScenesQuery } from './useGraphScenesQuery';
 
