@@ -3,7 +3,6 @@ import { vValidator } from '@hono/valibot-validator';
 import { createSession } from '@odyssage/database/src/queries/insert';
 import {
   getSessionById,
-  getSessionsByGmId,
   getSessions,
 } from '@odyssage/database/src/queries/select';
 import {
