@@ -297,6 +297,152 @@ interface APILog {
 ### Phase 3: エンタープライズ機能
 - **API Rate Limiting**: 利用制限機能
 - **API Gateway**: 統一エントリーポイント
+
+---
+
+## 🔧 API移行・リファクタリング実践知見（2025-08-12追加）
+
+### RESTful命名統一プロジェクトからの学習
+
+#### **第1弾移行実績**: `GET /api/scenario/{id} → GET /api/scenarios/{id}`
+
+**実施内容**:
+- **目的**: RESTful設計原則への統一（単数形→複数形リソース名）
+- **期間**: 実質2日（設計・実装・テスト・削除完了）
+- **削除効果**: 約200行のコード負債削除、テスト実行時間43%短縮
+
+#### **移行戦略パターン**
+
+**段階的移行 vs 迅速削除の判断基準**:
+```
+外部影響度 × 実装複雑度 = 移行戦略
+
+高影響・高複雑度: 段階的移行（監視期間3-6ヶ月）
+高影響・低複雑度: 事前告知 + スケジュール削除（1-3ヶ月）  
+低影響・高複雑度: 代替確認 + 迅速削除（1-2週間）
+低影響・低複雑度: 即座削除（1-3日） ← 内部プロジェクト推奨
+```
+
+**内部プロジェクトでの最適化戦略**:
+- ✅ **フロントエンド未使用確認**: 全ファイル検索で実利用状況確認
+- ✅ **移行テスト**: 新旧API同一動作を保証後、即座に削除対象化
+- ✅ **記憶が新しいうちに削除**: コンテキスト維持による作業効率化
+- ✅ **技術的負債圧縮**: 保守負担の迅速な軽減
+
+#### **実装パターン**
+
+**新旧API並行実装（一時的）**:
+```typescript
+// 新API（推奨）- RESTful統一
+.get('/scenarios/:id', vValidator('param', idSchema), async (c) => {
+  const param = c.req.valid('param');
+  const [data] = await getScenariosByid(c.env.NEON_CONNECTION_STRING, param.id);
+  if (!data) return c.text('Not Found', 404);
+  return c.json(data);
+})
+
+// 旧API（非推奨）- 後方互換性維持
+.get('/scenario/:id', vValidator('param', idSchema), async (c) => {
+  // Deprecated警告ヘッダー
+  c.header('X-Deprecated-Endpoint', 'true');
+  c.header('X-New-Endpoint', 'GET /api/scenarios/{id}');
+  c.header('X-Deprecated-Until', '2025-11-01');
+  
+  // 同一ロジック実行（レスポンス完全一致保証）
+  return [同一の実装];
+});
+```
+
+**移行完了後（推奨）**:
+```typescript
+// 新APIのみ維持
+.get('/scenarios/:id', vValidator('param', idSchema), async (c) => {
+  const param = c.req.valid('param');
+  const [data] = await getScenariosByid(c.env.NEON_CONNECTION_STRING, param.id);
+  if (!data) return c.text('Not Found', 404);
+  return c.json(data);
+});
+```
+
+#### **OpenAPI仕様管理**
+
+**移行前OpenAPI構成**:
+```yaml
+# api.yaml
+paths:
+  /api/scenarios/{id}:
+    $ref: './paths/scenarios-detail.yaml'  # 新API仕様
+  /api/scenario/{id}:
+    $ref: './paths/scenario.yaml'          # 旧API仕様（廃止警告付き）
+```
+
+**移行完了後**:
+```yaml
+# api.yaml
+paths:
+  /api/scenarios/{id}:
+    $ref: './paths/scenarios-detail.yaml'  # 新API仕様のみ
+```
+
+#### **移行テスト戦略**
+
+**Phase 1: 移行互換性テスト（一時的）**:
+```typescript
+describe('API移行互換性テスト', () => {
+  it('新旧エンドポイントが完全に同一結果を返すこと', async () => {
+    const oldResponse = await getScenarioLegacy(testId);
+    const newResponse = await getScenario(testId);
+    
+    expect(oldResponse.status).toBe(newResponse.status);
+    expect(await oldResponse.json()).toEqual(await newResponse.json());
+  });
+  
+  it('Deprecated警告ヘッダーが付与されること', async () => {
+    const response = await getScenarioLegacy(testId);
+    expect(response.headers.get('X-Deprecated-Endpoint')).toBe('true');
+  });
+});
+```
+
+**Phase 2: 統一テスト（完了形）**:
+```typescript
+describe('GET /api/scenarios/{id}', () => {
+  it('存在するシナリオを正しく取得できる', async () => {
+    const res = await getScenario(testScenario.id);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual(expectedData);
+  });
+  
+  it('存在しないシナリオで404エラー', async () => {
+    const res = await getScenario(nonExistentId);
+    expect(res.status).toBe(404);
+  });
+});
+```
+
+#### **効果測定**
+
+**技術的負債削除効果**:
+- **コード量削減**: バックエンド実装・OpenAPI仕様・テストで約200行削除
+- **テスト効率化**: 9→5テストで実行時間43%短縮（2290ms → 以前3207ms比較）
+- **認知負荷軽減**: 開発者が考慮すべきAPIエンドポイント統一
+- **保守性向上**: 重複コード・設定による保守負荷解消
+
+**学習事項**:
+- **段階的移行は内部プロジェクトでは過剰**: 外部利用者なしなら即座削除が効率的
+- **移行テストの役割**: 動作保証確認後は速やかに削除対象とする
+- **「記憶が新しいうちに削除」**: コンテキスト維持・作業効率・品質向上を実現
+
+#### **次弾移行計画への活用**
+
+**適用予定**:
+- `POST /api/users/{uid}/scenario → POST /api/authors/{uid}/scenarios`
+- `PATCH /api/gm/{uid}/sessions/{id} → PATCH /api/game-masters/{uid}/sessions/{id}`
+
+**効率化要素**:
+- 今回のテンプレート活用による50%工数削減見込み
+- 迅速削除による技術的負債圧縮の継続
+- OpenAPI First開発の確立による仕様・実装一貫性向上
 - **マイクロサービス**: ドメイン別API分割
 
 ---

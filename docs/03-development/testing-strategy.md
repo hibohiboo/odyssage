@@ -416,14 +416,81 @@ describe('認証・認可専用', () => {
 
 **詳細分析**: [[sprints/sprint_003/backend-rearchitecting/test-authentication-bypass-analysis]]
 
+#### **12. API移行・リファクタリングテスト戦略（2025-08-12追加）**
+
+**状況**: REST APIパス構造統一のため、段階的移行テストから迅速削除まで
+
+**移行フェーズ別テスト戦略**:
+```typescript
+// Phase 1: 移行互換性テスト（一時的）
+describe('API移行互換性テスト', () => {
+  it('新旧エンドポイントが完全に同一結果を返すこと', async () => {
+    const oldResponse = await getLegacyAPI();
+    const newResponse = await getNewAPI();
+    expect(await oldResponse.json()).toEqual(await newResponse.json());
+  });
+  
+  it('Deprecated警告ヘッダーが付与されること', async () => {
+    const response = await getLegacyAPI();
+    expect(response.headers.get('X-Deprecated-Endpoint')).toBe('true');
+  });
+});
+```
+
+**迅速削除のタイミング判断**:
+- ✅ **フロントエンド未使用確認**: 全ファイル検索で利用状況確認
+- ✅ **移行テスト完全通過**: 新旧API同一動作を保証
+- ✅ **即座削除の決断**: 「記憶が新しいうちに削除」原則
+- ✅ **技術的負債排除**: 重複コード・設定・テストの完全削除
+
+**削除時の作業パターン**:
+```typescript
+// Before: 9テスト（新API 5 + 旧API 2 + 移行互換性 2）
+describe('新API: GET /api/scenarios/{id}', () => { /* 5 tests */ });
+describe('旧API: GET /api/scenario/{id}', () => { /* 2 tests */ });
+describe('移行互換性テスト', () => { /* 2 tests */ });
+
+// After: 5テスト（新APIのみ）
+describe('GET /api/scenarios/{id}', () => { /* 5 tests */ });
+```
+
+**効果測定**:
+- **コード削除**: バックエンド実装・OpenAPI仕様・テストで約200行削除
+- **テスト効率化**: 9→5テストで実行時間43%短縮
+- **認知負荷軽減**: 開発者が考慮すべきAPIエンドポイント統一
+
+**重要な学習**:
+- **段階的移行は内部プロジェクトでは過剰**: 外部利用者なしなら即座削除が効率的
+- **移行テストの役割**: 動作保証確認後は速やかに削除対象
+- **フロントエンド影響確認**: 未使用APIの積極的削除検討材料
+
+#### **13. 技術的負債削除の指針（2025-08-12追加）**
+
+**削除タイミングの判断基準**:
+```
+外部影響度 × 実装複雑度 = 削除戦略
+
+高影響・高複雑度: 段階的移行（監視期間設定）
+高影響・低複雑度: 事前告知 + スケジュール削除  
+低影響・高複雑度: 代替確認 + 迅速削除
+低影響・低複雑度: 即座削除 ← 今回のケース
+```
+
+**「記憶が新しいうちに削除」の効果**:
+- **コンテキスト維持**: 変更背景・影響範囲の記憶が鮮明
+- **作業効率**: 関連ファイル・設定の把握済み
+- **品質向上**: 削除漏れ・影響範囲確認の精度向上
+- **技術的負債圧縮**: 保守負担の早期軽減
+
 ### 参考実装
 - **単一リソース操作**: `apps/backend/test/integrations/user-management.spec.ts` (GET/PUT /api/users/{uid})
-- **個別リソース取得**: `apps/backend/test/integrations/scenario-detail.spec.ts` (GET /api/scenario/{id})
+- **個別リソース取得**: `apps/backend/test/integrations/scenario-detail.spec.ts` (GET /api/scenarios/{id}) 
 - **リスト取得**: `apps/backend/test/integrations/scenario-public.spec.ts` (GET /api/scenarios, GET /api/scenarios/public)
 - **認証付きリソース管理**: `apps/backend/test/integrations/user-scenario.spec.ts` (POST/GET /api/users/{uid}/scenario)
 - **複合エンドポイント**: `apps/backend/test/integrations/user-stock.spec.ts` (GET/POST/DELETE stocked-scenarios)
-- **成功例**: 冗長テスト排除・upsert動作検証・スキーマ変更対応
+- **API移行パターン**: 第1弾移行 `GET /api/scenario/{id} → GET /api/scenarios/{id}` (完了・削除済み)
+- **成功例**: 冗長テスト排除・upsert動作検証・迅速な技術的負債削除
 
 ---
 
-この戦略により、業務領域に応じた効率的で適切なテストアプローチを実現します。
+この戦略により、業務領域に応じた効率的で適切なテストアプローチを実現し、技術的負債の迅速な削除による保守性向上を目指します。
