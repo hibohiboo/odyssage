@@ -148,45 +148,45 @@ describe('GraphDBシーン統合テスト', async () => {
       });
     });
 
-    // /** ------------------------------
-    //  * シーン削除テスト
-    //  * ------------------------------ */
-    // describe('シーン削除', () => {
-    //   it('存在するシーンを削除できる', async () => {
-    //     expect((await putScene(VALID_SCENE_ID, VALID_SCENE_DATA)).status).toBe(
-    //       200,
-    //     );
+    /** ------------------------------
+     * シーン削除テスト
+     * ------------------------------ */
+    describe('シーン削除', () => {
+      it('存在するシーンを削除できる', async () => {
+        expect((await putScene({ sceneId: VALID_SCENE_ID, data: VALID_SCENE_DATA })).status).toBe(
+          200,
+        );
 
-    //     const delRes = await deleteScene(VALID_SCENE_ID);
-    //     expect(delRes.status).toBe(204);
-    //     expect(await delRes.text()).toBe('');
-    //   });
+        const delRes = await deleteScene(VALID_SCENE_ID);
+        expect(delRes.status).toBe(204);
+        expect(await delRes.text()).toBe('');
+      });
 
-    //   it('存在しないシーン削除で404エラー', async () => {
-    //     const res = await deleteScene(NON_EXISTENT_SCENE_ID);
-    //     expect(res.status).toBe(404);
-    //     expect(await res.json()).toMatchObject({ error: 'Scene not found' });
-    //   });
+      it('存在しないシーン削除で404エラー', async () => {
+        const res = await deleteScene(NON_EXISTENT_SCENE_ID);
+        expect(res.status).toBe(404);
+        expect(await res.json()).toMatchObject({ error: 'Scene not found' });
+      });
 
-    //   it('不正なUUID形式で400エラー', async () => {
-    //     const res = await deleteScene(INVALID_UUID);
-    //     expect(res.status).toBe(400);
-    //   });
+      it('不正なUUID形式で400エラー', async () => {
+        const res = await deleteScene(INVALID_UUID);
+        expect(res.status).toBe(400);
+      });
 
-    //   it('削除後に一覧から除外される', async () => {
-    //     await putScene(VALID_SCENE_ID, VALID_SCENE_DATA);
+      it('削除後に一覧から除外される', async () => {
+        await putScene({ sceneId: VALID_SCENE_ID, data: VALID_SCENE_DATA });
 
-    //     const beforeList = await (
-    //       await getScenesByScenario(VALID_SCENARIO_ID)
-    //     ).json<any[]>();
-    //     await deleteScene(VALID_SCENE_ID);
-    //     const afterList = await (
-    //       await getScenesByScenario(VALID_SCENARIO_ID)
-    //     ).json<any[]>();
+        const beforeList = await (
+          await getScenesByScenario(VALID_SCENARIO_ID)
+        ).json<any[]>();
+        await deleteScene(VALID_SCENE_ID);
+        const afterList = await (
+          await getScenesByScenario(VALID_SCENARIO_ID)
+        ).json<any[]>();
 
-    //     expect(afterList.length).toBe(beforeList.length - 1);
-    //     expect(afterList.some((s: any) => s.id === VALID_SCENE_ID)).toBe(false);
-    //   });
-    // });
+        expect(afterList.length).toBe(beforeList.length - 1);
+        expect(afterList.some((s: any) => s.id === VALID_SCENE_ID)).toBe(false);
+      });
+    });
   });
 });
