@@ -19,15 +19,6 @@ describe('GraphDBシーン統合テスト', async () => {
     const NON_EXISTENT_SCENARIO_ID = '770e8400-e29b-41d4-a716-446655440000';
     const NON_EXISTENT_SCENE_ID = '880e8400-e29b-41d4-a716-446655440002';
 
-    // /** ------------------------------
-    //  * 環境セットアップ
-    //  * ------------------------------ */
-    // const { getApp, getEnv } = setupTestEnv({
-    //   beforeSetup: async () => {
-    //     // 将来、GraphDBの初期化/クリーンアップをここに実装
-    //   },
-    // });
-
     beforeEach(async () => {
       const session = driver.session();
       await session.run(
