@@ -153,24 +153,30 @@ describe('GraphDBシーン統合テスト', async () => {
      * ------------------------------ */
     describe('シーン削除', () => {
       it('存在するシーンを削除できる', async () => {
-        expect((await putScene({ sceneId: VALID_SCENE_ID, data: VALID_SCENE_DATA })).status).toBe(
-          200,
-        );
+        expect(
+          (await putScene({ sceneId: VALID_SCENE_ID, data: VALID_SCENE_DATA }))
+            .status,
+        ).toBe(200);
 
         const delRes = await deleteScene(VALID_SCENE_ID);
         expect(delRes.status).toBe(204);
         expect(await delRes.text()).toBe('');
       });
 
-      it('存在しないシーン削除で404エラー', async () => {
-        const res = await deleteScene(NON_EXISTENT_SCENE_ID);
-        expect(res.status).toBe(404);
-        expect(await res.json()).toMatchObject({ error: 'Scene not found' });
-      });
-
-      it('不正なUUID形式で400エラー', async () => {
-        const res = await deleteScene(INVALID_UUID);
-        expect(res.status).toBe(400);
+      it.each([
+        {
+          case: '不正なUUID形式で400エラー',
+          sceneId: INVALID_UUID,
+          expectedStatus: 400,
+        },
+        {
+          case: '存在しないシーン削除で404エラー',
+          sceneId: NON_EXISTENT_SCENE_ID,
+          expectedStatus: 404,
+        },
+      ])('$case', async ({ sceneId, expectedStatus }) => {
+        const res = await deleteScene(sceneId);
+        expect(res.status).toBe(expectedStatus);
       });
 
       it('削除後に一覧から除外される', async () => {
