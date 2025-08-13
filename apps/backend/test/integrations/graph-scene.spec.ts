@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useNeo4J } from './neo4j-test-utils';
-import type { AppType } from '../../src';
 
 describe('GraphDBシーン統合テスト', async () => {
   await useNeo4J(async ({ app, env, driver }) => {
@@ -52,17 +51,7 @@ describe('GraphDBシーン統合テスト', async () => {
     /** ------------------------------
      * API呼び出しヘルパー
      * ------------------------------ */
-    const putScene = ({
-      app,
-      env,
-      sceneId,
-      data,
-    }: {
-      app: AppType;
-      env: Record<string, string>;
-      sceneId: string;
-      data: object;
-    }) =>
+    const putScene = ({ sceneId, data }: { sceneId: string; data: object }) =>
       app.request(
         `/api/graph-scenes/${sceneId}`,
         {
@@ -105,8 +94,6 @@ describe('GraphDBシーン統合テスト', async () => {
           vi.stubEnv(key, value);
         });
         const res = await putScene({
-          app,
-          env,
           sceneId: VALID_SCENE_ID,
           data: VALID_SCENE_DATA,
         });
