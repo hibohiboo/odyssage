@@ -22,13 +22,10 @@ describe('セッション統合テスト', () => {
     },
   });
 
-  let app: ReturnType<typeof getApp>;
-  let api: IntegrationTestApi;
+  const api = new IntegrationTestApi(getApp(), getEnv());
   let fixtures: TestFixtures;
 
   beforeEach(async () => {
-    app = getApp();
-    api = new IntegrationTestApi(app, getEnv());
     fixtures = new TestFixtures(getConnectionString());
   });
 
@@ -44,7 +41,7 @@ describe('セッション統合テスト', () => {
         testUserId,
         testScenarioId,
         'テスト用セッション',
-        '準備中'
+        '準備中',
       );
 
       // APIクライアントでセッション詳細を取得
@@ -66,7 +63,6 @@ describe('セッション統合テスト', () => {
       });
     });
 
-
     it('異なるステータスのセッションも正しく取得できる', async () => {
       const testSessionId = generateUUID();
       await fixtures.createSession(
@@ -74,7 +70,7 @@ describe('セッション統合テスト', () => {
         testUserId,
         testScenarioId,
         '進行中セッション',
-        '進行中'
+        '進行中',
       );
 
       const getResponse = await api.getSessionById(testSessionId);
