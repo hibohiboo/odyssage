@@ -189,11 +189,12 @@ export class TestFixtures {
     scenarioId: string,
     title: string,
     status: string = '準備中',
+    createdAt: string = new Date().toISOString(),
   ) {
     await execSql(
       this.connectionString,
       `INSERT INTO odyssage.sessions (id, gm_id, scenario_id, title, status, created_at, updated_at) 
-       VALUES ('${id}', '${gmId}', '${scenarioId}', '${title}', '${status}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+       VALUES ('${id}', '${gmId}', '${scenarioId}', '${title}', '${status}', '${createdAt}', '${createdAt}')`,
     );
   }
 
