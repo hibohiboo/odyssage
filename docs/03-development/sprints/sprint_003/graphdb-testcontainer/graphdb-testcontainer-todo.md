@@ -10,10 +10,10 @@ issue #115: Neo4jのTestcontainerを適用し、テスト環境の自動化と�
 - [x] `@testcontainers/neo4j`をgraph-databaseパッケージに追加
 - [ ] Testcontainers Neo4jの動作確認
 
-### フェーズ2: バックエンド統合テスト対応
-- [ ] `apps/backend/test/integrations/test-utils.ts`にNeo4j Testcontainer設定を追加
-- [ ] 既存のPostgreSQL Testcontainerと同様の構成で実装
-- [ ] Neo4j環境変数設定をTestcontainer対応に修正
+### フェーズ2: バックエンド統合テスト対応 (方針更新)
+- [ ] 既存`apps/backend/test/integrations/test-utils.ts`からNeo4j関連設定を削除
+- [ ] Neo4j専用ヘルパー`apps/backend/test/integrations/neo4j-test-utils.ts`を新規作成
+- [ ] Neo4j Testcontainer専用のsetup関数を実装
 - [ ] バックエンド統合テストでNeo4j Testcontainerを使用
 
 ### フェーズ3: graph-databaseパッケージ対応
