@@ -1,22 +1,22 @@
-openapi: "3.1.0"
+openapi: '3.1.0'
 info:
-  title: "Odyssage API"
-  description: "Odyssage Backend API"
-  version: "0.0.0"
+  title: 'Odyssage API'
+  description: 'Odyssage Backend API'
+  version: '0.0.0'
   license:
-    name: "MIT"
-    url: "https://opensource.org/licenses/MIT"
+    name: 'MIT'
+    url: 'https://opensource.org/licenses/MIT'
 servers:
-  - url: "http://127.0.0.1:8787"
-    description: "Local Server"
+  - url: 'http://127.0.0.1:8787'
+    description: 'Local Server'
 paths:
   /api/scenarios:
     $ref: './paths/scenarios.yaml'
   /api/scenarios/public:
     $ref: './paths/scenariosPublic.yaml'
-  /api/scenario/{id}:
-    $ref: './paths/scenario.yaml'
-  /api/users/{uid}: 
+  /api/scenarios/{id}:
+    $ref: './paths/scenarios-detail.yaml'
+  /api/users/{uid}:
     $ref: './paths/user.yaml'
   /api/users/{uid}/scenario:
     $ref: './paths/userScenario.yaml'
@@ -24,14 +24,18 @@ paths:
     $ref: './paths/userScenarioStocks.yaml'
   /api/users/{uid}/stocked-scenarios/{scenario_id}:
     $ref: './paths/userScenarioStockItem.yaml'
-  /api/gm/{uid}/sessions/{id}:
-    $ref: './paths/gmSessionUpdate.yaml'
   /api/sessions:
     $ref: './paths/sessions.yaml'
   /api/sessions/{id}:
     $ref: './paths/session.yaml'
-  /api/sessions/gm/{gm_id}:
-    $ref: './paths/sessionsByGm.yaml'
+  /api/game-masters/{uid}/sessions:
+    $ref: './paths/gameMasterSessions.yaml'
+  /api/game-masters/{uid}/sessions/{id}:
+    $ref: './paths/gameMasterSessionUpdate.yaml'
+  /api/authors/{uid}/scenarios:
+    $ref: './paths/authorScenarios.yaml'
+  /api/authors/{uid}/scenarios/{id}:
+    $ref: './paths/authorScenarioDetail.yaml'
   /api/graph-scenarios/{id}:
     $ref: './paths/graphScenarios.yaml'
   /api/graph-scenes/{id}:

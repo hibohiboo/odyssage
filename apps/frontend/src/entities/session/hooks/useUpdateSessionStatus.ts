@@ -22,7 +22,7 @@ export const useUpdateSessionStatus = () => {
   ) => {
     setLoading(true);
     try {
-      const response = await apiClient.api.gm[':uid'].sessions[':id'].$patch({
+      const response = await apiClient.api['game-masters'][':uid'].sessions[':id'].$patch({
         param: { uid, id: sessionId },
         json: { status },
       });

@@ -1,8 +1,8 @@
 import { apiClient } from '@odyssage/frontend/shared/api/client';
 
 /**
- * セッションを作成するためのAPI関数
- * @param gmId GMのID
+ * セッションを作成するためのAPI関数（Game Master文脈）
+ * @param gmId GMのID（パスパラメータとして使用）
  * @param scenarioId シナリオID
  * @param title セッションのタイトル
  * @returns 作成されたセッションの情報
@@ -13,9 +13,11 @@ export async function createSession(
   title: string,
 ) {
   try {
-    const response = await apiClient.api.sessions.$post({
+    const response = await apiClient.api['game-masters'][':uid'].sessions.$post({
+      param: {
+        uid: gmId,
+      },
       json: {
-        gmId,
         scenarioId,
         title,
       },

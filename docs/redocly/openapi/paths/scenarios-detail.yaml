@@ -1,0 +1,70 @@
+get:
+  summary: シナリオ詳細取得
+  operationId: "getScenarioByIdNew"
+  description: |
+    指定したシナリオの詳細情報を取得します。
+    
+    **新API**: RESTful命名統一に基づく推奨エンドポイント
+    旧エンドポイント `/api/scenario/{id}` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  parameters:
+    - in: "path"
+      name: "id"
+      schema:
+        type: "string"
+        format: "uuid"
+      required: true
+      description: "取得するシナリオのUUID"
+  responses:
+    200:
+      description: "シナリオの詳細情報を正常に取得"
+      content:
+        application/json:
+          schema:
+            # ✅ 既存仕様と完全同一のスキーマ
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                format: "uuid"
+                description: "シナリオのUUID"
+              title:
+                type: "string"
+                description: "シナリオタイトル"
+              overview:
+                type: "string"
+                description: "シナリオ概要"
+              visibility:
+                type: "string"
+                enum: ["public", "private"]
+                description: "公開設定"
+              updatedAt:
+                type: "string"
+                format: "date-time"
+                description: "最終更新日時"
+            required:
+              - "id"
+              - "title"
+              - "overview"
+              - "visibility"
+              - "updatedAt"
+            additionalProperties: false
+          examples:
+            success:
+              summary: "正常レスポンス"
+              value:
+                id: "550e8400-e29b-41d4-a716-446655440000"
+                title: "失われた遺跡の謎"
+                overview: "古代遺跡を探索する冒険シナリオ"
+                visibility: "public"
+                updatedAt: "2025-04-01T12:00:00Z"
+    400:
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
+    404:
+      description: "指定されたシナリオが存在しない"
+      content:
+        text/plain:
+          schema:
+            type: "string"
+            example: "Not Found"

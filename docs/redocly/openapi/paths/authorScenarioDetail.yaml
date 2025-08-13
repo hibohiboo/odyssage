@@ -1,0 +1,124 @@
+parameters:
+  - name: uid
+    in: path
+    description: シナリオ作成者（Author）のユーザーID
+    required: true
+    schema:
+      type: string
+  - name: id
+    in: path
+    description: シナリオID（UUID形式）
+    required: true
+    schema:
+      type: string
+      format: uuid
+
+put:
+  summary: シナリオ更新（Author文脈）
+  operationId: "updateScenarioByAuthor"
+  description: |
+    シナリオ作成者（Author）として自身が作成したシナリオを更新します。
+    
+    **新API**: Author文脈特化に基づく推奨エンドポイント
+    旧エンドポイント `/api/users/{uid}/scenario/{id}` は非推奨です。
+    
+    **注意**: レスポンス形式は旧APIと完全に同一です。
+  tags:
+    - scenario
+    - author
+  security:
+    - bearerAuth: []
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - title
+            - overview
+          properties:
+            title:
+              type: string
+              minLength: 1
+              maxLength: 100
+              description: シナリオタイトル
+            overview:
+              type: string
+              minLength: 1
+              maxLength: 1000
+              description: シナリオ概要
+            visibility:
+              type: string
+              enum: ["public", "private"]
+              description: シナリオの公開設定
+            updatedAt:
+              type: string
+              format: date-time
+              description: 更新日時（通常は自動設定される）
+        examples:
+          update_basic:
+            summary: "基本情報更新"
+            value:
+              title: "失われた遺跡の謎（改訂版）"
+              overview: "古代文明の謎を解き明かす冒険シナリオ。新たな展開を追加。"
+              visibility: "private"
+          make_public:
+            summary: "公開設定変更"
+            value:
+              title: "都市の陰謀"
+              overview: "現代都市を舞台とした政治陰謀シナリオ"
+              visibility: "public"
+  responses:
+    '204':
+      description: シナリオが正常に更新されました
+    '400':
+      description: リクエストエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "必須フィールドが不足しています"
+    '401':
+      description: 認証エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "認証が必要です"
+    '403':
+      description: 権限エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "このシナリオを更新する権限がありません"
+    '404':
+      description: シナリオが見つからない
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "シナリオが見つかりません"
+    '500':
+      description: サーバーエラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "シナリオの更新に失敗しました"

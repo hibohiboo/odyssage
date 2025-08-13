@@ -73,14 +73,68 @@ graph TB
 
 ## 🔄 アーキテクチャパターン
 
-### ドメイン駆動設計（DDD）
+### フルスタック境界設計とDDD（2025-08-11改訂）
+
+#### **システム全体におけるレイヤー分離**
+```mermaid
+graph TB
+    subgraph "Frontend (React) - ドメイン中心"
+        P[Presentation Layer]
+        D[Domain Layer<br/>TRPGビジネスロジック<br/>楽観的更新・競合解決]
+        A[Application Layer<br/>ワークフロー・状態管理<br/>ドメインサービス]
+    end
+    
+    subgraph "Backend (Cloudflare Workers) - インフラ中心"
+        API[API Layer<br/>軽量CRUD・バリデーション<br/>最小限ドメインルール]
+        I[Infrastructure Layer<br/>データ永続化・認証連携]
+    end
+    
+    P --> D
+    D --> A
+    A --> API
+    API --> I
+    
+    style D fill:#e1f5fe
+    style A fill:#e8f5e8
+    style API fill:#fff3e0
+    style I fill:#fce4ec
 ```
-Domain Layer (ビジネスロジック)
-    ↓ 依存関係の逆転
-Application Layer (ユースケース実装)
-    ↓
-Infrastructure Layer (技術的実装)
+
+#### **DDD適用レベル別責務分担**
+
+**🎯 Frontend（React + TypeScript）- フルDDD適用**:
+```typescript
+// ドメインサービス例
+class OptimisticSceneManager {
+  handleConflictResolution(local: Scene[], server: Scene[]): Scene[]
+  validateSceneOrder(scenes: Scene[]): ValidationResult  
+  applyBusinessRules(scene: Scene): ValidationErrors
+}
+
+// 集約ルート例  
+class ScenarioAggregate {
+  publish(): ValidationResult
+  canBeEditedBy(userId: UserId): boolean
+  addScene(scene: Scene): ValidationResult
+}
 ```
+
+**⚡ Backend（Cloudflare Workers + Hono.js）- 最小限DDD適用**:
+```typescript
+// 最小限のドメインバリデーション
+class ScenarioValidator {
+  validateForPersistence(scenario: DTO): ValidationResult
+  checkTitleUniqueness(title: string): boolean
+  validateAuthorPermissions(authorId: string): boolean
+}
+```
+
+#### **設計判断の根拠とDDD戦略**
+- **境界の適切設定**: 複雑性がある場所（フロントエンド）にDDD集中
+- **パフォーマンス**: Edge Computing特性を活かした軽量バックエンド
+- **UX最適化**: フロントエンドでの豊富なドメインロジックにより応答性向上  
+- **開発効率**: 各層の特性に応じたDDD適用度で専門性最大化
+- **保守性**: ドメイン知識の明示的定義によるビジネスルール可視化
 
 ### CQRS（読み書き分離）
 - **Command**: データ変更操作 → PostgreSQL中心
@@ -195,16 +249,82 @@ interface StructuredLog {
 - **学習コスト**: 豊富な情報・人材確保容易
 - **エコシステム**: 豊富なライブラリ・ツール
 - **型安全性**: 大規模開発での保守性確保
+- **ビジネスロジック適合**: 複雑な状態管理・UXワークフローに最適
 
 ### Cloudflare Workers
 - **パフォーマンス**: Edge Computing による低レイテンシ
 - **運用コスト**: サーバーレスによる運用負荷軽減
 - **スケーラビリティ**: トラフィック増加への自動対応
+- **アーキテクチャ適合**: 軽量なCRUD操作に最適化された実行環境
 
 ### ハイブリッドDB
 - **PostgreSQL**: 確実性が重要なデータの信頼性
 - **Neo4j**: 複雑な関係性データの高速処理
 - **適材適所**: データ特性に応じた最適技術選択
+
+## 🤔 設計判断指針とガイドライン
+
+### フロントエンド vs バックエンド役割分担
+
+#### **フロントエンドで実装すべきもの**:
+- **複雑な状態管理**: 楽観的更新・ライフサイクル制御
+- **ビジネスワークフロー**: 作成→編集→保存の複雑なフロー
+- **リアルタイムUX**: インタラクティブな操作・即座のフィードバック
+- **ドメイン特化ロジック**: TRPG固有のルール・制約
+
+#### **バックエンドで実装すべきもの**:
+- **データ永続化**: 確実なCRUD操作・整合性保証
+- **認証・認可**: セキュリティ境界での検証
+- **基本バリデーション**: スキーマ検証・重複チェック
+- **外部システム連携**: Database・Firebase Auth等
+
+#### **判断基準**:
+```typescript
+// 複雑なビジネスロジック → Frontend
+if (hasComplexStateMachine || requiresOptimisticUpdate) {
+  // React hooks・state managementで実装
+}
+
+// シンプルなCRUD → Backend
+if (isBasicDataPersistence && requiresDataIntegrity) {
+  // Hono.js APIで実装
+}
+```
+
+### テスト戦略指針
+
+#### **各層のテスト責務**:
+
+**Frontend Testing**:
+- **Component Tests**: UI コンポーネントの動作確認
+- **Hook Tests**: ビジネスロジック・状態管理のテスト
+- **Integration Tests**: フロー全体の統合テスト
+
+**Backend Testing**:
+- **API Tests**: エンドポイントの基本動作確認
+- **Schema Validation Tests**: 入力データの検証テスト
+- **Integration Tests**: Database連携の確認
+
+**E2E Testing**:
+- **BDD Tests**: 実際のユーザーシナリオでの動作保証
+- **Cross-browser Tests**: 環境差異の検証
+
+#### **テスト投資レベル判断**:
+- **フロントエンド**: 複雑なビジネスロジックのため高投資
+- **バックエンド**: シンプルなCRUDのため中程度投資
+- **E2E**: ユーザー価値保証のため必須投資
+
+### アーキテクチャ進化指針
+
+#### **過剰な複雑化を避ける**:
+- ❌ バックエンドでの過度なDDD実装
+- ❌ 不要なマイクロサービス分割
+- ❌ 複雑な抽象化レイヤー
+
+#### **適切な改善方向**:
+- ✅ エラーハンドリング・ログの統一
+- ✅ パフォーマンス監視・最適化
+- ✅ 開発体験・保守性の向上
 
 ---
 

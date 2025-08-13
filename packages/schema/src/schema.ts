@@ -19,7 +19,7 @@ export const idUidSchema = v.object({
   uid: v.string(),
 });
 export const userRequestSchema = v.object({
-  name: v.string(),
+  name: v.pipe(v.string(), v.minLength(1)),
 });
 
 export enum VisibilityEnum {
@@ -31,7 +31,7 @@ export const scenarioRequestSchema = v.object({
   id: v.string(),
   title: v.string(),
   overview: v.string(),
-  visibility: v.optional(v.string()),
+  visibility: v.optional(v.picklist(['public', 'private'])),
 });
 
 export const userScenarioParamSchema = v.object({
@@ -60,8 +60,8 @@ export const sessionStatuSchema = v.picklist([
 ] as const);
 export type SessionStatuSchema = v.InferOutput<typeof sessionStatuSchema>;
 
-export const sessionRequestSchema = v.object({
-  gmId: v.string(),
+// Game Masters API用のセッション作成スキーマ（gmIdはパスパラメータから取得）
+export const gameMasterSessionRequestSchema = v.object({
   scenarioId: v.string(),
   title: v.string(),
 });
@@ -82,7 +82,7 @@ export const sessionResponseSchema = v.object({
   createdAt: v.string(),
 });
 
-export type SessionRequest = v.InferInput<typeof sessionRequestSchema>;
+export type GameMasterSessionRequest = v.InferInput<typeof gameMasterSessionRequestSchema>;
 export type SessionResponse = v.InferOutput<typeof sessionResponseSchema>;
 
 // GraphDB Scenario schemas
@@ -97,8 +97,12 @@ export const graphScenarioResponseSchema = v.object({
   overview: v.string(),
 });
 
-export type GraphScenarioRequest = v.InferInput<typeof graphScenarioRequestSchema>;
-export type GraphScenarioResponse = v.InferOutput<typeof graphScenarioResponseSchema>;
+export type GraphScenarioRequest = v.InferInput<
+  typeof graphScenarioRequestSchema
+>;
+export type GraphScenarioResponse = v.InferOutput<
+  typeof graphScenarioResponseSchema
+>;
 
 // GraphDB Scene schemas
 export const graphSceneRequestSchema = v.object({
@@ -137,19 +141,29 @@ export const graphSceneBatchSummarySchema = v.object({
 });
 
 export const graphSceneBatchResponseSchema = v.object({
-  scenes: v.array(v.object({
-    id: v.string(),
-    title: v.string(),
-    overview: v.string(),
-    order: v.pipe(v.number(), v.integer()),
-    scenarioId: v.string(),
-    createdAt: v.optional(v.string()),
-    updatedAt: v.optional(v.string()),
-  })),
+  scenes: v.array(
+    v.object({
+      id: v.string(),
+      title: v.string(),
+      overview: v.string(),
+      order: v.pipe(v.number(), v.integer()),
+      scenarioId: v.string(),
+      createdAt: v.optional(v.string()),
+      updatedAt: v.optional(v.string()),
+    }),
+  ),
   summary: graphSceneBatchSummarySchema,
 });
 
-export type GraphSceneBatchItem = v.InferInput<typeof graphSceneBatchItemSchema>;
-export type GraphSceneBatchRequest = v.InferInput<typeof graphSceneBatchRequestSchema>;
-export type GraphSceneBatchSummary = v.InferOutput<typeof graphSceneBatchSummarySchema>;
-export type GraphSceneBatchResponse = v.InferOutput<typeof graphSceneBatchResponseSchema>;
+export type GraphSceneBatchItem = v.InferInput<
+  typeof graphSceneBatchItemSchema
+>;
+export type GraphSceneBatchRequest = v.InferInput<
+  typeof graphSceneBatchRequestSchema
+>;
+export type GraphSceneBatchSummary = v.InferOutput<
+  typeof graphSceneBatchSummarySchema
+>;
+export type GraphSceneBatchResponse = v.InferOutput<
+  typeof graphSceneBatchResponseSchema
+>;

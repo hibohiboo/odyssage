@@ -10,7 +10,7 @@ type CreateScenarioData = {
   id: string;
   title: string;
   overview: string;
-  visibility?: string;
+  visibility?: 'private' | 'public';
 };
 
 type CreateScenarioResult = {
@@ -23,12 +23,12 @@ type CreateScenarioResult = {
 
 export const useScenarioWithGraphMutation = (props: Props) => {
   const scenarioMutation = useScenarioCreateMutation({ uid: props.uid });
-  
+
   const createScenario = useCallback(
     async (data: CreateScenarioData): Promise<CreateScenarioResult> => {
       // 1. RDBにシナリオを作成（失敗時は例外をスロー）
       const apiResponse = await scenarioMutation.trigger(data);
-      
+
       // 2. GraphDBにシナリオを保存（失敗しても処理を継続）
       let graphSaved = false;
       try {
@@ -40,7 +40,7 @@ export const useScenarioWithGraphMutation = (props: Props) => {
             overview: data.overview,
           },
         });
-        
+
         if (response.ok) {
           graphSaved = true;
         } else {
