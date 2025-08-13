@@ -14,21 +14,29 @@
   - パッケージ: `@testcontainers/neo4j@11.5.1`, `testcontainers@11.5.1`
   - ファイル: `packages/graph-database/package.json`
 
-### 実装開始 - フェーズ2: バックエンド統合テスト対応
-- **着手済み**: `apps/backend/test/integrations/test-utils.ts`のimport文追加
-  - Neo4jContainer, StartedNeo4jContainerをインポート
+### 完了済み - フェーズ2: バックエンド統合テスト対応 ✅
+- **完了**: `apps/backend/test/integrations/test-utils.ts`からNeo4j設定を削除
+  - Neo4j関連import、設定、環境変数設定を削除
+  - PostgreSQL専用として整理
+- **完了**: Neo4j専用ヘルパー`neo4j-test-utils.ts`作成
+  - setupNeo4jTestEnv関数実装
+  - Neo4j Testcontainer設定とAPI提供
 
 ## 現在の状況
 
-### 中断地点と方針変更
-- `apps/backend/test/integrations/test-utils.ts`の修正中で中断
-- 実装方針を変更：PostgreSQLとNeo4jのTestcontainerを分離
+### 完了済み - フェーズ3: graph-databaseパッケージ対応 ✅
+- **完了**: `packages/graph-database/test-utils/neo4j-testcontainer.ts`作成
+  - setupGraphDbTestEnv関数実装
+  - Neo4jドライバーとTestcontainer統合
+- **完了**: `packages/graph-database/src/driver.test.ts`をTestcontainer対応に修正
+  - ローカルNeo4j依存を削除
+  - Testcontainerベースのテストに変更
 
-### 次のステップ（新方針）
-1. 既存`test-utils.ts`からNeo4j関連設定を削除（クリーンアップ）
-2. Neo4j専用ヘルパー`neo4j-test-utils.ts`を新規作成
-3. graph-database用のNeo4jヘルパーを作成
-4. 各テストファイルを適切なヘルパーに更新
+### 現在の課題
+- **API互換性問題**: Neo4j TestcontainerのAPIが期待と異なる
+  - `.withAdminPassword()` → `.withPassword()`に修正済み
+- **Dockerイメージ問題**: `neo4j:5.27-community`が見つからない
+  - 正しいNeo4jイメージタグの確認が必要
 
 ## 技術詳細
 
@@ -68,15 +76,26 @@
 ## 残作業概要
 
 ### フェーズ2: バックエンド統合テスト対応（更新）
-- [ ] 既存test-utils.tsからNeo4j設定削除（クリーンアップ）
-- [ ] Neo4j専用ヘルパー`neo4j-test-utils.ts`作成
-- [ ] Neo4jテスト用のsetup関数実装
+- [x] 既存test-utils.tsからNeo4j設定削除（クリーンアップ）
+- [x] Neo4j専用ヘルパー`neo4j-test-utils.ts`作成
+- [x] Neo4jテスト用のsetup関数実装
 - [ ] バックエンド統合テストでの動作確認
 
-### フェーズ3以降
-- graph-databaseパッケージのTestcontainer対応
-- BDDテストのTestcontainer対応
-- 全テスト実行・品質保証
+### フェーズ3: graph-databaseパッケージ対応
+- [x] `packages/graph-database/test-utils/neo4j-testcontainer.ts`作成
+- [x] `packages/graph-database/src/driver.test.ts`をTestcontainer対応に修正
+- [ ] Neo4j Dockerイメージタグ問題の解決
+- [ ] graph-databaseテスト実行確認
+
+### フェーズ4: BDDテスト対応
+- [ ] BDDテストは環境変数ベースのため追加変更不要（確認のみ）
+- [ ] BDDテスト実行確認
+
+### フェーズ5: 品質保証とドキュメント更新
+- [ ] 全テスト実行・通過確認
+- [ ] lint・型チェック実行
+- [ ] パフォーマンステスト（起動時間など）
+- [ ] READMEとドキュメントの更新
 
 ## 学んだこト・注意事項
 
@@ -93,3 +112,13 @@
 - **起動コスト最適化**: 必要なコンテナのみ起動することでテスト実行時間短縮
 - **将来拡張性**: 分離設計により後から組み合わせ使用も可能
 - **保守性**: 責務が明確に分かれることで理解・修正が容易
+
+### Testcontainer API学習
+- **API変更**: `.withAdminPassword()` → `.withPassword()`が正しい
+- **Dockerイメージ**: 存在しないタグを使用してエラー発生
+- **公式ドキュメント確認**: 実装前の公式ドキュメント確認が重要
+
+### 実装完了範囲
+- **Backend**: Neo4j専用ヘルパー作成完了
+- **Graph-database**: Testcontainer統合完了、テスト修正完了
+- **BDD**: 既存実装が環境変数ベースのため追加変更不要
