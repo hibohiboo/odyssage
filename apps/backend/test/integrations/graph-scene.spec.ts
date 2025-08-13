@@ -91,25 +91,25 @@ describe('GraphDBシーン統合テスト', async () => {
         expect(body).toEqual({ id: VALID_SCENE_ID, ...VALID_SCENE_DATA });
       });
 
-      it('必須フィールド不足で400エラー', async () => {
-        const invalidData = {
-          overview: VALID_SCENE_DATA.overview,
-          scenarioId: VALID_SCENARIO_ID,
-          order: 0,
-        };
-        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
-        expect(res.status).toBe(400);
-      });
-
-      it('不正なscenarioId形式で400エラー', async () => {
-        const invalidData = { ...VALID_SCENE_DATA, scenarioId: INVALID_UUID };
-        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
-        expect(res.status).toBe(400);
-      });
-
-      it('負のorder値で400エラー', async () => {
-        const invalidData = { ...VALID_SCENE_DATA, order: -1 };
-        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
+      it.each([
+        {
+          case: '必須フィールド不足で400エラー',
+          data: {
+            overview: VALID_SCENE_DATA.overview,
+            scenarioId: VALID_SCENARIO_ID,
+            order: 0,
+          },
+        },
+        {
+          case: '不正なscenarioId形式で400エラー',
+          data: { ...VALID_SCENE_DATA, scenarioId: INVALID_UUID },
+        },
+        {
+          case: '負のorder値で400エラー',
+          data: { ...VALID_SCENE_DATA, order: -1 },
+        },
+      ])('$case', async ({ data }) => {
+        const res = await putScene({ sceneId: VALID_SCENE_ID, data });
         expect(res.status).toBe(400);
       });
     });
