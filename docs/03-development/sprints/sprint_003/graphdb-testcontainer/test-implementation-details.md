@@ -5,7 +5,9 @@
 
 ## 完了したテスト実装
 
-### apps/backend/test/integrations/graph-scene.spec.ts
+## Backend統合テスト実装完了
+
+### 1. apps/backend/test/integrations/graph-scene.spec.ts (12テスト)
 
 #### 実装概要
 - **統合テスト**: GraphDBシーンAPIの完全な統合テスト
