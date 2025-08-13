@@ -1,10 +1,8 @@
+/* eslint-disable import/no-extraneous-dependencies */
 // filepath: d:\projects\odyssage\packages\graph-database\test-utils\neo4j-testcontainer.ts
-import {
-  Neo4jContainer,
-  StartedNeo4jContainer,
-} from '@testcontainers/neo4j';
+import { Neo4jContainer, StartedNeo4jContainer } from '@testcontainers/neo4j';
+import { auth, driver as createDriver, Driver } from 'neo4j-driver';
 import { afterAll, beforeAll } from 'vitest';
-import { driver as createDriver, Driver } from 'neo4j-driver';
 
 /**
  * graph-database用Neo4jテスト環境のセットアップユーティリティ
@@ -36,18 +34,16 @@ export const setupGraphDbTestEnv = (options?: SetupGraphDbTestEnvOptions) => {
   // テスト開始前にNeo4jコンテナを起動
   beforeAll(async () => {
     // Neo4jコンテナを起動
-    neo4jContainer = await new Neo4jContainer('neo4j:5.27-community')
-      .withPassword('test-password')
-      .withApoc()
-      .start();
+    const container = await new Neo4jContainer('neo4j').start();
+    neo4jContainer = container;
 
     // Neo4j接続設定を生成
     const url = neo4jContainer.getBoltUri();
-    const user = 'neo4j';
-    const password = 'test-password';
+    const user = container.getUsername();
+    const password = container.getPassword();
 
     // Neo4jドライバーを作成
-    const driver = createDriver(url, { username: user, password });
+    const driver = createDriver(url, auth.basic(user, password));
 
     neo4jConfig = {
       url,
