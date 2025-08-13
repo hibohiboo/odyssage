@@ -13,21 +13,17 @@ describe('セッション統合テスト', () => {
   const testUserId = TestFixtures.TEST_USERS.GM_USER.id;
   const testScenarioId = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.id;
   const testScenarioTitle = TestFixtures.TEST_SCENARIOS.PUBLIC_SCENARIO.title;
-
-  const { getApp, getEnv, getConnectionString } = setupTestEnv({
+  let fixtures: TestFixtures;
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
       // 統一フィクスチャーを使用
-      const fixtures = new TestFixtures(connectionString);
+      fixtures = new TestFixtures(connectionString);
       await fixtures.setupBasicTestData();
     },
   });
-
   const api = new IntegrationTestApi(getApp(), getEnv());
-  let fixtures: TestFixtures;
 
-  beforeEach(async () => {
-    fixtures = new TestFixtures(getConnectionString());
-  });
+  beforeEach(async () => {});
 
   // 注意: セッション作成機能は POST /api/game-masters/{uid}/sessions に移行済み
   // セッション作成のテストは game-master-session.spec.ts で実施
