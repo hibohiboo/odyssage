@@ -32,11 +32,14 @@
   - ローカルNeo4j依存を削除
   - Testcontainerベースのテストに変更
 
-### 現在の課題
-- **API互換性問題**: Neo4j TestcontainerのAPIが期待と異なる
-  - `.withAdminPassword()` → `.withPassword()`に修正済み
-- **Dockerイメージ問題**: `neo4j:5.27-community`が見つからない
-  - 正しいNeo4jイメージタグの確認が必要
+### 完了済み - フェーズ4: Backend統合テスト完成 ✅
+- **完了**: Neo4jError問題の解決
+  - `getDriver()`関数のデフォルト引数問題を修正
+  - 環境変数の動的読み込み対応
+- **完了**: `apps/backend/test/integrations/graph-scene.spec.ts`の完全実装
+  - 基本テストケース実装
+  - コメントアウトされたテストの有効化
+  - `it.each`を使った異常系テストのリファクタリング
 
 ## 技術詳細
 
@@ -84,14 +87,18 @@
 ### フェーズ3: graph-databaseパッケージ対応
 - [x] `packages/graph-database/test-utils/neo4j-testcontainer.ts`作成
 - [x] `packages/graph-database/src/driver.test.ts`をTestcontainer対応に修正
-- [ ] Neo4j Dockerイメージタグ問題の解決
-- [ ] graph-databaseテスト実行確認
+- [x] Neo4j Dockerイメージタグ問題の解決（`neo4j`デフォルトイメージ使用）
+- [x] graph-databaseテスト実行確認
 
-### フェーズ4: BDDテスト対応
+### フェーズ4: Backend統合テスト完成
+- [x] Neo4jError問題の解決（getDriver環境変数問題）
+- [x] `graph-scene.spec.ts`の完全実装
+- [x] コメントアウトテストの有効化
+- [x] `it.each`による異常系テストリファクタリング
+
+### フェーズ5: BDDテスト対応と品質保証
 - [ ] BDDテストは環境変数ベースのため追加変更不要（確認のみ）
 - [ ] BDDテスト実行確認
-
-### フェーズ5: 品質保証とドキュメント更新
 - [ ] 全テスト実行・通過確認
 - [ ] lint・型チェック実行
 - [ ] パフォーマンステスト（起動時間など）
@@ -119,6 +126,17 @@
 - **公式ドキュメント確認**: 実装前の公式ドキュメント確認が重要
 
 ### 実装完了範囲
-- **Backend**: Neo4j専用ヘルパー作成完了
+- **Backend**: Neo4j専用ヘルパー作成完了、統合テスト完成
 - **Graph-database**: Testcontainer統合完了、テスト修正完了
 - **BDD**: 既存実装が環境変数ベースのため追加変更不要
+
+### Neo4jError解決
+- **問題**: `getDriver()`のデフォルト引数がモジュールロード時に固定
+- **解決**: 環境変数を実行時に動的読み込みするよう修正
+- **効果**: Testcontainerが設定した環境変数が正しく反映される
+
+### テストリファクタリング成果
+- **`it.each`適用**: 異常系テストを簡潔に集約
+- **適用基準**: 同じアサーションパターンのテストのみ
+- **避けた複雑化**: if文が必要な複雑なケースは個別テストを維持
+- **結果**: 保守しやすく読みやすいテストコード
