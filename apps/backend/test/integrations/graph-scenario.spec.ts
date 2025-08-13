@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { useNeo4J } from './neo4j-test-utils';
 
 describe('GraphDBシナリオ統合テスト', async () => {
-  await useNeo4J(async ({ app, env, driver }) => {
+  await useNeo4J(async ({ app, env }) => {
     /** ------------------------------
      * テスト用データ
      * ------------------------------ */
