@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { useNeo4J } from './neo4j-test-utils';
 import type { AppType } from '../../src';
 
@@ -79,6 +79,10 @@ describe('GraphDBシーン統合テスト', () => {
   describe('シーン作成', () => {
     it('GraphDBにシーンを作成できる', async () => {
       await useNeo4J(async ({ app, env }) => {
+        // envをループしてstubEnvを設定
+        Object.entries(env).forEach(([key, value]) => {
+          vi.stubEnv(key, value);
+        });
         const res = await putScene(app, env, VALID_SCENE_ID, VALID_SCENE_DATA);
         expect(res.status).toBe(200);
 

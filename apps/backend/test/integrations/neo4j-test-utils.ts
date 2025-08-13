@@ -10,7 +10,7 @@ export const useNeo4J = async (
     env: Record<string, string>;
   }) => Promise<void>,
 ) => {
-  await using container = await new Neo4jContainer('neo4j').start();
+  const container = await new Neo4jContainer('neo4j').start();
 
   const url = container.getBoltUri();
   const user = container.getUsername();
