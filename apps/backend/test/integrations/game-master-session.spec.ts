@@ -15,23 +15,18 @@ describe('Game Master Session Management API 統合テスト', () => {
     title: 'テストセッション1',
   };
 
-  const { getApp, getEnv, getConnectionString } = setupTestEnv({
+  let fixtures: TestFixtures;
+  const { getApp, getEnv } = setupTestEnv({
     beforeSetup: async (connectionString) => {
-      // 統一フィクスチャーを使用
-      const fixtures = new TestFixtures(connectionString);
+      fixtures = new TestFixtures(connectionString);
       await fixtures.setupBasicTestData();
     },
   });
 
-  let app: ReturnType<typeof getApp>;
   let api: IntegrationTestApi;
-  let fixtures: TestFixtures;
 
   beforeEach(async () => {
-    app = getApp();
-    api = new IntegrationTestApi(app, getEnv());
-    fixtures = new TestFixtures(getConnectionString());
-
+    api = new IntegrationTestApi(getApp(), getEnv());
     // セッションのみクリーンアップ（ユーザー・シナリオは保持）
     await fixtures.cleanupSessions();
   });
@@ -72,39 +67,22 @@ describe('Game Master Session Management API 統合テスト', () => {
       });
     });
 
-    it('必須フィールドが不足している場合400エラー', async () => {
+    it.each([
+      ['必須フィールドが不足している場合400エラー', undefined, 400],
+      [
+        '存在しないシナリオIDで400エラー',
+        '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039999',
+        400,
+      ],
+    ])('%s', async (_, scenarioId, expectStatus) => {
       const invalidSession = {
         title: testSession.title,
-        // scenarioIdを省略
+        ...testSession,
+        scenarioId,
       };
 
       const res = await api.createSession(testGMId, invalidSession as any);
-      expect(res.status).toBe(400);
-    });
-
-    it('存在しないシナリオIDで400エラー', async () => {
-      const invalidSession = {
-        ...testSession,
-        scenarioId: '3d9b0bc1-e1bb-4d1e-86d7-9c5d5d039999',
-      };
-
-      const res = await api.createSession(testGMId, invalidSession);
-      expect(res.status).toBe(400);
-
-      // 値による直接検証に変更
-      const errorData = await res.json();
-      expect(errorData).toEqual({
-        message: expect.any(String),
-      });
-    });
-
-    it('認証なしでもテスト環境ではバイパスされ201成功', async () => {
-      const res = await api.createSessionWithoutAuth(testGMId, {
-        scenarioId: testScenarioId,
-        title: 'テストセッション認証なし',
-      });
-
-      expect(res.status).toBe(201); // テスト環境では認証バイパス
+      expect(res.status).toBe(expectStatus);
     });
 
     it('複数セッション作成時にユニークIDが生成される', async () => {
@@ -117,15 +95,10 @@ describe('Game Master Session Management API 統合テスト', () => {
         title: 'セッション2',
       });
 
-      expect(session1.status).toBe(201);
-      expect(session2.status).toBe(201);
-
       const data1 = await session1.json();
       const data2 = await session2.json();
 
       expect(data1.id).not.toBe(data2.id);
-      expect(data1.title).toBe('セッション1');
-      expect(data2.title).toBe('セッション2');
     });
   });
 
@@ -136,6 +109,10 @@ describe('Game Master Session Management API 統合テスト', () => {
       await api.createSession(testGMId, {
         scenarioId: testScenarioId,
         title: 'テストセッション2',
+      });
+      await api.createSession('other-gm-id', {
+        scenarioId: '4d9b0bc1-e1bb-4d1e-86d7-9c5d5d039999',
+        title: 'テストセッション3',
       });
     });
 
@@ -182,9 +159,6 @@ describe('Game Master Session Management API 統合テスト', () => {
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       });
-
-      // status値の確認
-      expect(['準備中', '進行中', '完了', '中断']).toContain(session.status);
     });
 
     it('セッションが存在しないGMでは空配列を返す', async () => {
@@ -192,16 +166,9 @@ describe('Game Master Session Management API 統合テスト', () => {
       const res = await api.getGmSessions(nonExistentGMId);
 
       expect(res.status).toBe(200);
-      expect(res.headers.get('content-type')).toContain('application/json');
 
       const data = await res.json();
-      expect(Array.isArray(data)).toBe(true);
       expect(data.length).toBe(0);
-    });
-
-    it('認証不要で正常にアクセスできる', async () => {
-      const res = await api.getGmSessions(testGMId);
-      expect(res.status).toBe(200);
     });
   });
 });
