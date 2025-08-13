@@ -15,9 +15,9 @@ describe('GraphDBシーン統合テスト', async () => {
       order: 0,
     };
 
-    // const INVALID_UUID = 'invalid-uuid';
-    // const NON_EXISTENT_SCENARIO_ID = '770e8400-e29b-41d4-a716-446655440000';
-    // const NON_EXISTENT_SCENE_ID = '880e8400-e29b-41d4-a716-446655440002';
+    const INVALID_UUID = 'invalid-uuid';
+    const NON_EXISTENT_SCENARIO_ID = '770e8400-e29b-41d4-a716-446655440000';
+    const NON_EXISTENT_SCENE_ID = '880e8400-e29b-41d4-a716-446655440002';
 
     // /** ------------------------------
     //  * 環境セットアップ
@@ -62,27 +62,19 @@ describe('GraphDBシーン統合テスト', async () => {
         env,
       );
 
-    // const getScenesByScenario = (
-    //   app: AppType,
-    //   env: Record<string, string>,
-    //   scenarioId: string,
-    // ) =>
-    //   app.request(
-    //     `/api/graph-scenes/scenario/${scenarioId}`,
-    //     { method: 'GET', headers: { 'Content-Type': 'application/json' } },
-    //     env,
-    //   );
+    const getScenesByScenario = (scenarioId: string) =>
+      app.request(
+        `/api/graph-scenes/scenario/${scenarioId}`,
+        { method: 'GET', headers: { 'Content-Type': 'application/json' } },
+        env,
+      );
 
-    // const deleteScene = (
-    //   app: AppType,
-    //   env: Record<string, string>,
-    //   sceneId: string,
-    // ) =>
-    //   app.request(
-    //     `/api/graph-scenes/${sceneId}`,
-    //     { method: 'DELETE', headers: { 'Content-Type': 'application/json' } },
-    //     env,
-    //   );
+    const deleteScene = (sceneId: string) =>
+      app.request(
+        `/api/graph-scenes/${sceneId}`,
+        { method: 'DELETE', headers: { 'Content-Type': 'application/json' } },
+        env,
+      );
 
     /** ------------------------------
      * シーン作成テスト
@@ -99,62 +91,62 @@ describe('GraphDBシーン統合テスト', async () => {
         expect(body).toEqual({ id: VALID_SCENE_ID, ...VALID_SCENE_DATA });
       });
 
-      // it('必須フィールド不足で400エラー', async () => {
-      //   const invalidData = {
-      //     overview: VALID_SCENE_DATA.overview,
-      //     scenarioId: VALID_SCENARIO_ID,
-      //     order: 0,
-      //   };
-      //   const res = await putScene(VALID_SCENE_ID, invalidData);
-      //   expect(res.status).toBe(400);
-      // });
+      it('必須フィールド不足で400エラー', async () => {
+        const invalidData = {
+          overview: VALID_SCENE_DATA.overview,
+          scenarioId: VALID_SCENARIO_ID,
+          order: 0,
+        };
+        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
+        expect(res.status).toBe(400);
+      });
 
-      // it('不正なscenarioId形式で400エラー', async () => {
-      //   const invalidData = { ...VALID_SCENE_DATA, scenarioId: INVALID_UUID };
-      //   const res = await putScene(VALID_SCENE_ID, invalidData);
-      //   expect(res.status).toBe(400);
-      // });
+      it('不正なscenarioId形式で400エラー', async () => {
+        const invalidData = { ...VALID_SCENE_DATA, scenarioId: INVALID_UUID };
+        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
+        expect(res.status).toBe(400);
+      });
 
-      // it('負のorder値で400エラー', async () => {
-      //   const invalidData = { ...VALID_SCENE_DATA, order: -1 };
-      //   const res = await putScene(VALID_SCENE_ID, invalidData);
-      //   expect(res.status).toBe(400);
-      // });
+      it('負のorder値で400エラー', async () => {
+        const invalidData = { ...VALID_SCENE_DATA, order: -1 };
+        const res = await putScene({ sceneId: VALID_SCENE_ID, data: invalidData });
+        expect(res.status).toBe(400);
+      });
     });
 
     /** ------------------------------
      * シーン一覧取得テスト
      * ------------------------------ */
-    // describe('シーン一覧取得', () => {
-    //   it('正常に取得できる', async () => {
-    //     const res = await getScenesByScenario(VALID_SCENARIO_ID);
-    //     expect(res.status).toBe(200);
+    describe('シーン一覧取得', () => {
+      it('正常に取得できる', async () => {
+        const res = await getScenesByScenario(VALID_SCENARIO_ID);
+        expect(res.status).toBe(200);
 
-    //     const body = await res.json<any[]>();
-    //     expect(Array.isArray(body)).toBe(true);
+        const body = await res.json<any[]>();
+        expect(Array.isArray(body)).toBe(true);
 
-    //     if (body.length > 0) {
-    //       expect(body[0]).toMatchObject({
-    //         id: expect.any(String),
-    //         title: expect.any(String),
-    //         overview: expect.any(String),
-    //         scenarioId: expect.any(String),
-    //         order: expect.any(Number),
-    //       });
-    //     }
-    //   });
+        if (body.length > 0) {
+          expect(body[0]).toMatchObject({
+            id: expect.any(String),
+            title: expect.any(String),
+            overview: expect.any(String),
+            scenarioId: expect.any(String),
+            order: expect.any(Number),
+          });
+        }
+      });
 
-    //   it('不正なシナリオID形式で400エラー', async () => {
-    //     const res = await getScenesByScenario(INVALID_UUID);
-    //     expect(res.status).toBe(400);
-    //   });
+      it('不正なシナリオID形式で400エラー', async () => {
+        const res = await getScenesByScenario(INVALID_UUID);
+        expect(res.status).toBe(400);
+      });
 
-    //   it('存在しないシナリオIDで空配列', async () => {
-    //     const res = await getScenesByScenario(NON_EXISTENT_SCENARIO_ID);
-    //     expect(res.status).toBe(200);
-    //     expect(await res.json()).toEqual([]);
-    //   });
-    // });
+      it('存在しないシナリオIDで空配列', async () => {
+        const res = await getScenesByScenario(NON_EXISTENT_SCENARIO_ID);
+        expect(res.status).toBe(200);
+        expect(await res.json()).toEqual([]);
+      });
+    });
 
     // /** ------------------------------
     //  * シーン削除テスト
