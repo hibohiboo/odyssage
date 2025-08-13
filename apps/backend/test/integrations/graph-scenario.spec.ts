@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { useNeo4J } from './neo4j-test-utils';
 
 describe('GraphDBシナリオ統合テスト', async () => {
@@ -16,15 +16,16 @@ describe('GraphDBシナリオ統合テスト', async () => {
       overview: 'これは更新されたシナリオの概要です。',
     };
 
-
-    beforeEach(async () => {
-      // GraphDBのクリーンアップ処理（必要に応じて実装）
-    });
-
     /** ------------------------------
      * API呼び出しヘルパー
      * ------------------------------ */
-    const putScenario = ({ scenarioId, data }: { scenarioId: string; data: object }) =>
+    const putScenario = ({
+      scenarioId,
+      data,
+    }: {
+      scenarioId: string;
+      data: object;
+    }) =>
       app.request(
         `/api/graph-scenarios/${scenarioId}`,
         {
@@ -35,7 +36,6 @@ describe('GraphDBシナリオ統合テスト', async () => {
         env,
       );
 
-
     /** ------------------------------
      * シナリオテスト
      * ------------------------------ */
@@ -45,7 +45,10 @@ describe('GraphDBシナリオ統合テスト', async () => {
         data: VALID_SCENARIO_DATA,
       });
       expect(res.status).toBe(200);
-      expect(await res.json()).toEqual({ id: VALID_SCENARIO_ID, ...VALID_SCENARIO_DATA });
+      expect(await res.json()).toEqual({
+        id: VALID_SCENARIO_ID,
+        ...VALID_SCENARIO_DATA,
+      });
     });
 
     it('GraphDBシナリオを更新できる', async () => {
