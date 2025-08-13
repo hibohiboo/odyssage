@@ -6,8 +6,8 @@ issue #115: Neo4jのTestcontainerを適用し、テスト環境の自動化と�
 ## 実装計画
 
 ### フェーズ1: 依存関係とセットアップ
-- [ ] `@testcontainers/neo4j`をbackendパッケージに追加
-- [ ] `@testcontainers/neo4j`をgraph-databaseパッケージに追加
+- [x] `@testcontainers/neo4j`をbackendパッケージに追加
+- [x] `@testcontainers/neo4j`をgraph-databaseパッケージに追加
 - [ ] Testcontainers Neo4jの動作確認
 
 ### フェーズ2: バックエンド統合テスト対応
