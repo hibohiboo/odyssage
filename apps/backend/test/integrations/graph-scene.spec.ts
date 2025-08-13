@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { useNeo4J } from './neo4j-test-utils';
 
 describe('GraphDBシーン統合テスト', async () => {
@@ -89,10 +89,6 @@ describe('GraphDBシーン統合テスト', async () => {
      * ------------------------------ */
     describe('シーン作成', () => {
       it('GraphDBにシーンを作成できる', async () => {
-        // envをループしてstubEnvを設定
-        Object.entries(env).forEach(([key, value]) => {
-          vi.stubEnv(key, value);
-        });
         const res = await putScene({
           sceneId: VALID_SCENE_ID,
           data: VALID_SCENE_DATA,
