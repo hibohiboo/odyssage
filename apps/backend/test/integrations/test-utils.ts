@@ -4,6 +4,10 @@ import {
   PostgreSqlContainer,
   StartedPostgreSqlContainer,
 } from '@testcontainers/postgresql';
+import {
+  Neo4jContainer,
+  StartedNeo4jContainer,
+} from '@testcontainers/neo4j';
 import { afterAll, beforeAll } from 'vitest';
 import app from '../../src'; // 実際のHonoアプリケーションをインポート
 

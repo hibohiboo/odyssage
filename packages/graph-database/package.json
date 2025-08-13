@@ -12,5 +12,9 @@
   "dependencies": {
     "neo4j-driver": "^5.28.1",
     "vitest": "^3.2.4"
+  },
+  "devDependencies": {
+    "@testcontainers/neo4j": "^11.5.1",
+    "testcontainers": "^11.5.1"
   }
 }

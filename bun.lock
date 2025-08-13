@@ -27,6 +27,7 @@
       "devDependencies": {
         "@cloudflare/vitest-pool-workers": "^0.8.63",
         "@cloudflare/workers-types": "^4.20250813.0",
+        "@testcontainers/neo4j": "^11.5.1",
         "@testcontainers/postgresql": "^11.5.1",
         "dotenv": "^17.2.1",
         "testcontainers": "^11.5.1",
@@ -119,6 +120,10 @@
       "dependencies": {
         "neo4j-driver": "^5.28.1",
         "vitest": "^3.2.4",
+      },
+      "devDependencies": {
+        "@testcontainers/neo4j": "^11.5.1",
+        "testcontainers": "^11.5.1",
       },
     },
     "packages/lib": {
@@ -760,6 +765,8 @@
     "@tailwindcss/vite": ["@tailwindcss/vite@4.1.11", "", { "dependencies": { "@tailwindcss/node": "4.1.11", "@tailwindcss/oxide": "4.1.11", "tailwindcss": "4.1.11" }, "peerDependencies": { "vite": "^5.2.0 || ^6 || ^7" } }, "sha512-RHYhrR3hku0MJFRV+fN2gNbDNEh3dwKvY8XJvTxCSXeMOsCRSr+uKvDWQcbizrHgjML6ZmTE5OwMrl5wKcujCw=="],
 
     "@teppeis/multimaps": ["@teppeis/multimaps@3.0.0", "", {}, "sha512-ID7fosbc50TbT0MK0EG12O+gAP3W3Aa/Pz4DaTtQtEvlc9Odaqi0de+xuZ7Li2GtK4HzEX7IuRWS/JmZLksR3Q=="],
+
+    "@testcontainers/neo4j": ["@testcontainers/neo4j@11.5.1", "", { "dependencies": { "testcontainers": "^11.5.1" } }, "sha512-rakrod9OXiy+1mDyDKPlKjXWdMEOrh6SZbyO3mNiiC9TPaonvExLNO+fMzQmRAz2n8n6TO70Oq0sy8NNkV7nDA=="],
 
     "@testcontainers/postgresql": ["@testcontainers/postgresql@11.5.1", "", { "dependencies": { "testcontainers": "^11.5.1" } }, "sha512-6P1QYIKRkktSVwTuwU0Pke5WbXTkvpLleyQcgknJPbZwhaIsCrhnbZlVzj2g/e+Nf9Lmdy1F2OAai+vUrBq0AQ=="],
 
