@@ -17,13 +17,13 @@
     "cf-typegen": "wrangler types"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.8.61",
-    "@cloudflare/workers-types": "^4.20250810.0",
+    "@cloudflare/vitest-pool-workers": "^0.8.63",
+    "@cloudflare/workers-types": "^4.20250813.0",
     "@testcontainers/postgresql": "^11.5.1",
     "dotenv": "^17.2.1",
     "testcontainers": "^11.5.1",
     "vitest": "3.2.4",
-    "wrangler": "^4.28.1"
+    "wrangler": "^4.29.1"
   },
   "dependencies": {
     "@hono/valibot-validator": "^0.5.3",
@@ -32,7 +32,7 @@
     "@odyssage/lib": "workspace:*",
     "@odyssage/schema": "workspace:*",
     "firebase-auth-cloudflare-workers": "^2.0.6",
-    "hono": "^4.9.0",
+    "hono": "^4.9.1",
     "neo4j-driver": "^5.28.1"
   }
 }
