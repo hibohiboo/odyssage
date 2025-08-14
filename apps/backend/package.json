@@ -19,6 +19,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.63",
     "@cloudflare/workers-types": "^4.20250813.0",
+    "@testcontainers/neo4j": "^11.5.1",
     "@testcontainers/postgresql": "^11.5.1",
     "dotenv": "^17.2.1",
     "testcontainers": "^11.5.1",
