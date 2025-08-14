@@ -213,9 +213,10 @@ interface SustainabilityStrategy {
 **参照対象**: 全ての設計・実装判断
 
 **重要な確認事項**:
-- ✅ 個人学習プロジェクトであることの明確化
+- ✅ TRPG体験の提供を中心価値とした位置づけ
 - ✅ 商業的成功を目指さないことの明記  
-- ✅ 技術学習と個人的楽しみの両立方針
+- ✅ 技術学習は副次的価値・開発動機として位置づけ
+- ✅ プレイヤー体験の実現を最優先とする判断基準
 - ✅ 段階的開発戦略の具体化
 
-#project-vision #personal-project #technical-learning #trpg-platform #evolutionary-architecture
+#project-vision #trpg-platform #asynchronous-gaming #personal-project #evolutionary-architecture
