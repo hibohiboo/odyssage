@@ -1,0 +1,234 @@
+# Odyssage プロジェクトビジョン
+
+## 🎯 プロジェクトの本質的目的
+
+### **個人的学習プロジェクトとしての位置づけ**
+Odyssageは **技術学習と個人的楽しみのためのTRPGプラットフォーム** です。
+
+- **主目的**: モダンなフルスタック開発技術の習得・実践
+- **副次目的**: 自分がプレイヤーとして楽しめるTRPG体験の実現
+- **明確な非目的**: マネタイズ・メディア展開・商業的成功
+
+### **技術学習の焦点**
+```typescript
+interface LearningObjectives {
+  architecture_design: {
+    ddd: "Domain-Driven Design の実践";
+    fsd: "Feature-Sliced Design の適用";
+    evolutionary: "進化的アーキテクチャの実装";
+    context_first: "Context-First Architecture の実験";
+  };
+  
+  technology_stack: {
+    frontend: "React + TypeScript + 最新状態管理";
+    backend: "Cloudflare Workers + Hono.js";
+    database: "PostgreSQL + Neo4j ハイブリッド構成";
+    deployment: "モダンなCI/CD + インフラ管理";
+  };
+  
+  development_practices: {
+    testing: "統合テスト・E2Eテストの実装";
+    documentation: "技術ブログでの学習成果発信";
+    project_management: "個人開発でのスコープ管理";
+  };
+}
+```
+
+---
+
+## 🎮 個人的楽しみとしての体験設計
+
+### **理想的なプレイヤー体験**
+```markdown
+## 自分が楽しめるTRPG体験
+- **ファンタジー泥臭冒険**: 現実的な制約のある冒険者体験
+- **選択・結末の比較観察**: 異なる選択による結果の違いを楽しむ
+- **自分ペースでの進行**: ログイン不要・時間制約なし
+- **気軽な参加ハードル**: GMレス・準備不要での開始
+
+## 満足する完成基準
+- 自分が5回以上リプレイしたくなる体験
+- 異なる選択での結果違いを実際に体験できる
+- 技術的実装に満足感を得られる
+- 他者にも試してもらいたい完成度
+```
+
+### **コンテンツ方針**
+- **シナリオ品質**: 自分が作成者として楽しめる内容
+- **プレイボリューム**: 1シナリオ30分-1時間程度
+- **リプレイ価値**: 選択によって大きく変わる展開・結末
+
+---
+
+## 🏗️ 段階的開発戦略
+
+### **Phase 1: Player-Context MVP (1か月目標)**
+```typescript
+interface PlayerContextMVP {
+  core_features: {
+    scenario_browsing: "利用可能シナリオの閲覧";
+    gamebook_play: "ゲームブック形式での単独プレイ";
+    choice_tracking: "選択履歴の記録・比較";
+    multiple_endings: "分岐による異なる結末";
+  };
+  
+  technical_implementation: {
+    architecture: "FSD準拠 Context-First ハイブリッド";
+    backend_api: "既存Neo4j活用の読み取り専用API";
+    frontend: "React + TypeScript + LocalStorage";
+    content: "静的JSONからNeo4jクエリベースへ移行";
+  };
+  
+  success_criteria: {
+    personal_enjoyment: "自分が楽しめる体験を5回以上実現";
+    technical_learning: "アーキテクチャ判断を4つ以上記録・ブログ化";
+    completeness: "他者にも試してもらえる完成度";
+  };
+}
+```
+
+### **Phase 2: Multi-Context Evolution (2-3か月後)**
+```typescript
+interface MultiContextEvolution {
+  expanded_features: {
+    author_context: "シナリオ作成・編集機能";
+    gm_context: "セッション管理・進行機能";
+    user_authentication: "認証システムの段階的導入";
+    community_features: "他プレイヤーとの軽い交流";
+  };
+  
+  architecture_evolution: {
+    context_expansion: "player-* → author-* → gm-* features";
+    data_persistence: "LocalStorage → Database 移行";
+    api_enhancement: "静的コンテンツ → 動的CMS";
+  };
+}
+```
+
+### **Phase 3: Platform Maturation (半年後以降)**
+- 本格的なTRPGプラットフォーム機能
+- 他のシナリオ作成者の参加促進  
+- 高度な分析・可視化機能
+
+---
+
+## 🛠️ 技術的価値と学習成果
+
+### **アーキテクチャ学習価値**
+```markdown
+## 実践する設計手法
+1. **Context-First Architecture**: ユーザー文脈による境界設定
+2. **FSD準拠実装**: Feature-Sliced Design の正しい適用
+3. **進化的設計**: 段階的な機能拡張・アーキテクチャ進化
+4. **ハイブリッドDB**: PostgreSQL + Neo4j の使い分け
+
+## 技術ブログ発信テーマ
+1. "FSD vs Context-First の融合実践"
+2. "個人開発でのスコープ管理・技術負債回避"
+3. "Neo4j活用: ゲームシナリオの複雑分岐管理"
+4. "進化的アーキテクチャ: MVPから本格プラットフォームへ"
+```
+
+### **継続的な価値創出**
+- **技術記事**: 学習過程・設計判断の詳細記録
+- **オープンソース**: アーキテクチャパターンの共有
+- **ポートフォリオ**: フルスタック開発力の実証
+
+---
+
+## 📊 成功指標と継続戦略
+
+### **Phase 1 完了時の成功判定**
+```markdown
+## 技術学習面
+✅ アーキテクチャ設計判断を4つ以上記録・ブログ化
+✅ React + TypeScript + 状態管理パターンを3つ以上習得  
+✅ 進化的設計の実践経験として言語化可能
+✅ Neo4j クエリ最適化の実装経験
+
+## 個人的楽しみ面  
+✅ 自分が楽しめるプレイ体験を5回以上実現
+✅ 選択・結末違いを実際に体験・比較
+✅ "また遊びたい"と思える完成度
+✅ 他者にも試してもらいたい品質
+
+## プロジェクト継続性
+✅ Phase 2 への具体的拡張計画策定
+✅ 外部からの興味・フィードバック獲得
+✅ 燃え尽きることなく継続開発意欲維持
+```
+
+### **長期的な継続戦略**
+```typescript
+interface SustainabilityStrategy {
+  motivation_maintenance: {
+    regular_play_testing: "毎週の自己プレイ・体験評価";
+    learning_visualization: "技術習得の可視化・記録";
+    community_engagement: "技術コミュニティでの発信・交流";
+  };
+  
+  scope_management: {
+    time_boxing: "1日2時間の開発時間制約";
+    feature_prioritization: "楽しさ最優先での機能選択";
+    technical_debt_prevention: "段階的実装での負債回避";
+  };
+  
+  evolution_planning: {
+    quarterly_review: "3か月毎の方向性見直し";
+    technology_update: "新技術の段階的導入実験";
+    learning_goal_adjustment: "学習目標の現実的調整";
+  };
+}
+```
+
+---
+
+## 🎯 重要な制約と方針
+
+### **開発制約**
+- **時間制約**: 1日2時間、週14時間以内
+- **スコープ制約**: 完璧主義を避け、段階的完成を重視
+- **技術制約**: 学習効果の高い技術を優先選択
+
+### **品質方針**
+- **コード品質**: 技術負債を避ける設計判断
+- **ユーザー体験**: 自分が楽しめる水準を最低基準
+- **継続性**: 燃え尽きを防ぐペース配分
+
+### **外部依存の活用**
+- **既存ライブラリ**: 積極的な活用で開発効率化
+- **AI支援**: 実装スピード向上のためのClaude活用
+- **コミュニティ**: 技術的困難時の相談・情報収集
+
+---
+
+## 📝 このビジョンの位置づけ
+
+### **他の文書との関係**
+- **上位文書**: このPROJECT_VISION.mdがプロジェクト全体の方針を定義
+- **詳細文書**: 各Phase・機能の具体的設計は個別文書で詳述
+- **更新方針**: 重要な方針変更時のみこの文書を更新
+
+### **意思決定の基準**
+すべての開発判断は以下の優先順位で評価：
+1. **個人的楽しみの実現度**
+2. **技術学習価値の高さ**  
+3. **実装可能性・継続性**
+4. **将来拡張への影響**
+
+---
+
+## 🏷️ メタデータ
+
+**作成日**: 2025-08-14  
+**文書タイプ**: プロジェクト最上位ビジョン  
+**更新頻度**: 重要な方針変更時のみ  
+**参照対象**: 全ての設計・実装判断
+
+**重要な確認事項**:
+- ✅ 個人学習プロジェクトであることの明確化
+- ✅ 商業的成功を目指さないことの明記  
+- ✅ 技術学習と個人的楽しみの両立方針
+- ✅ 段階的開発戦略の具体化
+
+#project-vision #personal-project #technical-learning #trpg-platform #evolutionary-architecture
