@@ -2,41 +2,21 @@
 
 ## 🎯 プロジェクトの本質的目的
 
-### **個人的学習プロジェクトとしての位置づけ**
-Odyssageは **技術学習と個人的楽しみのためのTRPGプラットフォーム** です。
+### **提供したい価値: 自由なペースで楽しめるTRPG体験**
+Odyssageは **忙しい人でも自分のペースで楽しめる非同期TRPG体験** を提供するプラットフォームです。
 
-- **主目的**: モダンなフルスタック開発技術の習得・実践
-- **副次目的**: 自分がプレイヤーとして楽しめるTRPG体験の実現
-- **明確な非目的**: マネタイズ・メディア展開・商業的成功
+- **解決する課題**: 時間・場所の制約でTRPGを楽しめない状況
+- **提供する体験**: プレイヤーが自分だけの物語を作り、その記録が自然に残る新しいTRPG体験
+- **特別な価値**: 他人の冒険記録を読む楽しみ、多様なプレイスタイルとの出会い
 
-### **技術学習の焦点**
-```typescript
-interface LearningObjectives {
-  architecture_design: {
-    ddd: "Domain-Driven Design の実践";
-    fsd: "Feature-Sliced Design の適用";
-    evolutionary: "進化的アーキテクチャの実装";
-    context_first: "Context-First Architecture の実験";
-  };
-  
-  technology_stack: {
-    frontend: "React + TypeScript + 最新状態管理";
-    backend: "Cloudflare Workers + Hono.js";
-    database: "PostgreSQL + Neo4j ハイブリッド構成";
-    deployment: "モダンなCI/CD + インフラ管理";
-  };
-  
-  development_practices: {
-    testing: "統合テスト・E2Eテストの実装";
-    documentation: "技術ブログでの学習成果発信";
-    project_management: "個人開発でのスコープ管理";
-  };
-}
-```
+### **開発動機と制約**
+- **開発動機**: モダンなフルスタック開発技術の習得・実践の場として
+- **第一ユーザー**: 開発者自身がプレイヤーとして楽しめることを最優先
+- **明確な非目的**: マネタイズ・メディア展開・商業的成功は目指さない
 
 ---
 
-## 🎮 個人的楽しみとしての体験設計
+## 🎮 提供するTRPG体験の詳細設計
 
 ### **理想的なプレイヤー体験**
 ```markdown
