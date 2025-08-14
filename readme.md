@@ -1,13 +1,15 @@
 <div><img src="./docs/astro/public/images/consept-art/top.png" /></div>
 
 <div align="center"><h2>Odyssage</h2></div>
-<div align="center">An asynchronous, gamebook-style TRPG that explores the unknown.<br/>A blank journal to chronicle your own journey.</div>
+<div align="center">Asynchronous TRPG platform for busy people to enjoy at their own pace.<br/>Create your unique adventure stories and explore others' journeys.</div>
 
 ---
 
 ## 🎯 Project Overview
 
-**Odyssage** is a web application for **asynchronous gamebook-style TRPG sessions**. Players embark on adventures at their own pace, creating unique journey records in their digital journals.
+**Odyssage** provides **asynchronous TRPG experiences** that busy people can enjoy at their own pace. Free yourself from time and location constraints while creating your own stories and discovering diverse playstyles from other adventurers.
+
+> **📖 Full Vision**: See [Project Vision](./docs/PROJECT_VISION.md) for comprehensive project goals and values.
 
 ### Key Features
 - **Asynchronous Play**: Progress at your own pace, no real-time coordination required
