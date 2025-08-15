@@ -4,6 +4,8 @@ get:
     公開セッションの一覧を取得するエンドポイント。
     GMがリクエストする場合は、GM IDをクエリパラメータで指定することで、自分の非公開セッションも含めて取得できます。
   operationId: getSessions
+  security:
+    - bearerAuth: []
   tags:
     - session
   parameters:
@@ -21,21 +23,15 @@ get:
           schema:
             $ref: '../components/schemas/session.yaml#/SessionList'
     '500':
-      description: サーバーエラー
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "セッション一覧の取得に失敗しました"
+      $ref: '../components/schemas/response.yaml#/InternalServerError'
 post:
   summary: セッション作成
   description: |
     GMがシナリオを選択して新しいセッションを作成するためのエンドポイント。
     作成したセッションはGMが管理し、参加者を招待できます。
   operationId: createSession
+  security:
+    - bearerAuth: []
   tags:
     - session
   requestBody:
@@ -52,22 +48,6 @@ post:
           schema:
             $ref: '../components/schemas/session.yaml#/SessionResponse'
     '400':
-      description: 不正なリクエスト
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "セッションタイトルは必須です"
+      $ref: '../components/schemas/response.yaml#/BadRequestResponse'
     '500':
-      description: サーバーエラー
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "セッションの作成に失敗しました"
+      $ref: '../components/schemas/response.yaml#/InternalServerError'
