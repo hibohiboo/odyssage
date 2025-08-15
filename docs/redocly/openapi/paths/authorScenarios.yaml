@@ -138,6 +138,8 @@ get:
   tags:
     - scenario
     - author
+  security:
+    - bearerAuth: []
   responses:
     '200':
       description: シナリオ一覧取得成功

@@ -20,7 +20,7 @@ post:
     - session
     - game-master
   security:
-    - BearerAuth: []
+    - bearerAuth: []
   requestBody:
     description: 作成するセッションの情報
     required: true
@@ -168,6 +168,8 @@ get:
   tags:
     - session
     - game-master
+  security:
+    - bearerAuth: []
   responses:
     '200':
       description: セッション一覧取得成功
