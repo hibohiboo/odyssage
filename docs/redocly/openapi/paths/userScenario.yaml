@@ -84,5 +84,5 @@ get:
               additionalProperties: false
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
-  operationId: "getApiScenarios"
+  operationId: "getUserScenarios"
   description: "シナリオの一覧を取得"
