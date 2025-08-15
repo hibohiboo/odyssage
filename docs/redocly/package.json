@@ -3,19 +3,21 @@
   "version": "0.0.1",
   "dependencies": {
     "@apiture/openapi-down-convert": "^0.14.1",
-    "@redocly/cli": "1.34.2"
+    "@redocly/cli": "2.0.5"
   },
   "private": true,
   "scripts": {
-    "dev": "redocly preview-docs",
+    "dev": "redocly preview",
     "test": "redocly lint",
     "ncu": "ncu -u && npm install",
     "bundle": "redocly bundle -o dist/bundle.yaml",
     "postbundle": "openapi-down-convert -i dist/bundle.yaml -o dist/bundle-3.0.yaml",
     "bundle-json": "redocly bundle -o ./dist/openapi.json",
-    "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html"
+    "build": "redocly build-docs core@v1 --disableGoogleFont -o ../astro/public/odyssage-openapi/index.html",
+    "check": "redocly check-config",
+    "lint": "redocly lint"
   },
   "devDependencies": {
-    "npm-check-updates": "^17.1.18"
+    "npm-check-updates": "^18.0.2"
   }
 }
