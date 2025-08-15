@@ -185,7 +185,7 @@ get:
                   name: '失われた遺跡の謎'
                   gm: 'GM田中'
                   gmId: '12345678-1234-1234-1234-123456789abc'
-                  players: []
+                  players: 0
                   maxPlayers: 4
                   status: '準備中'
                   scenarioId: '660e8400-e29b-41d4-a716-446655440001'
