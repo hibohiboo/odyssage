@@ -22,6 +22,8 @@ get:
         application/json:
           schema:
             $ref: '../components/schemas/session.yaml#/SessionList'
+    '401':
+      $ref: '../components/schemas/response.yaml#/Unauthorized'
     '500':
       $ref: '../components/schemas/response.yaml#/InternalServerError'
 post:
