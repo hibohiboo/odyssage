@@ -251,10 +251,10 @@ interface Session {
   currentSceneId: string;
   playerCount: {
     current: number;
-    max: number;
+    max: number; // MVP: 常に1（GM1対Player1）
   };
 
-  // 参加者情報（MVP最小限）
+  // 参加者情報（MVP最小限：Player1名のみ、将来拡張用にデータ構造保持）
   participants: SessionParticipant[];
   gamemaster?: {
     id: string;
@@ -1132,5 +1132,6 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 - 2025-08-16: 緊急修正版（moodTag削除・イベントリンク構造確定・scene_transition追加）
 - 2025-08-16: Event概念対応版（Scene.startingEventId追加・PlayRecord.eventHistory対応・PlayEvent構造追加）
 - 2025-08-16: **サンプルデータ拡充版**（「失われた森の守護者」詳細シーン・セッション・プレイ記録サンプル追加）
+- 2025-08-16: **MVP範囲修正版**（GM1対Player1セッション明記、画面表示簡素化対応）
 
 #player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
