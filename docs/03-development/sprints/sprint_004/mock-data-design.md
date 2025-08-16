@@ -14,12 +14,14 @@
 
 ```markdown
 ## 高品質モックデータの定義
+
 1. **リアルさ**: 実際のTRPGセッションを忠実に再現
 2. **多様性**: 異なるジャンル・プレイスタイルに対応
 3. **体験価値**: プレイヤーが価値を感じる内容・展開
 4. **技術適合**: フロントエンド実装に最適化された構造
 
 ## データ作成方針
+
 - **物語品質**: 魅力的なストーリー・キャラクター設定
 - **選択意義**: プレイヤーの選択に意味・重みがある
 - **結末多様性**: 複数の結末ルートで再プレイ価値を提供
@@ -31,19 +33,19 @@
 ```typescript
 interface MockDataScope {
   scenarios: {
-    count: "2シナリオ（MVP最小構成）";
-    focus: ["失われた森の守護者", "薬草採取の旅"];
-    quality: "各シナリオ30-45分の体験時間";
+    count: '2シナリオ（MVP最小構成）';
+    focus: ['失われた森の守護者', '薬草採取の旅'];
+    quality: '各シナリオ30-45分の体験時間';
   };
-  
+
   sessions: {
-    active_sessions: "3セッション以下（MVP検証用）";
-    participation_states: ["参加可能", "参加中", "完了済み"];
+    active_sessions: '3セッション以下（MVP検証用）';
+    participation_states: ['参加可能', '参加中', '完了済み'];
   };
-  
+
   play_records: {
-    sample_histories: "最小限の完了セッション履歴";
-    choice_patterns: "基本的な選択パターンの記録";
+    sample_histories: '最小限の完了セッション履歴';
+    choice_patterns: '基本的な選択パターンの記録';
   };
 }
 ```
@@ -58,26 +60,26 @@ interface Scenario {
   id: string;
   title: string;
   overview: string; // 200-300文字の魅力的な概要
-  
+
   // メタデータ（MVP最小限）
   estimatedPlayTime: number; // 分単位
   playerCount: {
     min: number;
     max: number;
   };
-  
+
   // 物語構造
   scenes: Scene[];
   startingSceneId: string;
   endingSceneIds: string[];
-  
+
   // 追加情報（MVP最小限）
   tags: string[];
   thumbnailUrl: string;
   author: {
     name: string;
   };
-  
+
   // システム情報
   createdAt: string; // ISO date
   updatedAt: string; // ISO date
@@ -98,29 +100,29 @@ interface Scene {
   title: string;
   content: string; // マークダウン形式の物語テキスト
   type: SceneType;
-  
+
   // ビジュアル要素（MVP最小限）
   backgroundImageUrl?: string;
-  
+
   // Event概念の導入（TRPG的なイベント集合体として）
   events: Event[];
-  
+
   // システム情報（MVP最小限）
   metadata: {
     location?: string;
     npcs?: string[];
   };
-  
+
   // 従来の情報
   isStarting: boolean;
   isEnding: boolean;
 }
 
-type SceneType = 
-  | 'narrative'    // 物語進行
-  | 'interactive'  // イベント主体のシーン
-  | 'exploration'  // 探索・発見
-  | 'resolution';  // 解決・結末
+type SceneType =
+  | 'narrative' // 物語進行
+  | 'interactive' // イベント主体のシーン
+  | 'exploration' // 探索・発見
+  | 'resolution'; // 解決・結末
 
 // Event概念の導入でChoiceはEventの一種として扱う
 ```
@@ -134,10 +136,10 @@ interface Event {
   type: EventType;
   title?: string; // イベントの見出し（選択肢以外で使用）
   content?: string; // イベントの説明・テキスト
-  
+
   // イベント固有データ（type によって使い分け）
   data: EventData;
-  
+
   // システム情報
   order: number; // シーン内での実行順序
   isRequired: boolean; // 必須イベントかどうか
@@ -145,26 +147,26 @@ interface Event {
   nextEventId?: string; // 次のイベントID（通常イベント用）
 }
 
-type EventType = 
-  | 'choice'           // 選択肢（従来のChoice）- MVP必須
-  | 'narrative'        // 物語進行（テキスト表示）- MVP必須
-  | 'dialogue'         // NPC会話 - MVP最小限実装
+type EventType =
+  | 'choice' // 選択肢（従来のChoice）- MVP必須
+  | 'narrative' // 物語進行（テキスト表示）- MVP必須
+  | 'dialogue' // NPC会話 - MVP最小限実装
   | 'scene_transition' // シーン移動専用イベント - MVP必須
-  | 'exploration'      // 探索アクション - MVP最小限実装
-  | 'item_acquire'     // アイテム獲得 - 将来拡張
-  | 'skill_use'        // スキル使用 - 将来拡張
-  | 'condition';       // 条件判定 - 将来拡張
+  | 'exploration' // 探索アクション - MVP最小限実装
+  | 'item_acquire' // アイテム獲得 - 将来拡張
+  | 'skill_use' // スキル使用 - 将来拡張
+  | 'condition'; // 条件判定 - 将来拡張
 
 // EventType別のデータ構造（MVP版）
-type EventData = 
-  | ChoiceEventData         // MVP必須
-  | NarrativeEventData      // MVP必須
-  | DialogueEventData       // MVP最小限
+type EventData =
+  | ChoiceEventData // MVP必須
+  | NarrativeEventData // MVP必須
+  | DialogueEventData // MVP最小限
   | SceneTransitionEventData // MVP必須
-  | ExplorationEventData    // MVP最小限
-  | ItemAcquireEventData    // 将来拡張用（型のみ定義）
-  | SkillUseEventData       // 将来拡張用（型のみ定義）
-  | ConditionEventData;     // 将来拡張用（型のみ定義）
+  | ExplorationEventData // MVP最小限
+  | ItemAcquireEventData // 将来拡張用（型のみ定義）
+  | SkillUseEventData // 将来拡張用（型のみ定義）
+  | ConditionEventData; // 将来拡張用（型のみ定義）
 
 // 選択肢イベント（従来のChoiceを包含）
 interface ChoiceEventData {
@@ -175,22 +177,24 @@ interface Choice {
   id: string;
   text: string; // プレイヤーに表示される選択肢テキスト
   description?: string; // 選択肢の詳細説明・予想結果
-  nextEventId: string; // 各選択肢が次のイベントを直接指定
+  options: {
+    text: string;
+    nextEventId: string; // 各選択肢が次のイベントを直接指定
+  }[];
   transitionText?: string; // 選択後の遷移テキスト
   type: ChoiceActionType;
   isAvailable: boolean;
 }
 
-type ChoiceActionType = 
-  | 'action'     // 行動選択
-  | 'dialogue'   // 会話選択
-  | 'strategic'  // 戦略的判断
-  | 'creative';  // 創造的解決
+type ChoiceActionType =
+  | 'action' // 行動選択
+  | 'dialogue' // 会話選択
+  | 'strategic' // 戦略的判断
+  | 'creative'; // 創造的解決
 
 // MVP必須 - 物語進行イベント
 interface NarrativeEventData {
   narrativeText: string;
-  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
 }
 
 // MVP必須 - シーン移動専用イベント
@@ -203,14 +207,12 @@ interface SceneTransitionEventData {
 interface DialogueEventData {
   npcName: string;
   npcText: string;
-  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
   // MVP版では選択肢は別のChoiceEventで管理
 }
 
 interface ExplorationEventData {
   target: string; // 探索対象
   description: string;
-  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
   // MVP版では結果は単純なテキスト表示のみ
 }
 
@@ -242,7 +244,7 @@ interface Session {
   id: string;
   scenarioId: string;
   title: string; // セッション名（シナリオタイトルベース）
-  
+
   // セッション状態
   status: SessionStatus;
   currentSceneId: string;
@@ -250,33 +252,33 @@ interface Session {
     current: number;
     max: number;
   };
-  
+
   // 参加者情報（MVP最小限）
   participants: SessionParticipant[];
   gamemaster?: {
     id: string;
     name: string;
   };
-  
+
   // 進行状況（MVP最小限）
   startedAt: string; // ISO date
   lastActivityAt: string; // ISO date
-  
+
   // セッション設定（MVP最小限）
   settings: {
     isPublic: boolean;
     autoSave: boolean;
   };
-  
+
   // システム情報
   createdAt: string; // ISO date
   updatedAt: string; // ISO date
 }
 
-type SessionStatus = 
-  | 'recruiting'  // 参加者募集中
-  | 'active'      // 進行中
-  | 'completed';  // 完了
+type SessionStatus =
+  | 'recruiting' // 参加者募集中
+  | 'active' // 進行中
+  | 'completed'; // 完了
 
 interface SessionParticipant {
   playerId: string;
@@ -297,27 +299,27 @@ interface PlayRecord {
   playerId: string;
   sessionId: string;
   scenarioId: string;
-  
+
   // プレイ結果（MVP最小限）
   completionStatus: CompletionStatus;
   endingSceneId?: string;
-  
+
   // プレイ履歴（MVP最小限）
   choiceHistory: PlayChoice[];
-  
+
   // 時間情報（MVP最小限）
   startedAt: string; // ISO date
   completedAt?: string; // ISO date
   totalPlayTime: number; // 秒単位
-  
+
   // メタデータ（MVP最小限）
   notes?: string; // プレイヤーのメモ
   rating?: number; // 1-5の評価
 }
 
-type CompletionStatus = 
-  | 'completed'     // 完了
-  | 'in_progress';  // 進行中
+type CompletionStatus =
+  | 'completed' // 完了
+  | 'in_progress'; // 進行中
 
 interface PlayChoice {
   sceneId: string;
@@ -334,53 +336,57 @@ interface PlayChoice {
 ```typescript
 const sampleScenarios: Scenario[] = [
   {
-    id: "fantasy-001",
-    title: "失われた森の守護者",
-    overview: "古い森で起きる不思議な現象を調査する冒険者の物語。森の奥に眠る古代の秘密と、それを守る謎の存在との出会いが待っている。あなたの選択が森の運命、そして世界の平衡を決めることになる。",
+    id: 'fantasy-001',
+    title: '失われた森の守護者',
+    overview:
+      '古い森で起きる不思議な現象を調査する冒険者の物語。森の奥に眠る古代の秘密と、それを守る謎の存在との出会いが待っている。あなたの選択が森の運命、そして世界の平衡を決めることになる。',
     estimatedPlayTime: 45,
     playerCount: { min: 1, max: 4 },
     scenes: [], // 後述の詳細シーンデータ
-    startingSceneId: "scene-forest-001",
-    endingSceneIds: ["ending-harmony", "ending-sacrifice", "ending-corruption"],
-    tags: ["森", "古代", "神秘", "選択の重み"],
-    thumbnailUrl: "/images/scenarios/forest-guardian-thumb.jpg",
+    startingSceneId: 'scene-forest-001',
+    endingSceneIds: ['ending-harmony', 'ending-sacrifice', 'ending-corruption'],
+    tags: ['森', '古代', '神秘', '選択の重み'],
+    thumbnailUrl: '/images/scenarios/forest-guardian-thumb.jpg',
     author: {
-      name: "川上　雅史"
+      name: '川上　雅史',
     },
-    createdAt: "2025-08-10T09:00:00Z",
-    updatedAt: "2025-08-15T14:30:00Z",
-    version: "1.2.0",
-    isPublic: true
+    createdAt: '2025-08-10T09:00:00Z',
+    updatedAt: '2025-08-15T14:30:00Z',
+    version: '1.2.0',
+    isPublic: true,
   },
-  
+
   {
-    id: "adventure-001", 
-    title: "薬草採取の旅",
-    overview: "病気の母を救うため、伝説の薬草を求めて危険な山奥へと向かう若者の物語。道中で出会う旅人たち、危険な魔物、そして薬草を守る精霊たち。あなたは本当に大切なものが何かを学ぶことになる。",
+    id: 'adventure-001',
+    title: '薬草採取の旅',
+    overview:
+      '病気の母を救うため、伝説の薬草を求めて危険な山奥へと向かう若者の物語。道中で出会う旅人たち、危険な魔物、そして薬草を守る精霊たち。あなたは本当に大切なものが何かを学ぶことになる。',
     estimatedPlayTime: 35,
     playerCount: { min: 1, max: 3 },
     scenes: [],
-    startingSceneId: "scene-village-001",
-    endingSceneIds: ["ending-healing", "ending-sacrifice", "ending-wisdom"],
-    tags: ["家族", "薬草", "冒険", "成長"],
-    thumbnailUrl: "/images/scenarios/herb-journey-thumb.jpg",
+    startingSceneId: 'scene-village-001',
+    endingSceneIds: ['ending-healing', 'ending-sacrifice', 'ending-wisdom'],
+    tags: ['家族', '薬草', '冒険', '成長'],
+    thumbnailUrl: '/images/scenarios/herb-journey-thumb.jpg',
     author: {
-      name: "鈴木　太郎"
+      name: '鈴木　太郎',
     },
-    createdAt: "2025-08-07T13:15:00Z",
-    updatedAt: "2025-08-12T09:20:00Z",
-    version: "1.0.0",
-    isPublic: true
-  }
+    createdAt: '2025-08-07T13:15:00Z',
+    updatedAt: '2025-08-12T09:20:00Z',
+    version: '1.0.0',
+    isPublic: true,
+  },
 ];
 ```
 
 ## 🔮 将来機能の記録
 
 ### プレイヤーからGMへの選択肢提案機能（Phase 2以降）
+
 **要件**: プレイヤーがシーンで提示された選択肢以外の行動を提案し、GMが承認・却下できる機能
 
 **MVP範囲外とする理由**:
+
 - リアルタイム通知システムが必要（WebSocket等）
 - GM-Player間の複雑な相互作用が必要
 - 動的なシーン・選択肢生成が必要
@@ -389,35 +395,44 @@ const sampleScenarios: Scenario[] = [
 **詳細仕様**: [future-player-choice-proposal-feature.md](future-player-choice-proposal-feature.md)
 
 ### Event概念とイベントリンク構造
+
 **決定事項**: 選択肢2と3の併用によるハイブリッド構造
 
 #### 通常イベント（narrative、dialogue、scene_transition等）
+
 - `nextEventId`: 次のイベントへの直接リンク（1対1関係）
 - シンプルな直線的進行を実現
 
 #### choiceイベント（特別仕様）
+
 - `options配列`: 各選択肢が`nextEventId`を持つ
 - プレイヤーの選択によって分岐
 - 複数の選択肢から1つを選択する機能
 
 #### scene_transitionイベント（新規追加）
+
 - choiceからシーン移動機能を分離
 - 専用のシーン移動イベントとして独立
 - シーン間遷移の明確化
 
 ### TRPGフロー設計例
+
 ```
 narrative → choice (A→narrative, B→dialogue) → scene_transition
 ```
 
 ### Event概念のMVP簡略化
+
 **MVP版での制限事項**:
+
 - `dialogue`, `exploration`, `item_acquire`, `skill_use` イベントは最小限の実装
 - MVP段階では主に `choice`、`narrative`、`scene_transition` イベントに集中
 - 他のEventTypeは将来拡張として位置づけ
 
 ### 削除されたMVP外機能一覧
+
 以下の機能はMVP範囲外として削除：
+
 - ~~moodTag（完全削除）~~
 - カテゴリ・難易度システム
 - 詳細統計（プレイ記録の分析データ）
@@ -434,18 +449,21 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 
 ```markdown
 ## 最優先データ（2シナリオ）
+
 ✅ **「失われた森の守護者」** - MVP版（基本機能のみ）
 ✅ **「薬草採取の旅」** - MVP版（基本機能のみ）
 
 ## 各シナリオ必須要素
+
 - 8-10シーンの基本的な物語
 - 2つ以上の結末ルート
 - 1-2の進行中セッション
 - 1つのサンプルプレイ記録
 
 ## データファイル構成
+
 - scenario データJSON（2ファイル）
-- session データJSON（1ファイル） 
+- session データJSON（1ファイル）
 - play-record データJSON（1ファイル）
 ```
 
@@ -459,6 +477,7 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 ## 🔧 技術実装詳細（MVP版）
 
 削除された実装詳細：
+
 - データローダー設計
 - バリデーション・型安全性
 - データ検証スクリプト
@@ -469,13 +488,15 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 
 **作成者**: 設計担当Claude Code  
 **承認者**: リーダー（承認待ち）  
-**関連文書**: 
+**関連文書**:
+
 - [player-context-requirements.md](player-context-requirements.md)
 - [player-context-architecture.md](player-context-architecture.md)
 - [player-ui-ux-design.md](player-ui-ux-design.md)
 - [PROJECT_VISION.md](../../PROJECT_VISION.md)
 
 **更新履歴**:
+
 - 2025-08-16: 初版作成（設計担当）
 - 2025-08-16: レビュー修正版（MVP化・実装詳細削除・将来機能記録）
 - 2025-08-16: Event概念導入版（設計決定反映・選択肢提案機能分離）
