@@ -101,14 +101,14 @@ graph LR
 
 ### Sprint 004 (2025-08-16土 〜 2025-08-22金)
 
-**テーマ**: [[sprints/sprint_004/SPRINT_CONFIG|プレイヤー文脈MVP実装準備]]
+**テーマ**: [[sprints/sprint_004/SPRINT_CONFIG|⚔️ Player文脈MVP実装準備]]
 
-#### 主要タスク（⚡ バックエンド除外・フロントエンド単体MVP）
+#### 主要タスク（⚡ バックエンド除外・Player文脈フロントエンドMVP）
 
-- [ ] Phase 1: フロントエンドMVP設計（バックエンド非依存設計・モックデータ構造）
-- [ ] Phase 2: コンポーネント・UI設計（FSD準拠・プレイヤー文脈UI/UX）
-- [ ] Phase 3: プロトタイプ実装（モックデータ・基本コンポーネント・動作確認）
-- [ ] Phase 4: 検証・次Sprint準備（価値検証・統合計画策定）
+- [ ] Phase 1: ⚔️ Player文脈MVP設計（バックエンド非依存・モックデータ構造）
+- [ ] Phase 2: Player向けUI設計（FSD準拠・シナリオ探索UI/UX）
+- [ ] Phase 3: Player体験プロトタイプ実装（モックデータ・Player文脈コンポーネント）
+- [ ] Phase 4: Player価値検証・次Sprint準備（体験価値確認・統合計画策定）
 
 ### 完了スプリント
 
