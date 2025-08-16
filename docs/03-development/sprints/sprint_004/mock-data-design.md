@@ -142,26 +142,29 @@ interface Event {
   order: number; // シーン内での実行順序
   isRequired: boolean; // 必須イベントかどうか
   tags: string[];
+  nextEventId?: string; // 次のイベントID（通常イベント用）
 }
 
 type EventType = 
-  | 'choice'        // 選択肢（従来のChoice）- MVP必須
-  | 'narrative'     // 物語進行（テキスト表示）- MVP必須
-  | 'dialogue'      // NPC会話 - MVP最小限実装
-  | 'exploration'   // 探索アクション - MVP最小限実装
-  | 'item_acquire'  // アイテム獲得 - 将来拡張
-  | 'skill_use'     // スキル使用 - 将来拡張
-  | 'condition';    // 条件判定 - 将来拡張
+  | 'choice'           // 選択肢（従来のChoice）- MVP必須
+  | 'narrative'        // 物語進行（テキスト表示）- MVP必須
+  | 'dialogue'         // NPC会話 - MVP最小限実装
+  | 'scene_transition' // シーン移動専用イベント - MVP必須
+  | 'exploration'      // 探索アクション - MVP最小限実装
+  | 'item_acquire'     // アイテム獲得 - 将来拡張
+  | 'skill_use'        // スキル使用 - 将来拡張
+  | 'condition';       // 条件判定 - 将来拡張
 
 // EventType別のデータ構造（MVP版）
 type EventData = 
-  | ChoiceEventData       // MVP必須
-  | NarrativeEventData    // MVP必須
-  | DialogueEventData     // MVP最小限
-  | ExplorationEventData  // MVP最小限
-  | ItemAcquireEventData  // 将来拡張用（型のみ定義）
-  | SkillUseEventData     // 将来拡張用（型のみ定義）
-  | ConditionEventData;   // 将来拡張用（型のみ定義）
+  | ChoiceEventData         // MVP必須
+  | NarrativeEventData      // MVP必須
+  | DialogueEventData       // MVP最小限
+  | SceneTransitionEventData // MVP必須
+  | ExplorationEventData    // MVP最小限
+  | ItemAcquireEventData    // 将来拡張用（型のみ定義）
+  | SkillUseEventData       // 将来拡張用（型のみ定義）
+  | ConditionEventData;     // 将来拡張用（型のみ定義）
 
 // 選択肢イベント（従来のChoiceを包含）
 interface ChoiceEventData {
@@ -172,7 +175,7 @@ interface Choice {
   id: string;
   text: string; // プレイヤーに表示される選択肢テキスト
   description?: string; // 選択肢の詳細説明・予想結果
-  nextSceneId: string;
+  nextEventId: string; // 各選択肢が次のイベントを直接指定
   transitionText?: string; // 選択後の遷移テキスト
   type: ChoiceActionType;
   isAvailable: boolean;
@@ -187,18 +190,27 @@ type ChoiceActionType =
 // MVP必須 - 物語進行イベント
 interface NarrativeEventData {
   narrativeText: string;
+  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
+}
+
+// MVP必須 - シーン移動専用イベント
+interface SceneTransitionEventData {
+  targetSceneId: string; // 移動先シーンID
+  transitionText?: string; // 移動時の説明テキスト
 }
 
 // MVP最小限実装 - 簡略化されたイベントデータ
 interface DialogueEventData {
   npcName: string;
   npcText: string;
+  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
   // MVP版では選択肢は別のChoiceEventで管理
 }
 
 interface ExplorationEventData {
   target: string; // 探索対象
   description: string;
+  nextEventId?: string; // 次のイベントへの直接リンク（通常イベント）
   // MVP版では結果は単純なテキスト表示のみ
 }
 
@@ -376,14 +388,37 @@ const sampleScenarios: Scenario[] = [
 
 **詳細仕様**: [future-player-choice-proposal-feature.md](future-player-choice-proposal-feature.md)
 
+### Event概念とイベントリンク構造
+**決定事項**: 選択肢2と3の併用によるハイブリッド構造
+
+#### 通常イベント（narrative、dialogue、scene_transition等）
+- `nextEventId`: 次のイベントへの直接リンク（1対1関係）
+- シンプルな直線的進行を実現
+
+#### choiceイベント（特別仕様）
+- `options配列`: 各選択肢が`nextEventId`を持つ
+- プレイヤーの選択によって分岐
+- 複数の選択肢から1つを選択する機能
+
+#### scene_transitionイベント（新規追加）
+- choiceからシーン移動機能を分離
+- 専用のシーン移動イベントとして独立
+- シーン間遷移の明確化
+
+### TRPGフロー設計例
+```
+narrative → choice (A→narrative, B→dialogue) → scene_transition
+```
+
 ### Event概念のMVP簡略化
 **MVP版での制限事項**:
 - `dialogue`, `exploration`, `item_acquire`, `skill_use` イベントは最小限の実装
-- MVP段階では主に `choice` と `narrative` イベントに集中
+- MVP段階では主に `choice`、`narrative`、`scene_transition` イベントに集中
 - 他のEventTypeは将来拡張として位置づけ
 
 ### 削除されたMVP外機能一覧
 以下の機能はMVP範囲外として削除：
+- ~~moodTag（完全削除）~~
 - カテゴリ・難易度システム
 - 詳細統計（プレイ記録の分析データ）
 - BGM・ムード管理
@@ -444,5 +479,6 @@ const sampleScenarios: Scenario[] = [
 - 2025-08-16: 初版作成（設計担当）
 - 2025-08-16: レビュー修正版（MVP化・実装詳細削除・将来機能記録）
 - 2025-08-16: Event概念導入版（設計決定反映・選択肢提案機能分離）
+- 2025-08-16: 緊急修正版（moodTag削除・イベントリンク構造確定・scene_transition追加）
 
 #player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
