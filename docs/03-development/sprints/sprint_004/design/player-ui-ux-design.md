@@ -252,10 +252,11 @@ interface PlaySessionUISpec {
   };
   
   progress_tracking: {
-    scene_counter: "現在シーン / 総シーン数";
-    chapter_progress: "チャプター進行度";
-    time_tracking: "プレイ時間の表示";
     save_states: "自動保存・手動保存の状態表示";
+    // MVP範囲外: 没入感重視のため以下は除外
+    // scene_counter: "現在シーン / 総シーン数";
+    // chapter_progress: "チャプター進行度"; 
+    // time_tracking: "プレイ時間の表示";
   };
   
   accessibility: {
@@ -282,14 +283,14 @@ interface PlaySessionUISpec {
    - 選択結果の即座表示
    
 3. **シーン遷移**
-   - 選択結果の表示・アニメーション
+   - 選択後の即座の次シーン遷移（中間メッセージなし）
    - 次シーンへの滑らかな遷移
-   - ローディング状態の表示
+   - ローディング状態の最小化
    
 4. **プレイ支援機能**
    - 一時停止・保存機能
-   - 選択履歴の確認
    - 設定・オプションへのアクセス
+   // MVP範囲外: 選択履歴の明示的確認（内部保持のみ）
 ```
 
 ### 4. プレイ履歴画面（Play History）
@@ -343,7 +344,8 @@ interface PlayHistoryUISpec {
       scenario_thumbnail: "シナリオサムネイル";
       basic_info: "シナリオタイトル・完了日時";
       outcome_summary: "到達結末・主要選択";
-      replay_cta: "再プレイ・続きから";
+      // MVP範囲外: 再プレイ機能（セッション完了後は再プレイ不可）
+      // replay_cta: "再プレイ・続きから";
     };
     filtering: {
       by_scenario: "シナリオ別";
@@ -805,5 +807,10 @@ interface PlayerMicroInteractions {
 
 **更新履歴**:
 - 2025-08-16: 初版作成（設計担当）
+- 2025-08-16: play-experience.feature BDDレビューフィードバック反映
+  - 進行状況インジケーター・プレイ時間表示をMVP範囲外に変更（没入感重視）
+  - 選択後の中間メッセージ除去（即座の次シーン遷移）
+  - 再プレイ機能をMVP範囲外に変更（セッション完了後は再プレイ不可）
+  - 選択履歴の明示的確認をMVP範囲外に変更（内部保持のみ）
 
 #player-context #ui-ux-design #responsive-design #user-experience #mvp-design #trpg-interface
