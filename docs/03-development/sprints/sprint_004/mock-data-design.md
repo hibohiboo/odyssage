@@ -102,56 +102,123 @@ interface Scene {
   // ビジュアル要素（MVP最小限）
   backgroundImageUrl?: string;
   
-  // ゲーム進行
-  choices: Choice[];
-  isStarting: boolean;
-  isEnding: boolean;
+  // Event概念の導入（TRPG的なイベント集合体として）
+  events: Event[];
   
   // システム情報（MVP最小限）
   metadata: {
     location?: string;
     npcs?: string[];
   };
+  
+  // 従来の情報
+  isStarting: boolean;
+  isEnding: boolean;
 }
 
 type SceneType = 
   | 'narrative'    // 物語進行
-  | 'choice'       // 重要な選択
+  | 'interactive'  // イベント主体のシーン
   | 'exploration'  // 探索・発見
   | 'resolution';  // 解決・結末
 
-// MVP版では、moodやBGM管理を簡略化。必要に応じて後から追加可能
+// Event概念の導入でChoiceはEventの一種として扱う
 ```
 
-### 3. Choice（選択肢）データ構造
+### 3. Event（イベント）データ構造
 
 ```typescript
-interface Choice {
+interface Event {
   // 基本情報
+  id: string;
+  type: EventType;
+  title?: string; // イベントの見出し（選択肢以外で使用）
+  content?: string; // イベントの説明・テキスト
+  
+  // イベント固有データ（type によって使い分け）
+  data: EventData;
+  
+  // システム情報
+  order: number; // シーン内での実行順序
+  isRequired: boolean; // 必須イベントかどうか
+  tags: string[];
+}
+
+type EventType = 
+  | 'choice'        // 選択肢（従来のChoice）- MVP必須
+  | 'narrative'     // 物語進行（テキスト表示）- MVP必須
+  | 'dialogue'      // NPC会話 - MVP最小限実装
+  | 'exploration'   // 探索アクション - MVP最小限実装
+  | 'item_acquire'  // アイテム獲得 - 将来拡張
+  | 'skill_use'     // スキル使用 - 将来拡張
+  | 'condition';    // 条件判定 - 将来拡張
+
+// EventType別のデータ構造
+type EventData = 
+  | ChoiceEventData
+  | DialogueEventData
+  | ExplorationEventData
+  | ItemAcquireEventData
+  | SkillUseEventData
+  | NarrativeEventData
+  | ConditionEventData;
+
+// 選択肢イベント（従来のChoiceを包含）
+interface ChoiceEventData {
+  choices: Choice[];
+}
+
+interface Choice {
   id: string;
   text: string; // プレイヤーに表示される選択肢テキスト
   description?: string; // 選択肢の詳細説明・予想結果
-  
-  // 遷移情報
   nextSceneId: string;
   transitionText?: string; // 選択後の遷移テキスト
-  
-  // メタデータ（MVP最小限）
-  type: ChoiceType;
-  tags: string[];
-  
-  // システム情報
-  isAvailable: boolean; // 常時利用可能かどうか
+  type: ChoiceActionType;
+  isAvailable: boolean;
 }
 
-type ChoiceType = 
+type ChoiceActionType = 
   | 'action'     // 行動選択
   | 'dialogue'   // 会話選択
   | 'strategic'  // 戦略的判断
   | 'creative';  // 創造的解決
 
-// MVP版では、weight、requirements、consequences、difficultyは簡略化
-// 必要に応じて後から追加可能
+// その他のイベントデータ（MVP最小限版）
+interface DialogueEventData {
+  npcName: string;
+  npcText: string;
+  playerOptions?: string[]; // プレイヤーの返答選択肢
+}
+
+interface ExplorationEventData {
+  target: string; // 探索対象
+  description: string;
+  results: string[]; // 探索結果のパターン
+}
+
+interface ItemAcquireEventData {
+  itemName: string;
+  itemDescription: string;
+  acquisitionText: string;
+}
+
+interface SkillUseEventData {
+  skillName: string;
+  target: string;
+  effect: string;
+}
+
+interface NarrativeEventData {
+  narrativeText: string;
+  moodTag?: string; // 雰囲気タグ
+}
+
+interface ConditionEventData {
+  condition: string; // 条件の説明
+  successPath: string; // 成功時のシーンID
+  failurePath: string; // 失敗時のシーンID
+}
 ```
 
 ### 4. Session（セッション）データ構造
@@ -297,32 +364,22 @@ const sampleScenarios: Scenario[] = [
 
 ## 🔮 将来機能の記録
 
-### プレイヤーからGMへの選択肢提案機能
+### プレイヤーからGMへの選択肢提案機能（Phase 2以降）
 **要件**: プレイヤーがシーンで提示された選択肢以外の行動を提案し、GMが承認・却下できる機能
-**設計方針**: 
-- 各シーンに「その他の行動を提案」オプションを追加
-- プレイヤーがフリーテキストで行動を記述
-- GMに通知が送られ、承認・却下・修正提案が可能
-- 承認された場合、新しい選択肢として追加またはカスタムシーンへ遷移
 
-**データ構造案**:
-```typescript
-interface CustomChoiceProposal {
-  id: string;
-  sessionId: string;
-  sceneId: string;
-  playerId: string;
-  proposedText: string;
-  proposedDescription?: string;
-  status: 'pending' | 'approved' | 'rejected' | 'modified';
-  gmResponse?: {
-    responseType: 'approve' | 'reject' | 'modify';
-    feedback?: string;
-    modifiedChoice?: Choice;
-  };
-  createdAt: string;
-}
-```
+**MVP範囲外とする理由**:
+- リアルタイム通知システムが必要（WebSocket等）
+- GM-Player間の複雑な相互作用が必要
+- 動的なシーン・選択肢生成が必要
+- MVP目標「2シナリオ、3セッション以下」に対して過度に複雑
+
+**詳細仕様**: [future-player-choice-proposal-feature.md](future-player-choice-proposal-feature.md)
+
+### Event概念のMVP簡略化
+**MVP版での制限事項**:
+- `dialogue`, `exploration`, `item_acquire`, `skill_use` イベントは最小限の実装
+- MVP段階では主に `choice` と `narrative` イベントに集中
+- 他のEventTypeは将来拡張として位置づけ
 
 ### 削除されたMVP外機能一覧
 以下の機能はMVP範囲外として削除：
@@ -333,6 +390,7 @@ interface CustomChoiceProposal {
 - 選択肢の重み・結果システム
 - スペクテーター機能
 - プレイスタイル分類
+- プレイヤー選択肢提案機能（独立文書化済み）
 
 ## 📈 Phase別データ準備計画（MVP版）
 
