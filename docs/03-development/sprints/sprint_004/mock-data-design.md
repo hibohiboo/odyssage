@@ -85,20 +85,8 @@ interface Scenario {
   isPublic: boolean;
 }
 
-type ScenarioCategory = 
-  | 'fantasy' 
-  | 'scifi' 
-  | 'mystery' 
-  | 'horror' 
-  | 'adventure' 
-  | 'drama' 
-  | 'comedy';
-
-type DifficultyLevel = 
-  | 'beginner'    // 初心者向け・明確な選択肢
-  | 'intermediate' // 中級者向け・複雑な選択
-  | 'advanced'    // 上級者向け・高度な判断が必要
-  | 'expert';     // エキスパート向け・非常に複雑
+// MVP版では、カテゴリや難易度をenumで制限せず、柔軟性を確保
+// 将来的に必要になった場合は、文字列型で管理することで拡張性を保つ
 ```
 
 ### 2. Scene（シーン）データ構造
@@ -111,27 +99,17 @@ interface Scene {
   content: string; // マークダウン形式の物語テキスト
   type: SceneType;
   
-  // ビジュアル要素
+  // ビジュアル要素（MVP最小限）
   backgroundImageUrl?: string;
-  mood: SceneMood;
-  bgm?: {
-    url: string;
-    title: string;
-    loop: boolean;
-  };
   
   // ゲーム進行
   choices: Choice[];
   isStarting: boolean;
   isEnding: boolean;
-  chapterIndex?: number;
   
-  // システム情報
-  estimatedReadTime: number; // 秒単位
+  // システム情報（MVP最小限）
   metadata: {
     location?: string;
-    timeOfDay?: string;
-    weather?: string;
     npcs?: string[];
   };
 }
@@ -140,18 +118,9 @@ type SceneType =
   | 'narrative'    // 物語進行
   | 'choice'       // 重要な選択
   | 'exploration'  // 探索・発見
-  | 'confrontation' // 対立・戦闘
-  | 'resolution'   // 解決・結末
-  | 'transition';  // 場面転換
+  | 'resolution';  // 解決・結末
 
-type SceneMood = 
-  | 'peaceful' 
-  | 'tense' 
-  | 'mysterious' 
-  | 'dramatic' 
-  | 'action' 
-  | 'melancholy' 
-  | 'triumphant';
+// MVP版では、moodやBGM管理を簡略化。必要に応じて後から追加可能
 ```
 
 ### 3. Choice（選択肢）データ構造
@@ -167,48 +136,22 @@ interface Choice {
   nextSceneId: string;
   transitionText?: string; // 選択後の遷移テキスト
   
-  // 選択特性
-  difficulty: ChoiceDifficulty;
-  consequences: ChoiceConsequence[];
-  requirements?: ChoiceRequirement[];
-  
-  // メタデータ
+  // メタデータ（MVP最小限）
   type: ChoiceType;
-  weight: number; // 物語への影響度 (1-10)
   tags: string[];
   
   // システム情報
   isAvailable: boolean; // 常時利用可能かどうか
-  conditions?: ChoiceCondition[];
 }
-
-type ChoiceDifficulty = 
-  | 'easy'      // 明確で安全な選択
-  | 'moderate'  // 適度なリスク・判断が必要
-  | 'hard'      // 高いリスク・重要な判断
-  | 'critical'; // 物語の核心に関わる重大な選択
-
-type ChoiceConsequence = 
-  | 'story_branch'  // 物語分岐
-  | 'character_change' // キャラクター変化
-  | 'item_gain'     // アイテム獲得
-  | 'item_loss'     // アイテム喪失
-  | 'relationship_change' // 関係性変化
-  | 'ending_unlock'; // 結末解放
 
 type ChoiceType = 
   | 'action'     // 行動選択
   | 'dialogue'   // 会話選択
-  | 'moral'      // 道徳的判断
   | 'strategic'  // 戦略的判断
-  | 'creative'   // 創造的解決
-  | 'risk';      // リスク判断
+  | 'creative';  // 創造的解決
 
-interface ChoiceCondition {
-  type: 'previous_choice' | 'item_possession' | 'flag_state';
-  target: string;
-  value: any;
-}
+// MVP版では、weight、requirements、consequences、difficultyは簡略化
+// 必要に応じて後から追加可能
 ```
 
 ### 4. Session（セッション）データ構造
@@ -228,30 +171,21 @@ interface Session {
     max: number;
   };
   
-  // 参加者情報
+  // 参加者情報（MVP最小限）
   participants: SessionParticipant[];
   gamemaster?: {
     id: string;
     name: string;
-    avatar?: string;
   };
   
-  // 進行状況
+  // 進行状況（MVP最小限）
   startedAt: string; // ISO date
   lastActivityAt: string; // ISO date
-  estimatedCompletionTime?: string; // ISO date
-  progress: {
-    scenesCompleted: number;
-    totalScenes: number;
-    percentage: number;
-  };
   
-  // セッション設定
+  // セッション設定（MVP最小限）
   settings: {
     isPublic: boolean;
-    allowSpectators: boolean;
     autoSave: boolean;
-    playStyle: PlayStyle;
   };
   
   // システム情報
@@ -262,24 +196,15 @@ interface Session {
 type SessionStatus = 
   | 'recruiting'  // 参加者募集中
   | 'active'      // 進行中
-  | 'paused'      // 一時停止
-  | 'completed'   // 完了
-  | 'cancelled';  // キャンセル
-
-type PlayStyle = 
-  | 'narrative'   // 物語重視
-  | 'exploration' // 探索重視
-  | 'social'      // 対話重視
-  | 'challenge';  // 挑戦重視
+  | 'completed';  // 完了
 
 interface SessionParticipant {
   playerId: string;
   playerName: string;
-  avatar?: string;
-  role: 'player' | 'gm' | 'spectator';
+  role: 'player' | 'gm';
   joinedAt: string; // ISO date
   lastSeenAt: string; // ISO date
-  status: 'active' | 'away' | 'offline';
+  status: 'active' | 'offline';
 }
 ```
 
@@ -293,63 +218,32 @@ interface PlayRecord {
   sessionId: string;
   scenarioId: string;
   
-  // プレイ結果
+  // プレイ結果（MVP最小限）
   completionStatus: CompletionStatus;
   endingSceneId?: string;
-  finalScore?: number;
   
-  // プレイ履歴
+  // プレイ履歴（MVP最小限）
   choiceHistory: PlayChoice[];
-  sceneVisitHistory: SceneVisit[];
   
-  // 時間情報
+  // 時間情報（MVP最小限）
   startedAt: string; // ISO date
   completedAt?: string; // ISO date
   totalPlayTime: number; // 秒単位
-  sessionBreaks: PlayBreak[];
   
-  // 分析データ
-  statistics: {
-    totalChoices: number;
-    uniqueScenesVisited: number;
-    backtrackCount: number;
-    difficultChoicesCount: number;
-    averageDecisionTime: number; // 秒単位
-  };
-  
-  // メタデータ
-  tags: string[]; // プレイスタイルのタグ
+  // メタデータ（MVP最小限）
   notes?: string; // プレイヤーのメモ
   rating?: number; // 1-5の評価
 }
 
 type CompletionStatus = 
   | 'completed'     // 完了
-  | 'in_progress'   // 進行中
-  | 'abandoned'     // 途中放棄
-  | 'failed';       // 失敗終了
+  | 'in_progress';  // 進行中
 
 interface PlayChoice {
   sceneId: string;
   choiceId: string;
   choiceText: string;
   selectedAt: string; // ISO date
-  decisionTimeSeconds: number;
-  alternativesConsidered?: string[]; // 検討した他の選択肢ID
-}
-
-interface SceneVisit {
-  sceneId: string;
-  visitedAt: string; // ISO date
-  timeSpentSeconds: number;
-  isFirstVisit: boolean;
-}
-
-interface PlayBreak {
-  startedAt: string; // ISO date
-  resumedAt: string; // ISO date
-  durationSeconds: number;
-  reason?: 'pause' | 'interruption' | 'deliberation';
 }
 ```
 
