@@ -66,14 +66,14 @@
 ### 必須成果物
 
 #### 1. BDD Feature文書
-**ファイル**: `features/*.feature`
+**ファイル**: `packages/bdd-e2e-test/e2e/features/*.feature`
 - Gherkin記法による受入れシナリオ
 - Player文脈MVP体験の完全なカバレッジ
 - 正常系・異常系・境界値テストケース
 - ビジネス関係者にも理解可能な記述
 
 #### 2. E2Eテスト実装
-**ファイル**: `tests/e2e/` または `features/step-definitions/`
+**ファイル**: `packages/bdd-e2e-test/e2e/features/step-definitions/`
 - TypeScript実装のステップ定義
 - テストデータ・セットアップ・クリーンアップ
 - CI/CD環境での安定実行
@@ -202,5 +202,6 @@
 
 **更新履歴**
 - 2025-08-16: 初版作成（テスト担当ガイド）
+- 2025-08-16: BDD Feature・E2Eテストファイル配置先を正しいパス（packages/bdd-e2e-test/e2e/features/）に修正
 
 #test-specialist #bdd #e2e-testing #quality-assurance #player-context #mvp
