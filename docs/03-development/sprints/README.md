@@ -94,7 +94,7 @@ docs/development/sprints/
   - sprint_003（2025-08-09土〜2025-08-15金）- [[sprint_003/SPRINT_CONFIG|プロジェクトビジョン統一・OpenAPI品質改善]]
   - sprint_002（2025-07-26土〜2025-08-01金）- [[sprint_002/SPRINT_CONFIG|Optimistic UI & Batch Update]]
   - sprint_001（2025-07-19土〜2025-07-25金）- [[sprint_001/SPRINT_CONFIG|GraphDB Integration]]
-- **次期スプリント**: sprint_004（2025-08-16土〜2025-08-22金）- プレイヤー文脈MVP実装準備
+- **現在スプリント**: sprint_004（2025-08-16土〜2025-08-22金）- [[sprint_004/SPRINT_CONFIG|プレイヤー文脈MVP実装準備]]
 
 ## ファイルテンプレート
 
