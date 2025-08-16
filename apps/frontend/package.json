@@ -24,7 +24,7 @@
     "@odyssage/ui": "workspace:*",
     "@reduxjs/toolkit": "^2.8.2",
     "firebase": "^12.1.0",
-    "hono": "^4.9.1",
+    "hono": "^4.9.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-redux": "^9.2.0",

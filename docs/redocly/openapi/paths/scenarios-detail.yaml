@@ -1,6 +1,8 @@
 get:
   summary: シナリオ詳細取得
   operationId: "getScenarioByIdNew"
+  security:
+    - bearerAuth: []
   description: |
     指定したシナリオの詳細情報を取得します。
     
@@ -62,9 +64,4 @@ get:
     400:
       $ref: '../components/schemas/response.yaml#/BadRequestResponse'
     404:
-      description: "指定されたシナリオが存在しない"
-      content:
-        text/plain:
-          schema:
-            type: "string"
-            example: "Not Found"
+      $ref: '../components/schemas/response.yaml#/NotFound'

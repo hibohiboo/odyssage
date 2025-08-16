@@ -1,20 +1,21 @@
 # See https://redocly.com/docs/cli/configuration/ for more information.
+# Redocly CLI Configuration
 apis:
-  core@v1: 
-    root: openapi/api.yaml
+  core@v2:
+    root: ./openapi/api.yaml
+    rules:
+      no-unused-components: error
+# Global linting rules
 extends:
   - recommended
-rules:
-  no-unused-components: error
-theme:
-  openapi:
-    htmlTemplate: ./public/index.html
-    theme:
-      colors:
-        primary:
-          main: "#32329f"
-    generateCodeSamples:
-      languages:  # Array of language config objects; indicates in which languages to generate code samples.
-        - lang: curl
-        - lang: JavaScript
 
+openapi:
+  htmlTemplate: ./public/index.html
+  theme:
+    colors:
+      primary:
+        main: '#32329f'
+  generateCodeSamples:
+    languages: # Array of language config objects; indicates in which languages to generate code samples.
+      - lang: curl
+      - lang: JavaScript

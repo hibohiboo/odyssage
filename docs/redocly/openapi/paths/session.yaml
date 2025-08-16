@@ -13,6 +13,8 @@ get:
     特定のセッションの詳細情報を取得します。
     セッションのタイトル、ステータス、関連するシナリオ情報などが含まれます。
   operationId: getSession
+  security:
+    - bearerAuth: []
   tags:
     - session
   responses:
@@ -23,22 +25,6 @@ get:
           schema:
             $ref: '../components/schemas/session.yaml#/Session'
     '404':
-      description: セッションが見つかりません
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "セッションが見つかりません"
+      $ref: '../components/schemas/response.yaml#/NotFound'
     '500':
-      description: サーバーエラー
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              message:
-                type: string
-                example: "セッションの取得に失敗しました"
+      $ref: '../components/schemas/response.yaml#/InternalServerError'

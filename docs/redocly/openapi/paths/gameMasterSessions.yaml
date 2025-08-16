@@ -20,7 +20,7 @@ post:
     - session
     - game-master
   security:
-    - BearerAuth: []
+    - bearerAuth: []
   requestBody:
     description: 作成するセッションの情報
     required: true
@@ -168,6 +168,8 @@ get:
   tags:
     - session
     - game-master
+  security:
+    - bearerAuth: []
   responses:
     '200':
       description: セッション一覧取得成功
@@ -180,7 +182,11 @@ get:
               summary: '正常レスポンス'
               value:
                 - id: '550e8400-e29b-41d4-a716-446655440000'
-                  title: '失われた遺跡の謎'
+                  name: '失われた遺跡の謎'
+                  gm: 'GM田中'
+                  gmId: '12345678-1234-1234-1234-123456789abc'
+                  players: 0
+                  maxPlayers: 4
                   status: '準備中'
                   scenarioId: '660e8400-e29b-41d4-a716-446655440001'
                   scenarioTitle: '古代遺跡探索'

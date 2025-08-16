@@ -48,13 +48,17 @@ Odyssage プロジェクトの開発プロセス・実装ガイドライン・�
 
 - **土曜日**: スプリント開始・計画策定
 - **日〜木曜日**: 実装・日次進捗更新
-- **金曜日**: 完了確認・レトロスペクティブ
+- **金曜日**: 完了確認・レトロスペクティブ・**📋 完了チェックリスト実行**
 
 #### スプリント成果物
 
 - `SPRINT_CONFIG.md` - 目標・スコープ・リスク管理
 - `*-implementation.md` - 実装記録・技術判断
 - `retrospective.md` - KPT振り返り・改善アクション
+
+#### 完了時必須手順
+
+- [[sprints/sprint-completion-checklist|スプリント完了チェックリスト]] - 更新漏れ防止・品質保証
 
 ### [[testing-strategy]] - テスト戦略
 
@@ -95,22 +99,21 @@ graph LR
 
 ## 📊 現在のスプリント
 
-### Sprint 003 (2025-08-09土 〜 2025-08-15金)
+### 次期スプリント計画中
 
-**テーマ**: [[document-architecture/document-architecture-implementation|ドキュメントリアーキテクティング]]
+**Sprint 004**: プレイヤー文脈MVP実装準備
 
-#### 主要タスク
-
-- [x] Phase 1-3: 新ドキュメント構成設計・基盤整備
-- [x] Phase 4: ドキュメント品質改善（重複解消・リンク修正）
-- [x] Phase 5: Development ディレクトリ統合（進行中）
-  - [x] 設計判断記録・移行準備・ファイル移行
-  - [ ] リンク更新・クリーンアップ
+- フロントエンド実装開始に向けた基盤確認
+- 高品質API仕様を活用したクライアント開発
 
 ### 完了スプリント
 
-- **Sprint 001** (2025-07-19土〜2025-07-25金): [[sprints/sprint_001|GraphDB Integration]]
-- **Sprint 002** (2025-07-26土〜2025-08-01金): [[sprints/sprint_002|Optimistic UI & Batch Update]]
+- **Sprint 003** (2025-08-09土〜2025-08-15金): [[sprints/sprint_003/SPRINT_CONFIG|プロジェクトビジョン統一・OpenAPI品質改善]]
+  - ✅ プロジェクトビジョン統一完了（PROJECT_VISION.md中心化）
+  - ✅ OpenAPI lint完全クリア（33エラー+7警告 → 0エラー+0警告）
+  - ✅ ドキュメント体系整備・統一参照化
+- **Sprint 002** (2025-07-26土〜2025-08-01金): [[sprints/sprint_002/SPRINT_CONFIG|Optimistic UI & Batch Update]]
+- **Sprint 001** (2025-07-19土〜2025-07-25金): [[sprints/sprint_001/SPRINT_CONFIG|GraphDB Integration]]
 
 ## 🛠️ 開発ツール
 
