@@ -98,17 +98,18 @@ graph LR
 ### 次期スプリント計画中
 
 **Sprint 004**: プレイヤー文脈MVP実装準備
+
 - フロントエンド実装開始に向けた基盤確認
 - 高品質API仕様を活用したクライアント開発
 
 ### 完了スプリント
 
-- **Sprint 003** (2025-08-09土〜2025-08-15金): [[sprints/sprint_003|プロジェクトビジョン統一・OpenAPI品質改善]]
+- **Sprint 003** (2025-08-09土〜2025-08-15金): [[sprint_003|プロジェクトビジョン統一・OpenAPI品質改善]]
   - ✅ プロジェクトビジョン統一完了（PROJECT_VISION.md中心化）
   - ✅ OpenAPI lint完全クリア（33エラー+7警告 → 0エラー+0警告）
   - ✅ ドキュメント体系整備・統一参照化
-- **Sprint 001** (2025-07-19土〜2025-07-25金): [[sprints/sprint_001|GraphDB Integration]]
 - **Sprint 002** (2025-07-26土〜2025-08-01金): [[sprints/sprint_002|Optimistic UI & Batch Update]]
+- **Sprint 001** (2025-07-19土〜2025-07-25金): [[sprint_001|GraphDB Integration]]
 
 ## 🛠️ 開発ツール
 
