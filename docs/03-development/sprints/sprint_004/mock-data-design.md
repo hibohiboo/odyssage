@@ -153,15 +153,15 @@ type EventType =
   | 'skill_use'     // スキル使用 - 将来拡張
   | 'condition';    // 条件判定 - 将来拡張
 
-// EventType別のデータ構造
+// EventType別のデータ構造（MVP版）
 type EventData = 
-  | ChoiceEventData
-  | DialogueEventData
-  | ExplorationEventData
-  | ItemAcquireEventData
-  | SkillUseEventData
-  | NarrativeEventData
-  | ConditionEventData;
+  | ChoiceEventData       // MVP必須
+  | NarrativeEventData    // MVP必須
+  | DialogueEventData     // MVP最小限
+  | ExplorationEventData  // MVP最小限
+  | ItemAcquireEventData  // 将来拡張用（型のみ定義）
+  | SkillUseEventData     // 将来拡張用（型のみ定義）
+  | ConditionEventData;   // 将来拡張用（型のみ定義）
 
 // 選択肢イベント（従来のChoiceを包含）
 interface ChoiceEventData {
@@ -184,19 +184,25 @@ type ChoiceActionType =
   | 'strategic'  // 戦略的判断
   | 'creative';  // 創造的解決
 
-// その他のイベントデータ（MVP最小限版）
+// MVP必須 - 物語進行イベント
+interface NarrativeEventData {
+  narrativeText: string;
+}
+
+// MVP最小限実装 - 簡略化されたイベントデータ
 interface DialogueEventData {
   npcName: string;
   npcText: string;
-  playerOptions?: string[]; // プレイヤーの返答選択肢
+  // MVP版では選択肢は別のChoiceEventで管理
 }
 
 interface ExplorationEventData {
   target: string; // 探索対象
   description: string;
-  results: string[]; // 探索結果のパターン
+  // MVP版では結果は単純なテキスト表示のみ
 }
 
+// 将来拡張用（型定義のみ、MVP実装対象外）
 interface ItemAcquireEventData {
   itemName: string;
   itemDescription: string;
@@ -207,11 +213,6 @@ interface SkillUseEventData {
   skillName: string;
   target: string;
   effect: string;
-}
-
-interface NarrativeEventData {
-  narrativeText: string;
-  moodTag?: string; // 雰囲気タグ
 }
 
 interface ConditionEventData {
@@ -442,5 +443,6 @@ const sampleScenarios: Scenario[] = [
 **更新履歴**:
 - 2025-08-16: 初版作成（設計担当）
 - 2025-08-16: レビュー修正版（MVP化・実装詳細削除・将来機能記録）
+- 2025-08-16: Event概念導入版（設計決定反映・選択肢提案機能分離）
 
 #player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
