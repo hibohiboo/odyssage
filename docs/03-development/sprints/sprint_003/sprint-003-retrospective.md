@@ -159,6 +159,14 @@ Odyssageは **忙しい人でも自分のペースで楽しめる非同期TRPG�
    - 類似作業の実績データ蓄積
    - リスク要因の事前識別強化
 
+4. **🚨 スプリント完了時の更新漏れ防止**
+   - **課題**: Sprint 3完了時にREADME.md更新を忘れかけた
+   - **対策**: スプリント完了チェックリストの策定・必須化
+   - **影響範囲**: 複数ファイルの同期が必要
+     - `docs/03-development/README.md`
+     - `docs/03-development/sprints/README.md`
+     - `sprint-xxx-retrospective.md`
+
 ---
 
 ## 🚀 次スプリントへの引き継ぎ
