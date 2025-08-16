@@ -28,8 +28,8 @@ docs/development/sprints/
 │   ├── implementation.md
 │   └── retrospective.md
 ├── sprint_001/                  # 過去スプリント（アーカイブ）
-├── sprint_002/
-├── sprint_003/                  # 現在スプリント
+├── sprint_002/                  # 過去スプリント（アーカイブ）
+├── sprint_003/                  # 過去スプリント（アーカイブ）
 └── upcoming/                    # 次回予定
     └── backlog.md
 ```
@@ -90,11 +90,11 @@ docs/development/sprints/
 
 ### 現在の状況
 
-- **完了スプリント**:
-  - sprint_001（2025-07-19土〜2025-07-25金）- GraphDB実装 [[sprints/sprint_001/SPRINT_CONFIG|GraphDB Integration]]
-  - sprint_002（2025-07-26土〜2025-08-01金）- バッチ更新・楽観的UI [[sprints/sprint_002/SPRINT_CONFIG|Optimistic UI & Batch Update]]
-- **現在スプリント**: sprint_003（2025-08-09土〜2025-08-15金）- ドキュメントアーキテクチャ [[sprints/sprint_003/SPRINT_CONFIG|プロジェクトビジョン統一・OpenAPI品質改善]]
-- **次回スプリント**: sprint_004（2025-08-16土〜2025-08-22金）
+- **完了スプリント** (降順):
+  - sprint_003（2025-08-09土〜2025-08-15金）- [[sprints/sprint_003/SPRINT_CONFIG|プロジェクトビジョン統一・OpenAPI品質改善]]
+  - sprint_002（2025-07-26土〜2025-08-01金）- [[sprints/sprint_002/SPRINT_CONFIG|Optimistic UI & Batch Update]]
+  - sprint_001（2025-07-19土〜2025-07-25金）- [[sprints/sprint_001/SPRINT_CONFIG|GraphDB Integration]]
+- **次期スプリント**: sprint_004（2025-08-16土〜2025-08-22金）- プレイヤー文脈MVP実装準備
 
 ## ファイルテンプレート
 
