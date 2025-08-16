@@ -48,27 +48,28 @@ interface ResponsiveStrategy {
 }
 ```
 
-## 📱 4つの主要画面設計
+## 📱 3つの主要画面設計（承認済み概要設計準拠）
 
-### 1. シナリオ一覧画面（Scenario List）
+### 1. セッション一覧画面（Session List）
 
 #### 画面構成・レイアウト
 
 ```mermaid
 graph TB
-    subgraph "シナリオ一覧画面"
+    subgraph "セッション一覧画面"
         Header[ヘッダー: Odyssage + ユーザーメニュー]
         SearchFilter[検索・フィルタバー]
         
         subgraph "メインコンテンツ"
-            ScenarioGrid[シナリオカードグリッド]
+            SessionGrid[セッションカードグリッド]
             
-            subgraph "シナリオカード"
+            subgraph "セッションカード"
                 CardImage[シナリオイメージ]
-                CardTitle[タイトル]
-                CardOverview[概要（抜粋）]
-                CardMeta[メタ情報：難易度・時間・カテゴリ]
-                CardActions[アクション：詳細・プレイ開始]
+                CardTitle[セッションタイトル（シナリオ名ベース）]
+                CardScenarioInfo[シナリオ概要（抜粋）]
+                CardSessionMeta[セッション情報：参加者・進行状況・開始時間]
+                CardParticipationStatus[参加状況：参加可能・参加中・完了済み]
+                CardActions[アクション：参加・詳細確認]
             end
         end
         
