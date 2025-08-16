@@ -106,6 +106,7 @@ interface Scene {
 
   // Event概念の導入（TRPG的なイベント集合体として）
   events: Event[];
+  startingEventId?: string; // シーンに入った時に最初に実行するイベントID
 
   // システム情報（MVP最小限）
   metadata: {
@@ -304,8 +305,8 @@ interface PlayRecord {
   completionStatus: CompletionStatus;
   endingSceneId?: string;
 
-  // プレイ履歴（MVP最小限）
-  choiceHistory: PlayChoice[];
+  // プレイ履歴（Event概念に対応）
+  eventHistory: PlayEvent[]; // Event概念に対応した統一履歴管理
 
   // 時間情報（MVP最小限）
   startedAt: string; // ISO date
@@ -321,6 +322,16 @@ type CompletionStatus =
   | 'completed' // 完了
   | 'in_progress'; // 進行中
 
+// Event概念に対応した統一履歴管理
+interface PlayEvent {
+  sceneId: string;
+  eventId: string;
+  eventType: EventType;
+  actionTaken?: string; // choice選択時の選択内容
+  executedAt: string; // ISO date
+}
+
+// 従来のPlayChoice - 将来機能として保持
 interface PlayChoice {
   sceneId: string;
   choiceId: string;
@@ -501,5 +512,6 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 - 2025-08-16: レビュー修正版（MVP化・実装詳細削除・将来機能記録）
 - 2025-08-16: Event概念導入版（設計決定反映・選択肢提案機能分離）
 - 2025-08-16: 緊急修正版（moodTag削除・イベントリンク構造確定・scene_transition追加）
+- 2025-08-16: Event概念対応版（Scene.startingEventId追加・PlayRecord.eventHistory対応・PlayEvent構造追加）
 
 #player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
