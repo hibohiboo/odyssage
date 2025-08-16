@@ -211,16 +211,16 @@
 ## 📂 作業ファイル配置
 
 ### BDD Featureファイル
-**配置先**: `docs/03-development/sprints/sprint_004/bdd-features/`
+**配置先**: `packages/bdd-e2e-test/e2e/features/`
 ```
-bdd-features/
+packages/bdd-e2e-test/e2e/features/
 ├── scenario-discovery.feature
 ├── session-joining.feature
 └── play-experience.feature
 ```
 
-### 将来移動予定
-**Phase 2以降**: プロジェクトルートの `features/` ディレクトリ
+### E2Eテスト統合
+**Phase 2以降**: 同じディレクトリにステップ定義・テスト実装を追加
 
 ## ✅ オンボーディング完了チェック
 

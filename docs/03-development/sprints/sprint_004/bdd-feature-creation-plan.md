@@ -75,12 +75,12 @@
 
 ### ディレクトリ構造
 ```
-features/
+packages/bdd-e2e-test/e2e/features/
 ├── player-context/           # Player文脈専用Features
 │   ├── scenario-discovery.feature
 │   ├── session-joining.feature
 │   └── play-experience.feature
-├── shared/                   # 共通Features
+├── shared/                   # 共通Features（Phase 2以降）
 │   ├── error-handling.feature
 │   ├── accessibility.feature
 │   └── responsive.feature
@@ -91,8 +91,8 @@ features/
 ```
 
 ### 配置場所
-**現在**: `docs/03-development/sprints/sprint_004/bdd-features/`  
-**将来**: プロジェクトルートの `features/` ディレクトリに移動
+**配置先**: `packages/bdd-e2e-test/e2e/features/`
+**統合**: E2Eテストパッケージとの直接統合
 
 ## 📅 作成スケジュール
 
