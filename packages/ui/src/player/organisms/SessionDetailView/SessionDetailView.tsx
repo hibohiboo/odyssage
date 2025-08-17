@@ -93,27 +93,29 @@ const HeroSection = ({ session, statusConfig, onJoinSession }: {
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600"></div>
       )}
-      {/* オーバーレイ */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+      {/* オーバーレイ - モバイル可読性向上 */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20 md:from-black/60 md:via-black/20 md:to-transparent"></div>
     </div>
     
-    {/* ヒーロー情報 */}
+    {/* ヒーロー情報 - モバイル可読性向上 */}
     <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-      <div className="mb-3">
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusConfig.bgColor} ${statusConfig.textColor} ${statusConfig.borderColor} border`}>
-          {statusConfig.label}
-        </span>
+      <div className="bg-black/30 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none rounded-lg p-4 md:p-0">
+        <div className="mb-3">
+          <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusConfig.bgColor} ${statusConfig.textColor} ${statusConfig.borderColor} border`}>
+            {statusConfig.label}
+          </span>
+        </div>
+        <h1 className="text-3xl md:text-4xl font-bold mb-2 drop-shadow-lg">{session.title}</h1>
+        <p className="text-lg opacity-90 mb-4 line-clamp-2 drop-shadow-md">{session.scenarioSummary}</p>
+        <EventButton
+          onClick={() => onJoinSession(session.sessionId)}
+          variant={statusConfig.ctaVariant}
+          disabled={!statusConfig.ctaEnabled}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 shadow-lg"
+        >
+          {statusConfig.ctaText}
+        </EventButton>
       </div>
-      <h1 className="text-3xl md:text-4xl font-bold mb-2">{session.title}</h1>
-      <p className="text-lg opacity-90 mb-4 line-clamp-2">{session.scenarioSummary}</p>
-      <EventButton
-        onClick={() => onJoinSession(session.sessionId)}
-        variant={statusConfig.ctaVariant}
-        disabled={!statusConfig.ctaEnabled}
-        className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3"
-      >
-        {statusConfig.ctaText}
-      </EventButton>
     </div>
   </div>
 );
