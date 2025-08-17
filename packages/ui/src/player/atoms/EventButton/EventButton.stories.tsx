@@ -6,6 +6,11 @@ const meta: Meta<typeof EventButton> = {
   component: EventButton,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: 'Event処理用ボタンComponent。choice・narrative・continueに対応。Player文脈でのTRPG体験における選択・進行操作に使用。',
+      },
+    },
   },
   argTypes: {
     variant: {
