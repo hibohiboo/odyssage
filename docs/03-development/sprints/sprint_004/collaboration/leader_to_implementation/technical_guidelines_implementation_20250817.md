@@ -15,271 +15,49 @@
 - **環境・リソース支援**: 必要な技術情報・設計文書の提供
 - **調整・連携促進**: チーム間協働・課題解決の調整支援
 
-## 🏗️ アーキテクチャ実装詳細
+## 🏗️ 技術要件・制約事項
 
-### フロントエンド構成
+### 必須技術要件
 ```typescript
-// Player文脈MVP構成
-apps/frontend/src/
-├── features/player/          # Player文脈機能
-│   ├── session-list/         # セッション一覧機能
-│   ├── session-detail/       # セッション詳細機能
-│   ├── play-session/         # プレイセッション機能
-│   └── shared/               # Player文脈共通機能
-├── shared/                   # アプリ全体共通
-└── packages/ui/             # Component共有ライブラリ
+// 設計文書準拠技術
+- React Router v7: 宣言的ルーティング（architecture.md準拠）
+- TypeScript: 厳格な型安全性適用
+- Event概念: data-design.mdのEvent構造正確な実装
 
-// 状態管理構成
-- Redux Toolkit: 大局的状態管理（セッション状態・Event処理状態）
-- SWR: データフェッチング・キャッシュ管理
-- useState: Component内ローカル状態管理
+// 必須品質基準
+- packages/ui: Component品質・StoryBook統合
+- MVP制約: 除外機能の実装回避徹底
+- Chrome最新版: MVP制約に基づく環境制約
 ```
 
-### packages/ui Component戦略
+### Event概念実装要件
 ```typescript
-// packages/ui/src/player/ 構成
-packages/ui/src/player/
-├── atoms/                    # 基本Component
-│   ├── EventButton/          # Event処理ボタン
-│   ├── ChoiceOption/         # 選択肢オプション
-│   ├── NarrativeText/        # 物語テキスト表示
-│   └── SessionCard/          # セッション情報カード
-├── molecules/                # 複合Component
-│   ├── ChoiceList/           # 選択肢リスト
-│   ├── EventContainer/       # Event表示コンテナ
-│   ├── SessionSummary/       # セッション概要
-│   └── PlayProgress/         # プレイ進行状況
-└── organisms/                # 画面要素Component
-    ├── SessionListView/      # セッション一覧表示
-    ├── SessionDetailView/    # セッション詳細表示
-    ├── PlaySessionView/      # プレイセッション表示
-    └── EventProcessingView/  # Event処理表示
+// MVP必須Event（完全実装必須）
+- choice: 選択肢表示・選択・nextEventId遷移
+- narrative: 物語テキスト表示・読み進め・nextEventId遷移  
+- scene_transition: targetSceneId取得・シーン遷移・新シーン読み込み
 
-// StoryBook統合
-- 全Component必須Story作成
-- 視覚的品質確認・Component仕様書
-- Player文脈専用のComponent展示
+// MVP最小限Event（簡素実装）
+- dialogue: NPC名・テキスト基本表示
+- exploration: 探索対象・結果基本テキスト表示
+
+// 実装禁止Event（Phase 2以降）
+- item_acquire, skill_use, condition: 実装しない
 ```
 
-## 🎮 Event概念実装詳細
+## 🎮 Event概念理解支援
 
-### Event処理システム実装
+### data-design.md Event概念参照
+Event概念の詳細仕様・構造は以下を参照：
+- **Event概念定義**: docs/02-architecture/player-context/data-design.md (131-238行)
+- **EventType分類**: MVP必須・最小限・将来拡張の分類
+- **Event構造**: Event・Scene・PlayRecordの関係性
 
-#### Event処理Core Logic
-```typescript
-// Event処理Engine
-interface EventProcessor {
-  executeEvent(eventId: string): Promise<EventResult>;
-  processChoice(eventId: string, choiceId: string): Promise<EventResult>;
-  transitionToScene(sceneId: string): Promise<SceneResult>;
-  saveEventHistory(playEvent: PlayEvent): Promise<void>;
-}
-
-// Event処理State管理
-interface EventProcessingState {
-  currentEvent: {
-    sceneId: string;
-    eventId: string;
-    eventType: EventType;
-    status: 'loading' | 'displaying' | 'waiting_input' | 'transitioning';
-  };
-  eventHistory: PlayEvent[];
-  uiState: {
-    textDisplayComplete: boolean;
-    choiceSelectionEnabled: boolean;
-    transitionInProgress: boolean;
-  };
-}
-
-// Event処理Hooks
-const useEventProcessor = () => {
-  const [state, setState] = useState<EventProcessingState>();
-  
-  const executeEvent = useCallback(async (eventId: string) => {
-    // Event実行ロジック
-  }, []);
-  
-  const processChoice = useCallback(async (choiceId: string) => {
-    // 選択肢処理ロジック
-  }, []);
-  
-  return { state, executeEvent, processChoice };
-};
-```
-
-#### EventType別Component実装
-
-##### 1. choice Event Component
-```typescript
-// ChoiceEventComponent.tsx
-interface ChoiceEventProps {
-  event: ChoiceEvent;
-  onChoiceSelect: (choiceId: string) => Promise<void>;
-  disabled?: boolean;
-}
-
-const ChoiceEventComponent: React.FC<ChoiceEventProps> = ({
-  event,
-  onChoiceSelect,
-  disabled = false
-}) => {
-  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const handleChoiceSelect = async (choiceId: string) => {
-    setSelectedChoice(choiceId);
-    setIsProcessing(true);
-    
-    try {
-      await onChoiceSelect(choiceId);
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <div className="choice-event-container">
-      <div className="choice-content">
-        {event.content && <p>{event.content}</p>}
-      </div>
-      <ChoiceList
-        choices={event.data.choices}
-        selectedChoice={selectedChoice}
-        onSelect={handleChoiceSelect}
-        disabled={disabled || isProcessing}
-      />
-    </div>
-  );
-};
-
-// ChoiceList Component (packages/ui)
-const ChoiceList: React.FC<ChoiceListProps> = ({
-  choices,
-  selectedChoice,
-  onSelect,
-  disabled
-}) => {
-  return (
-    <div className="choice-list">
-      {choices.map((choice) => (
-        <ChoiceOption
-          key={choice.id}
-          choice={choice}
-          selected={selectedChoice === choice.id}
-          onSelect={() => onSelect(choice.id)}
-          disabled={disabled}
-        />
-      ))}
-    </div>
-  );
-};
-```
-
-##### 2. narrative Event Component
-```typescript
-// NarrativeEventComponent.tsx
-interface NarrativeEventProps {
-  event: NarrativeEvent;
-  onContinue: () => Promise<void>;
-}
-
-const NarrativeEventComponent: React.FC<NarrativeEventProps> = ({
-  event,
-  onContinue
-}) => {
-  const [displayComplete, setDisplayComplete] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  // MVP: 即座全文表示（タイプライター効果はPhase 2）
-  useEffect(() => {
-    setDisplayComplete(true);
-  }, []);
-
-  const handleContinue = async () => {
-    setIsProcessing(true);
-    try {
-      await onContinue();
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  return (
-    <div className="narrative-event-container">
-      <NarrativeText 
-        content={event.content} 
-        displayComplete={displayComplete}
-      />
-      {displayComplete && (
-        <EventButton
-          onClick={handleContinue}
-          disabled={isProcessing}
-          variant="continue"
-        >
-          続ける
-        </EventButton>
-      )}
-    </div>
-  );
-};
-```
-
-##### 3. scene_transition Event Component
-```typescript
-// SceneTransitionEventComponent.tsx
-interface SceneTransitionEventProps {
-  event: SceneTransitionEvent;
-  onTransition: (targetSceneId: string) => Promise<void>;
-}
-
-const SceneTransitionEventComponent: React.FC<SceneTransitionEventProps> = ({
-  event,
-  onTransition
-}) => {
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // 自動遷移実行
-    const executeTransition = async () => {
-      setIsTransitioning(true);
-      try {
-        await onTransition(event.data.targetSceneId);
-      } catch (err) {
-        setError('シーンの読み込みに失敗しました');
-      } finally {
-        setIsTransitioning(false);
-      }
-    };
-
-    executeTransition();
-  }, [event.data.targetSceneId, onTransition]);
-
-  if (error) {
-    return (
-      <div className="scene-transition-error">
-        <p>{error}</p>
-        <EventButton onClick={() => window.location.reload()}>
-          再試行
-        </EventButton>
-      </div>
-    );
-  }
-
-  return (
-    <div className="scene-transition-container">
-      <div className="transition-message">
-        {event.content || 'シーンを移動中...'}
-      </div>
-      {isTransitioning && (
-        <div className="loading-indicator">
-          読み込み中...
-        </div>
-      )}
-    </div>
-  );
-};
-```
+### Event処理実装例・参考資料
+Event処理の実装アプローチ例は以下で確認可能：
+- **画面設計**: docs/02-architecture/player-context/screens/play-session.md
+- **Event処理UI**: EventType別UI仕様・処理フロー・状態管理設計
+- **実装指針**: Event処理の確実な動作・MVP制約適用方針
 
 ## 🗄️ データ管理・永続化実装
 
