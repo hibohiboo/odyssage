@@ -13,7 +13,8 @@
 ✅ **POフィードバック完全反映**: UI開発方針追加・技術選択修正・テスト戦略調整  
 ✅ **実装品質向上**: StoryBook統合・コード可読性・既存コード分離戦略確立  
 ✅ **技術選択正確性**: React Router v7・Cucumber明記・MVP制約適用  
-✅ **開発体験改善**: packages/ui統合・視覚的確認・品質保証体制整備
+✅ **開発体験改善**: packages/ui統合・視覚的確認・品質保証体制整備  
+✅ **Context-First統合**: packages/ui構造を文脈別フォルダ + AtomicDesignに調整
 
 ## 📊 POフィードバック詳細分析
 
@@ -155,9 +156,9 @@
 ### ✅ 実装チームへの明確なガイダンス
 
 #### 1. UI Component実装指針
-- **packages/ui配置**: 明確なディレクトリ構造・配置ルール
-- **StoryBook作成**: Component Storyの必須作成・品質確保
-- **Atomic Design**: Atoms/Molecules/Organisms構造での体系化
+- **packages/ui配置**: 文脈別フォルダ + AtomicDesign構造
+- **StoryBook作成**: 文脈別Component Storyの必須作成・品質確保
+- **Context-First + Atomic Design**: player/, gm/, author/, shared/での文脈分離
 
 #### 2. 技術選択指針
 - **React Router v7**: 最新バージョンの活用・機能選択
@@ -184,14 +185,14 @@
 ### 実装フェーズでの展開戦略
 
 #### Phase 1: 基盤構築
-1. **packages/ui環境整備**: StoryBook環境・Atomic Design構造構築
-2. **基本Component**: Button, Input, Card等の基本コンポーネント実装
+1. **packages/ui環境整備**: StoryBook環境・文脈別 + AtomicDesign構造構築
+2. **shared基本Component**: Button, Input, Card等の汎用コンポーネント実装
 3. **Story作成**: 各コンポーネントのStory・Design Token設定
 
 #### Phase 2: Player文脈Component実装
-1. **Session関連**: SessionCard, SessionList等の実装・Story作成
-2. **Play関連**: PlayInterface, ChoiceButton等の実装・視覚確認
-3. **統合テスト**: 実際の画面での動作確認・StoryBook連携
+1. **Player atoms**: SessionButton, ChoiceChip, PlayStatus等の実装・Story作成
+2. **Player molecules**: SessionCard, ChoiceList, PlayProgress等の実装・視覚確認  
+3. **Player organisms**: SessionGrid, PlayInterface, PlayHistory等の統合Component実装
 
 #### 継続運用
 1. **Component追加**: 新規コンポーネントのStory作成必須化
@@ -222,8 +223,8 @@
 ### 🚨 重要な実装方針
 
 #### UI Component開発
-- **packages/ui必須**: 全UIコンポーネントはpackages/ui配下で実装
-- **StoryBook作成**: 各コンポーネントでStory作成が必須
+- **packages/ui構造**: 文脈別フォルダ（player/, gm/, author/, shared/）でAtomicDesign実装
+- **StoryBook作成**: 文脈別Component Storyの作成が必須
 - **既存コード回避**: vercel v0生成コードは絶対に参考にしない
 
 #### 技術選択
