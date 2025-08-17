@@ -95,7 +95,7 @@ Sprint 4の設計フェーズが完了し、Player文脈MVPの実装フェーズ
 - 型安全性: TypeScript厳格適用
 ```
 
-## 📅 実装フェーズスケジュール
+## 📅 実装フェーズスケジュール・POレビューフロー
 
 ### Phase 1: 基盤構築（Week 1）
 - packages/ui環境構築・StoryBook設定
@@ -106,6 +106,13 @@ Sprint 4の設計フェーズが完了し、Player文脈MVPの実装フェーズ
 - session-list・session-detail画面実装
 - セッション一覧・詳細・遷移機能
 - SWRデータフェッチング・状態管理
+
+### 🔍 **重要：POレビューポイント（Week 2完了時）**
+**POレビュータイミング**: StoryBookでの画面イメージ確認可能時点
+- **レビュー対象**: 各画面のStoryBookコンポーネント・UI/UX確認
+- **確認方法**: StoryBook展示による視覚的画面イメージ
+- **フィードバック**: UI改善・画面フロー・ユーザー体験向上提案
+- **調整期間**: POフィードバック反映・画面調整実装
 
 ### Phase 3: Event概念・プレイ体験実装（Week 3）
 - Event処理基盤・useEventProcessor Hook
