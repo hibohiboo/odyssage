@@ -1,0 +1,9 @@
+docs\03-development\sprints\sprint_004\collaboration\implementation_to_leader\component_review_request_PlaySessionView_20250817.md
+
+# 他のコンポーネントの整合性について
+
+文字のフォントや大きさなど、PlaySessionViewとSessionDetailViewとSessionListViewで同じものを使っていて、毎回tail-windで指定しています。
+
+tail-windを使う時はこのような使い方が一般的なのでしょうか。
+
+cssでクラス名をつけて、画面で使いまわしていた時代の人間のため、修正してほしいわけではなく、説明をしてほしいです。
