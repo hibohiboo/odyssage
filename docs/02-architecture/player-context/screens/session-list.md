@@ -187,13 +187,10 @@ interface PerformanceSpec {
   };
   
   data_management: {
-    pagination: "大量セッション対応（仮想スクロール）";
     caching: "セッション情報の適切なキャッシュ";
-    refresh: "リアルタイム状態更新（WebSocket or ポーリング）";
   };
   
   responsive_behavior: {
-    breakpoint_switching: "300ms以内でのレイアウト切り替え";
     touch_response: "タッチ操作への即座の視覚フィードバック";
     loading_states: "全ての非同期操作に対する適切な状態表示";
   };
@@ -282,6 +279,23 @@ Scenario: セッション選択とシナリオ詳細確認
 - Sprint 4 Phase 1B設計からの分離・独立化
 - BDDレビューフィードバック反映済み
 - MVP制約適用（検索・フィルタ・参加者数表示除外）
+
+**2025-08-17**: POレビューフィードバック反映版（設計担当）
+- PerformanceSpec.data_managementの簡素化（pagination・refresh除外）
+- PerformanceSpec.responsive_behaviorの簡素化（breakpoint_switching除外）
+- 理由: PO指摘によるMVP制約適用、実装複雑化回避
+
+## MVP制約による除外機能
+
+### Phase 2以降への移行項目
+- **ページネーション**: 大量セッション対応（仮想スクロール）
+- **リアルタイム更新**: WebSocket or ポーリングによる状態更新
+- **レスポンシブ切り替え**: 300ms以内でのレイアウト切り替え
+
+### MVP範囲の集中
+- セッション情報の基本表示・キャッシュ
+- タッチ操作の基本的フィードバック
+- 読み込み状態の適切な表示
 
 **進化的設計**: この文書は実装・テスト・ユーザーフィードバックに基づいて継続的に更新されます。
 
