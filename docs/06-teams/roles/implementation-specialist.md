@@ -204,6 +204,7 @@ export const AllVariants: Story = { /* 全バリエーション一覧 */ };
 - Cyclomatic complexity過多（関数分離・ロジック簡素化必須）
 - disabled状態での視認性不足（背景色・文字色同一化）
 - StoryBook import間違い（@storybook/react vs @storybook/react-vite）
+- ダミー画像サービス: via.placeholder.com使用（サービス終了済み）
 
 ✅ 対策・予防:
 - ファイル作成時のエディタ設定確認（LF改行コード）
@@ -211,6 +212,7 @@ export const AllVariants: Story = { /* 全バリエーション一覧 */ };
 - CRLF問題発生時は bun run lint --fix で自動修正
 - TypeScript技術負債: tscチェック無効・記法は維持・将来修正
 - StoryBook表示での全状態視覚確認（人間が実施）
+- ダミー画像: https://dummyimage.com/ 使用（via.placeholder.com不可）
 - レビュー依頼前の自己品質チェック実施
 ```
 
