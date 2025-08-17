@@ -111,6 +111,41 @@ src/
     └── config/                   # 設定管理
 ```
 
+## 🎨 UI Component開発方針
+
+### packages/ui Component戦略
+
+```markdown
+## StoryBook統合開発
+- **視覚的確認**: packages/ui配置での画面部品のStoryBook表示
+- **品質保証**: コンポーネント単位での動作確認・デザインレビュー
+- **ドキュメント化**: 実装者・デザイナー間でのコンポーネント仕様共有
+
+## 人間可読性重視
+- **既存コード分離**: vercel v0生成コードは参考にしない
+- **可読性優先**: 人間が読んで理解しやすいコード構造
+- **保守性確保**: 長期的な保守・拡張を考慮した実装
+
+## Deprecated コード分離戦略
+- **混在回避**: 既存vercel v0コードとの完全分離
+- **新規ディレクトリ**: packages/ui配下での新規Component実装
+- **段階的移行**: 既存コードは段階的にdeprecated化
+```
+
+### UI Component配置原則
+
+```markdown
+## packages/ui構造
+- **Atomic Design**: Atoms, Molecules, Organisms構造
+- **Player文脈専用**: Player文脈向けのコンポーネント集約
+- **共通Component**: 全文脈で利用可能な汎用コンポーネント
+
+## StoryBook統合
+- **Component Story**: 各コンポーネントのStory作成
+- **Design Token**: 色・サイズ・間隔の統一管理
+- **Interactive Demo**: プロパティ変更での動作確認
+```
+
 ## 🔧 各層の責務と実装方針
 
 ### App Layer: Player文脈アプリケーション設定
@@ -122,7 +157,7 @@ src/
 - アプリケーション設定・初期化
 
 ## 実装方針
-- React Router v6を使用した宣言的ルーティング
+- React Router v7を使用した宣言的ルーティング
 - Redux Toolkit + SWRのハイブリッド状態管理
 - Context-First アプローチによる境界明確化
 ```
@@ -322,9 +357,9 @@ interface PlayerContextTestStrategy {
 - アクセシビリティ属性の検証
 
 ## E2Eテスト
-- Playwrightを使用したBDDシナリオテスト
+- Playwright + Cucumberを使用したBDDシナリオテスト
 - ユーザージャーニー全体の検証
-- クロスブラウザー・デバイステスト
+- Chrome最新版での確認（MVP制約）
 ```
 
 ## 📈 パフォーマンス最適化設計
@@ -472,5 +507,11 @@ interface ContextEvolutionStrategy {
 
 **更新履歴**:
 - 2025-08-16: 初版作成（設計担当）
+- 2025-08-17: POレビューフィードバック反映版（設計担当）
+  - UI Component開発方針の追加（StoryBook統合・packages/ui配置戦略）
+  - React Router v6→v7への修正
+  - テスト戦略修正（Cucumber明記・クロスブラウザ除外）
+  - 既存vercel v0コード分離戦略の明確化
+  - 理由: PO指摘による実装品質向上、技術選択正確性確保
 
 #player-context #architecture #fsd #context-first #react #typescript #mvp-design
