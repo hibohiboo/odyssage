@@ -1,4 +1,4 @@
-import { EventButton } from '../../../../atoms/EventButton';
+import { EventContentBase, EventText, ContinueButton } from './common';
 import type { MVPEvent } from '../../../../engine/EventEngine';
 
 interface DialogueEventContentProps {
@@ -12,7 +12,7 @@ export function DialogueEventContent({ event, onContinue }: DialogueEventContent
   }
 
   return (
-    <div className="space-y-4">
+    <EventContentBase>
       <div className="flex items-center space-x-2">
         <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
           {event.data.npcName.charAt(0)}
@@ -20,21 +20,8 @@ export function DialogueEventContent({ event, onContinue }: DialogueEventContent
         <h3 className="font-medium text-gray-900">{event.data.npcName}</h3>
       </div>
       
-      <div className="prose prose-gray max-w-none">
-        <p className="text-gray-800 leading-relaxed font-serif text-lg">
-          {event.data.npcText}
-        </p>
-      </div>
-      
-      <div className="flex justify-center">
-        <EventButton
-          onClick={onContinue}
-          variant="continue"
-          className="px-8 py-3"
-        >
-          続ける
-        </EventButton>
-      </div>
-    </div>
+      <EventText text={event.data.npcText} />
+      <ContinueButton onContinue={onContinue} />
+    </EventContentBase>
   );
 }

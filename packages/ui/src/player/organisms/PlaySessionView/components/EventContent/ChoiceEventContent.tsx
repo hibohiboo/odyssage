@@ -1,4 +1,5 @@
 import { ChoiceOption } from '../../../../atoms/ChoiceOption';
+import { EventContentBase, EventText } from './common';
 import type { MVPEvent } from '../../../../engine/EventEngine';
 
 interface ChoiceEventContentProps {
@@ -12,12 +13,8 @@ export function ChoiceEventContent({ event, onChoiceSelect }: ChoiceEventContent
   }
 
   return (
-    <div className="space-y-4">
-      <div className="prose prose-gray max-w-none">
-        <p className="text-gray-800 leading-relaxed font-serif text-lg">
-          {event.content}
-        </p>
-      </div>
+    <EventContentBase>
+      <EventText text={event.content} />
       <div className="space-y-3">
         <h3 className="font-medium text-gray-900">選択肢を選んでください：</h3>
         {event.data.choices.map((choice) => (
@@ -29,6 +26,6 @@ export function ChoiceEventContent({ event, onChoiceSelect }: ChoiceEventContent
           />
         ))}
       </div>
-    </div>
+    </EventContentBase>
   );
 }
