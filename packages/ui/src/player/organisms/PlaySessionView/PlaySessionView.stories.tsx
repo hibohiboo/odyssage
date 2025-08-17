@@ -20,6 +20,8 @@ const meta: Meta<typeof PlaySessionView> = {
       control: 'select',
       options: ['idle', 'saving', 'saved', 'error'],
     },
+    error: { control: 'text' },
+    className: { control: 'text' },
   },
 };
 
@@ -126,8 +128,8 @@ export const ForestDepthsScene: Story = {
 // 読み込み中状態
 export const Loading: Story = {
   args: {
-    currentScene: sampleScene,
-    currentEvent: sampleScene.events[0],
+    currentScene: null,
+    currentEvent: null,
     sessionInfo,
     loading: true,
     onChoiceSelect: (choiceId: string) => console.log('選択肢選択:', choiceId),
@@ -195,8 +197,8 @@ export const AutoSaveStates: Story = {
 // エラー状態
 export const ErrorState: Story = {
   args: {
-    currentScene: sampleScene,
-    currentEvent: sampleScene.events[0],
+    currentScene: null,
+    currentEvent: null,
     sessionInfo,
     error:
       'セッションの読み込みに失敗しました。ネットワーク接続を確認してください。',

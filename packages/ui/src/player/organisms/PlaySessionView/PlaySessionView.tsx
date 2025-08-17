@@ -1,36 +1,28 @@
 import { ChoiceOption } from '../../atoms/ChoiceOption';
 import { EventButton } from '../../atoms/EventButton';
-import { type UseEventEngineProps } from '../../hooks/useEventEngine';
 import type { Scene, MVPEvent } from '../../engine/EventEngine';
 
-// PlaySessionView用のProps型
-export interface PlaySessionConfig {
-  /** Event処理エンジン設定 */
-  eventEngine: UseEventEngineProps;
-  /** セッション表示情報 */
+type AutoSaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+export interface PlaySessionViewProps {
+  currentScene: Scene | null;
+  currentEvent: MVPEvent | null;
   sessionInfo: {
     sessionId: string;
     title: string;
     description?: string;
   };
-}
-
-export interface PlaySessionViewProps {
-  /** PlaySession設定 */
-  config: PlaySessionConfig;
-  /** メニューアクセス時のハンドラー */
+  onChoiceSelect: (choiceId: string) => void;
+  onContinue: () => void;
   onMenuAccess: () => void;
-  /** セッション終了時のハンドラー */
   onExitSession: () => void;
-  /** 追加のCSSクラス */
+  loading?: boolean;
+  autoSaveStatus?: AutoSaveStatus;
+  error?: string | null;
   className?: string;
 }
 
-const AutoSaveIndicator = ({
-  status,
-}: {
-  status: 'idle' | 'saving' | 'saved' | 'error';
-}) => {
+const AutoSaveIndicator = ({ status }: { status: AutoSaveStatus }) => {
   if (status === 'idle') return null;
 
   const statusConfig = {
@@ -58,7 +50,7 @@ const PlayHeader = ({
   onExitSession,
 }: {
   sessionInfo: { sessionId: string; title: string; description?: string };
-  autoSaveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  autoSaveStatus?: AutoSaveStatus;
   onMenuAccess: () => void;
   onExitSession: () => void;
 }) => (
@@ -76,7 +68,7 @@ const PlayHeader = ({
         <h1 className="font-medium text-sm truncate max-w-[200px]">
           {sessionInfo.title}
         </h1>
-        <AutoSaveIndicator status={autoSaveStatus} />
+        <AutoSaveIndicator status={autoSaveStatus || 'idle'} />
       </div>
     </div>
     <EventButton
@@ -207,7 +199,7 @@ const ExplorationEventContent = ({
   event,
   onContinue,
 }: {
-  event: EventData;
+  event: MVPEvent;
   onContinue: () => void;
 }) => (
   <div className="space-y-4">
@@ -236,7 +228,7 @@ const ExplorationEventContent = ({
   </div>
 );
 
-const SceneTransitionEventContent = ({ event }: { event: EventData }) => (
+const SceneTransitionEventContent = ({ event }: { event: MVPEvent }) => (
   <div className="space-y-4 text-center">
     <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
       <div className="animate-pulse space-y-3">
@@ -258,7 +250,7 @@ const DefaultEventContent = ({
   event,
   onContinue,
 }: {
-  event: EventData;
+  event: MVPEvent;
   onContinue: () => void;
 }) => (
   <div className="space-y-4">
@@ -284,7 +276,7 @@ const EventDisplay = ({
   onChoiceSelect,
   onContinue,
 }: {
-  event: EventData;
+  event: MVPEvent;
   onChoiceSelect: (choiceId: string) => void;
   onContinue: () => void;
 }) => {
@@ -376,8 +368,8 @@ const MainContent = ({
 }: {
   currentScene: Scene;
   currentEvent: MVPEvent;
-  sessionInfo: PlaySessionViewProps['sessionInfo'];
-  autoSaveStatus: PlaySessionViewProps['autoSaveStatus'];
+  sessionInfo: { sessionId: string; title: string; description?: string };
+  autoSaveStatus?: AutoSaveStatus;
   onMenuAccess: () => void;
   onExitSession: () => void;
   onChoiceSelect: (choiceId: string) => void;
@@ -420,19 +412,25 @@ const renderLoadingState = (className?: string) => (
 );
 
 // 正常表示状態
-const renderNormalState = (props: PlaySessionViewProps) => (
-  <MainContent
-    currentScene={props.currentScene!}
-    currentEvent={props.currentEvent!}
-    sessionInfo={props.sessionInfo}
-    autoSaveStatus={props.autoSaveStatus}
-    onMenuAccess={props.onMenuAccess}
-    onExitSession={props.onExitSession}
-    onChoiceSelect={props.onChoiceSelect}
-    onContinue={props.onContinue}
-    className={props.className || ''}
-  />
-);
+const renderNormalState = (props: PlaySessionViewProps) => {
+  if (!props.currentScene || !props.currentEvent) {
+    return null; // この関数が呼ばれる時点では必ず存在するはず
+  }
+
+  return (
+    <MainContent
+      currentScene={props.currentScene}
+      currentEvent={props.currentEvent}
+      sessionInfo={props.sessionInfo}
+      autoSaveStatus={props.autoSaveStatus}
+      onMenuAccess={props.onMenuAccess}
+      onExitSession={props.onExitSession}
+      onChoiceSelect={props.onChoiceSelect}
+      onContinue={props.onContinue}
+      className={props.className || ''}
+    />
+  );
+};
 
 // 表示状態判定・レンダリング選択
 function renderViewByState(props: PlaySessionViewProps) {
