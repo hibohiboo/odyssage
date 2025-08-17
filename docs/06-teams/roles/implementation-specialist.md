@@ -61,7 +61,7 @@
 
 ### Component開発責任
 - **packages/ui**: Player文脈Component・AtomicDesign・再利用性
-- **StoryBook**: Component Story・視覚的品質確認・仕様書
+- **StoryBook**: Component Story・視覚的品質確認・仕様書・Component使い分け明記
 - **型定義**: TypeScript型安全性・インターフェース設計
 - **テスト**: Component Test・Hook Test・動作確認
 
@@ -73,7 +73,9 @@
 ## 🧪 品質保証責任
 
 ### 実装品質基準
-- **TypeScript厳格**: 型安全性100%・コンパイルエラー0
+- **lint品質**: bun run lint でエラー0・警告は許容（console.log等Storybook用途）
+- **改行コード**: 全ファイルLF統一（CRLF禁止）・lint --fix で自動修正
+- **TypeScript**: ★技術負債対応中・現在tscチェック無効・将来修正予定
 - **Component品質**: StoryBook表示・視覚的品質・レスポンシブ対応
 - **動作品質**: 基本動作確認・エラーハンドリング・Edge Case対応
 - **コード品質**: 可読性・保守性・再利用性・命名規則
@@ -157,16 +159,18 @@
 
 ### 基本品質要件（必須遵守）
 ```typescript
-// Sprint 4実装フィードバックより
+// Sprint 4実装フィードバック・2025-08-17更新
 実装時必須チェック事項:
-- 改行コード: 全ファイルLF統一（CRLFは不可）
+- 改行コード: 全ファイルLF統一（CRLFは不可）・lint --fix で自動修正
 - Cyclomatic complexity: 7以下に抑制（8以上は修正必須）
-- lint エラー: 0件（warning除く）
+- lint エラー: 0件（warning除く・console.logはStorybook用途で許容）
+- TypeScript: ★技術負債により現在tscチェック無効・将来修正予定
 - StoryBook表示: 全variant・全状態で視覚的確認必須
+- 人間による動作確認: Storybook起動・視覚的品質確認は人間が実施
 ```
 
 ### Component実装品質基準
-- **型安全性**: TypeScript厳格適用・コンパイルエラー0
+- **型安全性**: ★技術負債により現在tscチェック無効・TypeScript記法は維持
 - **視覚的品質**: 背景色・文字色のコントラスト確保・視認性確保
 - **状態管理**: disabled・loading・error状態の適切な表現
 - **アクセシビリティ**: aria-label・適切なタッチターゲット・semantic HTML
@@ -180,7 +184,7 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Component用途・Player文脈での役割の明確な説明'
+        component: 'Component用途・Player文脈での役割・他Componentとの使い分けの明確な説明'
       }
     }
   }
@@ -202,9 +206,11 @@ export const AllVariants: Story = { /* 全バリエーション一覧 */ };
 - StoryBook import間違い（@storybook/react vs @storybook/react-vite）
 
 ✅ 対策・予防:
-- ファイル作成時のエディタ設定確認
+- ファイル作成時のエディタ設定確認（LF改行コード）
 - 実装完了時の bun run lint 実行・エラー0確認
-- StoryBook表示での全状態視覚確認
+- CRLF問題発生時は bun run lint --fix で自動修正
+- TypeScript技術負債: tscチェック無効・記法は維持・将来修正
+- StoryBook表示での全状態視覚確認（人間が実施）
 - レビュー依頼前の自己品質チェック実施
 ```
 
