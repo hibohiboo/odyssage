@@ -679,7 +679,7 @@ const sampleScenarios: Scenario[] = [
     overview:
       '古い森で起きる不思議な現象を調査する冒険者の物語。森の奥に眠る古代の秘密と、それを守る謎の存在との出会いが待っている。あなたの選択が森の運命、そして世界の平衡を決めることになる。',
     estimatedPlayTime: 45,
-    playerCount: { min: 1, max: 4 },
+    playerCount: { min: 1, max: 1 },
     scenes: [forestScene001, forestScene002], // 上記の詳細シーンデータ
     startingSceneId: 'scene-forest-001',
     endingSceneIds: ['ending-harmony', 'ending-sacrifice', 'ending-corruption'],
@@ -700,7 +700,7 @@ const sampleScenarios: Scenario[] = [
     overview:
       '病気の母を救うため、伝説の薬草を求めて危険な山奥へと向かう若者の物語。道中で出会う旅人たち、危険な魔物、そして薬草を守る精霊たち。あなたは本当に大切なものが何かを学ぶことになる。',
     estimatedPlayTime: 35,
-    playerCount: { min: 1, max: 3 },
+    playerCount: { min: 1, max: 1 },
     scenes: [], // 簡略化（MVP範囲）
     startingSceneId: 'scene-village-001',
     endingSceneIds: ['ending-healing', 'ending-sacrifice', 'ending-wisdom'],
@@ -724,12 +724,12 @@ const sampleSessions: Session[] = [
   {
     id: 'session-001',
     scenarioId: 'fantasy-001',
-    title: '失われた森の守護者 - 深夜セッション',
+    title: '失われた森の守護者 - 単独探索セッション',
     status: 'active',
     currentSceneId: 'scene-forest-002',
     playerCount: {
-      current: 3,
-      max: 4
+      current: 1,
+      max: 1
     },
     participants: [
       {
@@ -738,22 +738,6 @@ const sampleSessions: Session[] = [
         role: 'player',
         joinedAt: '2025-08-16T20:30:00Z',
         lastSeenAt: '2025-08-16T22:15:00Z',
-        status: 'active'
-      },
-      {
-        playerId: 'player-002',
-        playerName: '探索者サキ',
-        role: 'player',
-        joinedAt: '2025-08-16T20:35:00Z',
-        lastSeenAt: '2025-08-16T22:14:00Z',
-        status: 'active'
-      },
-      {
-        playerId: 'player-003',
-        playerName: '学者ヒロシ',
-        role: 'player',
-        joinedAt: '2025-08-16T20:45:00Z',
-        lastSeenAt: '2025-08-16T22:10:00Z',
         status: 'active'
       }
     ],
@@ -774,12 +758,12 @@ const sampleSessions: Session[] = [
   {
     id: 'session-002',
     scenarioId: 'adventure-001',
-    title: '薬草採取の旅 - 初心者歓迎',
+    title: '薬草採取の旅 - 単独冒険',
     status: 'recruiting',
     currentSceneId: 'scene-village-001',
     playerCount: {
       current: 1,
-      max: 3
+      max: 1
     },
     participants: [
       {
@@ -808,12 +792,12 @@ const sampleSessions: Session[] = [
   {
     id: 'session-003',
     scenarioId: 'fantasy-001',
-    title: '失われた森の守護者 - 完結編',
+    title: '失われた森の守護者 - 賢者の選択',
     status: 'completed',
     currentSceneId: 'ending-harmony',
     playerCount: {
-      current: 2,
-      max: 4
+      current: 1,
+      max: 1
     },
     participants: [
       {
@@ -821,14 +805,6 @@ const sampleSessions: Session[] = [
         playerName: '賢者エリカ',
         role: 'player',
         joinedAt: '2025-08-15T19:00:00Z',
-        lastSeenAt: '2025-08-15T21:45:00Z',
-        status: 'offline'
-      },
-      {
-        playerId: 'player-006',
-        playerName: '戦士レン',
-        role: 'player',
-        joinedAt: '2025-08-15T19:10:00Z',
         lastSeenAt: '2025-08-15T21:45:00Z',
         status: 'offline'
       }
@@ -1133,5 +1109,10 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
 - 2025-08-16: Event概念対応版（Scene.startingEventId追加・PlayRecord.eventHistory対応・PlayEvent構造追加）
 - 2025-08-16: **サンプルデータ拡充版**（「失われた森の守護者」詳細シーン・セッション・プレイ記録サンプル追加）
 - 2025-08-16: **MVP範囲修正版**（GM1対Player1セッション明記、画面表示簡素化対応）
+- 2025-08-17: **GM1-vs-Player1制約完全適用版**（設計担当）
+  - サンプルセッションデータ完全修正: 全セッションをmax:1, current:1に統一
+  - サンプルシナリオのplayerCount修正: 両シナリオをmax:1に統一
+  - セッションタイトル調整: 単独プレイ体験を反映した命名
+  - 理由: MVP制約の一貫適用、実装との整合性確保、BDDレビュー方針の徹底
 
 #player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
