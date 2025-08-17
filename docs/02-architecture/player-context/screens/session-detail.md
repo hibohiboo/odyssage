@@ -31,7 +31,7 @@ graph TB
         subgraph "ヒーローセクション"
             HeroImage[シナリオメイン画像]
             HeroTitle[シナリオタイトル]
-            HeroMeta[基本情報: 難易度・推定時間・ジャンル]
+            HeroMeta[基本情報: シナリオタイトル・概要のみ]
             HeroCTA[メインCTA: このセッションに参加]
         end
         
@@ -76,8 +76,8 @@ interface SessionDetailLayoutSpec {
 interface HeroSectionSpec {
   image_display: {
     aspect_ratio: "16:9（デスクトップ）、4:3（モバイル）";
-    fallback: "シナリオジャンルに応じたデフォルト画像";
-    loading: "プログレッシブ画像読み込み";
+    fallback: "統一デフォルト画像";
+    loading: "基本的な画像読み込み";
   };
   
   title_hierarchy: {
@@ -120,10 +120,8 @@ interface SessionStatusDisplay {
   };
   
   additional_info: {
-    estimated_time: "推定プレイ時間の表示";
-    scenario_genre: "シナリオジャンル・カテゴリ";
-    difficulty_level: "難易度レベル表示";
-    // MVP範囲外: participant_count: "参加者数情報";
+    // MVP制約: 基本情報のみ表示
+    scenario_overview: "シナリオ概要・説明文";
   };
 }
 ```
@@ -227,7 +225,7 @@ interface InteractionSpec {
 interface ParticipationConfirmationSpec {
   dialog_content: {
     session_summary: "セッション名・基本情報の再確認";
-    commitment_info: "推定プレイ時間・参加への責任";
+    commitment_info: "セッション参加への確認";
     action_buttons: [
       "参加する（プライマリ）",
       "キャンセル（セカンダリ）"
@@ -253,28 +251,8 @@ interface ParticipationConfirmationSpec {
 
 ### 読み込み最適化
 
-```typescript
-interface PerformanceOptimization {
-  image_loading: {
-    hero_image: "プライオリティ読み込み";
-    progressive: "プログレッシブJPEG対応";
-    webp_support: "WebP形式での配信";
-    fallback: "画像読み込み失敗時のフォールバック";
-  };
-  
-  content_rendering: {
-    critical_path: "ヒーローセクションの優先表示";
-    lazy_sections: "詳細セクションの遅延読み込み";
-    markdown_parsing: "マークダウンコンテンツの効率的解析";
-  };
-  
-  state_management: {
-    session_state: "セッション状態のリアルタイム更新";
-    user_context: "ユーザー参加状態の保持";
-    error_recovery: "エラー時の状態復旧";
-  };
-}
-```
+// MVP制約によりPerformanceOptimizationセクションは除外
+// 基本的な読み込み・表示機能のみ実装
 
 ### 応答性基準
 
@@ -348,6 +326,27 @@ Scenario: 参加確認からプレイ開始へ
 - Sprint 4 Phase 1B設計からの分離・独立化
 - BDDレビューフィードバック反映済み
 - MVP制約適用（キーボード操作等除外）
+
+**2025-08-17**: POレビューフィードバック反映版（設計担当）
+- 全体構造図のHeroMeta修正（ジャンル・難易度除外）
+- ヒーローセクション仕様の簡素化（ジャンル参照除外・基本的読み込み）
+- セッション状態表示の簡素化（推定時間・ジャンル・難易度除外）
+- 確認ダイアログの簡素化（推定プレイ時間除外）
+- パフォーマンス最適化セクションの除外
+- 理由: PO指摘によるdata-design.mdとの整合性確保、MVP制約一貫適用
+
+## MVP制約による除外機能
+
+### Phase 2以降への移行項目
+- **ジャンル・カテゴリ表示**: シナリオジャンル分類・表示
+- **難易度レベル**: 難易度レベル表示・フィルタリング
+- **推定プレイ時間**: プレイ時間表示・参加判断材料
+- **高度な画像最適化**: WebP・プログレッシブJPEG・プライオリティ読み込み
+
+### MVP範囲の集中
+- シナリオタイトル・概要の表示
+- 基本的なセッション参加確認
+- シンプルな画像表示・読み込み
 
 **進化的設計**: この文書は実装・テスト・ユーザーフィードバックに基づいて継続的に更新されます。
 
