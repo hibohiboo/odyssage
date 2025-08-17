@@ -39,7 +39,14 @@ Player文脈MVP開発におけるテスト担当として、BDD（振る舞い�
 
 ## 📚 必須理解事項
 
-### 1. MVP制約（重要）
+### 1. テスト担当役割定義（最重要）
+**必読文書**: **[テスト担当専用ガイド](../../../../06-teams/roles/test-specialist.md)**
+- 役割概要・核心責任の理解
+- BDD Feature作成・E2Eテスト実装の専門要件
+- Player文脈MVP BDD設計の具体的ガイダンス
+- 協働プロセス・成功のポイント
+
+### 2. MVP制約（重要）
 ```markdown
 ## 除外機能（実装対象外）
 - フィルタリング機能
@@ -55,12 +62,12 @@ Player文脈MVP開発におけるテスト担当として、BDD（振る舞い�
 - 状態保存・復旧
 ```
 
-### 2. BDDレビュー済みFeature
+### 3. BDDレビュー済みFeature
 - **scenario-discovery.feature**: セッション発見・選択
 - **session-joining.feature**: セッション参加
 - **play-experience.feature**: プレイ体験
 
-### 3. 技術制約・前提条件
+### 4. 技術制約・前提条件
 - **データ管理**: LocalStorage中心（バックエンド非依存）
 - **JSON静的ファイル**: シナリオ・モックデータ
 - **React + Next.js**: フロントエンド実装
