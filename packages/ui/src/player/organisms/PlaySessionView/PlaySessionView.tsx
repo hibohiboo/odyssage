@@ -328,53 +328,129 @@ const LoadingView = () => (
   </div>
 );
 
-export function PlaySessionView({
-  scene,
+// エラー表示用コンポーネント
+const ErrorView = ({
+  error,
+  className,
+}: {
+  error: string;
+  className: string;
+}) => (
+  <div
+    className={`w-full min-h-screen bg-gray-50 flex items-center justify-center ${className}`}
+  >
+    <div className="text-center p-6">
+      <div className="text-red-600 text-lg font-medium mb-2">
+        エラーが発生しました
+      </div>
+      <div className="text-gray-600 mb-4">{error}</div>
+      <EventButton onClick={() => window.location.reload()} variant="primary">
+        再読み込み
+      </EventButton>
+    </div>
+  </div>
+);
+
+// データなし表示用コンポーネント
+const NoDataView = ({ className }: { className: string }) => (
+  <div
+    className={`w-full min-h-screen bg-gray-50 flex items-center justify-center ${className}`}
+  >
+    <div className="text-center p-6">
+      <div className="text-gray-600">シーンデータが読み込まれていません</div>
+    </div>
+  </div>
+);
+
+// メインコンテンツ表示用コンポーネント
+const MainContent = ({
+  currentScene,
+  currentEvent,
   sessionInfo,
-  onChoiceSelect,
-  onContinue,
+  autoSaveStatus,
   onMenuAccess,
   onExitSession,
-  loading = false,
-  autoSaveStatus = 'idle',
-  className = '',
-}: PlaySessionViewProps) {
-  if (loading) {
-    return (
-      <div className={`w-full min-h-screen bg-gray-50 ${className}`}>
-        <LoadingView />
+  onChoiceSelect,
+  onContinue,
+  className,
+}: {
+  currentScene: Scene;
+  currentEvent: MVPEvent;
+  sessionInfo: PlaySessionViewProps['sessionInfo'];
+  autoSaveStatus: PlaySessionViewProps['autoSaveStatus'];
+  onMenuAccess: () => void;
+  onExitSession: () => void;
+  onChoiceSelect: (choiceId: string) => void;
+  onContinue: () => void;
+  className: string;
+}) => (
+  <div className={`w-full min-h-screen bg-gray-50 flex flex-col ${className}`}>
+    {/* ヘッダー */}
+    <PlayHeader
+      sessionInfo={sessionInfo}
+      autoSaveStatus={autoSaveStatus}
+      onMenuAccess={onMenuAccess}
+      onExitSession={onExitSession}
+    />
+
+    {/* メインプレイエリア */}
+    <main className="flex-1 max-w-4xl mx-auto w-full">
+      {/* シーン表示 */}
+      <div className="mb-6">
+        <SceneDisplay scene={currentScene} />
       </div>
-    );
+
+      {/* Event表示 */}
+      <div className="mx-4">
+        <EventDisplay
+          event={currentEvent}
+          onChoiceSelect={onChoiceSelect}
+          onContinue={onContinue}
+        />
+      </div>
+    </main>
+  </div>
+);
+
+// 読み込み中表示
+const renderLoadingState = (className?: string) => (
+  <div className={`w-full min-h-screen bg-gray-50 ${className || ''}`}>
+    <LoadingView />
+  </div>
+);
+
+// 正常表示状態
+const renderNormalState = (props: PlaySessionViewProps) => (
+  <MainContent
+    currentScene={props.currentScene!}
+    currentEvent={props.currentEvent!}
+    sessionInfo={props.sessionInfo}
+    autoSaveStatus={props.autoSaveStatus}
+    onMenuAccess={props.onMenuAccess}
+    onExitSession={props.onExitSession}
+    onChoiceSelect={props.onChoiceSelect}
+    onContinue={props.onContinue}
+    className={props.className || ''}
+  />
+);
+
+// 表示状態判定・レンダリング選択
+function renderViewByState(props: PlaySessionViewProps) {
+  if (props.loading) {
+    return renderLoadingState(props.className);
   }
 
-  return (
-    <div
-      className={`w-full min-h-screen bg-gray-50 flex flex-col ${className}`}
-    >
-      {/* ヘッダー */}
-      <PlayHeader
-        sessionInfo={sessionInfo}
-        autoSaveStatus={autoSaveStatus}
-        onMenuAccess={onMenuAccess}
-        onExitSession={onExitSession}
-      />
+  if (props.error) {
+    return <ErrorView error={props.error} className={props.className || ''} />;
+  }
 
-      {/* メインプレイエリア */}
-      <main className="flex-1 max-w-4xl mx-auto w-full">
-        {/* シーン表示 */}
-        <div className="mb-6">
-          <SceneDisplay scene={scene} />
-        </div>
+  if (!props.currentScene || !props.currentEvent) {
+    return <NoDataView className={props.className || ''} />;
+  }
 
-        {/* Event表示 */}
-        <div className="mx-4">
-          <EventDisplay
-            event={scene.currentEvent}
-            onChoiceSelect={onChoiceSelect}
-            onContinue={onContinue}
-          />
-        </div>
-      </main>
-    </div>
-  );
+  return renderNormalState(props);
+}
+
+export function PlaySessionView(props: PlaySessionViewProps) {
+  return renderViewByState(props);
 }

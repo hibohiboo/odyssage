@@ -5,6 +5,7 @@ import {
   type Scene,
   type SessionState,
   type EventExecutionResult,
+  type PlayEvent,
 } from '../engine/EventEngine';
 
 export interface UseEventEngineProps {
@@ -33,7 +34,7 @@ export interface UseEventEngineReturn {
 
   // Engine制御
   resetSession: () => void;
-  getPlayHistory: () => any[];
+  getPlayHistory: () => PlayEvent[];
 }
 
 export function useEventEngine({
@@ -52,6 +53,18 @@ export function useEventEngine({
   const [autoSaveStatus, setAutoSaveStatus] = useState<
     'idle' | 'saving' | 'saved' | 'error'
   >('idle');
+
+  // 現在の状態更新
+  const updateCurrentState = useCallback(() => {
+    const engine = engineRef.current;
+    const scene = engine.getCurrentScene();
+    const event = engine.getCurrentEvent();
+    const state = engine.getSessionState();
+
+    setCurrentScene(scene);
+    setCurrentEvent(event);
+    setSessionState(state);
+  }, []);
 
   // Engine初期化
   useEffect(() => {
@@ -77,19 +90,7 @@ export function useEventEngine({
     } finally {
       setIsLoading(false);
     }
-  }, [scenes, sessionId, startingSceneId]);
-
-  // 現在の状態更新
-  const updateCurrentState = useCallback(() => {
-    const engine = engineRef.current;
-    const scene = engine.getCurrentScene();
-    const event = engine.getCurrentEvent();
-    const state = engine.getSessionState();
-
-    setCurrentScene(scene);
-    setCurrentEvent(event);
-    setSessionState(state);
-  }, []);
+  }, [scenes, sessionId, startingSceneId, updateCurrentState]);
 
   // Event実行結果処理
   const handleEventExecution = useCallback(
@@ -190,7 +191,7 @@ export function useEventEngine({
 
   // 定期自動保存
   useEffect(() => {
-    if (!onAutoSave || !sessionState || autoSaveInterval <= 0) return;
+    if (!onAutoSave || !sessionState || autoSaveInterval <= 0) return undefined;
 
     const interval = setInterval(async () => {
       if (autoSaveStatus === 'saving') return; // 保存中はスキップ
