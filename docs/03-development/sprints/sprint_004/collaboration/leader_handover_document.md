@@ -88,7 +88,7 @@
 ## 📚 重要な参考文書
 
 ### プロセス文書
-1. **[複数ClaudeCode協働フレームワーク](../../collaboration-framework.md)**
+1. **[複数ClaudeCode協働フレームワーク](../../../06-teams/processes/multi-claude-collaboration-framework.md)**
    - 新協働体制の完全な運用ガイド
    - 役割定義・ディレクトリ構造・テンプレート
 
