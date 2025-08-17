@@ -391,7 +391,7 @@ Player文脈MVP → Author文脈追加 → GM文脈統合
 
 ```markdown
 ## ユーザー体験の達成状態
-- 5つ以上のTRPGシナリオでプレイ可能
+- 2つ以上のTRPGシナリオでプレイ可能
 - 各シナリオで3つ以上の異なる結末体験
 - プレイ記録の自動保存・履歴確認機能
 - 30分程度の満足できるプレイ体験
@@ -438,5 +438,9 @@ Player文脈MVP → Author文脈追加 → GM文脈統合
   - MVP制約: セッション記録上限10件、基本設定のみ、バックアップ機能除外
   - 将来拡張: お気に入り機能、詳細設定、エクスポート・インポート、大容量データ管理
   - 理由: Player文脈の基本TRPG体験に集中、バックエンド非依存での価値提供重視
+- 2025-08-17: MVP達成状態修正（設計担当）
+  - Phase 1完了時の達成状態「5つ以上のTRPGシナリオ」→「2つ以上」に修正
+  - 理由: data-design.mdのMVP方針（2シナリオMVP最小構成）との整合性確保
+  - 参照: mvp-guidelines.md MVP制約、data-design.md MVP範囲データ要件
 
 #player-context #mvp-requirements #trpg-experience #phase1 #requirements-definition
