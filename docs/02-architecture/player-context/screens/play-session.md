@@ -340,6 +340,214 @@ Scenario: 選択肢の選択と次シーンへの遷移
 - ✅ メモリ使用量の適正性
 ```
 
+## 🎯 シーン中のEvent処理設計
+
+### Event概念統合UI/UX
+
+#### MVP必須Event処理
+
+```typescript
+interface EventProcessingUISpec {
+  // MVP必須: choiceイベント処理
+  choice_event: {
+    display_elements: [
+      "選択肢リスト表示",
+      "選択肢説明文",
+      "選択ボタン群"
+    ];
+    interaction_flow: [
+      "タップ選択",
+      "選択確認",
+      "nextEventId取得",
+      "次イベント遷移"
+    ];
+    state_management: [
+      "選択済み状態",
+      "無効化状態",
+      "進行中状態"
+    ];
+  };
+  
+  // MVP必須: narrativeイベント処理
+  narrative_event: {
+    display_elements: [
+      "物語テキスト表示",
+      "読み進めボタン",
+      "テキスト表示状態"
+    ];
+    interaction_flow: [
+      "テキスト表示完了待ち",
+      "読み進め操作",
+      "nextEventId取得",
+      "次イベント遷移"
+    ];
+    text_presentation: [
+      "MVP: 即座全文表示",
+      "将来: タイプライター効果"
+    ];
+  };
+  
+  // MVP必須: scene_transitionイベント処理
+  scene_transition_event: {
+    display_elements: [
+      "遷移メッセージ表示",
+      "読み込み状態表示",
+      "エラーハンドリング"
+    ];
+    interaction_flow: [
+      "targetSceneId取得",
+      "新シーン読み込み",
+      "シーン表示更新",
+      "自動遷移完了"
+    ];
+    feedback_states: [
+      "遷移中状態表示",
+      "読み込みエラー表示",
+      "復旧オプション"
+    ];
+  };
+}
+```
+
+#### MVP最小限Event処理
+
+```typescript
+interface MinimalEventProcessingSpec {
+  // MVP最小限: dialogueイベント処理
+  dialogue_event: {
+    display_elements: [
+      "NPC名表示",
+      "NPCテキスト表示",
+      "基本的な会話UI"
+    ];
+    interaction_flow: [
+      "会話テキスト表示",
+      "継続操作待ち",
+      "nextEventId取得",
+      "次イベント遷移"
+    ];
+    mvp_constraints: [
+      "選択肢は別途ChoiceEventで管理",
+      "シンプルなテキスト表示のみ",
+      "複雑な会話システムは除外"
+    ];
+  };
+  
+  // MVP最小限: explorationイベント処理
+  exploration_event: {
+    display_elements: [
+      "探索対象表示",
+      "探索結果表示",
+      "基本的なアクションUI"
+    ];
+    interaction_flow: [
+      "探索アクション表示",
+      "結果テキスト表示",
+      "nextEventId取得",
+      "次イベント遷移"
+    ];
+    mvp_constraints: [
+      "MVP版では結果は単純なテキスト表示のみ",
+      "複雑なアイテム管理は除外",
+      "判定システムは除外"
+    ];
+  };
+}
+```
+
+### Event処理フロー設計
+
+```mermaid
+graph TB
+    A[シーン開始] --> B{startingEventId確認}
+    B --> C[Event実行]
+    C --> D{EventType判定}
+    
+    D -->|choice| E[選択肢表示]
+    D -->|narrative| F[物語テキスト表示]
+    D -->|dialogue| G[NPC会話表示]
+    D -->|scene_transition| H[シーン遷移実行]
+    D -->|exploration| I[探索アクション表示]
+    
+    E --> J[プレイヤー選択待ち]
+    F --> K[読み進め操作待ち]
+    G --> K
+    I --> K
+    
+    J --> L[nextEventId取得]
+    K --> L
+    H --> M[新シーン読み込み]
+    
+    L --> N{nextEventId存在?}
+    N -->|Yes| C
+    N -->|No| O[シーン完了]
+    
+    M --> A
+    O --> P[セッション状態更新]
+```
+
+### Event処理状態管理設計
+
+```typescript
+interface EventProcessingState {
+  // 現在のEvent状態
+  current_event: {
+    scene_id: string;
+    event_id: string;
+    event_type: EventType;
+    processing_status: 'loading' | 'displaying' | 'waiting_input' | 'transitioning';
+  };
+  
+  // Event履歴管理
+  event_history: {
+    completed_events: PlayEvent[];
+    current_session_events: PlayEvent[];
+    save_frequency: 'every_event' | 'every_scene';
+  };
+  
+  // UI状態管理
+  ui_state: {
+    text_display_complete: boolean;
+    choice_selection_enabled: boolean;
+    transition_in_progress: boolean;
+    error_state?: string;
+  };
+  
+  // MVP制約下でのシンプル状態管理
+  mvp_constraints: {
+    auto_save_enabled: true; // イベント毎の自動保存
+    complex_animations: false; // 複雑なアニメーション除外
+    detailed_logging: false; // 詳細ログ除外
+  };
+}
+```
+
+### MVP制約下でのEvent処理
+
+```markdown
+## MVP制約下でのEvent処理
+
+### 実装必須Event
+- **choice**: 選択肢表示・選択・遷移（完全実装）
+- **narrative**: テキスト表示・読み進め（完全実装）
+- **scene_transition**: シーン遷移・読み込み（完全実装）
+
+### 最小限実装Event
+- **dialogue**: 基本的なNPC会話表示（簡素実装）
+- **exploration**: 基本的な探索結果表示（簡素実装）
+
+### Phase 2移行Event
+- **item_acquire**: アイテム獲得・管理
+- **skill_use**: スキル使用・効果
+- **condition**: 条件判定・分岐
+
+### MVP実装制約
+- **演出最小限**: 派手なアニメーション・エフェクト除外
+- **基本的UI**: 標準的なWeb UIコンポーネント活用
+- **確実な動作**: 複雑な演出より確実な動作優先
+- **自動保存**: Event毎の確実な状態保存
+```
+
 ## 🔗 関連文書・依存関係
 
 ### 画面遷移
@@ -364,6 +572,14 @@ Scenario: 選択肢の選択と次シーンへの遷移
 - 没入感重視（進行表示・時間表示・中間メッセージ除外）
 - MVP制約適用（キーボード操作・詳細履歴等除外）
 
+**2025-08-17**: POレビューフィードバック反映版（設計担当）
+- シーン中のEvent処理設計の追加
+- data-design.mdのEvent概念との統合UI/UX設計
+- EventType別UI仕様（choice、narrative、dialogue、scene_transition、exploration）
+- Event処理フロー設計・Event処理状態管理設計
+- MVP制約下でのEvent処理方針の明記
+- 理由: PO指摘によるdata-design.mdのEvent概念反映不足の解決
+
 **進化的設計**: この文書は実装・テスト・ユーザーフィードバックに基づいて継続的に更新されます。
 
-#play-session #player-context #mvp-design #immersive-experience #screen-design
+#play-session #player-context #mvp-design #immersive-experience #event-processing #screen-design
