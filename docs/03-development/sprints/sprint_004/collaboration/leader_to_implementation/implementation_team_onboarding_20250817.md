@@ -40,7 +40,7 @@ Sprint 4では、Player文脈MVPの実装を開始します。設計フェーズ
 ### 統一技術スタック
 ```typescript
 // フロントエンド技術スタック
-- React 18+ (関数型コンポーネント・Hooks)
+- React 19+ (関数型コンポーネント・Hooks)
 - React Router v7 (宣言的ルーティング)
 - TypeScript (厳格な型安全性)
 - Redux Toolkit + SWR + useState (状態管理)

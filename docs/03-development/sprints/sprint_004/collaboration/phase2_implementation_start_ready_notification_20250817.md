@@ -97,22 +97,24 @@ Sprint 4の設計フェーズが完了し、Player文脈MVPの実装フェーズ
 
 ## 📅 実装フェーズスケジュール・POレビューフロー
 
-### Phase 1: 基盤構築（Week 1）
+### Phase 1: 基盤構築・画面デザイン（Week 1）
 - packages/ui環境構築・StoryBook設定
 - 基本Component作成・Story統合
-- Redux Toolkit + SWR状態管理基盤
+- **session-list・session-detail画面のStoryBook作成**（見た目のみ・動作不要）
 
-### Phase 2: 基本画面実装（Week 2）
-- session-list・session-detail画面実装
-- セッション一覧・詳細・遷移機能
-- SWRデータフェッチング・状態管理
+### 🔍 **重要：POレビューポイント（Week 1完了時）**
+**POレビュータイミング**: Phase 1完了時・StoryBookでの画面イメージ確認
+- **レビュー対象**: session-list・session-detail画面のStoryBookコンポーネント
+- **確認方法**: StoryBook展示による視覚的画面イメージ（動作不要）
+- **目的**: 画面デザイン・UI/UX方向性の早期確認
+- **フィードバック**: UI改善・画面レイアウト・ユーザー体験向上提案
+- **調整期間**: POフィードバック反映・画面デザイン調整
 
-### 🔍 **重要：POレビューポイント（Week 2完了時）**
-**POレビュータイミング**: StoryBookでの画面イメージ確認可能時点
-- **レビュー対象**: 各画面のStoryBookコンポーネント・UI/UX確認
-- **確認方法**: StoryBook展示による視覚的画面イメージ
-- **フィードバック**: UI改善・画面フロー・ユーザー体験向上提案
-- **調整期間**: POフィードバック反映・画面調整実装
+### Phase 2: 基本画面実装・状態管理（Week 2）
+- Redux Toolkit + SWR状態管理基盤構築
+- session-list・session-detail画面機能実装
+- セッション一覧・詳細・遷移機能の動作実装
+- SWRデータフェッチング・状態管理統合
 
 ### Phase 3: Event概念・プレイ体験実装（Week 3）
 - Event処理基盤・useEventProcessor Hook
