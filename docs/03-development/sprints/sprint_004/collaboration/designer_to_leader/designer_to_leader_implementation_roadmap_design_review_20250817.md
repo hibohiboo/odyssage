@@ -165,57 +165,8 @@ Week 5: 品質保証・統合確認 → ✅ 適切（テスト・品質確認）
 
 ### ⚠️ 補完推奨の設計情報
 
-#### 1. Event処理エラーハンドリング詳細
-**推奨補完内容**:
-```typescript
-// Event処理エラーハンドリング詳細仕様
-interface EventErrorHandling {
-  // Event実行失敗時の復旧戦略
-  event_execution_failure: {
-    retry_strategy: "自動リトライ3回 + 手動リトライオプション";
-    fallback_behavior: "前のEvent状態への復旧";
-    user_notification: "分かりやすいエラーメッセージ + 復旧手順案内";
-  };
-  
-  // データ不整合時の対応
-  data_inconsistency: {
-    detection: "Event遷移時の整合性チェック";
-    recovery: "最後の整合性のある状態への復旧";
-    prevention: "Event履歴の検証・修正";
-  };
-  
-  // ネットワークエラー時の対応
-  network_error: {
-    offline_mode: "LocalStorageでのオフライン継続";
-    sync_recovery: "接続復旧時の状態同期";
-    data_backup: "Event履歴の確実なバックアップ";
-  };
-}
-```
-
-#### 2. Event処理パフォーマンス要件
-**推奨補完内容**:
-```typescript
-// Event処理パフォーマンス要件
-interface EventPerformanceRequirements {
-  // Event実行・遷移の応答性
-  event_execution_timing: {
-    choice_selection: "選択→次Event遷移 1秒以内";
-    narrative_display: "テキスト表示完了 即座";
-    scene_transition: "シーン遷移完了 3秒以内";
-  };
-  
-  // メモリ・状態管理効率
-  memory_management: {
-    event_history: "過去100Event履歴保持（それ以前は圧縮保存）";
-    state_cleanup: "不要Event状態の定期クリーンアップ";
-    cache_strategy: "頻繁アクセスEventのメモリキャッシュ";
-  };
-}
-```
-
-#### 3. Component間データフロー詳細
-**推奨補完内容**:
+#### 1. Component間データフロー詳細
+**推奨補完内容**:（参照：[play-session.md Event処理設計](../../02-architecture/player-context/screens/play-session.md)）
 ```typescript
 // Component間データフロー詳細仕様
 interface ComponentDataFlow {
@@ -235,17 +186,40 @@ interface ComponentDataFlow {
 }
 ```
 
-### ✅ 適切に除外されている内容
+#### 2. 基本的なエラー表示（MVP制約）
+**MVPでの実装方針**:（参照：[play-session.md](../../02-architecture/player-context/screens/play-session.md)）
+```typescript
+// MVP制約: 基本的なエラー表示のみ
+interface BasicErrorHandling {
+  error_display: {
+    simple_message: "「エラーが発生しました」の基本表示";
+    retry_button: "「再試行」ボタンの提供";
+    fallback_action: "前の状態への基本的な復旧";
+  };
+  
+  // MVP範囲外（Phase 2以降）
+  // - 詳細なエラー分類・復旧戦略
+  // - 自動リトライ・高度な復旧機能
+  // - ネットワークエラー・データ不整合の詳細対応
+}
+```
+
+### ✅ 適切に除外されている内容（MVP制約遵守）
 
 #### 1. 実装方法詳細
 - ✅ **適切な境界**: 設計要件に集中・実装手法への過度な介入回避
 - ✅ **実装自由度**: 実装担当の専門判断余地の確保
 - ✅ **技術選択**: フレームワーク活用・ライブラリ選択の実装担当委ねる
 
-#### 2. 詳細な品質基準
-- ✅ **適切なレベル**: 過度に詳細・実装困難な品質要求の回避
-- ✅ **実現可能性**: MVP制約下での現実的品質基準設定
-- ✅ **段階的改善**: Phase 2での品質向上への適切な配慮
+#### 2. 高度なエラーハンドリング（MVP範囲外）
+- ✅ **MVP制約適用**: 詳細なエラー分類・復旧戦略はPhase 2以降
+- ✅ **シンプル化**: 基本的なエラー表示・再試行のみMVP実装
+- ✅ **段階的改善**: 高度なエラー処理はPhase 2での品質向上
+
+#### 3. パフォーマンス最適化（MVP範囲外）
+- ✅ **MVP制約適用**: 詳細なパフォーマンス要件・最適化はPhase 2以降
+- ✅ **基本的動作**: MVP段階では確実な基本動作に集中
+- ✅ **段階的改善**: パフォーマンス最適化はPhase 2での品質向上
 
 ## 🚀 実装実現可能性確認
 
