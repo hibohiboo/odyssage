@@ -135,13 +135,40 @@ src/
 ### UI Component配置原則
 
 ```markdown
-## packages/ui構造
-- **Atomic Design**: Atoms, Molecules, Organisms構造
-- **Player文脈専用**: Player文脈向けのコンポーネント集約
-- **共通Component**: 全文脈で利用可能な汎用コンポーネント
+## packages/ui構造（文脈別 + Atomic Design）
+- **文脈別フォルダ**: player/, gm/, author/, shared/
+- **Atomic Design**: 各文脈内でAtoms, Molecules, Organisms構造
+- **共通Component**: shared/配下で全文脈共通コンポーネント
+
+## ディレクトリ構造例
+```
+packages/ui/
+├── player/                    # Player文脈専用Component
+│   ├── atoms/                # 基本UI要素
+│   │   ├── SessionButton/
+│   │   ├── ChoiceChip/
+│   │   └── PlayStatus/
+│   ├── molecules/            # 複合Component
+│   │   ├── SessionCard/
+│   │   ├── ChoiceList/
+│   │   └── PlayProgress/
+│   └── organisms/            # 複雑なComponent
+│       ├── SessionGrid/
+│       ├── PlayInterface/
+│       └── PlayHistory/
+├── gm/                       # GM文脈専用Component（将来）
+├── author/                   # Author文脈専用Component（将来）
+└── shared/                   # 全文脈共通Component
+    ├── atoms/               # 汎用基本要素
+    │   ├── Button/
+    │   ├── Input/
+    │   └── Card/
+    ├── molecules/           # 汎用複合要素
+    └── organisms/           # 汎用複雑要素
+```
 
 ## StoryBook統合
-- **Component Story**: 各コンポーネントのStory作成
+- **文脈別Story**: 各文脈のComponent Storyを分離
 - **Design Token**: 色・サイズ・間隔の統一管理
 - **Interactive Demo**: プロパティ変更での動作確認
 ```
@@ -512,6 +539,7 @@ interface ContextEvolutionStrategy {
   - React Router v6→v7への修正
   - テスト戦略修正（Cucumber明記・クロスブラウザ除外）
   - 既存vercel v0コード分離戦略の明確化
-  - 理由: PO指摘による実装品質向上、技術選択正確性確保
+  - packages/ui構造調整（文脈別フォルダ + AtomicDesign構造）
+  - 理由: PO指摘による実装品質向上、技術選択正確性確保、文脈分離の徹底
 
 #player-context #architecture #fsd #context-first #react #typescript #mvp-design
