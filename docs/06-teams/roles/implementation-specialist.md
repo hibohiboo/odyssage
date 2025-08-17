@@ -153,6 +153,84 @@
 - **テスト協働**: テスト担当との連携・品質確認依頼
 - **設計フィードバック**: 実装課題・改善提案の設計チーム共有
 
+## ⚠️ 実装時の重要注意事項・品質基準
+
+### 基本品質要件（必須遵守）
+```typescript
+// Sprint 4実装フィードバックより
+実装時必須チェック事項:
+- 改行コード: 全ファイルLF統一（CRLFは不可）
+- Cyclomatic complexity: 7以下に抑制（8以上は修正必須）
+- lint エラー: 0件（warning除く）
+- StoryBook表示: 全variant・全状態で視覚的確認必須
+```
+
+### Component実装品質基準
+- **型安全性**: TypeScript厳格適用・コンパイルエラー0
+- **視覚的品質**: 背景色・文字色のコントラスト確保・視認性確保
+- **状態管理**: disabled・loading・error状態の適切な表現
+- **アクセシビリティ**: aria-label・適切なタッチターゲット・semantic HTML
+
+### StoryBook Story品質基準
+```typescript
+// 必須Story構成
+export default {
+  title: 'Player/Atoms/ComponentName',
+  component: ComponentName,
+  parameters: {
+    docs: {
+      description: {
+        component: 'Component用途・Player文脈での役割の明確な説明'
+      }
+    }
+  }
+} as Meta;
+
+// 必須Story パターン
+export const Default: Story = { /* 基本表示 */ };
+export const Disabled: Story = { /* 無効状態 */ };
+export const Loading: Story = { /* 処理中状態 */ };
+export const AllVariants: Story = { /* 全バリエーション一覧 */ };
+```
+
+### よくある実装ミス・対策
+```typescript
+❌ よくあるミス:
+- CRLF改行コードでファイル作成（必ずLFで作成）
+- Cyclomatic complexity過多（関数分離・ロジック簡素化必須）
+- disabled状態での視認性不足（背景色・文字色同一化）
+- StoryBook import間違い（@storybook/react vs @storybook/react-vite）
+
+✅ 対策・予防:
+- ファイル作成時のエディタ設定確認
+- 実装完了時の bun run lint 実行・エラー0確認
+- StoryBook表示での全状態視覚確認
+- レビュー依頼前の自己品質チェック実施
+```
+
+### MVP制約遵守チェックリスト
+```typescript
+// 実装禁止機能チェック
+❌ 実装してはいけない機能:
+- フィルタリング・検索・ソート機能
+- ジャンル・難易度詳細情報表示
+- 参加者数表示・複雑な参加状態管理
+- タイプライター効果・派手な演出効果
+- item_acquire・skill_use・condition Event対応
+
+✅ 集中すべき基本機能:
+- 確実な動作・基本的な応答性
+- choice・narrative・scene_transition Event対応
+- TypeScript型安全性・エラーハンドリング
+- シンプルで読みやすいコード構造
+```
+
+### 段階的レビューの重要性
+- **1 Component + 1 Story完成毎**: 即座レビュー依頼（複数Component一括禁止）
+- **人間レビュー配慮**: 15-30分でレビュー可能な適切な分量
+- **継続的品質向上**: 早期フィードバック・継続的改善
+- **学習促進**: 各Componentでの知見蓄積・次Component品質向上
+
 ---
 
 **実装担当者への期待**:
