@@ -1,5 +1,6 @@
 import { sampleScenes } from '../../data/sampleScenes';
-import { PlaySessionView, type PlaySessionViewProps } from './PlaySessionView';
+import { PlaySessionView } from './PlaySessionView';
+import type { PlaySessionViewProps } from './types';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta: Meta<typeof PlaySessionView> = {
