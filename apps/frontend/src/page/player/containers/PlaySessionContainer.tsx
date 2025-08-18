@@ -5,7 +5,7 @@ import {
   PlaySessionView,
   type PlaySessionViewProps,
 } from '@odyssage/ui/player/organisms/PlaySessionView/index';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { AutoSaveService } from '../services/AutoSaveService';
 import { SceneLoader } from '../services/SceneLoader';
 
@@ -22,8 +22,9 @@ export function PlaySessionContainer({
   const [loadingError, setLoadingError] = useState<string | null>(null);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
-  const sceneLoader = new SceneLoader();
-  const autoSaveService = new AutoSaveService();
+  // Service インスタンス（useMemoで最適化）
+  const sceneLoader = useMemo(() => new SceneLoader(), []);
+  const autoSaveService = useMemo(() => new AutoSaveService(), []);
 
   // Scene データの読み込み
   useEffect(() => {
@@ -59,33 +60,30 @@ export function PlaySessionContainer({
 
   // PlaySessionViewProps へのマッピング
   const mapToViewProps = (): PlaySessionViewProps => ({
-    // Session 情報
-    sessionId,
-    sessionTitle: `セッション ${sessionId}`,
-
     // Scene 情報
     currentScene: eventEngine.currentScene,
-
-    // Event 情報
     currentEvent: eventEngine.currentEvent,
 
-    // 状態管理
-    isLoading: isInitialLoading || eventEngine.isLoading,
-    error: loadingError || eventEngine.error,
-
-    // Auto-save 状態
-    autoSaveStatus: eventEngine.autoSaveStatus,
+    // Session 情報
+    sessionInfo: {
+      sessionId,
+      title: `セッション ${sessionId}`,
+    },
 
     // Event ハンドラー
     onChoiceSelect: eventEngine.executeChoice,
     onContinue: eventEngine.executeContinue,
-    onSceneTransition: eventEngine.executeSceneTransition,
-
-    // Session 制御
-    onRetry: () => {
-      setLoadingError(null);
-      window.location.reload();
+    onMenuAccess: () => {
+      // メニューアクセス処理（未実装）
     },
+    onExitSession: () => {
+      // セッション終了処理（未実装）
+    },
+
+    // 状態管理
+    loading: isInitialLoading || eventEngine.isLoading,
+    error: loadingError || eventEngine.error,
+    autoSaveStatus: eventEngine.autoSaveStatus,
   });
 
   // 初期読み込みエラー時の表示

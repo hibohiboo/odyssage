@@ -1,5 +1,5 @@
-import { sampleScenes } from '@odyssage/ui/player/data/sampleScenes';
 import { safeValidateScene, type Scene } from '@odyssage/schema';
+import { sampleScenes } from '@odyssage/ui/player/data/sampleScenes';
 
 /**
  * SceneLoader - モックJSONデータ + LocalStorage実装
@@ -23,7 +23,7 @@ export class SceneLoader {
       }
 
       // 2. モックJSONデータから取得
-      const scenes = await this.loadFromMockData();
+      const scenes = await SceneLoader.loadFromMockData();
 
       // 3. LocalStorageにキャッシュ保存
       this.saveToCache(sessionId, scenes);
@@ -47,8 +47,8 @@ export class SceneLoader {
       }
 
       // 2. モックデータから確認
-      const mockScenes = await this.loadFromMockData();
-      const mockScene = mockScenes.find((s) => s.id === sceneId);
+      const mockScenes = await SceneLoader.loadFromMockData();
+      const mockScene = mockScenes.find((s: Scene) => s.id === sceneId);
       if (mockScene) {
         return mockScene;
       }
@@ -76,7 +76,7 @@ export class SceneLoader {
    * モックJSONデータから読み込み
    * 現在は sampleScenes を直接使用、将来的には静的JSONファイルに対応可能
    */
-  private async loadFromMockData(): Promise<Scene[]> {
+  private static async loadFromMockData(): Promise<Scene[]> {
     // 非同期処理をシミュレート（実際のデータ読み込み時間をエミュレート）
     await new Promise<void>((resolve) => {
       setTimeout(resolve, 100);
@@ -96,31 +96,34 @@ export class SceneLoader {
       if (!cached) return null;
 
       const parsed = JSON.parse(cached);
-      
-      // データの有効性確認
-      if (!Array.isArray(parsed) || parsed.length === 0) return null;
-      
-      // Scene構造の検証 (Valibot使用)
-      const validatedScenes: Scene[] = [];
-      for (const scene of parsed) {
-        const validScene = safeValidateScene(scene);
-        if (validScene) {
-          validatedScenes.push(validScene);
-        } else {
-          console.warn('Invalid scene data found in cache:', scene);
-          return null; // 不正なデータがある場合はキャッシュ無効
-        }
-      }
-      
-      if (validatedScenes.length === parsed.length) {
-        return validatedScenes;
-      }
-
-      return null;
+      return SceneLoader.validateAndParseScenes(parsed);
     } catch (error) {
       console.error('Cache読み込みエラー:', error);
       return null;
     }
+  }
+
+  /**
+   * Scene配列の検証・パース
+   */
+  private static validateAndParseScenes(parsed: unknown): Scene[] | null {
+    // データの有効性確認
+    if (!Array.isArray(parsed) || parsed.length === 0) return null;
+
+    // Scene構造の検証 (Valibot使用)
+    const validatedScenes: Scene[] = [];
+    const invalidScenes = parsed.filter((scene: unknown) => {
+      const validScene = safeValidateScene(scene);
+      if (validScene) {
+        validatedScenes.push(validScene);
+        return false;
+      }
+      console.warn('Invalid scene data found in cache:', scene);
+      return true;
+    });
+
+    // 不正なデータがある場合はキャッシュ無効
+    return invalidScenes.length > 0 ? null : validatedScenes;
   }
 
   /**
@@ -192,13 +195,12 @@ export class SceneLoader {
       } else {
         // 全Sceneキャッシュをクリア
         localStorage.removeItem(this.SCENE_CACHE_KEY);
-        
+
         // セッション別キャッシュも全てクリア
         const keys = Object.keys(localStorage);
-        keys.forEach((key) => {
-          if (key.startsWith(this.SESSION_SCENE_KEY)) {
-            localStorage.removeItem(key);
-          }
+        const sessionKeys = keys.filter(key => key.startsWith(this.SESSION_SCENE_KEY));
+        sessionKeys.forEach((key) => {
+          localStorage.removeItem(key);
         });
       }
     } catch (error) {

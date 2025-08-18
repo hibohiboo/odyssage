@@ -68,7 +68,7 @@ export interface SceneTransitionEvent extends BaseEvent {
   type: 'scene_transition';
   data: {
     targetSceneId: string;
-    transitionText: string;
+    transitionText?: string;
   };
 }
 
@@ -93,7 +93,7 @@ export type MVPEvent =
 export interface Scene {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   backgroundImage?: string;
   startingEventId: string;
   events: MVPEvent[];

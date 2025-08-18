@@ -104,7 +104,7 @@ export class AutoSaveService {
   /**
    * 自動保存の停止
    */
-  stopAutoSave(intervalId: number): void {
+  static stopAutoSave(intervalId: number): void {
     window.clearInterval(intervalId);
   }
 
@@ -155,7 +155,7 @@ export class AutoSaveService {
   /**
    * LocalStorageの容量確認
    */
-  checkStorageSpace(): {
+  static checkStorageSpace(): {
     used: number;
     available: number;
     isNearLimit: boolean;
@@ -163,13 +163,10 @@ export class AutoSaveService {
     try {
       // LocalStorageの概算使用量を計算
       let used = 0;
-      // eslint-disable-next-line no-restricted-syntax
-      for (const key in localStorage) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (localStorage.hasOwnProperty(key)) {
-          used += localStorage[key].length + key.length;
-        }
-      }
+      const keys = Object.keys(localStorage);
+      keys.forEach((key) => {
+        used += localStorage[key].length + key.length;
+      });
 
       // 一般的なLocalStorageの制限は約5MB
       const limit = 5 * 1024 * 1024; // 5MB in bytes
