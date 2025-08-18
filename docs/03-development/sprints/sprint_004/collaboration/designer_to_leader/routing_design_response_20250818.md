@@ -98,22 +98,20 @@ export const playerRoutes = [
 ];
 ```
 
-#### 2. **パラメータ取得Hook**
-```typescript
-// PlaySessionContainer内での使用
-import { useParams, useLoaderData } from "react-router-dom";
+#### 2. **パラメータ仕様**
+```markdown
+# PlaySessionContainerパラメータ仕様
 
-export function PlaySessionContainer() {
-  const { sessionId } = useParams<{ sessionId: string }>();
-  const { startingSceneId } = useLoaderData() as { startingSceneId?: string };
-  
-  const eventEngine = useEventEngine({
-    sessionId: sessionId!,
-    startingSceneId
-  });
-  
-  return <PlaySessionView {...eventEngine} />;
-}
+必須パラメータ:
+- sessionId: セッション識別子（URL Path Parameter）
+- startingSceneId: 開始シーン識別子（Optional URL Parameter）
+
+データ受け渡し方針:
+- ルートパラメータから必要なIDを取得
+- useEventEngineへの適切なパラメータ受け渡し
+- エラーハンドリング: 無効なパラメータの適切な処理
+
+実装方法: 実装担当の技術判断に委ねる
 ```
 
 ---
@@ -122,31 +120,42 @@ export function PlaySessionContainer() {
 
 ### **暫定テストパス作成**
 
-#### 1. **最優先: PlaySessionContainer直接アクセス**
-```typescript
-// 緊急テスト用URLパターン
-const TEST_URLS = {
-  basic_play: "http://localhost:3000/player/session/test-session-001/play",
-  scene_specific: "http://localhost:3000/player/session/test-session-001/play/scene-001"
-};
+#### 1. **緊急動作確認パス仕様**
+```markdown
+# Phase 2動作確認用パス設計
 
-// 必要なテストデータ
-const TEST_SESSION_DATA = {
-  sessionId: "test-session-001",
-  startingSceneId: "scene-001",
-  // LocalStorageに事前配置するテストデータ
-};
+基本アクセスパス:
+- /player/session/{sessionId}/play
+- /player/session/{sessionId}/play/{sceneId}
+
+動作確認要件:
+- PlaySessionContainerの正常レンダリング
+- パラメータの適切な取得・受け渡し
+- useEventEngineとの統合動作
+
+テストデータ要件:
+- 有効なsessionId・sceneIdの事前準備
+- LocalStorageベースのテストデータ整備
+
+実装方法・URL詳細: 実装担当の判断に委ねる
 ```
 
-#### 2. **動作確認手順**
+#### 2. **動作確認要件**
 ```markdown
-Phase 2動作確認タスク:
-1. ルーティング設定追加（30分）
-2. PlaySessionContainerパラメータ取得実装（30分） 
-3. テスト用URLでの動作確認（30分）
-4. Event処理・LocalStorage連携確認（30分）
+# Phase 2完了確認要件
 
-合計: 2時間での動作確認完了可能
+必須確認項目:
+1. ルーティング機能: 指定パスでのPlaySessionContainer表示
+2. パラメータ処理: sessionId・sceneIdの適切な取得
+3. 統合動作: useEventEngineとの正常連携
+4. データ連携: LocalStorageとの統合動作
+
+成功基準:
+- PlaySessionContainerへの直接アクセス成功
+- Event処理エンジンの正常動作
+- MVP制約範囲内での基本機能確認
+
+実装スケジュール・作業詳細: 実装担当の判断・計画に委ねる
 ```
 
 ---
