@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": "./src/schema.ts"
+  },
   "scripts": {
     "lint": "eslint .",
     "ncu": "ncu -u"

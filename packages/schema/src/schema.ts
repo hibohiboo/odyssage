@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 
 export const { parse, object, pipe, string, uuid } = v;
+export * from './player';
 export const scenarioResponseSchema = v.object({
   id: v.string(),
   title: v.string(),
