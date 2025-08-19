@@ -47,6 +47,13 @@ Odyssageプロジェクトの複数Claude Code体制による専門分野分担�
 
 ## 🎯 利用方法
 
+### 新規リーダー引継ぎ時（**Priority 1**）
+1. **成果・実績確認**: [`../03-development/sprints/sprint_004/collaboration/leader_to_leader/sprint4_leadership_completion_summary_20250818.md`]
+2. **責任分界理解**: [`processes/responsibility-boundary-management.md`](./processes/responsibility-boundary-management.md)
+3. **協働フレームワーク**: [`processes/multi-claude-collaboration-framework.md`](./processes/multi-claude-collaboration-framework.md)
+4. **役割詳細**: [`roles/leader.md`](./roles/leader.md)
+5. **全体ナビ**: 本ファイル（README.md）
+
 ### 新規参加時（初回オンボーディング）
 1. **共通理解**: [`onboarding/project-fundamentals.md`](./onboarding/project-fundamentals.md)
 2. **技術基盤**: [`onboarding/technical-foundations.md`](./onboarding/technical-foundations.md)  
@@ -90,11 +97,11 @@ Odyssageプロジェクトの複数Claude Code体制による専門分野分担�
 
 ---
 
-**チーム協働の成功に向けて**
+**効率的チーム協働の実現**
 
-複数Claude Code体制は、各専門性を活かした高品質・高効率開発の実現を目指します。この文書体系を活用し、円滑な協働・継続的な改善を実践していきましょう。
+複数Claude Code体制は、各専門性を活かした高品質・高効率開発の実現を目指します。本文書体系の活用により、効率的協働・継続改善を実現してください。
 
 **更新履歴**
 - 2025-08-16: 初版作成（チーム体制文書化）
 
-#team-collaboration #onboarding #processes #specialized-roles
+#team-collaboration #onboarding #processes #specialized-roles #ai-optimized #priority-structured
