@@ -199,6 +199,40 @@ return (
 2. **エラーケーステスト**: 各種無効パラメータでの挙動確認
 3. **ブラウザ履歴**: 戻る・進むボタンでの正常動作確認
 
+## 🔧 レビュー発見課題・即座修正完了
+
+### 発見された問題
+**問題**: デフォルトシーンID不整合  
+**症状**: `/play/scene_01` アクセス時に "Scene not found: scene_01" エラー  
+**原因**: sampleScenesの実際のシーンIDは `forest_entrance` だが、PlaySessionPageで `scene_01` をデフォルト値として設定
+
+### 実施した修正
+```typescript
+// 修正前
+startingSceneId={params.sceneId || 'scene_01'} // 存在しないシーンID
+
+// 修正後  
+startingSceneId={params.sceneId || 'forest_entrance'} // sampleScenesの実際のデフォルトシーンID
+```
+
+### 修正後の動作確認
+**レビュー結果**: ✅ **ページ表示成功確認**  
+**利用可能テストURL**:
+```
+✅ http://localhost:5173/player/session/test-session-001/play
+✅ http://localhost:5173/player/session/test-session-001/play/forest_entrance  
+✅ http://localhost:5173/player/session/test-session-001/play/forest_depths
+```
+
+**品質確認**: ✅ ESLint通過・修正後の静的解析クリーン
+
+### 学習・改善点
+1. **sampleDataとの整合性確認**: 実装時にsampleScenesの実際の構造確認が必要
+2. **デフォルト値の慎重な設定**: 推測ベースではなく実際のデータ構造に基づく設定
+3. **エラー再現テスト**: 無効パラメータでの動作確認の重要性
+
+**修正完了**: 全機能正常動作・レビュー指摘事項解決済み
+
 ## 📋 完了確認・承認
 
 **実装担当確認事項**:
