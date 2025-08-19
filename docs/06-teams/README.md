@@ -16,30 +16,34 @@ Odyssageプロジェクトの複数Claude Code体制による専門分野分担�
 
 - [`design-specialist.md`](./roles/design-specialist.md) - 設計担当専用ガイド
 - [`implementation-specialist.md`](./roles/implementation-specialist.md) - 実装担当専用ガイド  
-- [`testing-specialist.md`](./roles/testing-specialist.md) - テスト担当専用ガイド
-- [`review-specialist.md`](./roles/review-specialist.md) - レビュー担当専用ガイド
+- [`test-specialist.md`](./roles/test-specialist.md) - テスト担当専用ガイド
+- [`leader.md`](./roles/leader.md) - リーダー専用ガイド
 
 ### [`onboarding/`](./onboarding/) - オンボーディング資料
 プロジェクト参加時の必要知識・手順
 
 - [`project-fundamentals.md`](./onboarding/project-fundamentals.md) - プロジェクト基礎知識（共通）
-- [`technical-foundations.md`](./onboarding/technical-foundations.md) - 技術基盤・開発環境
-- [`context-architecture-guide.md`](./onboarding/context-architecture-guide.md) - Context-First設計原則
+
+### [`lessons/`](./lessons/) - 学習記録・改善事項
+プロジェクト遂行中の重要な学び・課題・改善の体系的記録
+
+- [`project_leadership_lessons_sprint4_20250818.md`](./lessons/project_leadership_lessons_sprint4_20250818.md) - Sprint 4リーダーシップ学習記録
 
 ### [`processes/`](./processes/) - 協働プロセス
 チーム間の情報共有・意思決定・品質保証手順
 
 - [`collaboration-workflow.md`](./processes/collaboration-workflow.md) - 日常協働フロー
-- [`decision-making-protocol.md`](./processes/decision-making-protocol.md) - 意思決定・エスカレーション
-- [`quality-assurance-checklist.md`](./processes/quality-assurance-checklist.md) - 品質保証手順
-- [`communication-guidelines.md`](./processes/communication-guidelines.md) - 情報共有・同期ルール
+- [`responsibility-boundary-management.md`](./processes/responsibility-boundary-management.md) - 責務分界管理指針
+- [`multi-claude-collaboration-framework.md`](./processes/multi-claude-collaboration-framework.md) - 複数Claude協働フレームワーク
+- [`test-responsibility-boundaries.md`](./processes/test-responsibility-boundaries.md) - テスト責任境界
 
 ### [`templates/`](./templates/) - 作業テンプレート
 標準化された作業成果物・記録テンプレート
 
-- [`design-specification-template.md`](./templates/design-specification-template.md) - 設計仕様書
-- [`implementation-record-template.md`](./templates/implementation-record-template.md) - 実装記録
-- [`review-checklist-template.md`](./templates/review-checklist-template.md) - レビューチェックリスト
+- [`leadership-handover-template.md`](./templates/leadership-handover-template.md) - リーダー引継ぎ文書テンプレート
+- [`quality-check-template.md`](./templates/quality-check-template.md) - 品質確認テンプレート
+- [`work-instruction-template.md`](./templates/work-instruction-template.md) - 作業指示テンプレート
+- [`work-report-template.md`](./templates/work-report-template.md) - 作業報告テンプレート
 
 ## 🎯 利用方法
 
