@@ -68,7 +68,7 @@ export function PlaySessionPage() {
   return (
     <PlaySessionContainer
       sessionId={params.sessionId!}
-      startingSceneId={params.sceneId || 'scene_01'} // デフォルトシーンID
+      startingSceneId={params.sceneId || 'forest_entrance'} // sampleScenesのデフォルトシーンID
     />
   );
 }
