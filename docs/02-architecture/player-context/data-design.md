@@ -1114,5 +1114,93 @@ narrative → choice (A→narrative, B→dialogue) → scene_transition
   - サンプルシナリオのplayerCount修正: 両シナリオをmax:1に統一
   - セッションタイトル調整: 単独プレイ体験を反映した命名
   - 理由: MVP制約の一貫適用、実装との整合性確保、BDDレビュー方針の徹底
+- 2025-08-18: **ルーティングパラメータ統合版**（設計担当）
+  - ルーティングパラメータとデータ構造の統合設計追加
+  - sessionId・sceneIdパラメータとデータモデルの関係明確化
+  - 理由: ルーティング設計の緊急対応、実装での正確なデータアクセス確保
 
-#player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design
+## 🛣️ ルーティングパラメータとデータ統合設計
+
+### **ルーティングパラメータ仕様**
+
+#### **Player文脈URLパラメータ**
+```typescript
+interface PlayerRoutingParams {
+  // 必須パラメータ
+  sessionId: string;     // Session.id と対応
+  
+  // オプショナルパラメータ  
+  sceneId?: string;      // Scene.id と対応（開始シーン指定）
+}
+```
+
+#### **データモデルとの対応関係**
+```typescript
+// URL: /player/session/:sessionId/play
+// sessionId → Session.id でセッションデータを取得
+const session = sessions.find(s => s.id === params.sessionId);
+const scenario = scenarios.find(sc => sc.id === session.scenarioId);
+
+// URL: /player/session/:sessionId/play/:sceneId
+// sceneId → Scene.id で開始シーンを指定
+const startingScene = scenario.scenes.find(sc => sc.id === params.sceneId);
+```
+
+### **データアクセス仕様**
+
+#### **LocalStorage キー戦略**
+```typescript
+const STORAGE_KEYS = {
+  // ルーティングパラメータベースのキー
+  session_state: `session_state_${sessionId}`,
+  play_progress: `play_progress_${sessionId}`,
+  scene_cache: `scenes_${sessionId}`,
+  
+  // プレイヤー固有データ
+  player_profile: 'player_profile',
+  play_records: 'play_records'
+} as const;
+```
+
+#### **パラメータバリデーション要件**
+```markdown
+必須バリデーション:
+✅ sessionId: Session.id の存在確認
+✅ sceneId: 指定時のScene.id存在確認・同一シナリオ内確認
+
+エラーハンドリング:
+❌ 無効sessionId → 404エラー・セッション一覧へリダイレクト
+❌ 無効sceneId → シナリオ開始シーンへフォールバック
+❌ 完了済みセッション → 読み取り専用モードまたは履歴表示
+```
+
+### **イベント概念との統合**
+
+#### **ルーティング → Event処理の流れ**
+```typescript
+// 1. ルーティングパラメータ取得
+const { sessionId, sceneId } = useParams();
+
+// 2. セッション状態復元
+const sessionState = loadSessionState(sessionId);
+
+// 3. Event処理エンジン初期化
+const eventEngine = useEventEngine({
+  sessionId,
+  startingSceneId: sceneId || sessionState.currentSceneId,
+  currentEventIndex: sessionState.currentEventIndex
+});
+```
+
+#### **Event履歴とURL状態の関係**
+```markdown
+URL状態管理方針:
+✅ sessionId: セッション識別・状態復元のキー
+✅ sceneId: 特定シーン開始用（オプショナル）
+❌ eventId: URL管理対象外（セッション状態で管理）
+❌ choiceIndex: URL管理対象外（一時的な状態）
+
+理由: MVP制約によるシンプルな状態管理、複雑なURL操作の回避
+```
+
+#player-context #mock-data #json-design #trpg-scenarios #data-modeling #mvp-design #routing-integration

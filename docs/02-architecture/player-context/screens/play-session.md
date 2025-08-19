@@ -325,6 +325,83 @@ Scenario: 選択肢の選択と次シーンへの遷移
 - ✅ メモリ使用量の適正性
 ```
 
+## 🛣️ ルーティング統合・画面遷移
+
+### **PlaySessionページ ルーティング仕様（緊急追加）**
+
+#### **ルート定義・パラメータ**
+```typescript
+interface PlaySessionRouting {
+  // メインルート: /player/session/:sessionId/play
+  primary_route: "/player/session/:sessionId/play";
+  
+  // シーン指定ルート: /player/session/:sessionId/play/:sceneId
+  scene_specific_route: "/player/session/:sessionId/play/:sceneId";
+  
+  // パラメータ仕様
+  params: {
+    sessionId: "必須 - Session.id と対応";
+    sceneId: "オプショナル - 特定シーン開始用";
+  };
+  
+  // 遷移元ルート
+  entry_points: {
+    from_session_detail: "/player/session/:sessionId → 参加ボタン";
+    from_session_list: "/player/sessions → 直接参加ボタン";
+    from_bookmark: "ブックマーク・履歴からの復帰（将来）";
+  };
+}
+```
+
+#### **データ取得・状態管理統合**
+```typescript
+interface PlaySessionDataFlow {
+  // URL → データ読み込みフロー
+  initialization: {
+    url_params: "sessionId, sceneId取得";
+    session_validation: "sessionId存在確認・参加権限確認";
+    state_restoration: "LocalStorage経由でのセッション状態復元";
+    event_engine_init: "useEventEngine初期化・開始Event決定";
+  };
+  
+  // Event処理とURL状態の関係
+  url_state_policy: {
+    sessionId: "URL固定 - セッション識別・状態管理キー";
+    sceneId: "初期表示のみ - Event進行中は状態管理で追跡";
+    eventId: "URL管理対象外 - useEventEngine内部状態";
+    choice_state: "URL管理対象外 - 一時的UI状態";
+  };
+}
+```
+
+#### **エラーハンドリング・ルーティング復旧**
+```markdown
+ルーティングエラー対応:
+❌ 無効sessionId → /player/sessions リダイレクト + エラーメッセージ
+❌ 無効sceneId → シナリオ開始シーンへフォールバック
+❌ セッション終了済み → 読み取り専用モード または 履歴表示
+❌ データ取得失敗 → エラー表示 + リトライ + 戻るボタン
+
+MVP制約:
+✅ シンプルエラー表示・基本リダイレクト
+❌ 複雑な復旧フロー・詳細エラー分類
+❌ 高度な状態復元・履歴管理機能
+```
+
+### **PlaySessionContainer統合設計**
+```markdown
+Container責務:
+✅ ルーティングパラメータ取得・バリデーション
+✅ セッション状態復元・useEventEngine初期化
+✅ エラーハンドリング・ルーティング復旧
+✅ PlaySessionViewへの適切なProps受け渡し
+
+packages/ui分離:
+✅ PlaySessionView: プレゼンテーション専用・ルーティング非依存
+✅ useEventEngine: Event処理専用・URL状態非依存
+✅ Container: ルーティング統合・ビジネスロジック統合
+```
+
 ## 🎯 シーン中のEvent処理設計
 
 ### Event概念統合UI/UX

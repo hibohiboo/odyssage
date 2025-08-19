@@ -193,7 +193,7 @@ interface ContentSectionSpec {
    - セッション開始準備
 ```
 
-### インタラクション詳細
+### インタラクション詳細・ルーティング統合
 
 ```typescript
 interface InteractionSpec {
@@ -215,6 +215,52 @@ interface InteractionSpec {
     session_unavailable: "セッション状態変更時の適切な案内";
   };
 }
+```
+
+#### **ルーティング遷移仕様（緊急追加）**
+
+```typescript
+// SessionDetailPage ルーティング遷移パターン
+interface SessionDetailRouting {
+  // 現在ページ: /player/session/:sessionId
+  current_route: "/player/session/:sessionId";
+  params: {
+    sessionId: "URL pathから取得するセッション識別子";
+  };
+  
+  // 遷移元・遷移先ルート
+  navigation: {
+    from: "/player/sessions";                      // セッション一覧から
+    to_play: "/player/session/:sessionId/play";   // プレイ画面へ
+    back_to_list: "/player/sessions";             // 一覧に戻る
+  };
+  
+  // ページロード・データ取得
+  data_loading: {
+    session_data: "params.sessionIdでのセッション詳細取得";
+    scenario_data: "session.scenarioIdでのシナリオ詳細取得"; 
+    validation: "sessionId存在確認・アクセス権限確認";
+  };
+}
+```
+
+#### **Parameter処理・エラーハンドリング**
+
+```markdown
+URLパラメータ処理:
+✅ sessionId: 必須パラメータ・存在確認必須
+✅ セッション取得: Session.id照合・データ読み込み
+✅ シナリオ取得: Session.scenarioId経由でのシナリオデータ取得
+
+エラー時のルーティング:
+❌ 無効sessionId → /player/sessions へリダイレクト
+❌ セッション終了済み → 読み取り専用表示・プレイ不可
+❌ データ取得失敗 → エラー表示・リトライ機能
+
+MVP制約:
+❌ 複雑な権限チェック・認証機能
+❌ 詳細なアクセス制御・参加制限機能
+❌ 高度なエラー復旧・状態管理
 ```
 
 ## 🎯 参加確認フロー

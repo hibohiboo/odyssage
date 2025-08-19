@@ -153,7 +153,7 @@ interface SessionStatusBadges {
    - カードタップ → 詳細画面（モバイル）
 ```
 
-### 操作パターン
+### 操作パターン・ルーティング統合
 
 ```typescript
 interface UserInteractionSpec {
@@ -172,6 +172,45 @@ interface UserInteractionSpec {
   // search_filter: "検索・フィルタリング機能";
   // sort_options: "ソート・並び替え機能";
 }
+```
+
+#### **ルーティング遷移仕様（緊急追加）**
+
+```typescript
+// SessionListPage ルーティング遷移パターン
+interface SessionListRouting {
+  // 現在ページ: /player/sessions
+  current_route: "/player/sessions";
+  
+  // 遷移先ルート
+  transitions: {
+    session_detail: "/player/session/:sessionId";     // 詳細確認
+    direct_play: "/player/session/:sessionId/play";   // 直接参加
+    session_history: "/player/history";               // プレイ履歴（将来）
+  };
+  
+  // 遷移トリガー
+  triggers: {
+    card_click: "session_detail";           // カードクリック → 詳細画面
+    detail_button: "session_detail";        // 詳細ボタン → 詳細画面  
+    join_button: "direct_play";             // 参加ボタン → 直接プレイ
+    history_nav: "session_history";         // 履歴ナビ → 履歴画面
+  };
+}
+```
+
+#### **Navigation実装方針**
+
+```markdown
+遷移実装パターン:
+✅ useNavigate Hook使用: React Router v7標準パターン
+✅ パラメータ受け渡し: sessionId経由でのセッション特定
+✅ 状態管理: 遷移前後での適切な状態保持
+
+MVP制約:
+❌ 複雑な状態受け渡し・クエリパラメータ
+❌ 戻るボタン・履歴スタック管理
+❌ ページ間アニメーション・トランジション効果
 ```
 
 ## ⚡ パフォーマンス・技術仕様

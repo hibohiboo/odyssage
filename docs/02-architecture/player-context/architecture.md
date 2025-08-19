@@ -193,6 +193,70 @@ packages/ui/
 - Context-First アプローチによる境界明確化
 ```
 
+#### **ルーティング設計詳細（緊急追加）**
+
+```typescript
+// app/router/player-routes.ts
+export const playerRoutes = [
+  // セッション一覧・発見
+  {
+    path: "/player/sessions",
+    element: <SessionListPage />,
+    loader: () => ({ sessions: loadAvailableSessions() })
+  },
+  
+  // セッション詳細・参加判断
+  {
+    path: "/player/session/:sessionId", 
+    element: <SessionDetailPage />,
+    loader: ({ params }) => ({ 
+      session: loadSession(params.sessionId),
+      scenario: loadSessionScenario(params.sessionId)
+    })
+  },
+  
+  // プレイセッション（MVP最重要）
+  {
+    path: "/player/session/:sessionId/play",
+    element: <PlaySessionContainer />,
+    loader: ({ params }) => ({
+      sessionId: params.sessionId
+    })
+  },
+  
+  // 特定シーン開始（デバッグ・テスト用）
+  {
+    path: "/player/session/:sessionId/play/:sceneId",
+    element: <PlaySessionContainer />,
+    loader: ({ params }) => ({
+      sessionId: params.sessionId,
+      startingSceneId: params.sceneId
+    })
+  }
+];
+```
+
+#### **ルーティング層アーキテクチャ**
+
+```markdown
+## ルーティング責務分離
+
+✅ **app/router/**: ルート定義・設定
+- player-routes.ts: Player文脈ルート定義
+- route-guards.ts: MVP範囲内の基本ガード（将来）
+- error-boundaries.ts: ルートレベルエラーハンドリング
+
+✅ **pages/**: ページコンポーネント・データローダー統合
+- SessionListPage: セッション一覧・ルーティング統合
+- SessionDetailPage: セッション詳細・パラメータ処理
+- PlaySessionContainer: プレイセッション・状態管理
+
+✅ **MVP制約遵守**:
+❌ 認証ガード・権限制御（Phase 4以降）
+❌ 複雑なネストルート・レイアウト
+❌ 高度なプリロード・コード分割戦略
+```
+
 ### Pages Layer: Player文脈ページ構成
 
 ```markdown
@@ -526,5 +590,10 @@ interface ContextEvolutionStrategy {
 - 2025-08-17: MVP制約調整（設計担当）
   - パフォーマンス最適化要件をMVP範囲外へ調整
   - 理由: POフィードバック「パフォーマンス要件もMVPのやらないこととしましょう」への対応
+- 2025-08-18: **ルーティング層アーキテクチャ追加版**（設計担当）
+  - App Layer: ルーティング設計詳細・Player文脈ルート定義追加
+  - ルーティング責務分離・MVP制約遵守のアーキテクチャ明確化
+  - React Router v7統合戦略・データローダーパターン統合
+  - 理由: ルーティング設計の緊急対応、Phase 2動作確認への技術基盤提供
 
-#player-context #architecture #fsd #context-first #react #typescript #mvp-design
+#player-context #architecture #fsd #context-first #react #typescript #mvp-design #routing-architecture
