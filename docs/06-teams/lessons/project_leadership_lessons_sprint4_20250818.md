@@ -231,6 +231,10 @@ export function PlaySessionContainer() {
 
 ---
 
-**この学習・改善を次Sprint以降に継続的に活用し、プロジェクト成功・チーム成長を実現する。**
+**次段階適用事項**:
+
+1. **責務分界確認**: 作業開始時・定期監視・早期調整
+2. **文書管理ルール**: 設計決定即座化・整合性確保  
+3. **協働効率化**: 専門性活用・自律性確保・課題予防
 
 #leadership-lessons #responsibility-boundary #continuous-improvement #team-collaboration #knowledge-management
