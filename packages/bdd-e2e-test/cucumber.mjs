@@ -2,9 +2,14 @@ export default {
   paths: [
     process.env.CI === 'true'
       ? '**/features/*.feature'
-      : '**/features/scene-optimistic-create-test.feature',
+      : '**/features/play-experience.feature',
   ],
-  import: ['**/step-definitions/*.steps.ts'],
+  import: [
+    // '**/step-definitions/*.steps.ts'
+    // Player文脈テスト用の最小限のstep definitions
+    '**/step-definitions/common.steps.ts',
+    '**/step-definitions/play-experience.steps.ts',
+  ],
   loader: ['ts-node/esm'],
   format: [
     'summary',
