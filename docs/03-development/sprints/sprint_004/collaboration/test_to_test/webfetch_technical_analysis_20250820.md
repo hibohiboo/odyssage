@@ -104,6 +104,38 @@ curl -v http://127.0.0.1:5173/
 curl -o frontend_top.html http://127.0.0.1:5173/
 ```
 
+### **✅ 実証テスト結果**
+
+#### **接続成功確認**
+```
+HTTP/1.1 200 OK
+Content-Type: text/html
+Content-Length: 625
+```
+
+#### **取得したHTML構造**
+```html
+<!doctype html>
+<html lang="ja">
+  <head>
+    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";</script>
+    <script type="module" src="/@vite/client"></script>
+    <meta charset="UTF-8" />
+    <title>Odyssage</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+```
+
+#### **重要な発見：SPA (Client-Side Routing)**
+- ✅ **全URL同一HTML**: `/`、`/player/sessions`、`/player/session/.../play` 全て同じHTML
+- ✅ **React Router**: クライアントサイドでルーティング処理
+- ✅ **動的レンダリング**: `<div id="root"></div>` に React コンポーネントが動的マウント
+- ⚠️ **curl制約確定**: 静的HTML取得のみ・動的コンテンツ確認不可
+
 ### **Player文脈URL直接アクセス**
 ```bash
 # プレイ画面アクセス
