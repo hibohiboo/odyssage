@@ -34,11 +34,19 @@
 
 ### Priority 3: Phase 2実装の実際UI構造確認
 
-- [ ] フロントエンド画面の実際動作確認（アクセス問題解決後）
-  - [ ] PlaySessionPage.tsx の実際のルーティング・UI表示確認
-  - [ ] PlaySessionContainer.tsx の実際のEvent処理・状態管理確認
-  - [ ] 実際のdata-testid・CSS class・表示テキスト調査（段階的）
+- [x] フロントエンド画面の実際動作確認（人間によるブラウザ確認完了）
+  - [x] PlaySessionPage.tsx の実際のルーティング・UI表示確認
+  - [x] 基本的なボタン操作確認・動作正常
+  - [x] data-testid属性未実装の確認
   - [ ] LocalStorage依存データ形式・UI表示の正確な把握
+
+### Priority 4: 実装担当への改善依頼
+
+- [x] data-testid属性追加実装依頼書作成
+  - [x] 必要な全data-testid属性の具体的指定
+  - [x] 実装箇所・ファイル・優先度の明確化  
+  - [x] 実装後の期待効果・工数見積提示
+  - [ ] 実装担当への依頼・対応確認
 
 ### Priority 3: 段階的BDDテスト実装（1シナリオずつ）
 
