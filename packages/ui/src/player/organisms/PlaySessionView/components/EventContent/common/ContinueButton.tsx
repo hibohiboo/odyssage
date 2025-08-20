@@ -15,6 +15,7 @@ export function ContinueButton({ onContinue }: ContinueButtonProps) {
         onClick={onContinue}
         variant="continue"
         className="px-8 py-3"
+        data-testid="continue-button"
       >
         続ける
       </EventButton>

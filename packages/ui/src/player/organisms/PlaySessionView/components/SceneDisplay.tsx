@@ -6,11 +6,12 @@ interface SceneDisplayProps {
 
 export function SceneDisplay({ scene }: SceneDisplayProps) {
   return (
-    <div className="relative">
+    <div data-testid="scene-display" className="relative">
       {/* 背景画像 */}
-      <div className="aspect-video relative overflow-hidden">
+      <div data-testid="scene-background" className="aspect-video relative overflow-hidden">
         {scene.backgroundImage ? (
           <img
+            data-testid="scene-image"
             src={scene.backgroundImage}
             alt={scene.title}
             className="w-full h-full object-cover"
@@ -24,7 +25,7 @@ export function SceneDisplay({ scene }: SceneDisplayProps) {
 
       {/* シーンタイトル */}
       <div className="absolute bottom-4 left-4 right-4">
-        <h2 className="text-white text-lg font-semibold shadow-lg">
+        <h2 data-testid="scene-title" className="text-white text-lg font-semibold shadow-lg">
           {scene.title}
         </h2>
       </div>
