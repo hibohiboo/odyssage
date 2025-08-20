@@ -53,7 +53,7 @@ Given('アプリが起動している', async function (this) {
   await this.page.goto('http://localhost:5173');
 });
 
-Given('テストセッション「{string}」が利用可能である', async function (sessionId: string) {
+Given('テストセッション {string} が利用可能である', async function (sessionId: string) {
   // テストセッションのサンプルデータをLocalStorageに設定
   const sampleSession = {
     id: sessionId,

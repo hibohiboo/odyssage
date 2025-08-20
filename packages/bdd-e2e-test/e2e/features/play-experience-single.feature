@@ -7,7 +7,7 @@ Feature: プレイ体験 - 初期表示のみ
 
   Background:
     Given プレイヤーがアプリにアクセスしている
-    And テストセッション「test-session-001」が利用可能である
+    And テストセッション "test-session-001" が利用可能である
 
   Scenario: プレイ画面の初期表示
     Given プレイヤーがプレイ画面にアクセスする
