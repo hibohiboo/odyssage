@@ -20,11 +20,11 @@
 
 ### Priority 2: Phase 2実装の実際UI構造確認
 
-- [current] フロントエンド起動・実際の画面動作確認
+- [x] フロントエンド起動・実際の画面動作確認
   - [current] PlaySessionPage.tsx の実際のルーティング・UI表示確認
-  - [current] PlaySessionContainer.tsx の実際のEvent処理・状態管理確認
-  - [current] 実際のdata-testid・CSS class・表示テキスト調査
-  - [current] LocalStorage依存データ形式・UI表示の正確な把握
+  - [ ] PlaySessionContainer.tsx の実際のEvent処理・状態管理確認
+  - [ ] 実際のdata-testid・CSS class・表示テキスト調査
+  - [ ] LocalStorage依存データ形式・UI表示の正確な把握
 
 ### Priority 3: 段階的BDDテスト実装（1シナリオずつ）
 
