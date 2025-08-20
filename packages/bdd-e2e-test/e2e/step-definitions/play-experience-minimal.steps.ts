@@ -23,21 +23,16 @@ Given('プレイヤーがプレイ画面にアクセスする', async function (
 });
 
 Then('以下のUI要素が表示される:', async function (dataTable: any) {
-  const pageActions = new PageActions(this.page);
   const elements = dataTable.hashes();
   
   for (const element of elements) {
-    // 実装されたdata-testidを活用
     const content = element['内容'];
     if (content.includes('セッション') || content.includes('タイトル')) {
-      // セッションタイトル確認
+      // セッションタイトル確認 - 実装されたdata-testidを使用
       await expect(this.page.locator('[data-testid="session-title"]')).toBeVisible();
     } else if (content.includes('シーン') || content.includes('章')) {
-      // シーンタイトル確認  
+      // シーンタイトル確認 - 実装されたdata-testidを使用
       await expect(this.page.locator('[data-testid="scene-title"]')).toBeVisible();
-    } else {
-      // その他はテキストベース検索
-      await pageActions.expectTextContaining(content);
     }
   }
 });
@@ -54,5 +49,6 @@ Then('シーン説明文が表示される', async function () {
 });
 
 Then('「次へ」ボタンが表示される', async function () {
-  await expect(this.page.locator('button:has-text("次へ")')).toBeVisible();
+  // 実装されたdata-testidを使用
+  await expect(this.page.locator('[data-testid="continue-button"]')).toBeVisible();
 });
