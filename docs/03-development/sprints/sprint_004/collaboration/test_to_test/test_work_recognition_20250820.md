@@ -8,48 +8,57 @@
 
 ## 📋 現在認識している作業項目 TODO LIST
 
-### Priority 1: Phase 2実装確認・動作テスト
+### Priority 1: 初回BDD実行結果分析・改善方針策定
 
-- [x] Phase 2実装完了状況の確認と動作テスト
-  - [x] PlaySessionPage.tsx (ルーティング・パラメータ処理) の動作確認
-  - [x] PlaySessionContainer.tsx (Event処理・状態管理) の動作確認
-  - [x] SceneLoader.ts、AutoSaveService.ts の機能確認
-  - [x] LocalStorage基盤の動作確認
-  - [x] 指定URLでの動作確認: http://localhost:5173/player/session/test-session-001/play
+- [x] 初回BDDテスト実行（play-experience.feature）
+  - [x] 12シナリオ実行: 7失敗、10未定義ステップ、60成功ステップ
+  - [x] 主要問題特定: 実装とテストの不整合・一気実装の弊害
+- [x] BDD実行結果分析・フィードバックドキュメント作成
+  - [x] 失敗原因分析: UI構造不一致・段階的アプローチ不採用
+  - [x] 改善方針策定: Red→Green→Refactor 1シナリオずつ実装
+- [x] TODOリスト更新（段階的アプローチ反映）
 
-### Priority 2: BDD Feature品質確認
+### Priority 2: Phase 2実装の実際UI構造確認
 
-- [x] 既存BDD Featureファイルの確認と品質評価
-  - [ ] scenario-discovery.feature の内容確認
-  - [ ] session-joining.feature の内容確認
-  - [x] play-experience.feature の内容確認
-  - [ ] MVP制約適合性の確認
-  - [ ] 実装可能性・カバレッジの評価
+- [ ] フロントエンド起動・実際の画面動作確認
+  - [ ] PlaySessionPage.tsx の実際のルーティング・UI表示確認
+  - [ ] PlaySessionContainer.tsx の実際のEvent処理・状態管理確認
+  - [ ] 実際のdata-testid・CSS class・表示テキスト調査
+  - [ ] LocalStorage依存データ形式・UI表示の正確な把握
 
-### Priority 3: テスト実行環境準備
+### Priority 3: 段階的BDDテスト実装（1シナリオずつ）
 
-- [ ] BDDテスト実行環境のセットアップと動作確認
-  - [ ] packages/bdd-e2e-test/ ディレクトリ構造確認
-  - [ ] Cucumber/Playwright環境の動作確認
-  - [ ] テストデータ・モックデータの確認
-  - [ ] CI/CD統合状況の確認
+- [ ] **第1シナリオ**: "プレイ画面の初期表示"
+  - [ ] 実装に合わせたstep definitions修正
+  - [ ] Red→Green→Refactor実行
+  - [ ] 1シナリオ完全成功確認
 
-### Priority 4: BDDテスト実行
+- [ ] **第2シナリオ**: "初回シーン内容の表示"
+  - [ ] 前シナリオ成功を基盤に段階的拡張
+  - [ ] 新規undefined stepsの実装
+  - [ ] Red→Green→Refactor実行
 
-- [ ] Phase 2実装に対するBDDテスト実行
-  - [ ] scenario-discovery.feature 実行
-  - [ ] session-joining.feature 実行
-  - [ ] play-experience.feature 実行
-  - [ ] 正常系・異常系・エッジケース確認
-  - [ ] レスポンシブ・アクセシビリティ確認
+- [ ] **第3シナリオ**: "基本的な選択肢表示・選択"
+  - [ ] 選択肢UI・操作フローの実装対応
+  - [ ] Red→Green→Refactor実行
 
-### Priority 5: 結果分析・報告
+- [ ] **残り9シナリオ**: 順次段階的実装
+  - [ ] 各シナリオでRed→Green→Refactorサイクル
+  - [ ] 累積品質の段階的向上確認
 
-- [ ] テスト結果の分析とバグレポート作成
-  - [ ] 発見バグの詳細記録・再現手順作成
-  - [ ] 品質問題の分類・優先度付け
-  - [ ] 実装担当へのフィードバック作成
-  - [ ] 改善提案・次期アクション計画作成
+### Priority 4: 品質強化・統合確認
+
+- [ ] 全シナリオGreen達成後の統合テスト
+  - [ ] 12シナリオ全体の安定実行確認
+  - [ ] パフォーマンス・レスポンシブ・エラーハンドリング検証
+  - [ ] CI/CD環境での自動実行確認
+
+### Priority 5: 実装フィードバック・改善提案
+
+- [ ] Phase 2実装品質評価・バグレポート作成
+  - [ ] BDDテストで発見した品質問題の詳細記録
+  - [ ] 実装担当へのフィードバック・改善提案作成
+  - [ ] MVP制約遵守・技術制約対応の品質確認
 
 ---
 

@@ -38,7 +38,7 @@ Given('プレイヤーがセッション {string} に参加済みである', asy
     joinedAt: new Date().toISOString()
   };
   
-  await this.page.evaluate((data) => {
+  await this.page.evaluate((data: any) => {
     localStorage.setItem('odyssage_current_session', JSON.stringify(data));
   }, sessionData);
 });
@@ -92,7 +92,7 @@ Given('プレイセッションが開始されている', async function () {
     }
   ];
   
-  await this.page.evaluate((scenes) => {
+  await this.page.evaluate((scenes: any) => {
     localStorage.setItem('odyssage_session_test-session-001_scenes', JSON.stringify(scenes));
   }, sampleScenes);
 });
@@ -194,7 +194,7 @@ Given('プレイヤーが最終章をプレイしている', async function () {
     ]
   };
   
-  await this.page.evaluate((scene) => {
+  await this.page.evaluate((scene: any) => {
     const scenes = JSON.parse(localStorage.getItem('odyssage_session_test-session-001_scenes') || '[]');
     scenes.push(scene);
     localStorage.setItem('odyssage_session_test-session-001_scenes', JSON.stringify(scenes));
@@ -230,7 +230,7 @@ When('プレイヤーが画面を閉じる', async function () {
     timestamp: new Date().toISOString()
   };
   
-  await this.page.evaluate((state) => {
+  await this.page.evaluate((state: any) => {
     localStorage.setItem('odyssage_play_state', JSON.stringify(state));
   }, currentState);
 });
@@ -328,10 +328,10 @@ Then('選択した選択肢がハイライトされる', async function () {
   await expect(this.page.locator('button:has-text("準備を整えてから向かう（慎重）")[class*="selected"]')).toBeVisible({ timeout: 3000 });
 });
 
-Then('{int}秒以内に次のシーンに遷移する', async function (seconds) {
+Then('{int}秒以内に次のシーンに遷移する', async function (seconds: number) {
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextContaining('第2章：準備の時間');
-}, { timeout: 10000 });
+});
 
 Then('次のシーンとして「{string}」が表示される', async function (sceneName) {
   const pageActions = new PageActions(this.page);
@@ -423,19 +423,19 @@ Then('「前のシーンに戻る」ボタンが表示される', async function
   await expect(this.page.locator('button:has-text("前のシーンに戻る")')).toBeVisible();
 });
 
-Then('{int}秒以内に選択の受付が表示される', async function (seconds) {
+Then('{int}秒以内に選択の受付が表示される', async function (seconds: number) {
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextContaining('選択を受付けました');
 });
 
-Then('{int}秒以内に次のシーンの表示が開始される', async function (seconds) {
+Then('{int}秒以内に次のシーンの表示が開始される', async function (seconds: number) {
   // シーン遷移の開始を示すローディング表示等をチェック
   await this.page.waitForTimeout(1000);
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextContaining('第2章');
 });
 
-Then('シーン画像の読み込みが{int}秒以内に完了する', async function (seconds) {
+Then('シーン画像の読み込みが{int}秒以内に完了する', async function (seconds: number) {
   await expect(this.page.locator('[data-testid="scene-background"]')).toBeVisible({ timeout: seconds * 1000 });
 });
 
