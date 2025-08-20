@@ -18,12 +18,20 @@
   - [x] 改善方針策定: Red→Green→Refactor 1シナリオずつ実装
 - [x] TODOリスト更新（段階的アプローチ反映）
 
-### Priority 2: Phase 2実装の実際UI構造確認
+### Priority 2: ローカルホストアクセス問題解決
 
-- [x] フロントエンド起動・実際の画面動作確認
-  - [x] PlaySessionPage.tsx の実際のルーティング・UI表示確認
+- [current] localhost:5173 アクセス失敗問題の調査・解決
+  - [current] http://127.0.0.1:5173/ での代替アクセス試行
+  - [ ] サーバー状態確認（netstat・プロセス確認）  
+  - [ ] 代替アクセス手段検討（ブラウザ確認依頼等）
+  - [ ] 根本原因特定・解決方法確立
+
+### Priority 3: Phase 2実装の実際UI構造確認
+
+- [ ] フロントエンド画面の実際動作確認（アクセス問題解決後）
+  - [ ] PlaySessionPage.tsx の実際のルーティング・UI表示確認
   - [ ] PlaySessionContainer.tsx の実際のEvent処理・状態管理確認
-  - [current] 実際のdata-testid・CSS class・表示テキスト調査（ChoiceEventContentのみ）
+  - [ ] 実際のdata-testid・CSS class・表示テキスト調査（段階的）
   - [ ] LocalStorage依存データ形式・UI表示の正確な把握
 
 ### Priority 3: 段階的BDDテスト実装（1シナリオずつ）
