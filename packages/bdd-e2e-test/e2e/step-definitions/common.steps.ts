@@ -52,6 +52,36 @@ After(async function (scenario) {
 Given('アプリが起動している', async function (this) {
   await this.page.goto('http://localhost:5173');
 });
+
+Given('テストセッション「{string}」が利用可能である', async function (sessionId: string) {
+  // テストセッションのサンプルデータをLocalStorageに設定
+  const sampleSession = {
+    id: sessionId,
+    title: 'テストセッション：魔法の森の冒険',
+    description: 'BDDテスト用サンプルセッション',
+    currentSceneId: 'forest_entrance'
+  };
+  
+  const sampleScenes = [
+    {
+      id: 'forest_entrance',
+      title: '第1章：森の入り口',
+      description: 'あなたは魔法の森の入り口に立っています。深い緑に覆われた小道が奥へと続いています。',
+      backgroundImage: '/images/forest-entrance.jpg',
+      events: [
+        {
+          type: 'narrative',
+          content: 'あなたは魔法の森の入り口に立っています。'
+        }
+      ]
+    }
+  ];
+  
+  await this.page.evaluate((data: any) => {
+    localStorage.setItem(`odyssage_session_${data.session.id}`, JSON.stringify(data.session));
+    localStorage.setItem(`odyssage_session_${data.session.id}_scenes`, JSON.stringify(data.scenes));
+  }, { session: sampleSession, scenes: sampleScenes });
+});
 When(
   'ユーザーが「 {string} 」リンクをクリックする',
   async function (this, text) {
