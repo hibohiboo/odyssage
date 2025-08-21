@@ -59,9 +59,9 @@ Given('プレイヤーがプレイ画面を表示している', async function (
   await this.page.waitForLoadState('networkidle');
 });
 
-Given('現在のシーンが「第1章：森の入り口」である', async function () {
+Given('現在のシーンが {string} である', async function (sceneName: string) {
   // シーンタイトルが表示されていることを確認（テキストベース）
-  await expect(this.page.locator('body')).toContainText('第1章：森の入り口');
+  await expect(this.page.locator('body')).toContainText(sceneName);
 });
 
 Then('以下のシーン説明が表示される:', async function (docString: string) {
@@ -72,7 +72,7 @@ Then('以下のシーン説明が表示される:', async function (docString: s
   }
 });
 
-Then('シーンの背景画像として「森の入り口の風景」が表示される', async function () {
+Then('シーンの背景画像として {string} が表示される', async function (imageDescription: string) {
   // 背景画像コンテナが表示されていることを確認（data-testidではなく基本的な要素確認）
   await expect(this.page.locator('div[class*="aspect-video"], img')).toBeVisible();
 });
