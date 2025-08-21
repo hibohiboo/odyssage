@@ -65,13 +65,13 @@ Given('テストセッション {string} が利用可能である', async functi
   const sampleScenes = [
     {
       id: 'forest_entrance',
-      title: '第1章：森の入り口',
-      description: 'あなたは魔法の森の入り口に立っています。深い緑に覆われた小道が奥へと続いています。',
+      title: '古い森の入り口',
+      description: 'あなたは古い森の入り口に立っています。深い霧が漂い、木々の向こうから不思議な音が聞こえてきます。',
       backgroundImage: '/images/forest-entrance.jpg',
       events: [
         {
           type: 'narrative',
-          content: 'あなたは魔法の森の入り口に立っています。'
+          content: 'あなたは古い森の入り口に立っています。'
         }
       ]
     }
