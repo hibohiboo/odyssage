@@ -16,11 +16,7 @@ export function AutoSaveIndicator({ status }: AutoSaveIndicatorProps) {
   const config = AUTO_SAVE_CONFIG[status as keyof typeof AUTO_SAVE_CONFIG];
 
   return (
-    <div 
-      data-testid="autosave-status" 
-      data-status={status}
-      className={`text-xs ${config.color} flex items-center`}
-    >
+    <div className={`text-xs ${config.color} flex items-center`}>
       {status === 'saving' && (
         <div className="animate-spin rounded-full h-3 w-3 border-b border-current mr-1" />
       )}

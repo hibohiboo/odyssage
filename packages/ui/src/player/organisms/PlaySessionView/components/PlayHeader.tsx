@@ -16,17 +16,13 @@ export function PlayHeader({
   onExitSession,
 }: PlayHeaderProps) {
   return (
-    <header 
-      data-testid="play-header"
-      className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between"
-    >
+    <header className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
       <div className="flex items-center space-x-3">
         <EventButton
           onClick={onExitSession}
           variant="secondary"
           className="text-sm px-3 py-1"
           ariaLabel="セッション終了"
-          data-testid="exit-session-button"
         >
           終了
         </EventButton>
@@ -45,7 +41,6 @@ export function PlayHeader({
         variant="secondary"
         className="text-sm px-3 py-1"
         ariaLabel="メニュー"
-        data-testid="menu-button"
       >
         ⋯
       </EventButton>

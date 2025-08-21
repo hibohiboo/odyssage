@@ -14,10 +14,6 @@ export interface ChoiceOptionProps {
   className?: string;
   /** アクセシビリティ用ラベル */
   ariaLabel?: string;
-  /** テスト用ID */
-  'data-testid'?: string;
-  /** 選択肢ID */
-  'data-choice-id'?: string;
 }
 
 const getButtonClasses = (disabled: boolean, selected: boolean, className: string) => {
@@ -57,8 +53,6 @@ export function ChoiceOption({
   selected = false,
   className = '',
   ariaLabel,
-  'data-testid': dataTestId,
-  'data-choice-id': dataChoiceId,
 }: ChoiceOptionProps) {
   const classes = getButtonClasses(disabled, selected, className);
 
@@ -69,8 +63,6 @@ export function ChoiceOption({
       disabled={disabled}
       aria-label={ariaLabel || text}
       className={classes}
-      data-testid={dataTestId}
-      data-choice-id={dataChoiceId}
     >
       <div className="flex flex-col gap-2">
         <div className="font-medium text-base leading-relaxed">

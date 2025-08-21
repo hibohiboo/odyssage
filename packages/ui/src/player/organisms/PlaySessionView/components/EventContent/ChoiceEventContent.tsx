@@ -15,18 +15,14 @@ export function ChoiceEventContent({ event, onChoiceSelect }: ChoiceEventContent
   return (
     <EventContentBase>
       <EventText text={event.content} />
-      <div data-testid="choice-container" className="space-y-3">
-        <h3 data-testid="choice-instruction" className="font-medium text-gray-900">
-          選択肢を選んでください：
-        </h3>
-        {event.data.choices.map((choice, index) => (
+      <div className="space-y-3">
+        <h3 className="font-medium text-gray-900">選択肢を選んでください：</h3>
+        {event.data.choices.map((choice) => (
           <ChoiceOption
             key={choice.id}
             text={choice.text}
             description={choice.description}
             onClick={() => onChoiceSelect(choice.id)}
-            data-testid={`choice-${index + 1}`}
-            data-choice-id={choice.id}
           />
         ))}
       </div>

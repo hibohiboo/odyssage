@@ -11,9 +11,7 @@ export function NarrativeEventContent({ event, onContinue }: NarrativeEventConte
 
   return (
     <EventContentBase>
-      <div data-testid="narrative-content">
-        <EventText text={narrativeText} allowLineBreaks />
-      </div>
+      <EventText text={narrativeText} allowLineBreaks />
       <ContinueButton onContinue={onContinue} />
     </EventContentBase>
   );

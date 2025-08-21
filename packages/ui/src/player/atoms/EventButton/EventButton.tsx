@@ -10,7 +10,6 @@ export interface EventButtonProps {
   loading?: boolean;
   className?: string;
   ariaLabel?: string;
-  'data-testid'?: string;
 }
 
 const VARIANT_STYLES = {
@@ -60,7 +59,6 @@ export function EventButton({
   loading = false,
   className = '',
   ariaLabel,
-  'data-testid': dataTestId,
 }: EventButtonProps) {
   const isDisabled = disabled || loading;
   const classes = getButtonClasses(variant, disabled, loading, className);
@@ -73,7 +71,6 @@ export function EventButton({
       disabled={isDisabled}
       aria-label={ariaLabel}
       className={classes}
-      data-testid={dataTestId}
     >
       {content}
     </button>
