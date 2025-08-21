@@ -72,6 +72,27 @@ Given('テストセッション {string} が利用可能である', async functi
         {
           type: 'narrative',
           content: 'あなたは古い森の入り口に立っています。'
+        },
+        {
+          type: 'choice',
+          content: '次の行動を選択してください',
+          choices: [
+            {
+              id: 'choice-deep',
+              text: '森の奥へ進む',
+              nextSceneId: 'deep_forest'
+            },
+            {
+              id: 'choice-safe',
+              text: '安全な道を探す',
+              nextSceneId: 'safe_path'
+            },
+            {
+              id: 'choice-return',
+              text: '村へ戻る',
+              nextSceneId: 'village_return'
+            }
+          ]
         }
       ]
     }

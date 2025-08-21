@@ -80,3 +80,41 @@ Then('シーンの背景画像として {string} が表示される', async func
   // TODO: 目視確認項目 - 実際の背景画像が期待する内容（imageDescription）と一致するか確認
   console.log(`期待する背景画像: ${imageDescription}`);
 });
+
+// 第3シナリオ「基本的な選択肢表示・選択」専用のsteps
+Given('プレイヤーが {string} シーンを表示している', async function (sceneName: string) {
+  await this.page.goto('http://localhost:5173/player/session/test-session-001/play');
+  await this.page.waitForLoadState('networkidle');
+  // シーンが表示されていることを確認
+  await expect(this.page.locator('body')).toContainText(sceneName);
+});
+
+When('プレイヤーが「続ける」ボタンをクリックする', async function () {
+  await this.page.locator('button:has-text("続ける")').click();
+  await this.page.waitForTimeout(1000); // 選択肢表示の待機
+});
+
+Then('以下の選択肢が表示される:', async function (dataTable: any) {
+  const choices = dataTable.hashes();
+  
+  for (const choice of choices) {
+    const choiceText = choice['選択肢テキスト'];
+    // 選択肢ボタンが表示されることを確認（テキストベース）
+    await expect(this.page.locator(`button:has-text("${choiceText}")`)).toBeVisible();
+  }
+});
+
+Then('各選択肢がクリック可能な状態で表示される', async function () {
+  // 選択肢ボタンがクリック可能状態であることを確認
+  const choiceButtons = this.page.locator('button:has-text("森の奥へ進む"), button:has-text("安全な道を探す"), button:has-text("村へ戻る")');
+  const count = await choiceButtons.count();
+  
+  for (let i = 0; i < count; i++) {
+    await expect(choiceButtons.nth(i)).toBeEnabled();
+  }
+});
+
+Then('選択肢の下に「選択してください」メッセージが表示される', async function () {
+  // 選択指示メッセージの表示確認
+  await expect(this.page.locator('body')).toContainText('選択してください');
+});
