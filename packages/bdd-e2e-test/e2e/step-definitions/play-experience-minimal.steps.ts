@@ -73,9 +73,9 @@ Then('以下のシーン説明が表示される:', async function (docString: s
 });
 
 Then('シーンの背景画像として {string} が表示される', async function (imageDescription: string) {
-  // 背景画像コンテナが表示されていることを確認
+  // 背景画像コンテナが表示されていることを確認（strict mode対応で特定要素を指定）
   // 注意: imageDescriptionの内容確認は自動テストでは困難なため、要素の存在確認のみ実施
-  await expect(this.page.locator('div[class*="aspect-video"], img')).toBeVisible();
+  await expect(this.page.locator('[data-testid="scene-background"]')).toBeVisible();
   
   // TODO: 目視確認項目 - 実際の背景画像が期待する内容（imageDescription）と一致するか確認
   console.log(`期待する背景画像: ${imageDescription}`);
