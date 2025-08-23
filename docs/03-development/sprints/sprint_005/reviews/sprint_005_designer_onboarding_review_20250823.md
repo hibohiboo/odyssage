@@ -25,9 +25,9 @@
 - **影響**: 役割理解・品質基準・協働プロセスの認識不足
 
 #### **2. BDD現状確認の情報不足**
-- **現状**: 3つのBDDファイルへの言及があるも詳細情報が不足
-- **問題**: 実際の実装状況・Green/Red状態の正確性が不明
-- **影響**: 現状認識のズレ・計画立案の根拠不足
+- **現状**: 前スプリント成果のplay-experience-single.featureのみが完成・残り2画面の新規BDD作成が必要
+- **問題**: 残り2画面の実装状況・Player価値観点での優先度評価が不足
+- **影響**: 新規BDD作成計画の根拠不足・段階的実行の判断材料不足
 
 #### **3. Phase実行順序の曖昧性**
 - **現状**: Phase 1-3の設定はあるが実行順序・依存関係が不明確
@@ -96,10 +96,8 @@
 1. **[設計担当専用ガイド](../../06-teams/roles/design-specialist.md)** (20分・基本必須)
 2. **[段階的試行チーム体制](../../06-teams/README.md)** (15分・協働原則)
 3. **[Sprint 4レトロスペクティブ](../../../sprint_004/sprint_004_retrospective_20250822.md)** (10分・成果確認)
-4. **プレイヤー文脈BDDファイル** (20分・現状確認必須):
-   - `play-experience-single.feature`
-   - `scenario-discovery.feature` 
-   - `session-joining.feature`
+4. **プレイヤー文脈BDDファイル** (10分・前スプリント成果確認):
+   - `packages/bdd-e2e-test/e2e/features/player/play-experience-single.feature`（完成済み・参考パターン）
 ```
 
 ### **Priority 2: 現状確認タスクの具体化**
@@ -108,16 +106,16 @@
 #### **Task 1.1: Player文脈BDD現状確認（改善版）**
 
 **事前実行必須事項**:
-1. **BDDテスト実行**: 3ファイルの実際の実行・結果確認
-2. **実装状況調査**: 対応する画面・機能の存在・動作確認
-3. **一致性検証**: BDD仕様と実装の整合性チェック
+1. **既存BDD確認**: play-experience-single.featureの内容・実装状況確認
+2. **残り2画面の特定**: セッション一覧 vs セッション参加の選択・優先度決定
+3. **新規BDD作成準備**: packages/bdd-e2e-test/e2e/features/player/配下での作成計画
 
 **確認・記録すべき項目**:
-- [ ] play-experience-single.feature: Green/Red状態・実装完成度
-- [ ] scenario-discovery.feature: Green/Red状態・実装完成度  
-- [ ] session-joining.feature: 削除理由・代替実装の必要性
-- [ ] 各画面の実際の動作確認・ユーザビリティ評価
-- [ ] Player価値観点での優先度評価・選択根拠
+- [ ] play-experience-single.feature: 完成済み実装との整合性確認・成功パターン分析
+- [ ] セッション一覧画面: 現在の実装状況・Player価値観点での重要度評価
+- [ ] セッション参加画面: 現在の実装状況・Player価値観点での重要度評価
+- [ ] 選択した1画面のBDD作成計画・Player価値への貢献度評価
+- [ ] packages/bdd-e2e-test/e2e/features/player/配下での新規.feature作成準備
 ```
 
 ### **Priority 3: Phase実行順序の明確化**
@@ -127,15 +125,15 @@
 
 #### **Phase 1: 現状確認・分析（48時間以内完了必須）**
 1. 必読資料の完読・理解（design-specialist.mdから開始）
-2. BDDテスト実行・現状確認・記録
-3. 実装状況調査・Player価値評価
+2. play-experience-single.feature確認・成功パターン分析
+3. セッション一覧・セッション参加画面の実装状況調査・Player価値評価
 4. セッション一覧 vs セッション参加の優先度決定
 
 #### **Phase 2: 選択画面の設計（Phase 1完了後開始）**
-1. 選択画面のBDD設計・作成
+1. packages/bdd-e2e-test/e2e/features/player/配下での新規.feature作成
 2. UI/UX設計・Player体験フローの最適化
 3. 実装担当との協働・段階的実装開始
-4. テスト実行・品質確認・改善
+4. BDDテスト実行・品質確認・改善
 
 #### **Phase 3: 他文脈展開準備（Phase 2完全完了後）**
 1. Player文脈成功パターンの分析・抽象化
