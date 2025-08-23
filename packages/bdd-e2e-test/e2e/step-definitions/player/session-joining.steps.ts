@@ -27,6 +27,13 @@ Given('プレイヤーがセッション詳細画面を表示している', asyn
   // セッション詳細画面への遷移（実装に応じてURLを調整）
   await this.page.goto('http://localhost:5173/player/sessions/test-session-join');
   await this.page.waitForLoadState('networkidle');
+  
+  // 404エラーが発生していないことを確認
+  const is404Error = await this.page.locator('body').textContent();
+  if (is404Error?.includes('404 Not Found')) {
+    throw new Error('セッション詳細画面が実装されていません（404エラー）');
+  }
+  
   console.log('セッション詳細画面にアクセス');
 });
 
@@ -55,12 +62,9 @@ When('プレイヤーが「このセッションに参加」ボタンをクリ�
   }
 
   if (!clicked) {
-    console.log('【実装確認必要】参加ボタンが見つかりません');
     const allButtons = await this.page.locator('button').allTextContents();
     console.log('利用可能なボタン:', allButtons);
-    
-    // 実装待ちの場合は、この段階では警告のみ
-    console.log('参加機能の実装待ち - テストは継続します');
+    throw new Error('セッション参加ボタンが実装されていません');
   }
   
   await this.page.waitForTimeout(1000); // ダイアログ表示待機
@@ -92,14 +96,9 @@ Then('参加確認ダイアログが表示される', async function () {
   }
 
   if (!dialogFound) {
-    console.log('【実装確認必要】参加確認ダイアログが表示されていません');
-    
-    // ページ内容をデバッグ出力
     const bodyText = await this.page.locator('body').textContent();
     console.log('現在のページ内容（最初の300文字）:', bodyText?.substring(0, 300));
-    
-    // 実装待ちの場合は、この段階では警告のみ
-    console.log('参加確認ダイアログの実装待ち - テストは継続します');
+    throw new Error('参加確認ダイアログが実装されていません');
   }
 });
 
@@ -156,8 +155,7 @@ Then('「参加する」「キャンセル」ボタンが表示される', async
     const allButtons = await this.page.locator('button').allTextContents();
     console.log('利用可能なボタン:', allButtons);
     
-    // 実装待ちの場合は、この段階では警告のみ
-    console.log('確認ダイアログボタンの実装待ち - テストは継続します');
+    throw new Error('参加確認ダイアログのボタンが実装されていません');
   } else {
     console.log('参加確認ダイアログのボタンが適切に表示されています');
   }

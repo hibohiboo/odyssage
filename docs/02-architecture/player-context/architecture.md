@@ -193,47 +193,29 @@ packages/ui/
 - Context-First アプローチによる境界明確化
 ```
 
-#### **ルーティング設計詳細（緊急追加）**
+#### **ルーティング設計詳細**
 
-```typescript
-// app/router/player-routes.ts
-export const playerRoutes = [
-  // セッション一覧・発見
-  {
-    path: "/player/sessions",
-    element: <SessionListPage />,
-    loader: () => ({ sessions: loadAvailableSessions() })
-  },
+```markdown
+## Player文脈ルート設計方針
+
+### セッション発見・参加フロー
+- セッション一覧: `/player/sessions`
+  - 利用可能なセッション一覧表示
+  - セッション検索・フィルタ機能
   
-  // セッション詳細・参加判断
-  {
-    path: "/player/session/:sessionId", 
-    element: <SessionDetailPage />,
-    loader: ({ params }) => ({ 
-      session: loadSession(params.sessionId),
-      scenario: loadSessionScenario(params.sessionId)
-    })
-  },
-  
-  // プレイセッション（MVP最重要）
-  {
-    path: "/player/session/:sessionId/play",
-    element: <PlaySessionContainer />,
-    loader: ({ params }) => ({
-      sessionId: params.sessionId
-    })
-  },
-  
-  // 特定シーン開始（デバッグ・テスト用）
-  {
-    path: "/player/session/:sessionId/play/:sceneId",
-    element: <PlaySessionContainer />,
-    loader: ({ params }) => ({
-      sessionId: params.sessionId,
-      startingSceneId: params.sceneId
-    })
-  }
-];
+- セッション詳細: `/player/session/:sessionId`  
+  - セッション詳細情報表示
+  - 参加判断・参加アクション
+
+### プレイ体験フロー  
+- プレイセッション: `/player/session/:sessionId/play`
+  - メインプレイ画面・ゲームブック形式
+  - プレイ状態の自動保存
+
+### 設計制約・原則
+- MVP範囲: 基本的な画面遷移のみ
+- 認証不要: ゲストプレイヤー対応
+- React Router v7データローダーパターン活用
 ```
 
 #### **ルーティング層アーキテクチャ**
