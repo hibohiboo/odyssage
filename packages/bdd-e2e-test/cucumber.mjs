@@ -2,7 +2,7 @@ export default {
   paths: [
     process.env.CI === 'true'
       ? '**/features/*.feature'
-      : '**/features/player/*.feature',
+      : '**/features/player/session-joining.feature',
   ],
   import: [
     // ⚠️ 段階的実装: Player文脈のstep definitionsを使用
