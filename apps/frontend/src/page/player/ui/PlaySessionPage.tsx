@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { PlaySessionContainer } from '../containers/PlaySessionContainer';
 
-interface PlaySessionPageParams {
+interface PlaySessionPageParams extends Record<string, string | undefined> {
   sessionId: string;
   sceneId?: string;
 }
