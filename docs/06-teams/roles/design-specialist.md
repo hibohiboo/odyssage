@@ -200,6 +200,56 @@
 - [`../../03-development/sprints/sprint_004/SPRINT_CONFIG.md`](../../03-development/sprints/sprint_004/SPRINT_CONFIG.md) - Sprint 4設定
 - [`../../03-development/sprints/sprint_004/onboarding-guide-for-design-specialist.md`](../../03-development/sprints/sprint_004/onboarding-guide-for-design-specialist.md) - Sprint 4専用ガイド
 
+## 🔍 **設計レビュー必須チェックリスト（Sprint 5教訓追加）**
+
+### **設計適合性確認の必須項目**
+```markdown
+🛡️ 設計レビュー必須確認事項（漏れ厳禁）:
+- [ ] **BDD仕様書との整合性確認**
+- [ ] **Player価値実現度評価**
+- [ ] **段階的実装原則遵守確認**
+- [ ] **具体的パス・URL設計の整合性確認**（🚨重要追加）
+- [ ] **step definitions実装との突き合わせ**（🚨重要追加）
+- [ ] **全関連設計書との整合性確認**（🚨重要追加）
+- [ ] **実装可能性の技術的妥当性確認**（🚨重要追加）
+
+⚠️ 重要原則: 未確認項目がある場合は承認不可・設計書間矛盾発見時は即座調整
+```
+
+### **設計文書間整合性確認手順**
+```markdown
+📚 必須確認設計書リスト:
+1. **Player文脈要件定義**: `docs/02-architecture/player-context/requirements.md`
+2. **Player文脈アーキテクチャ**: `docs/02-architecture/player-context/architecture.md`  
+3. **フロントエンドアーキテクチャ**: Player文脈アーキテクチャに統合済み（🚨旧文書は非推奨）
+4. **関連BDD仕様書**: 対象機能のBDDファイル
+5. **実装詳細**: step definitions等の実装ファイル（🚨設計適合性確認用）
+
+確認方法:
+- 各設計書を逐一確認・矛盾点の洗い出し
+- URL・パス設計の完全一致確認
+- アーキテクチャ原則との整合性評価
+```
+
+### **責務分界の正しい理解（教訓反映）**
+```markdown
+⚖️ 設計品質保証における責務範囲の明確化:
+
+✅ 設計担当の必須責務（実装詳細でも確認必要）:
+- URL設計・パス構造の整合性確認
+- アーキテクチャ文書間の一貫性確保
+- 実装詳細での設計適合性確認
+- 技術的実装可能性の妥当性確認
+
+❌ 責務越境（避けるべき行動）:
+- 実装方法・技術選択の詳細指示
+- コード実装のスタイル・構造指示  
+- テスト実装の技術詳細介入
+
+🎯 重要原則: 設計品質に関わる事項は実装詳細でも確認必須
+「実装詳細への介入回避」と「設計品質保証責務」の適切なバランス
+```
+
 ## 💡 成功のポイント
 
 ### 設計思考
@@ -227,5 +277,11 @@
 
 **更新履歴**
 - 2025-08-16: 初版作成（設計担当ガイド）
+- 2025-08-23: **Sprint 5品質改善追加**（設計担当）
+  - 設計レビュー必須チェックリスト追加
+  - 設計文書間整合性確認手順の明確化
+  - 責務分界の正しい理解（教訓反映）
+  - URL・パス設計確認・step definitions突き合わせの必須化
+  - 理由: Sprint 5設計レビュー漏れ問題の根本対策・再発防止
 
-#design-specialist #architecture #ui-ux #player-context #mvp
+#design-specialist #architecture #ui-ux #player-context #mvp #quality-assurance #design-review

@@ -8,7 +8,7 @@
     "dev:mock": "bunx --bun vite --mode mock",
     "prebuild": "node ../../node_modules/typescript/bin/tsc -b",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint": "eslint . && tsc --noEmit",
     "preview": "bunx --bun vite preview",
     "prepreview:ci": "tsc -b && bunx --bun vite build --mode ci",
     "preview:ci": "bunx --bun vite preview --port 5173 ",

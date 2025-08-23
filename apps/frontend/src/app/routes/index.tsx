@@ -6,6 +6,7 @@ import {
   SignupPage,
 } from '@odyssage/frontend/page/login';
 import { PlaySessionPage } from '@odyssage/frontend/page/player/ui/PlaySessionPage';
+import { SessionDetailPage } from '@odyssage/frontend/page/player/ui/SessionDetailPage';
 import {
   ScenarioCreatePage,
   ScenarioListPage,
@@ -152,6 +153,11 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
           path: 'sessions',
           element: <SessionListPage />,
           loader: sessionListLoader,
+        },
+        {
+          path: 'sessions/:sessionId',
+          element: <SessionDetailPage />,
+          loader: sessionDetailLoader,
         },
         {
           path: 'session/:sessionId/play',
