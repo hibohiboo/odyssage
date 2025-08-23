@@ -25,7 +25,7 @@ Given('セッション詳細情報が表示されている', async function () {
 // 第1シナリオ「セッション参加の基本フロー」専用のsteps
 Given('プレイヤーがセッション詳細画面を表示している', async function () {
   // セッション詳細画面への遷移（実装に応じてURLを調整）
-  await this.page.goto('http://localhost:5173/player/sessions/test-session-join');
+  await this.page.goto('http://localhost:5173/player/session/test-session-join');
   await this.page.waitForLoadState('networkidle');
   
   // 404エラーが発生していないことを確認

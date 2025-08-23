@@ -33,11 +33,17 @@
 #### **1. セッション詳細画面の実装（最優先・ブロッカー）**
 ```markdown
 🚨 問題: 404 Not Found
-URL: http://localhost:5173/player/sessions/test-session-join
+URL: http://localhost:5173/player/session/test-session-join
 エラー: "Unexpected Application Error! 404 Not Found"
+
+⚠️ 重要な修正情報:
+設計担当からの指摘により、正しいURLパスは以下に修正されました:
+- 修正前: /player/sessions/{sessionId} (誤り)
+- 修正後: /player/session/{sessionId} (設計書準拠)
 
 📋 実装依頼:
 1. Player文脈でのセッション詳細画面ルーティング作成
+   - 正しいパス: `/player/session/:sessionId`
 2. セッション基本情報（タイトル・説明・参加者数等）の表示
 3. テストセッション "test-session-join" データの準備
 

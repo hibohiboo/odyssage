@@ -155,7 +155,7 @@ export const createRouter = (_: { dispatch: AppDispatch }) =>
           loader: sessionListLoader,
         },
         {
-          path: 'sessions/:sessionId',
+          path: 'session/:sessionId',
           element: <SessionDetailPage />,
           loader: sessionDetailLoader,
         },
