@@ -77,21 +77,21 @@
 ```markdown
 📋 必須確認事項:
 1. ✅ play-experience-single.feature の内容詳細確認
-   - 完成済み実装との整合性検証
-   - 成功パターンの分析・他画面への適用可能性
+   - packages/bdd-e2e-test/e2e/features/player/play-experience-single.feature の完成済み実装確認
+   - 成功パターンの分析・他画面への適用可能性検証
 
-2. ❌ セッション一覧画面の未実装BDD設計必要性確認
+2. ❌ セッション一覧画面のBDD設計必要性確認
    - 現在の実装状況確認（画面は存在するか？）
    - Player価値観点での重要度評価
    
-3. ❌ セッション参加画面の未実装BDD設計必要性確認
-   - session-joining.feature削除後の現在実装状況確認
+3. ❌ セッション参加画面のBDD設計必要性確認
+   - 現在の実装状況確認（画面は存在するか？）
    - Player価値観点での重要度評価
 
 🎯 最重要判断:
 - セッション一覧 vs セッション参加のどちらを1つ目に選ぶか決定
 - Player（プレイヤー）のユーザージャーニー観点での優先度判断
-- 選択した1画面のBDD設計・実装計画策定
+- 選択した1画面のpackages/bdd-e2e-test/e2e/features/player/配下でのBDD設計・実装計画策定
 ```
 
 #### **Task 1.2: 実装品質の設計観点確認**
@@ -110,16 +110,17 @@
 
 ### **Phase 2: 設計改善・最適化（段階的実行）**
 
-#### **Task 2.1: Priority 1改善の設計**
+#### **Task 2.1: 選択画面のBDD設計・実装**
 ```markdown
-⚡ 段階的改善設計:
-Step 1: 最高優先度の1つの改善点のみ設計
-Step 2: 改善設計の文書化・実装影響範囲の明確化
-Step 3: 実装担当との協働・設計実装の段階的実行
-Step 4: 改善結果の確認・次改善点の検討
+⚡ 段階的BDD設計:
+Step 1: セッション一覧 vs セッション参加から1つを選択・BDD設計開始
+Step 2: packages/bdd-e2e-test/e2e/features/player/配下での新規.feature作成
+Step 3: UI/UX設計・Player体験フローの最適化
+Step 4: 実装担当との協働・段階的実装・BDDテスト実行
 
 🚨 重要原則:
-- 1つずつの改善・複数同時改善の絶対禁止
+- 1画面ずつの設計・複数同時設計の絶対禁止
+- play-experience-single.featureの成功パターン活用
 - Player価値への貢献度での優先度判断
 - 実装担当の自律性尊重・過度指示の防止
 ```
@@ -232,12 +233,11 @@ Step 4: 改善結果の確認・次改善点の検討
 ## 📚 **必読・参考資料**
 
 ### **📚 必読文書（読む順序・所要時間）**
-1. **[段階的試行チーム体制](../../06-teams/README.md)** (15分・最重要)
-2. **[Sprint 4レトロスペクティブ](../../../sprint_004/sprint_004_retrospective_20250822.md)** (10分・成果確認)
-3. **プレイヤー文脈BDDファイル** (20分・現状確認必須):
-   - `play-experience-single.feature`
-   - `scenario-discovery.feature` 
-   - `session-joining.feature`
+1. **[設計担当専用ガイド](../../06-teams/roles/design-specialist.md)** (20分・基本必須)
+2. **[段階的試行チーム体制](../../06-teams/README.md)** (15分・最重要)
+3. **[Sprint 4レトロスペクティブ](../../../sprint_004/sprint_004_retrospective_20250822.md)** (10分・成果確認)
+4. **プレイヤー文脈BDDファイル** (10分・前スプリント成果確認):
+   - `packages/bdd-e2e-test/e2e/features/player/play-experience-single.feature`（完成済み・参考パターン）
 
 ### **🔧 即座活用すべき確立済みツール**
 - **[段階的タスク実行テンプレート](../../06-teams/templates/gradual-task-execution-template.md)**
