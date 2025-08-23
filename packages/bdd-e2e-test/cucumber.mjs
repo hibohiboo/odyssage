@@ -2,12 +2,13 @@ export default {
   paths: [
     process.env.CI === 'true'
       ? '**/features/*.feature'
-      : '**/features/play-experience-single.feature',
+      : '**/features/player/*.feature',
   ],
   import: [
-    // ⚠️ 段階的実装: 最小限のstep definitionsのみ使用
+    // ⚠️ 段階的実装: Player文脈のstep definitionsを使用
     '**/step-definitions/common.steps.ts',
-    '**/step-definitions/play-experience-minimal.steps.ts',
+    '**/step-definitions/player/play-experience-minimal.steps.ts',
+    '**/step-definitions/player/session-joining.steps.ts',
   ],
   loader: ['ts-node/esm'],
   format: [
