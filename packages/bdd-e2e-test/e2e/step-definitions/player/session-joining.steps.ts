@@ -45,7 +45,7 @@ Given('プレイヤーがセッション詳細画面を表示している', asyn
 When(
   'プレイヤーが「このセッションに参加」ボタンをクリックする',
   async function (this: { page: Page }) {
-    const button = this.page.getByText('このセッションに参加');
+    const button = this.page.getByText('このセッションに参加').nth(0);
 
     await button.click();
   },
