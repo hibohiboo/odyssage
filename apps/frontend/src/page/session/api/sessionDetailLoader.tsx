@@ -1,8 +1,8 @@
 import { LoaderFunctionArgs } from 'react-router';
-import { apiClient } from '@odyssage/frontend/shared/api/client';
+import { SessionDataService, SessionData } from '@odyssage/frontend/page/player/services/SessionDataService';
 
 /**
- * セッション詳細データの型定義
+ * セッション詳細データの型定義（レガシー互換性のため維持）
  */
 export interface SessionDetailData {
   id: string;
@@ -16,30 +16,57 @@ export interface SessionDetailData {
 }
 
 /**
+ * SessionData を SessionDetailData に変換
+ * PlaySessionContainer との一貫性を保ちつつレガシー互換性を維持
+ */
+function mapToSessionDetailData(sessionData: SessionData): SessionDetailData {
+  // status のマッピング
+  const statusMapping: Record<SessionData['status'], SessionDetailData['status']> = {
+    available: '準備中',
+    ongoing: '進行中',
+    completed: '終了',
+  };
+
+  return {
+    id: sessionData.id,
+    gmId: sessionData.author.name,
+    scenarioId: sessionData.scenarioId,
+    title: sessionData.title,
+    status: statusMapping[sessionData.status],
+    createdAt: sessionData.createdAt,
+    updatedAt: sessionData.createdAt, // モックデータでは createdAt と同じ値を使用
+    scenarioTitle: sessionData.scenarioTitle,
+  };
+}
+
+/**
  * セッション詳細情報の読み込みを行うローダー関数
- * GET /api/sessions/:id APIを呼び出し、特定のセッションの詳細データを取得する
+ * PlaySessionContainer と同じモックデータアプローチを使用
+ * MVP制約: バックエンドAPI呼び出しなし、LocalStorage + モックデータベース
  */
 export async function sessionDetailLoader(
   args: LoaderFunctionArgs,
 ): Promise<SessionDetailData | null> {
-  const { id } = args.params;
+  const { id, sessionId } = args.params;
+  
+  // sessionId パラメータも対応（player ルート用）
+  const targetId = sessionId || id;
+  
   try {
-    if (!id) {
+    if (!targetId) {
       console.error('Session ID is required');
       return null;
     }
 
-    const response = await apiClient.api.sessions[':id'].$get({
-      param: { id },
-    });
-
-    if (!response.ok) {
-      console.error('Failed to load session details');
+    const sessionDataService = new SessionDataService();
+    const sessionData = await sessionDataService.loadSessionData(targetId);
+    
+    if (!sessionData) {
+      console.error('Session not found:', targetId);
       return null;
     }
 
-    const data = await response.json();
-    return data;
+    return mapToSessionDetailData(sessionData);
   } catch (error) {
     console.error('Error loading session details:', error);
     return null;

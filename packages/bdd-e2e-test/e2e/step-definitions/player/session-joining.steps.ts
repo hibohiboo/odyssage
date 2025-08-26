@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@cucumber/cucumber';
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 
 /**
  * session-joining.feature用のstep definitions - 段階的実装版
@@ -9,11 +9,14 @@ import { expect } from '@playwright/test';
  */
 
 // Background steps（共通ステップ）
-Given('参加可能なセッション {string} が利用可能である', async function (sessionId: string) {
-  // テストセッションが利用可能であることを確認（実装に応じて調整）
-  console.log(`テストセッション「${sessionId}」の利用可能性を確認`);
-  // TODO: 実装に応じてAPIチェックまたはデータベース確認
-});
+Given(
+  '参加可能なセッション {string} が利用可能である',
+  async function (sessionId: string) {
+    // テストセッションが利用可能であることを確認（実装に応じて調整）
+    console.log(`テストセッション「${sessionId}」の利用可能性を確認`);
+    // TODO: 実装に応じてAPIチェックまたはデータベース確認
+  },
+);
 
 Given('セッション詳細情報が表示されている', async function () {
   // セッション詳細画面への遷移を確認
@@ -25,50 +28,28 @@ Given('セッション詳細情報が表示されている', async function () {
 // 第1シナリオ「セッション参加の基本フロー」専用のsteps
 Given('プレイヤーがセッション詳細画面を表示している', async function () {
   // セッション詳細画面への遷移（実装に応じてURLを調整）
-  await this.page.goto('http://localhost:5173/player/session/test-session-join');
+  await this.page.goto(
+    'http://localhost:5173/player/session/test-session-join',
+  );
   await this.page.waitForLoadState('networkidle');
-  
+
   // 404エラーが発生していないことを確認
   const is404Error = await this.page.locator('body').textContent();
   if (is404Error?.includes('404 Not Found')) {
     throw new Error('セッション詳細画面が実装されていません（404エラー）');
   }
-  
+
   console.log('セッション詳細画面にアクセス');
 });
 
-When('プレイヤーが「このセッションに参加」ボタンをクリックする', async function () {
-  // 参加ボタンを探してクリック（複数のパターンを考慮）
-  const joinButtonSelectors = [
-    'button:has-text("このセッションに参加")',
-    'button:has-text("参加")',
-    'button:has-text("参加する")',
-    '[data-testid="join-session-button"]',
-  ];
+When(
+  'プレイヤーが「このセッションに参加」ボタンをクリックする',
+  async function (this: { page: Page }) {
+    const button = this.page.getByText('このセッションに参加');
 
-  let clicked = false;
-  for (const selector of joinButtonSelectors) {
-    try {
-      const button = this.page.locator(selector);
-      if (await button.isVisible()) {
-        await button.click();
-        clicked = true;
-        console.log(`参加ボタンをクリック: ${selector}`);
-        break;
-      }
-    } catch (error) {
-      // 次のセレクタを試行
-    }
-  }
-
-  if (!clicked) {
-    const allButtons = await this.page.locator('button').allTextContents();
-    console.log('利用可能なボタン:', allButtons);
-    throw new Error('セッション参加ボタンが実装されていません');
-  }
-  
-  await this.page.waitForTimeout(1000); // ダイアログ表示待機
-});
+    await button.click();
+  },
+);
 
 Then('参加確認ダイアログが表示される', async function () {
   // 参加確認ダイアログの表示確認（複数のパターンを考慮）
@@ -97,7 +78,10 @@ Then('参加確認ダイアログが表示される', async function () {
 
   if (!dialogFound) {
     const bodyText = await this.page.locator('body').textContent();
-    console.log('現在のページ内容（最初の300文字）:', bodyText?.substring(0, 300));
+    console.log(
+      '現在のページ内容（最初の300文字）:',
+      bodyText?.substring(0, 300),
+    );
     throw new Error('参加確認ダイアログが実装されていません');
   }
 });
@@ -110,7 +94,7 @@ Then('「参加する」「キャンセル」ボタンが表示される', async
     'button:has-text("確認")',
     'button:has-text("OK")',
   ];
-  
+
   const cancelButtons = [
     'button:has-text("キャンセル")',
     'button:has-text("取消")',
@@ -151,10 +135,10 @@ Then('「参加する」「キャンセル」ボタンが表示される', async
     console.log('【実装確認必要】確認/キャンセルボタンの実装状況:');
     console.log(`- 確認ボタン: ${confirmFound ? '発見' : '未発見'}`);
     console.log(`- キャンセルボタン: ${cancelFound ? '発見' : '未発見'}`);
-    
+
     const allButtons = await this.page.locator('button').allTextContents();
     console.log('利用可能なボタン:', allButtons);
-    
+
     throw new Error('参加確認ダイアログのボタンが実装されていません');
   } else {
     console.log('参加確認ダイアログのボタンが適切に表示されています');

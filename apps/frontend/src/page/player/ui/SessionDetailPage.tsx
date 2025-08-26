@@ -14,6 +14,7 @@ function getSessionStatus(status: string): 'available' | 'ongoing' | 'completed'
 /**
  * SessionDetailPage - Player文脈でのセッション詳細表示
  * packages/ui/src/player/organisms/SessionDetailView使用
+ * データソース: PlaySessionContainer と同じモックデータアプローチ（SessionDataService）
  * テスト: session-joining.feature対応
  */
 export function SessionDetailPage() {
@@ -32,7 +33,8 @@ export function SessionDetailPage() {
     );
   }
 
-  // APIデータをUIコンポーネント用に変換
+  // SessionDataServiceからのデータをUIコンポーネント用に変換
+  // PlaySessionContainer と同じモックデータアプローチを使用
   const mapToUISessionData = (): UISessionData => ({
     sessionId: sessionData.id,
     title: sessionData.title,
@@ -40,10 +42,10 @@ export function SessionDetailPage() {
     overview: `このセッションでは「${sessionData.scenarioTitle}」シナリオをプレイします。\n\nステータス: ${sessionData.status}\n作成日: ${new Date(sessionData.createdAt).toLocaleDateString('ja-JP')}\n最終更新: ${new Date(sessionData.updatedAt).toLocaleDateString('ja-JP')}`,
     status: getSessionStatus(sessionData.status),
     author: {
-      name: sessionData.gmId, // 将来的にはGM名を取得
+      name: sessionData.gmId, // SessionDataService の author.name がマッピング済み
     },
     createdAt: sessionData.createdAt,
-    tags: ['TRPG', 'オンラインセッション'],
+    tags: ['TRPG', 'オンラインセッション'], // 将来的には SessionDataService.tags を使用
   });
 
   // 参加ボタンクリック処理 - Phase 2で参加確認ダイアログを実装予定
