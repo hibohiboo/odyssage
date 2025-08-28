@@ -1,6 +1,8 @@
 import { SessionDetailView, type SessionDetailData as UISessionData } from '@odyssage/ui/player/organisms/SessionDetailView/index';
+import { useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router';
 import { SessionDetailData } from '../../session/api/sessionDetailLoader';
+import { JoinConfirmationDialog } from './components/JoinConfirmationDialog';
 
 /**
  * セッションステータスを UIコンポーネント用に変換
@@ -20,6 +22,7 @@ function getSessionStatus(status: string): 'available' | 'ongoing' | 'completed'
 export function SessionDetailPage() {
   const sessionData = useLoaderData<SessionDetailData>();
   const navigate = useNavigate();
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
 
   // データ取得失敗時の処理
   if (!sessionData) {
@@ -48,9 +51,22 @@ export function SessionDetailPage() {
     tags: ['TRPG', 'オンラインセッション'], // 将来的には SessionDataService.tags を使用
   });
 
-  // 参加ボタンクリック処理 - Phase 2で参加確認ダイアログを実装予定
+  // 参加ボタンクリック処理 - 参加確認ダイアログを表示
   const handleJoinSession = (sessionId: string) => {
     console.log('Join session clicked:', sessionId);
+    setShowConfirmationDialog(true);
+  };
+
+  // 参加確認ダイアログ - 確認ボタンクリック処理
+  const handleConfirmJoin = () => {
+    console.log('Confirmed join for session:', sessionData.id);
+    setShowConfirmationDialog(false);
+  };
+
+  // 参加確認ダイアログ - キャンセルボタンクリック処理
+  const handleCancelJoin = () => {
+    console.log('Cancelled join for session:', sessionData.id);
+    setShowConfirmationDialog(false);
   };
 
   // 戻るボタン処理
@@ -59,10 +75,20 @@ export function SessionDetailPage() {
   };
 
   return (
-    <SessionDetailView
-      session={mapToUISessionData()}
-      onJoinSession={handleJoinSession}
-      onBack={handleBack}
-    />
+    <>
+      <SessionDetailView
+        session={mapToUISessionData()}
+        onJoinSession={handleJoinSession}
+        onBack={handleBack}
+      />
+      
+      {/* 参加確認ダイアログ */}
+      <JoinConfirmationDialog
+        isOpen={showConfirmationDialog}
+        sessionTitle={sessionData.title}
+        onConfirm={handleConfirmJoin}
+        onCancel={handleCancelJoin}
+      />
+    </>
   );
 }
