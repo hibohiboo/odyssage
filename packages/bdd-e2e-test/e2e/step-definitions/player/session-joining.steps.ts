@@ -45,9 +45,11 @@ Given('プレイヤーがセッション詳細画面を表示している', asyn
 When(
   'プレイヤーが「このセッションに参加」ボタンをクリックする',
   async function (this: { page: Page }) {
-    const button = this.page.getByText('このセッションに参加').nth(0);
+    // 見えているボタンのみを選択
+    const buttons = this.page.getByText('このセッションに参加');
+    const visibleButton = buttons.locator('visible=true').first();
 
-    await button.click();
+    await visibleButton.click();
   },
 );
 

@@ -9,7 +9,7 @@ const meta: Meta<typeof SessionDetailView> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'セッション詳細画面Organism。session-detail.md設計に基づくヒーローセクション・詳細情報・参加CTA統合Component。\n\n**画面設計対応**: ヒーローセクション・詳細情報・参加確認フロー・レスポンシブレイアウト実装。',
+        component: 'セッション詳細画面Organism。session-detail.md設計に基づくヒーローセクション・詳細情報・参加CTA統合Component。\n\n**画面設計対応**: ヒーローセクション・詳細情報・参加確認フロー・レスポンシブレイアウト実装。\n\n**データ連携**: SessionDataService モックデータと統合、BDDテスト（session-joining.feature）対応。',
       },
     },
   },
@@ -22,7 +22,7 @@ const meta: Meta<typeof SessionDetailView> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-// サンプルデータ
+// サンプルデータ - SessionDataService のモックデータと整合性保持
 const mockSessionData: SessionDetailData = {
   sessionId: 'session-001',
   title: '失われた森の守護者',
@@ -44,34 +44,48 @@ const mockSessionData: SessionDetailData = {
   createdAt: '2025-08-15T10:00:00Z',
 };
 
+// BDDテスト用データ - SessionDataService.MOCK_SESSIONS と同じ内容
+const bddTestSessionData: SessionDetailData = {
+  sessionId: 'test-session-join',
+  title: 'テストセッション（参加用）',
+  scenarioSummary: '魔法の森の冒険シナリオをプレイ',
+  overview: 'このセッションでは「魔法の森の冒険」シナリオをプレイします。\n\n古い森に隠された謎を解き明かし、仲間と協力して困難を乗り越える冒険が待っています。初心者の方でも楽しめる内容となっております。\n\nステータス: 参加者募集中',
+  status: 'available',
+  thumbnailUrl: 'https://dummyimage.com/800x450/16a34a/ffffff?text=Magic+Forest',
+  tags: ['TRPG', 'オンラインセッション', '初心者歓迎'],
+  author: {
+    name: 'テストGM',
+  },
+  createdAt: '2025-08-26T00:00:00.000Z',
+};
+
+// SessionDataService モックデータに対応
 const ongoingSessionData: SessionDetailData = {
-  ...mockSessionData,
-  sessionId: 'session-002',
-  title: '薬草採取の旅',
-  scenarioSummary: '病気を治すための薬草を求めて危険な山々を旅する。仲間との絆が試される物語。',
-  overview: `村に疫病が蔓延し、多くの人々が苦しんでいる。唯一の治療法は、遥か遠い山の頂上にしか咲かない「銀の薬草」を手に入れることだ。
-
-危険な山道を越え、モンスターの住む洞窟を抜け、厳しい自然と向き合いながら薬草を目指す旅。一人では決して成し遂げられない困難な道のりで、仲間との協力と信頼が物語の鍵となる。
-
-果たしてあなたたちは村を救うことができるのか？`,
+  sessionId: 'session-ongoing-test',
+  title: '進行中セッション',
+  scenarioSummary: '都市の謎解きシナリオをプレイ',
+  overview: 'このセッションでは「都市の謎解き」シナリオをプレイします。\n\n現代都市を舞台にした謎解きとサスペンスが展開される物語です。プレイヤーの推理力と判断力が試されます。\n\nステータス: 進行中',
   status: 'ongoing',
-  thumbnailUrl: 'https://dummyimage.com/800x450/16a34a/ffffff?text=Herb+Journey',
-  tags: ['冒険', '協力', '感動'],
+  thumbnailUrl: 'https://dummyimage.com/800x450/2563eb/ffffff?text=City+Mystery',
+  tags: ['TRPG', '謎解き', '中級者向け'],
+  author: {
+    name: '経験豊富GM',
+  },
+  createdAt: '2025-08-25T12:00:00.000Z',
 };
 
 const completedSessionData: SessionDetailData = {
-  ...mockSessionData,
-  sessionId: 'session-003',
-  title: '古の遺跡探索',
-  scenarioSummary: '謎に満ちた古代遺跡での宝探し。パズルとトラップが冒険者を待ち受ける。',
-  overview: `千年前に失われた古代文明の遺跡が発見された。そこには伝説の宝が眠っているという。
-
-しかし遺跡は巧妙なパズルと危険なトラップで守られている。知恵と勇気、そして仲間との連携が試される謎解き冒険。
-
-古代の技術者たちが残した仕掛けを解き明かし、最深部の宝にたどり着けるか？`,
+  sessionId: 'session-completed-test',
+  title: '完了済みセッション',
+  scenarioSummary: '宇宙船の危機シナリオをプレイ',
+  overview: 'このセッションでは「宇宙船の危機」シナリオをプレイしました。\n\nSF世界を舞台にしたスリルあふれる冒険でした。プレイヤーの皆さんは見事に危機を乗り越え、無事に地球に帰還することができました。\n\nステータス: 完了',
   status: 'completed',
-  thumbnailUrl: 'https://dummyimage.com/800x450/dc2626/ffffff?text=Ancient+Ruins',
-  tags: ['謎解き', '宝探し', '古代'],
+  thumbnailUrl: 'https://dummyimage.com/800x450/dc2626/ffffff?text=Space+Crisis',
+  tags: ['TRPG', 'SF', '上級者向け'],
+  author: {
+    name: 'SF好きGM',
+  },
+  createdAt: '2025-08-24T18:30:00.000Z',
 };
 
 export const Available: Story = {
@@ -148,14 +162,49 @@ export const LongContent: Story = {
   },
 };
 
+// BDDテスト専用ストーリー - session-joining.feature 対応
+export const BDDTestSession: Story = {
+  args: {
+    session: bddTestSessionData,
+    onJoinSession: (sessionId: string) => console.log('BDDテスト - セッション参加:', sessionId),
+    onBack: () => console.log('BDDテスト - 戻る'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'BDDテスト（session-joining.feature）用のストーリー。SessionDataService のtest-session-joinデータと完全一致。',
+      },
+    },
+  },
+};
+
+// 参加確認ダイアログ統合テスト用（将来の拡張）
+export const WithJoinConfirmation: Story = {
+  args: {
+    session: bddTestSessionData,
+    onJoinSession: (sessionId: string) => {
+      console.log('参加確認ダイアログ表示想定:', sessionId);
+      alert(`参加確認ダイアログが表示されます:\n${bddTestSessionData.title}`);
+    },
+    onBack: () => console.log('戻る'),
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: '参加確認ダイアログとの統合を想定したストーリー。実際のダイアログはSessionDetailPage側で実装。',
+      },
+    },
+  },
+};
+
 export const StatusComparison: Story = {
   render: () => (
     <div className="space-y-8 bg-gray-100 p-4">
       <div className="space-y-2">
-        <h3 className="font-semibold text-lg">参加者募集中（Available）</h3>
+        <h3 className="font-semibold text-lg">BDDテストセッション（Available）</h3>
         <div className="border rounded-lg overflow-hidden">
           <SessionDetailView
-            session={mockSessionData}
+            session={bddTestSessionData}
             onJoinSession={(sessionId) => console.log('参加:', sessionId)}
             onBack={() => console.log('戻る')}
           />
@@ -163,7 +212,7 @@ export const StatusComparison: Story = {
       </div>
       
       <div className="space-y-2">
-        <h3 className="font-semibold text-lg">進行中（Ongoing）</h3>
+        <h3 className="font-semibold text-lg">進行中セッション（Ongoing）</h3>
         <div className="border rounded-lg overflow-hidden">
           <SessionDetailView
             session={ongoingSessionData}
@@ -174,7 +223,7 @@ export const StatusComparison: Story = {
       </div>
       
       <div className="space-y-2">
-        <h3 className="font-semibold text-lg">完了済み（Completed）</h3>
+        <h3 className="font-semibold text-lg">完了済みセッション（Completed）</h3>
         <div className="border rounded-lg overflow-hidden">
           <SessionDetailView
             session={completedSessionData}
@@ -185,4 +234,11 @@ export const StatusComparison: Story = {
       </div>
     </div>
   ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'SessionDataService の全ステータスタイプの比較表示。実際のモックデータと一致。',
+      },
+    },
+  },
 };
