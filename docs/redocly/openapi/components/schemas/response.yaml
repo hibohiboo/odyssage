@@ -9,3 +9,81 @@ BadRequestResponse:
             type: "string"
         required:
           - "error"
+
+Unauthorized:
+  description: "認証エラー"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "認証が必要です"
+        required:
+          - "error"
+
+UnauthorizedResponse:
+  description: "認証エラー"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "認証が必要です"
+        required:
+          - "error"
+
+Forbidden:
+  description: "アクセス権限エラー"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "アクセス権限がありません"
+        required:
+          - "error"
+
+NotFound:
+  description: "リソースが見つかりません"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "指定されたリソースが見つかりません"
+        required:
+          - "error"
+
+InternalServerError:
+  description: "サーバー内部エラー"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "サーバー内部エラーが発生しました"
+        required:
+          - "error"
+
+InternalServerErrorResponse:
+  description: "サーバー内部エラー"
+  content:
+    application/json:
+      schema:
+        type: "object"
+        properties:
+          error:
+            type: "string"
+            example: "サーバー内部エラーが発生しました"
+        required:
+          - "error"

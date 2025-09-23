@@ -3,7 +3,7 @@ post:
   summary: ユーザーのストックにシナリオを追加
   description: ユーザーが将来参照するためにシナリオをストック（保存）します
   parameters:
-    - name: user_id
+    - name: uid
       in: path
       required: true
       schema:
@@ -37,7 +37,7 @@ delete:
   summary: ユーザーのストックからシナリオを削除
   description: 以前にストックしたシナリオをユーザーのコレクションから削除します
   parameters:
-    - name: user_id
+    - name: uid
       in: path
       required: true
       schema:
