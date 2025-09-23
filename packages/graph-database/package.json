@@ -10,11 +10,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "neo4j-driver": "^5.28.1",
+    "neo4j-driver": "^5.28.2",
     "vitest": "^3.2.4"
   },
   "devDependencies": {
-    "@testcontainers/neo4j": "^11.5.1",
-    "testcontainers": "^11.5.1"
+    "@testcontainers/neo4j": "^11.6.0",
+    "testcontainers": "^11.6.0"
   }
 }
