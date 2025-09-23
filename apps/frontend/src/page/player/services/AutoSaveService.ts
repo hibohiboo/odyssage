@@ -71,7 +71,7 @@ export class AutoSaveService {
 
       if (!timestamp) return null;
 
-      return new Date(parseInt(timestamp, 10));
+      return new Date(Number.parseInt(timestamp, 10));
     } catch (error) {
       console.error('最終保存時刻取得失敗:', error);
       return null;

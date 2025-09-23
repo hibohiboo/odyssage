@@ -10,7 +10,11 @@ class SceneTestHelpers {
     return new PageActions(this.page);
   }
 
-  async createSceneOptimistic(title: string, overview: string, order: string = '1') {
+  async createSceneOptimistic(
+    title: string,
+    overview: string,
+    order: string = '1',
+  ) {
     const pageActions = this.getPageActions();
     await pageActions.clickButton('新しいシーンを追加');
     await pageActions.fillByTestId('scene-title-input', title);
@@ -19,7 +23,11 @@ class SceneTestHelpers {
     await pageActions.clickButton('シーンを追加');
   }
 
-  async createSceneNormal(title: string, overview: string, order: string = '1') {
+  async createSceneNormal(
+    title: string,
+    overview: string,
+    order: string = '1',
+  ) {
     const pageActions = this.getPageActions();
     await pageActions.clickButton('新しいシーンを追加');
     await pageActions.fillByTestId('scene-title-input', title);
@@ -46,7 +54,9 @@ class SceneTestHelpers {
   async expectUnsavedChangesWarning() {
     const pageActions = this.getPageActions();
     await pageActions.expectTextVisible('未保存の変更があります');
-    const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
+    const warningBanner = this.page.locator(
+      '.bg-amber-50:has-text("未保存の変更があります")',
+    );
     await expect(warningBanner).toBeVisible();
   }
 
@@ -56,7 +66,9 @@ class SceneTestHelpers {
   }
 
   async expectWarningBannerHidden() {
-    const warningBanner = this.page.locator('.bg-amber-50:has-text("未保存の変更があります")');
+    const warningBanner = this.page.locator(
+      '.bg-amber-50:has-text("未保存の変更があります")',
+    );
     await expect(warningBanner).not.toBeVisible({ timeout: 5000 });
   }
 
@@ -68,7 +80,9 @@ class SceneTestHelpers {
   async navigateToScenarioDetail() {
     await this.page.goto('http://localhost:5173/creator/scenario/list');
     await this.page.waitForLoadState('networkidle');
-    const scenarioLink = this.page.locator('a[href*="/creator/scenario/"]').first();
+    const scenarioLink = this.page
+      .locator('a[href*="/creator/scenario/"]')
+      .first();
     await scenarioLink.click();
     await this.page.waitForURL(/\/creator\/scenario\/[\w-]+/);
     const pageActions = this.getPageActions();
@@ -76,44 +90,42 @@ class SceneTestHelpers {
   }
 }
 
-Given('既存のシナリオを使用してシナリオ詳細ページにいる', async function (this) {
-  try {
+Given(
+  '既存のシナリオを使用してシナリオ詳細ページにいる',
+  async function (this) {
     const helpers = new SceneTestHelpers(this.page);
     await helpers.navigateToScenarioDetail();
-    console.log('前提条件: 既存のシナリオ詳細ページに移動しました');
-  } catch (error) {
-    console.error('シナリオ詳細ページへの移動に失敗:', error);
-  }
-});
+  },
+);
 
-Given('シナリオ「楽観的更新テスト用シナリオ」が作成済みである', async function (this) {
-  try {
+Given(
+  'シナリオ「楽観的更新テスト用シナリオ」が作成済みである',
+  async function (this) {
     // シナリオ作成ページに移動
     await this.page.goto('http://localhost:5173/creator/scenario/create');
-    
+
     // シナリオ作成フォームに入力
     await this.page.fill('#title', '楽観的更新テスト用シナリオ');
-    await this.page.fill('#overview', '楽観的更新機能をテストするためのシナリオです');
-    
+    await this.page.fill(
+      '#overview',
+      '楽観的更新機能をテストするためのシナリオです',
+    );
+
     // シナリオを保存
     await this.page.click('button[type="submit"]');
-    
+
     // 作成完了後、シナリオ一覧ページに遷移するまで待機
     await this.page.waitForURL(/\/creator\/scenario\/list/);
-    
-    console.log('前提条件: 楽観的更新テスト用シナリオを作成しました');
-  } catch (error) {
-    console.error('楽観的更新テスト用シナリオの作成に失敗:', error);
-  }
-});
+  },
+);
 
 Given('ユーザーがシナリオ詳細ページにいる', async function (this) {
   const pageActions = new PageActions(this.page);
-  
+
   // シナリオ一覧から対象シナリオを選択
   await pageActions.expectTextVisible('楽観的更新テスト用シナリオ');
   await this.page.click('text=楽観的更新テスト用シナリオ');
-  
+
   // シナリオ詳細ページに移動したことを確認
   await this.page.waitForURL(/\/creator\/scenario\/\w+/);
   await pageActions.expectTextVisible('シーン管理');
@@ -121,7 +133,10 @@ Given('ユーザーがシナリオ詳細ページにいる', async function (thi
 
 Given('シーン「テスト用シーン」が作成済みである', async function (this) {
   const helpers = new SceneTestHelpers(this.page);
-  await helpers.createSceneNormal('テスト用シーン', '楽観的更新テスト用の既存シーン');
+  await helpers.createSceneNormal(
+    'テスト用シーン',
+    '楽観的更新テスト用の既存シーン',
+  );
 });
 
 Given('シーン「削除対象シーン」が作成済みである', async function (this) {
@@ -129,34 +144,44 @@ Given('シーン「削除対象シーン」が作成済みである', async func
   await helpers.createSceneNormal('削除対象シーン', '削除テスト用のシーン');
 });
 
-Given('シーンが楽観的に作成・編集・削除されている状態である', async function (this) {
-  const helpers = new SceneTestHelpers(this.page);
-  const pageActions = new PageActions(this.page);
-  
-  // 1. 楽観的にシーンを作成
-  await helpers.createSceneOptimistic('楽観的作成シーン', '楽観的に作成されたシーン');
-  
-  // 2. 既存シーンを楽観的に編集（事前に作成済みと仮定）
-  if (await this.page.locator('text=テスト用シーン').isVisible()) {
+Given(
+  'シーンが楽観的に作成・編集・削除されている状態である',
+  async function (this) {
+    const helpers = new SceneTestHelpers(this.page);
+    const pageActions = new PageActions(this.page);
+
+    // 1. 楽観的にシーンを作成
+    await helpers.createSceneOptimistic(
+      '楽観的作成シーン',
+      '楽観的に作成されたシーン',
+    );
+
+    // 2. 既存シーンを楽観的に編集（事前に作成済みと仮定）
+    await this.page.locator('text=テスト用シーン').isVisible();
     await this.page.click('[data-testid="edit-scene-button"]');
     await pageActions.fillByTestId('scene-title-input', '楽観的編集シーン');
     await pageActions.clickButton('シーンを更新');
-  }
-  
-  // 未保存変更の警告が表示されることを確認
-  await helpers.expectUnsavedChangesWarning();
-});
+
+    // 未保存変更の警告が表示されることを確認
+    await helpers.expectUnsavedChangesWarning();
+  },
+);
 
 Given('シーンが楽観的に作成されている状態である', async function (this) {
   const helpers = new SceneTestHelpers(this.page);
-  await helpers.createSceneOptimistic('楽観的作成テストシーン', 'サーバーエラーテスト用');
+  await helpers.createSceneOptimistic(
+    '楽観的作成テストシーン',
+    'サーバーエラーテスト用',
+  );
   await helpers.expectUnsavedChangesWarning();
 });
 
 Given('サーバーが一時的にエラーを返す状態にある', async function (this) {
   // サーバーエラーのシミュレーション設定
   // 実際の実装では、Network条件やMockServiceWorkerでエラーレスポンスを設定
-  console.log('サーバーエラー状態をシミュレート（実装時は適切なエラー条件を設定）');
+  console.log(
+    'サーバーエラー状態をシミュレート（実装時は適切なエラー条件を設定）',
+  );
 });
 
 When('ユーザーが「シーン管理」セクションを開く', async function (this) {
@@ -165,15 +190,21 @@ When('ユーザーが「シーン管理」セクションを開く', async funct
   await pageActions.expectTextVisible('シーン管理');
 });
 
-When('シーンタイトルを「{string}」と入力する', async function (this, title: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.fillByTestId('scene-title-input', title);
-});
+When(
+  'シーンタイトルを「{string}」と入力する',
+  async function (this, title: string) {
+    const pageActions = new PageActions(this.page);
+    await pageActions.fillByTestId('scene-title-input', title);
+  },
+);
 
-When('シーン概要を「{string}」と入力する', async function (this, overview: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.fillByTestId('scene-overview-input', overview);
-});
+When(
+  'シーン概要を「{string}」と入力する',
+  async function (this, overview: string) {
+    const pageActions = new PageActions(this.page);
+    await pageActions.fillByTestId('scene-overview-input', overview);
+  },
+);
 
 When('シーン順序を「{int}」と設定する', async function (this, order: number) {
   const pageActions = new PageActions(this.page);
@@ -190,19 +221,25 @@ When('さらに「新しいシーンを追加」ボタンをクリックする',
   await pageActions.clickButton('新しいシーンを追加');
 });
 
-Then('シーン「{string}」も即座にシーン一覧に表示される', async function (this, sceneTitle: string) {
-  const helpers = new SceneTestHelpers(this.page);
-  await helpers.expectSceneVisibleImmediately(sceneTitle);
-});
+Then(
+  'シーン「{string}」も即座にシーン一覧に表示される',
+  async function (this, sceneTitle: string) {
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.expectSceneVisibleImmediately(sceneTitle);
+  },
+);
 
-When('シーンタイトルを「{string}」と入力してシーンを追加する', async function (this, title: string) {
-  const helpers = new SceneTestHelpers(this.page);
-  await helpers.createSceneOptimistic(title, `${title}の概要`);
-});
+When(
+  'シーンタイトルを「{string}」と入力してシーンを追加する',
+  async function (this, title: string) {
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.createSceneOptimistic(title, `${title}の概要`);
+  },
+);
 
 When('さらに別のシーンを編集してタイトルを変更する', async function (this) {
   const pageActions = new PageActions(this.page);
-  
+
   // 既存のシーンの編集ボタンをクリック（最初に見つかるもの）
   await this.page.click('[data-testid="edit-scene-button"]:first-of-type');
   await pageActions.fillByTestId('scene-title-input', '楽観的編集されたシーン');
@@ -215,24 +252,46 @@ When('既存のシーンを1つ削除する', async function (this) {
   await this.page.click('button:has-text("OK")'); // 確認ダイアログ
 });
 
-When('ユーザーがシーン「{string}」の編集ボタンをクリックする', async function (this, sceneTitle: string) {
-  // 特定のシーンの編集ボタンを探してクリック
-  await this.page.click(`[data-testid="scene-item"]:has-text("${sceneTitle}") [data-testid="edit-scene-button"]`);
-});
+When(
+  'ユーザーがシーン「{string}」の編集ボタンをクリックする',
+  async function (this, sceneTitle: string) {
+    // 特定のシーンの編集ボタンを探してクリック
+    await this.page.click(
+      `[data-testid="scene-item"]:has-text("${sceneTitle}") [data-testid="edit-scene-button"]`,
+    );
+  },
+);
 
-When('シーンタイトルを「{string}」に変更する', async function (this, newTitle: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.clearAndFill('[data-testid="scene-title-input"]', newTitle);
-});
+When(
+  'シーンタイトルを「{string}」に変更する',
+  async function (this, newTitle: string) {
+    const pageActions = new PageActions(this.page);
+    await pageActions.clearAndFill(
+      '[data-testid="scene-title-input"]',
+      newTitle,
+    );
+  },
+);
 
-When('シーン概要を「{string}」に変更する', async function (this, newOverview: string) {
-  const pageActions = new PageActions(this.page);
-  await pageActions.clearAndFill('[data-testid="scene-overview-input"]', newOverview);
-});
+When(
+  'シーン概要を「{string}」に変更する',
+  async function (this, newOverview: string) {
+    const pageActions = new PageActions(this.page);
+    await pageActions.clearAndFill(
+      '[data-testid="scene-overview-input"]',
+      newOverview,
+    );
+  },
+);
 
-When('ユーザーがシーン「{string}」の削除ボタンをクリックする', async function (this, sceneTitle: string) {
-  await this.page.click(`[data-testid="scene-item"]:has-text("${sceneTitle}") [data-testid="delete-scene-button"]`);
-});
+When(
+  'ユーザーがシーン「{string}」の削除ボタンをクリックする',
+  async function (this, sceneTitle: string) {
+    await this.page.click(
+      `[data-testid="scene-item"]:has-text("${sceneTitle}") [data-testid="delete-scene-button"]`,
+    );
+  },
+);
 
 When('削除確認ダイアログで「OK」をクリックする', async function (this) {
   await this.page.click('button:has-text("OK")');
@@ -242,10 +301,13 @@ When('破棄確認ダイアログで「OK」をクリックする', async functi
   await this.page.click('button:has-text("OK")');
 });
 
-Then('シーン「{string}」が即座にシーン一覧に表示される', async function (this, sceneTitle: string) {
-  const helpers = new SceneTestHelpers(this.page);
-  await helpers.expectSceneVisibleImmediately(sceneTitle);
-});
+Then(
+  'シーン「{string}」が即座にシーン一覧に表示される',
+  async function (this, sceneTitle: string) {
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.expectSceneVisibleImmediately(sceneTitle);
+  },
+);
 
 Then('シーンに「新規」バッジが表示されている', async function (this) {
   const helpers = new SceneTestHelpers(this.page);
@@ -264,37 +326,46 @@ Then('両方のシーンに「新規」バッジが表示されている', async
 
 Then('シーン一覧には2つのシーンが順序通りに表示される', async function (this) {
   const pageActions = new PageActions(this.page);
-  
+
   // 1番目のシーンを確認
   await pageActions.expectTextVisible('1. 森の入口');
   // 2番目のシーンを確認
   await pageActions.expectTextVisible('2. 村の中心');
-  
+
   // 順序が正しいことも確認
   const sceneElements = this.page.locator('[data-testid="scene-item"]');
   await expect(sceneElements).toHaveCount(2);
 });
 
-Then('シーン一覧でタイトルが即座に「{string}」に更新される', async function (this, newTitle: string) {
-  const helpers = new SceneTestHelpers(this.page);
-  await helpers.expectSceneVisibleImmediately(newTitle);
-});
+Then(
+  'シーン一覧でタイトルが即座に「{string}」に更新される',
+  async function (this, newTitle: string) {
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.expectSceneVisibleImmediately(newTitle);
+  },
+);
 
-Then('シーン「{string}」が即座にシーン一覧から消える', async function (this, sceneTitle: string) {
-  // シーンが即座に削除されることを確認
-  const deletedElement = this.page.locator(`text=${sceneTitle}`);
-  await expect(deletedElement).not.toBeVisible({ timeout: 1000 });
-});
+Then(
+  'シーン「{string}」が即座にシーン一覧から消える',
+  async function (this, sceneTitle: string) {
+    // シーンが即座に削除されることを確認
+    const deletedElement = this.page.locator(`text=${sceneTitle}`);
+    await expect(deletedElement).not.toBeVisible({ timeout: 1000 });
+  },
+);
 
 Then('保存中の表示が現れる', async function (this) {
   const pageActions = new PageActions(this.page);
   await pageActions.expectTextVisible('保存中...');
 });
 
-Then('保存が完了すると「未保存の変更があります」警告が消える', async function (this) {
-  const helpers = new SceneTestHelpers(this.page);
-  await helpers.expectWarningBannerHidden();
-});
+Then(
+  '保存が完了すると「未保存の変更があります」警告が消える',
+  async function (this) {
+    const helpers = new SceneTestHelpers(this.page);
+    await helpers.expectWarningBannerHidden();
+  },
+);
 
 Then('すべての「新規」バッジが消える', async function (this) {
   const helpers = new SceneTestHelpers(this.page);
@@ -305,7 +376,7 @@ Then('GraphDBにすべての変更が正しく反映されている', async func
   // GraphDBに保存されていることを確認
   // 実際の実装では、API呼び出しやDB確認ロジックを使用
   console.log('GraphDBへの変更反映を確認（実装時は実際のDB確認処理を追加）');
-  
+
   // 例: 最新のシーンデータをAPIから取得して確認
   await this.page.waitForTimeout(1000); // DB更新完了を待機
 });
@@ -320,7 +391,7 @@ Then('シーン一覧が元の状態に戻る', async function (this) {
   // 破棄前の状態に戻ることを確認
   // 実際の実装では、元の状態と比較
   const pageActions = new PageActions(this.page);
-  
+
   // 楽観的変更が取り消されることを確認
   await this.page.waitForTimeout(500); // UI更新を待機
   console.log('シーン一覧が元の状態に戻りました');
@@ -333,7 +404,7 @@ Then('すべての楽観的変更が取り消される', async function (this) {
 
 Then('エラーメッセージが表示される', async function (this) {
   const pageActions = new PageActions(this.page);
-  
+
   // エラーメッセージの表示を確認
   // 実際の実装では、具体的なエラーメッセージを確認
   await pageActions.expectTextVisible('保存に失敗しました');
@@ -342,33 +413,33 @@ Then('エラーメッセージが表示される', async function (this) {
 Then('シーン一覧が元の状態に自動的に巻き戻される', async function (this) {
   // エラー時の自動巻き戻しを確認
   await this.page.waitForTimeout(1000); // 巻き戻し処理完了を待機
-  
+
   const helpers = new SceneTestHelpers(this.page);
   await helpers.expectNoNewBadges();
 });
 
 Then('すべての操作が即座にUI反映される', async function (this) {
   const pageActions = new PageActions(this.page);
-  
+
   // 複数の操作結果がすべて表示されることを確認
   await pageActions.expectTextVisible('新規シーン');
   await pageActions.expectTextVisible('楽観的編集されたシーン');
-  
+
   // 削除されたシーンは表示されないことを確認
   // （削除対象の具体的なシーン名は文脈により決定）
 });
 
 Then('3つの異なる操作による変更が画面に表示されている', async function (this) {
   // 作成・編集・削除の3つの操作結果を確認
-  
+
   // 1. 新規作成されたシーンとバッジ
   const newSceneElement = this.page.locator('text=新規シーン');
   await expect(newSceneElement).toBeVisible();
-  
+
   // 2. 編集されたシーン
   const editedSceneElement = this.page.locator('text=楽観的編集されたシーン');
   await expect(editedSceneElement).toBeVisible();
-  
+
   // 3. 削除されたシーンがないことを確認
   // （具体的な削除シーン名は前のステップから継承）
 });
@@ -376,23 +447,26 @@ Then('3つの異なる操作による変更が画面に表示されている', a
 Then('すべての変更が一括でサーバーに送信される', async function (this) {
   // ネットワークリクエストの監視
   // 実際の実装では、Playwrightのネットワーク監視機能を使用
-  
+
   // 一括更新APIが1回だけ呼び出されることを確認
   console.log('一括更新APIの呼び出しを確認（実装時はネットワーク監視を追加）');
 });
 
-Then('GraphDBでは1回のトランザクションですべてが処理される', async function (this) {
-  // GraphDBでの一括処理確認
-  // 実際の実装では、ログやメトリクスでトランザクション数を確認
-  console.log('GraphDBでの一括トランザクション処理を確認');
-});
+Then(
+  'GraphDBでは1回のトランザクションですべてが処理される',
+  async function (this) {
+    // GraphDBでの一括処理確認
+    // 実際の実装では、ログやメトリクスでトランザクション数を確認
+    console.log('GraphDBでの一括トランザクション処理を確認');
+  },
+);
 
 Then('最終的なシーン状態が正しく画面に反映される', async function (this) {
   // 最終状態の確認
   await this.page.waitForTimeout(2000); // 保存完了とUI更新を待機
-  
+
   const helpers = new SceneTestHelpers(this.page);
   await helpers.expectWarningBannerHidden();
-  
+
   console.log('最終的なシーン状態が正しく反映されました');
 });
